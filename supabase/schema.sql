@@ -8,13 +8,23 @@
 create extension if not exists pgcrypto;
 
 -- ── Drop the previous schema ─────────────────────────────────────────────
+-- Includes tables that existed on the live database but were never
+-- captured in this file (hr_contacts, open_roles, user_applications,
+-- saved_companies) — leftovers from the old HR-direct/dashboard/saved-
+-- companies features. `cascade` so any other undiscovered dependents on
+-- these specific legacy tables are cleared too; nothing here is meant to
+-- survive the rebuild.
 
+drop table if exists public.hr_contacts cascade;
+drop table if exists public.open_roles cascade;
+drop table if exists public.user_applications cascade;
+drop table if exists public.saved_companies cascade;
 drop function if exists public.create_opportunity(jsonb, jsonb, jsonb);
-drop table if exists public.saved_opportunities;
-drop table if exists public.opportunity_links;
-drop table if exists public.opportunity_contacts;
-drop table if exists public.opportunities;
-drop table if exists public.companies;
+drop table if exists public.saved_opportunities cascade;
+drop table if exists public.opportunity_links cascade;
+drop table if exists public.opportunity_contacts cascade;
+drop table if exists public.opportunities cascade;
+drop table if exists public.companies cascade;
 
 -- ── companies ─────────────────────────────────────────────────────────────
 
