@@ -63,6 +63,7 @@ export interface Opportunity {
   google_form_url: string | null;
   hr_email: string | null;
   hr_contact: string | null;
+  how_to_apply: string | null;
 
   deadline: string | null;
 
@@ -105,6 +106,7 @@ export interface OpportunityInsert {
   google_form_url?: string | null;
   hr_email?: string | null;
   hr_contact?: string | null;
+  how_to_apply?: string | null;
 
   deadline?: string | null;
 

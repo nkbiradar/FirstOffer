@@ -61,3 +61,26 @@ export async function requireUser(): Promise<AuthUser> {
   if (!user) redirect("/admin/login");
   return user;
 }
+
+// ── getAdminUser ─────────────────────────────────────────────
+
+function adminEmails() {
+  return (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/**
+ * Returns the current user if they're authenticated AND in the
+ * ADMIN_EMAILS allowlist, otherwise `null`. Use this in Route Handlers
+ * (e.g. app/api/admin/**) which need a 401/403 response rather than the
+ * redirect requireUser() does — middleware.ts only guards page routes
+ * under /admin/*, not /api/admin/*, so API routes check this themselves.
+ */
+export async function getAdminUser(): Promise<AuthUser | null> {
+  const user = await getUser();
+  if (!user?.email) return null;
+  if (!adminEmails().includes(user.email.toLowerCase())) return null;
+  return user;
+}

@@ -116,6 +116,54 @@ export async function getLatestOpportunities(limit = 6): Promise<OpportunityWith
   return (data ?? []) as OpportunityWithCompany[];
 }
 
+/** yyyy-mm-dd in IST — the site is India-focused (₹, Bengaluru, etc.), so "today" is judged in IST rather than the server's UTC clock. */
+function istDateKey(iso: string) {
+  return new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+}
+
+export type HomepageOpportunities = {
+  today: OpportunityWithCompany[];
+  earlier: OpportunityWithCompany[];
+  todayDateLabel: string;
+};
+
+/**
+ * Published, non-expired opportunities split into "published today" (IST)
+ * and "earlier" — for the homepage's Today's Opportunities / Earlier
+ * Opportunities sections. Both newest-first. Nothing here is hardcoded:
+ * every opportunity comes straight from Supabase on every request.
+ */
+export async function getHomepageOpportunities(limit = 30): Promise<HomepageOpportunities> {
+  const supabase = await createClient();
+  const builder = applyPublishedFilter(
+    supabase.from("opportunities").select(OPPORTUNITY_SELECT),
+  );
+
+  const { data, error } = await builder
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  const todayDateLabel = new Date().toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  if (error) {
+    console.error("getHomepageOpportunities failed:", error.message);
+    return { today: [], earlier: [], todayDateLabel };
+  }
+
+  const rows = (data ?? []) as OpportunityWithCompany[];
+  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+  const today = rows.filter((row) => row.published_at && istDateKey(row.published_at) === todayKey);
+  const earlier = rows.filter((row) => !row.published_at || istDateKey(row.published_at) !== todayKey);
+
+  return { today, earlier, todayDateLabel };
+}
+
 /**
  * Published, non-expired opportunities with optional search/type filters
  * and simple offset pagination — used on the /opportunities listing page.
@@ -161,4 +209,27 @@ export async function getPublishedOpportunities(
     page,
     pageSize,
   };
+}
+
+/**
+ * A single opportunity by id, for the public detail page. Uses the normal
+ * (RLS-scoped) client on purpose: there's no explicit status/expiry filter
+ * here because the "Anyone can read published, non-expired opportunities"
+ * RLS policy already enforces that — a direct hit on a draft or expired
+ * opportunity's id correctly gets no row back, not just a client-side check.
+ */
+export async function getOpportunityById(id: string): Promise<OpportunityWithCompany | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("opportunities")
+    .select(OPPORTUNITY_SELECT)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("getOpportunityById failed:", error.message);
+    return null;
+  }
+
+  return data as OpportunityWithCompany | null;
 }

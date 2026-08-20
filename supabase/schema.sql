@@ -39,9 +39,10 @@ create table public.companies (
 );
 
 -- ── opportunities ─────────────────────────────────────────────────────────
--- One row = one Telegram opportunity, extracted (by AI, later) or entered
--- manually. Every field that isn't guaranteed to appear in a Telegram post
--- is nullable — nothing here should be invented if the source doesn't say it.
+-- One row = one Telegram opportunity, entered manually by the admin for now
+-- (Step 4) — AI extraction and Telegram automation come later. Every field
+-- that isn't guaranteed to appear in a Telegram post is nullable — nothing
+-- here should be invented if the source doesn't say it.
 
 create table public.opportunities (
   id uuid primary key default gen_random_uuid(),
@@ -78,6 +79,7 @@ create table public.opportunities (
   google_form_url text,
   hr_email text,
   hr_contact text,
+  how_to_apply text,
 
   -- Deadline
   deadline date,
@@ -131,7 +133,8 @@ create index opportunities_skills_gin_idx
 
 -- ── Row Level Security ───────────────────────────────────────────────────
 -- No public insert/update/delete policies exist for either table — all
--- writes go through the service-role client from trusted server/admin code.
+-- writes go through the service-role client from trusted admin code
+-- (lib/supabase/admin.ts), not RLS-granted access.
 
 alter table public.companies enable row level security;
 alter table public.opportunities enable row level security;

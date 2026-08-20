@@ -332,3 +332,273 @@ a {
   margin: 0 auto;
   padding: 48px 24px;
 }
+
+/* ── Admin: opportunity management (Step 4) ─────────────────────────────── */
+
+.admin-page-wide {
+  max-width: 960px;
+}
+
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-page-header h1 {
+  margin: 0;
+}
+
+.btn-primary {
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #dc2626;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.admin-tabs a {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666666;
+  border-bottom: 2px solid transparent;
+}
+
+.admin-tabs a.active {
+  color: #1a1a1a;
+  border-bottom-color: #2563eb;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.admin-table th {
+  color: #666666;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-table-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-draft {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.status-published {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-expired {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.opportunity-form {
+  display: grid;
+  gap: 28px;
+  margin-top: 16px;
+  max-width: 720px;
+}
+
+.opportunity-form section {
+  display: grid;
+  gap: 14px;
+}
+
+.opportunity-form h2 {
+  margin: 0;
+  font-size: 15px;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 6px;
+}
+
+.opportunity-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.opportunity-form .hint {
+  font-weight: 400;
+  color: #888888;
+}
+
+.opportunity-form input,
+.opportunity-form select,
+.opportunity-form textarea {
+  padding: 10px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.opportunity-form textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.form-actions button {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  background: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form-actions button.btn-primary {
+  border-color: #2563eb;
+}
+
+.form-error {
+  padding: 10px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+/* ── Public: opportunity detail page (Step 4) ───────────────────────────── */
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #666666;
+}
+
+.opportunity-detail section {
+  margin-top: 24px;
+}
+
+.opportunity-detail h2 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.opportunity-detail ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.opportunity-detail li {
+  margin-bottom: 4px;
+}
+
+.preserve-whitespace {
+  white-space: pre-wrap;
+}
+
+.apply-now {
+  margin: 16px 0;
+}
+
+/* ── Admin: dashboard stats (Step 4 v2) ─────────────────────────────────── */
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.admin-stat {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.admin-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.admin-stat-label {
+  font-size: 12px;
+  color: #666666;
+}
+
+.admin-dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
