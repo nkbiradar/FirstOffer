@@ -149,3 +149,129 @@ create policy "Anyone can read published, non-expired opportunities"
     status = 'published'
     and (expires_at is null or expires_at > now())
   );
+
+-- ── user_applications ────────────────────────────────────────────────────
+-- Google-authenticated job seekers can mark an opportunity as "applied" and
+-- see that list on /applications (see lib/data/user-applications.ts,
+-- app/api/applications/*, components/ApplyTracker.tsx). This is the first
+-- table tied to a real user identity (auth.users) rather than admin-only
+-- data — RLS is the actual enforcement here, not application code: a user
+-- can only ever select/insert/delete rows where user_id = auth.uid().
+--
+-- NOTE: this block is additive (`if not exists` throughout) — safe to run
+-- on its own against the live database. Do NOT re-run the drop/create
+-- statements above this point against production; they're written for a
+-- fresh database and would destroy existing companies/opportunities data.
+
+create table if not exists public.user_applications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  opportunity_id uuid not null references public.opportunities(id) on delete cascade,
+  applied_at timestamptz not null default now(),
+  unique (user_id, opportunity_id)
+);
+
+create index if not exists user_applications_user_id_idx
+  on public.user_applications (user_id);
+create index if not exists user_applications_opportunity_id_idx
+  on public.user_applications (opportunity_id);
+
+alter table public.user_applications enable row level security;
+
+create policy "Users can view their own applications"
+  on public.user_applications for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert their own applications"
+  on public.user_applications for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can delete their own applications"
+  on public.user_applications for delete
+  using (auth.uid() = user_id);
+
+-- ── user_applications outcome tracking ("did you hear back?") ────────────
+-- Lets a user self-report what happened after applying — interview, offer,
+-- rejected, or no response — a few days after marking something applied.
+-- See lib/data/user-applications.ts, app/api/applications/[opportunityId]/
+-- route.ts (PATCH), components/OutcomeTracker.tsx, app/applications/page.tsx.
+--
+-- NOTE: this block is additive and safe to re-run on its own — do NOT
+-- re-run the drop/create statements at the top of this file.
+
+alter table public.user_applications
+  add column if not exists outcome text
+    check (outcome in ('interview', 'offer', 'rejected', 'no_response')),
+  add column if not exists outcome_updated_at timestamptz;
+
+-- No `create policy if not exists` in Postgres, so guard it by hand —
+-- makes this block safe to run more than once.
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'user_applications'
+      and policyname = 'Users can update their own applications'
+  ) then
+    create policy "Users can update their own applications"
+      on public.user_applications for update
+      using (auth.uid() = user_id)
+      with check (auth.uid() = user_id);
+  end if;
+end $$;
+
+-- ── opportunity_unlocks (Phase 6 — payments) ─────────────────────────────
+-- A signed-in job seeker can pay a small UPI fee (via Razorpay) to reveal
+-- the HR Email / HR Contact display on one specific opportunity's detail
+-- page (app/opportunities/[id]/page.tsx). This does NOT touch the "Apply
+-- Now" button — getApplyAction() there is unchanged and still falls back
+-- to a mailto: link exactly as before when HR email is an opportunity's
+-- only apply route, so an opportunity's core apply flow is never paywalled.
+--
+-- One row per (user, opportunity): create-order upserts it on every
+-- attempt (status starts 'created'), and either the client-side verify
+-- call (app/api/payments/verify/route.ts) or the webhook backstop
+-- (app/api/payments/webhook/route.ts) flips it to 'paid'.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.opportunity_unlocks (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  opportunity_id uuid not null references public.opportunities(id) on delete cascade,
+  razorpay_order_id text not null,
+  razorpay_payment_id text,
+  amount_paise integer not null,
+  status text not null default 'created' check (status in ('created', 'paid', 'failed')),
+  created_at timestamptz not null default now(),
+  paid_at timestamptz,
+  unique (user_id, opportunity_id)
+);
+
+create index if not exists opportunity_unlocks_user_id_idx
+  on public.opportunity_unlocks (user_id);
+create index if not exists opportunity_unlocks_razorpay_order_id_idx
+  on public.opportunity_unlocks (razorpay_order_id);
+
+alter table public.opportunity_unlocks enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'opportunity_unlocks'
+      and policyname = 'Users can view their own unlocks'
+  ) then
+    create policy "Users can view their own unlocks"
+      on public.opportunity_unlocks for select
+      using (auth.uid() = user_id);
+  end if;
+end $$;
+
+-- No public insert/update policy — all writes go through the service-role
+-- client from the payment API routes (create-order, verify, webhook),
+-- matching lib/supabase/admin.ts's existing pattern.

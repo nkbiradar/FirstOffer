@@ -13,9 +13,13 @@ export default async function NewOpportunityPage({
   const companies = await getAllCompanyOptions();
 
   return (
-    <main className="admin-page admin-page-wide">
-      <h1>Add Opportunity</h1>
-      <OpportunityForm mode="create" companies={companies} errorMessage={errorParam} />
-    </main>
+    <div className="admin-shell">
+      <main className="admin-page admin-page-wide">
+        <div className="admin-page-header">
+          <h1>Add Opportunity</h1>
+        </div>
+        <OpportunityForm mode="create" companies={companies} errorMessage={errorParam} />
+      </main>
+    </div>
   );
 }

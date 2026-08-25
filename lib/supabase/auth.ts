@@ -72,6 +72,18 @@ function adminEmails() {
 }
 
 /**
+ * Whether an email is in the ADMIN_EMAILS allowlist. Exported so callers
+ * that already have a `user` in hand (e.g. app/layout.tsx, which fetches
+ * it once for the whole site) can check admin status without a second
+ * getUser() round-trip — see getAdminUser() below for the common case of
+ * "fetch the user AND check admin" in one call.
+ */
+export function isAdminEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return adminEmails().includes(email.toLowerCase());
+}
+
+/**
  * Returns the current user if they're authenticated AND in the
  * ADMIN_EMAILS allowlist, otherwise `null`. Use this in Route Handlers
  * (e.g. app/api/admin/**) which need a 401/403 response rather than the
@@ -80,7 +92,6 @@ function adminEmails() {
  */
 export async function getAdminUser(): Promise<AuthUser | null> {
   const user = await getUser();
-  if (!user?.email) return null;
-  if (!adminEmails().includes(user.email.toLowerCase())) return null;
+  if (!isAdminEmail(user?.email)) return null;
   return user;
 }

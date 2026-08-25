@@ -68,7 +68,15 @@ export async function middleware(request: NextRequest) {
     user.email && adminEmails().includes(user.email.toLowerCase()),
   );
   if (!isAdmin) {
-    return redirectToLogin();
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/admin/login";
+    redirectUrl.search = "";
+    redirectUrl.searchParams.set("next", pathname);
+    redirectUrl.searchParams.set(
+      "error",
+      `Access denied: ${user.email ?? "your account"} is not an allowlisted admin.`
+    );
+    return NextResponse.redirect(redirectUrl);
   }
 
   return response;

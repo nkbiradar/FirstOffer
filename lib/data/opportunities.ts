@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Opportunity, OpportunityType } from "@/types/supabase";
+import type { Opportunity, OpportunityType, WorkMode } from "@/types/supabase";
 
 export type OpportunityCompanySummary = {
   id: string;
@@ -17,6 +17,11 @@ export type ListOpportunitiesOptions = {
   type?: OpportunityType;
   page?: number;
   pageSize?: number;
+  // Additional listing filters (Discovery & SEO enhancement) — all optional
+  // and additive; omitting them preserves the exact previous behavior.
+  workMode?: WorkMode;
+  batch?: string;
+  location?: string;
 };
 
 export type ListOpportunitiesResult = {
@@ -91,10 +96,36 @@ async function buildSearchFilter(
   return orFilters.join(",");
 }
 
+/**
+ * yyyy-mm-dd "today" in IST — used to compare against the `deadline` date
+ * column (see the auto-expiry note below).
+ */
+function todayDateKey() {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+}
+
+/**
+ * Published + not expired. "Not expired" checks two independent things —
+ * an opportunity must clear BOTH to stay visible:
+ *  - `expires_at` (timestamp) — set automatically by
+ *    createOpportunity()/updateOpportunity() in lib/data/admin-opportunities.ts
+ *    to `published_at` + 2 days. This is the site's own "nothing stays
+ *    listed for more than 2 days" freshness policy, independent of the
+ *    job's own deadline.
+ *  - `deadline` (date) — the job's own application deadline, entered by
+ *    the admin via the form/bulk import. A published opportunity whose
+ *    deadline has passed is excluded even if it's still within its 2-day
+ *    window.
+ * Either one passing is enough to hide it from every public read here,
+ * even before the lazy admin-side sweep (see sweepExpiredOpportunities in
+ * lib/data/admin-opportunities.ts) gets a chance to flip its `status` to
+ * "expired" in the database.
+ */
 function applyPublishedFilter(builder: QueryBuilder): QueryBuilder {
   return builder
     .eq("status", "published")
-    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+    .or(`deadline.is.null,deadline.gte.${todayDateKey()}`);
 }
 
 /** Latest published, non-expired opportunities — used on the homepage. */
@@ -164,6 +195,46 @@ export async function getHomepageOpportunities(limit = 30): Promise<HomepageOppo
   return { today, earlier, todayDateLabel };
 }
 
+export type SiteStats = {
+  totalOpportunities: number;
+  totalCompanies: number;
+};
+
+/**
+ * Real, live counts for the homepage hero stat tiles — total published
+ * (non-expired) opportunities, and how many distinct companies currently
+ * have at least one. Purely additive/read-only: does not change any
+ * existing query, just two cheap `count: "exact", head: true` lookups.
+ */
+export async function getSiteStats(): Promise<SiteStats> {
+  const supabase = await createClient();
+
+  const [totalResult, companyRowsResult] = await Promise.all([
+    applyPublishedFilter(
+      supabase.from("opportunities").select("id", { count: "exact", head: true }),
+    ),
+    applyPublishedFilter(
+      supabase.from("opportunities").select("company_id").not("company_id", "is", null),
+    ),
+  ]);
+
+  if (totalResult.error) {
+    console.error("getSiteStats (total) failed:", totalResult.error.message);
+  }
+  if (companyRowsResult.error) {
+    console.error("getSiteStats (companies) failed:", companyRowsResult.error.message);
+  }
+
+  const companyIds = new Set(
+    ((companyRowsResult.data ?? []) as { company_id: string | null }[]).map((row) => row.company_id),
+  );
+
+  return {
+    totalOpportunities: totalResult.count ?? 0,
+    totalCompanies: companyIds.size,
+  };
+}
+
 /**
  * Published, non-expired opportunities with optional search/type filters
  * and simple offset pagination — used on the /opportunities listing page.
@@ -182,6 +253,24 @@ export async function getPublishedOpportunities(
 
   if (options.type) {
     builder = builder.eq("opportunity_type", options.type);
+  }
+
+  if (options.workMode) {
+    builder = builder.eq("work_mode", options.workMode);
+  }
+
+  if (options.batch) {
+    const batchTerm = sanitizeSearchTerm(options.batch);
+    if (batchTerm) {
+      builder = builder.contains("batch", [batchTerm]);
+    }
+  }
+
+  if (options.location) {
+    const locationTerm = sanitizeSearchTerm(options.location);
+    if (locationTerm) {
+      builder = builder.ilike("location", `%${locationTerm}%`);
+    }
   }
 
   if (options.query) {
@@ -232,4 +321,29 @@ export async function getOpportunityById(id: string): Promise<OpportunityWithCom
   }
 
   return data as OpportunityWithCompany | null;
+}
+
+export type OpportunitySitemapEntry = { id: string; updated_at: string };
+
+/**
+ * id + updated_at for every published, non-expired opportunity — used by
+ * app/sitemap.ts. A dedicated lightweight query (no company join, no full
+ * row) so the sitemap doesn't pull down every field for every opportunity.
+ */
+export async function getAllPublishedOpportunityIds(): Promise<OpportunitySitemapEntry[]> {
+  const supabase = await createClient();
+  const builder = applyPublishedFilter(
+    supabase.from("opportunities").select("id, updated_at"),
+  );
+
+  const { data, error } = await builder
+    .order("published_at", { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    console.error("getAllPublishedOpportunityIds failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []) as OpportunitySitemapEntry[];
 }

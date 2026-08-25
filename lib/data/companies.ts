@@ -70,6 +70,24 @@ export async function getAllCompanyOptions(): Promise<CompanyOption[]> {
   return (data ?? []) as CompanyOption[];
 }
 
+export type CompanyForAdmin = Pick<Company, "id" | "name" | "slug" | "logo_url">;
+
+/** All companies with their logo URL — for the /admin/companies logo-editing page. */
+export async function getAllCompaniesForAdmin(): Promise<CompanyForAdmin[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("companies")
+    .select("id, name, slug, logo_url")
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("getAllCompaniesForAdmin failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []) as CompanyForAdmin[];
+}
+
 function slugify(name: string) {
   const slug = name
     .toLowerCase()
@@ -86,10 +104,14 @@ function slugify(name: string) {
  * typing "Vedantu" twice across two opportunities never creates duplicate
  * company rows.
  *
+ * `logoUrl` is only used when a NEW company is created (e.g. from the "New
+ * Company Logo URL" field on the opportunity form) — an existing company's
+ * logo is left untouched here; edit it from /admin/companies instead.
+ *
  * Uses the service-role client: RLS only grants public SELECT, and
  * creating a company here happens as an admin action.
  */
-export async function findOrCreateCompanyId(rawName: string): Promise<string> {
+export async function findOrCreateCompanyId(rawName: string, logoUrl?: string): Promise<string> {
   const name = rawName.trim();
   if (!name) throw new Error("Company name is required.");
 
@@ -108,13 +130,14 @@ export async function findOrCreateCompanyId(rawName: string): Promise<string> {
   const baseSlug = slugify(name);
   let slug = baseSlug;
   let attempt = 1;
+  const trimmedLogoUrl = logoUrl?.trim() || null;
 
   // Slugs are unique; retry with a numeric suffix on collision (e.g. two
   // differently-named companies that slugify to the same string).
   while (attempt < 20) {
     const { data: created, error: insertError } = await admin
       .from("companies")
-      .insert({ name, slug })
+      .insert({ name, slug, logo_url: trimmedLogoUrl })
       .select("id")
       .single();
 

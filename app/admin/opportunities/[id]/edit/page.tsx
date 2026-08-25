@@ -24,9 +24,13 @@ export default async function EditOpportunityPage({
   if (!opportunity) notFound();
 
   return (
-    <main className="admin-page admin-page-wide">
-      <h1>Edit Opportunity</h1>
-      <OpportunityForm mode="edit" opportunity={opportunity} companies={companies} errorMessage={errorParam} />
-    </main>
+    <div className="admin-shell">
+      <main className="admin-page admin-page-wide">
+        <div className="admin-page-header">
+          <h1>Edit Opportunity</h1>
+        </div>
+        <OpportunityForm mode="edit" opportunity={opportunity} companies={companies} errorMessage={errorParam} />
+      </main>
+    </div>
   );
 }

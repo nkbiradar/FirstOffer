@@ -13,6 +13,7 @@ export type Json =
 export type OpportunityType = "internship" | "full_time";
 export type WorkMode = "remote" | "hybrid" | "onsite";
 export type OpportunityStatus = "draft" | "published" | "expired";
+export type ApplicationOutcome = "interview" | "offer" | "rejected" | "no_response";
 
 export interface Company {
   id: string;
@@ -123,6 +124,20 @@ export interface OpportunityInsert {
 }
 
 export type OpportunityUpdate = Partial<OpportunityInsert>;
+
+// Google-authenticated job seekers marking an opportunity as "applied" —
+// see supabase/schema.sql's user_applications table. Not referenced by the
+// untyped Database interface below (lib/data/user-applications.ts queries
+// it directly, same untyped-client convention as the rest of the data
+// layer), kept here just so the row shape is documented alongside the rest.
+export interface UserApplication {
+  id: string;
+  user_id: string;
+  opportunity_id: string;
+  applied_at: string;
+  outcome: ApplicationOutcome | null;
+  outcome_updated_at: string | null;
+}
 
 export interface Database {
   public: {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
+import { avatarGradient, formatRelativeTime, initials } from "@/lib/ui-format";
 
 const TYPE_LABELS: Record<string, string> = {
   internship: "Internship",
@@ -12,18 +13,7 @@ const WORK_MODE_LABELS: Record<string, string> = {
   onsite: "On-site",
 };
 
-function formatPostedDate(value: string | null) {
-  if (!value) return null;
-  return new Date(value).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-// Detail page isn't built yet (Step 3 scope). The schema has no opportunity
-// slug (only companies have one), so this links by id — that route will be
-// app/opportunities/[id]/ when the detail page is built.
+// Links by id (schema has no opportunity slug, only companies do).
 export default function OpportunityCard({
   opportunity,
 }: {
@@ -44,38 +34,69 @@ export default function OpportunityCard({
   } = opportunity;
 
   const compensation = stipend || salary;
-  const postedDate = formatPostedDate(published_at);
+  const postedLabel = formatRelativeTime(published_at);
   const workModeLabel = work_mode ? WORK_MODE_LABELS[work_mode] : null;
+  const companyName = company?.name ?? "";
+  const { a, b } = avatarGradient(companyName || role);
 
   return (
-    <article className="opportunity-card">
-      {company?.name && <p className="opportunity-company">{company.name}</p>}
+    <Link
+      className="opportunity-card"
+      href={`/opportunities/${id}`}
+      style={{ ["--avatar-a" as string]: a, ["--avatar-b" as string]: b }}
+    >
+      <div className="opportunity-card-top">
+        <div className="opportunity-company-row">
+          <span className="company-avatar">
+            {company?.logo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img alt="" src={company.logo_url} />
+            ) : (
+              initials(companyName || role)
+            )}
+          </span>
+          {companyName && <p className="opportunity-company">{companyName}</p>}
+        </div>
+        {postedLabel && <span className="opportunity-posted">{postedLabel}</span>}
+      </div>
+
       <h3 className="opportunity-role">{role}</h3>
 
       {(opportunity_type || batch.length > 0) && (
+        <div className="badge-row">
+          {opportunity_type && (
+            <span className={`badge badge-${opportunity_type}`}>{TYPE_LABELS[opportunity_type]}</span>
+          )}
+          {batch.length > 0 && <span className="badge badge-neutral">Batch {batch.join(" / ")}</span>}
+        </div>
+      )}
+
+      {(location || workModeLabel) && (
         <p className="opportunity-meta">
-          {opportunity_type && <span>{TYPE_LABELS[opportunity_type]}</span>}
-          {batch.length > 0 && <span>{batch.join(" / ")}</span>}
+          {location && <span>{location}</span>}
+          {workModeLabel && <span>{workModeLabel}</span>}
         </p>
       )}
 
       {compensation && <p className="opportunity-comp">{compensation}</p>}
 
-      {(location || workModeLabel) && (
-        <p className="opportunity-location">
-          {[location, workModeLabel].filter(Boolean).join(" · ")}
+      {skills.length > 0 && (
+        <p className="opportunity-skills">
+          {skills.slice(0, 4).map((skill) => (
+            <span className="skill-chip" key={skill}>
+              {skill}
+            </span>
+          ))}
+          {skills.length > 4 && <span className="skill-chip">+{skills.length - 4}</span>}
         </p>
       )}
 
-      {skills.length > 0 && (
-        <p className="opportunity-skills">{skills.slice(0, 5).join(" · ")}</p>
-      )}
-
-      {postedDate && <p className="opportunity-posted">Posted {postedDate}</p>}
-
-      <Link className="opportunity-card-link" href={`/opportunities/${id}`}>
-        View Details
-      </Link>
-    </article>
+      <span className="opportunity-card-link">
+        View Opportunity
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+    </Link>
   );
 }
