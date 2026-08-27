@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createPublicClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Company } from "@/types/supabase";
 
@@ -8,7 +8,7 @@ export type CompanyWithOpportunityCount = Company & {
 
 /** Companies with a count of their published, non-expired opportunities. */
 export async function getCompaniesWithPublishedCounts(): Promise<CompanyWithOpportunityCount[]> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
 
   const { data: companies, error: companiesError } = await supabase
     .from("companies")

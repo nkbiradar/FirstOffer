@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createPublicClient } from "@/lib/supabase/server";
 import type { Opportunity, OpportunityType, WorkMode } from "@/types/supabase";
 
 export type OpportunityCompanySummary = {
@@ -130,7 +130,7 @@ function applyPublishedFilter(builder: QueryBuilder): QueryBuilder {
 
 /** Latest published, non-expired opportunities — used on the homepage. */
 export async function getLatestOpportunities(limit = 6): Promise<OpportunityWithCompany[]> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select(OPPORTUNITY_SELECT),
   );
@@ -165,7 +165,7 @@ export type HomepageOpportunities = {
  * every opportunity comes straight from Supabase on every request.
  */
 export async function getHomepageOpportunities(limit = 30): Promise<HomepageOpportunities> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select(OPPORTUNITY_SELECT),
   );
@@ -207,7 +207,7 @@ export type SiteStats = {
  * existing query, just two cheap `count: "exact", head: true` lookups.
  */
 export async function getSiteStats(): Promise<SiteStats> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
 
   const [totalResult, companyRowsResult] = await Promise.all([
     applyPublishedFilter(
@@ -244,7 +244,7 @@ export async function getPublishedOpportunities(
 ): Promise<ListOpportunitiesResult> {
   const page = Math.max(1, options.page ?? 1);
   const pageSize = options.pageSize ?? 12;
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
 
   let builder: QueryBuilder = supabase
     .from("opportunities")
@@ -308,7 +308,7 @@ export async function getPublishedOpportunities(
  * opportunity's id correctly gets no row back, not just a client-side check.
  */
 export async function getOpportunityById(id: string): Promise<OpportunityWithCompany | null> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const { data, error } = await supabase
     .from("opportunities")
     .select(OPPORTUNITY_SELECT)
@@ -331,7 +331,7 @@ export type OpportunitySitemapEntry = { id: string; updated_at: string };
  * row) so the sitemap doesn't pull down every field for every opportunity.
  */
 export async function getAllPublishedOpportunityIds(): Promise<OpportunitySitemapEntry[]> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select("id, updated_at"),
   );
