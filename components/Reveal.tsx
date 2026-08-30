@@ -15,15 +15,20 @@ export default function Reveal({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  // Always start false — matching what the server renders (Node has no
+  // IntersectionObserver, but reading that at init time here would differ
+  // between SSR and the client's first render before hydration, which is
+  // exactly the bug CountUp.tsx had before it was fixed). The no-JS/old-
+  // browser fallback below now happens inside the client-only effect
+  // instead of the render, so it can't cause a hydration mismatch.
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
       setVisible(true);
       return;
     }
-    const el = ref.current;
-    if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

@@ -224,6 +224,21 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
             </div>
           )}
+
+          <div className="resume-tip-banner">
+            <span className="resume-tip-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path
+                  d="M9 18h6M10 21h4M12 3a6 6 0 00-6 6c0 2.5 1.5 4 2.5 5.2.5.6.5 1 .5 1.8h6c0-.8 0-1.2.5-1.8C16.5 13 18 11.5 18 9a6 6 0 00-6-6z"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+            <p>
+              <strong>Tailor your resume to the JD.</strong> That&apos;s what actually gets you shortlisted.
+            </p>
+          </div>
         </header>
 
         {overviewParts.length > 0 && (

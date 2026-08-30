@@ -2423,7 +2423,8 @@ button.btn-danger {
 
 /* ── Admin: dashboard ────────────────────────────────────────────────── */
 
-.admin-stats {
+.admin-stats,
+.dashboard-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
@@ -2433,8 +2434,11 @@ button.btn-danger {
 /* Solid pastel color-block tiles (Round 5) instead of white cards, still
    color-coded by meaning rather than decoration — same four semantic
    categories as before, just rendered as flat pastel blocks with a black
-   icon badge, matching the site-wide bold color-block direction. */
-.admin-stat {
+   icon badge, matching the site-wide bold color-block direction. Shared
+   with .dashboard-stat (the user-facing /dashboard page) so both surfaces
+   stay visually consistent without duplicating the whole block. */
+.admin-stat,
+.dashboard-stat {
   display: grid;
   gap: 6px;
   padding: 18px;
@@ -2443,28 +2447,34 @@ button.btn-danger {
   transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
 
-.admin-stat:nth-child(1) {
+.admin-stat:nth-child(1),
+.dashboard-stat:nth-child(1) {
   background: var(--color-lavender);
 }
 
-.admin-stat:nth-child(2) {
+.admin-stat:nth-child(2),
+.dashboard-stat:nth-child(2) {
   background: var(--color-mint);
 }
 
-.admin-stat:nth-child(3) {
+.admin-stat:nth-child(3),
+.dashboard-stat:nth-child(3) {
   background: var(--color-peach);
 }
 
-.admin-stat:nth-child(4) {
+.admin-stat:nth-child(4),
+.dashboard-stat:nth-child(4) {
   background: var(--color-blush);
 }
 
-.admin-stat:hover {
+.admin-stat:hover,
+.dashboard-stat:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
-.admin-stat-icon {
+.admin-stat-icon,
+.dashboard-stat-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2474,43 +2484,50 @@ button.btn-danger {
   margin-bottom: 2px;
 }
 
-.admin-stat-icon svg {
+.admin-stat-icon svg,
+.dashboard-stat-icon svg {
   width: 18px;
   height: 18px;
 }
 
-/* Each admin stat tile keeps a distinct color by meaning (lavender/mint/
-   peach/blush for total/published/drafts/expired), just rendered as a flat
+/* Each stat tile keeps a distinct color by meaning, just rendered as a flat
    pastel block + black icon badge instead of a white card with a soft
    icon circle. */
-.admin-stat-icon {
+.admin-stat-icon,
+.dashboard-stat-icon {
   background: var(--color-ink);
   color: var(--color-bg);
 }
 
-.admin-stat:nth-child(1) .admin-stat-value {
+.admin-stat:nth-child(1) .admin-stat-value,
+.dashboard-stat:nth-child(1) .dashboard-stat-value {
   color: var(--color-lavender-strong);
 }
 
-.admin-stat:nth-child(2) .admin-stat-value {
+.admin-stat:nth-child(2) .admin-stat-value,
+.dashboard-stat:nth-child(2) .dashboard-stat-value {
   color: var(--color-mint-strong);
 }
 
-.admin-stat:nth-child(3) .admin-stat-value {
+.admin-stat:nth-child(3) .admin-stat-value,
+.dashboard-stat:nth-child(3) .dashboard-stat-value {
   color: var(--color-peach-strong);
 }
 
-.admin-stat:nth-child(4) .admin-stat-value {
+.admin-stat:nth-child(4) .admin-stat-value,
+.dashboard-stat:nth-child(4) .dashboard-stat-value {
   color: var(--color-blush-strong);
 }
 
-.admin-stat-value {
+.admin-stat-value,
+.dashboard-stat-value {
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
-.admin-stat-label {
+.admin-stat-label,
+.dashboard-stat-label {
   font-size: 12px;
   color: var(--color-text-secondary);
   font-weight: 650;
@@ -2525,9 +2542,152 @@ button.btn-danger {
 }
 
 @media (max-width: 720px) {
-  .admin-stats {
+  .admin-stats,
+  .dashboard-stats {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* ── Resume tip banner (opportunity detail page) ─────────────────────── */
+
+.resume-tip-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-peach);
+}
+
+.resume-tip-banner p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.resume-tip-banner strong {
+  font-weight: 800;
+  color: var(--color-peach-strong);
+}
+
+.resume-tip-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background: var(--color-ink);
+  color: var(--color-bg);
+}
+
+.resume-tip-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── User dashboard (/dashboard) ─────────────────────────────────────── */
+
+.dashboard-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.dashboard-section {
+  margin-top: 44px;
+}
+
+.dashboard-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.dashboard-section-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.dashboard-section-count {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.unlock-list {
+  display: grid;
+  gap: 10px;
+}
+
+.unlock-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+
+.unlock-item:hover {
+  border-color: var(--color-border-strong);
+  transform: translateY(-2px);
+}
+
+.unlock-item-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--avatar-a, var(--color-lavender-strong)), var(--avatar-b, var(--color-blush-strong)));
+}
+
+.unlock-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.unlock-item-role {
+  font-weight: 700;
+  font-size: 14.5px;
+  margin: 0 0 2px;
+}
+
+.unlock-item-meta {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.unlock-item-amount {
+  flex-shrink: 0;
+  text-align: right;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--color-mint-strong);
+}
+
+.unlock-item-date {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
 }
 
 /* ── Admin: opportunity table ────────────────────────────────────────── */

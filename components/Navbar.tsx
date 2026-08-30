@@ -47,8 +47,8 @@ function AuthActions({ user }: { user: NavUser }) {
 
   return (
     <div className="nav-user">
-      <Link className="nav-admin-link" href="/applications">
-        My Applications
+      <Link className="nav-admin-link" href="/dashboard">
+        Dashboard
       </Link>
       {user.email && <span className="nav-user-email">{user.email}</span>}
       <form action="/api/auth/signout" method="post" className="nav-signout-form">
@@ -142,8 +142,8 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
           ))}
           {user ? (
             <>
-              <Link href="/applications" onClick={() => setOpen(false)}>
-                My Applications
+              <Link href="/dashboard" onClick={() => setOpen(false)}>
+                Dashboard
               </Link>
               <form action="/api/auth/signout" method="post">
                 <button type="submit" style={{ width: "100%", textAlign: "left" }}>
