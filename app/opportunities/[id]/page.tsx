@@ -120,8 +120,20 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
   const user = await getUser();
   const isApplied = user ? await isOpportunityApplied(user.id, id) : false;
-  const hasContactInfo = Boolean(opportunity.hr_email || opportunity.hr_contact);
-  const contactUnlocked = user && hasContactInfo ? await hasUnlockedContact(user.id, id) : false;
+  // Every apply route — a direct application link, a Google Form, HR
+  // email/contact, and the free-text "how to apply" instructions — is
+  // gated behind a single ₹49 unlock now (previously only HR email/contact
+  // were paywalled). `applyAction` below still resolves to the real
+  // destination; `canShowApply` decides whether it's actually rendered.
+  const hasApplyContent = Boolean(
+    opportunity.application_url ||
+      opportunity.google_form_url ||
+      opportunity.hr_email ||
+      opportunity.hr_contact ||
+      opportunity.how_to_apply,
+  );
+  const applyUnlocked = user && hasApplyContent ? await hasUnlockedContact(user.id, id) : false;
+  const canShowApply = !hasApplyContent || applyUnlocked;
 
   const {
     role,
@@ -196,15 +208,20 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
           {compensation.length > 0 && <p className="opportunity-comp">{compensation.join(" · ")}</p>}
 
-          {applyAction && (
+          {canShowApply && applyAction && (
             <div className="apply-inline">
               <ApplyButton action={applyAction} />
               <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
             </div>
           )}
-          {!applyAction && (
+          {canShowApply && !applyAction && (
             <div className="apply-inline">
               <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
+            </div>
+          )}
+          {!canShowApply && (
+            <div className="apply-inline">
+              <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
             </div>
           )}
         </header>
@@ -270,31 +287,29 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </section>
         )}
 
-        {(how_to_apply || hasContactInfo || deadlineLabel) && (
+        {(canShowApply ? Boolean(how_to_apply || hr_email || hr_contact) : hasApplyContent) || deadlineLabel ? (
           <section className="card">
             <h2>Application Information</h2>
-            {how_to_apply && <p className="preserve-whitespace">{how_to_apply}</p>}
-            {hasContactInfo &&
-              (contactUnlocked ? (
-                <>
-                  {hr_email && (
-                    <p>
-                      HR Email: <a href={`mailto:${hr_email}`}>{hr_email}</a>
-                    </p>
-                  )}
-                  {hr_contact && <p>HR Contact: {hr_contact}</p>}
-                </>
-              ) : (
-                <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
-              ))}
+            {canShowApply && how_to_apply && <p className="preserve-whitespace">{how_to_apply}</p>}
+            {canShowApply && hr_email && (
+              <p>
+                HR Email: <a href={`mailto:${hr_email}`}>{hr_email}</a>
+              </p>
+            )}
+            {canShowApply && hr_contact && <p>HR Contact: {hr_contact}</p>}
+            {!canShowApply && hasApplyContent && (
+              <p className="unlock-contact-desc">
+                How to apply — including any email, contact, or application link — is locked. Unlock above to view it.
+              </p>
+            )}
             {deadlineLabel && <p>Application Deadline: {deadlineLabel}</p>}
           </section>
-        )}
+        ) : null}
 
-        {applyAction && <ApplyButton action={applyAction} className="btn-block" />}
+        {canShowApply && applyAction && <ApplyButton action={applyAction} className="btn-block" />}
       </div>
 
-      {applyAction && (
+      {canShowApply && applyAction && (
         <div className="apply-bar">
           <ApplyButton action={applyAction} />
         </div>

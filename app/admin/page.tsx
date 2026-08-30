@@ -83,6 +83,9 @@ export default async function AdminDashboardPage() {
           <Link className="btn btn-secondary" href="/admin/companies">
             Manage Companies
           </Link>
+          <Link className="btn btn-secondary" href="/admin/testimonials">
+            Manage Testimonials
+          </Link>
         </div>
       </main>
     </div>

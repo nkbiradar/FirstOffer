@@ -14,6 +14,29 @@ export type OpportunityType = "internship" | "full_time";
 export type WorkMode = "remote" | "hybrid" | "onsite";
 export type OpportunityStatus = "draft" | "published" | "expired";
 export type ApplicationOutcome = "interview" | "offer" | "rejected" | "no_response";
+export type TestimonialOutcome = "interview" | "selected";
+
+export interface Testimonial {
+  id: string;
+  student_name: string;
+  company_name: string;
+  role: string | null;
+  outcome: TestimonialOutcome;
+  quote: string | null;
+  is_published: boolean;
+  created_at: string;
+}
+
+export interface TestimonialInsert {
+  id?: string;
+  student_name: string;
+  company_name: string;
+  role?: string | null;
+  outcome: TestimonialOutcome;
+  quote?: string | null;
+  is_published?: boolean;
+  created_at?: string;
+}
 
 export interface Company {
   id: string;

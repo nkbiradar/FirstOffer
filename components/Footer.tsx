@@ -9,6 +9,9 @@ export default function Footer() {
           <Link href="/opportunities">Opportunities</Link>
           <Link href="/companies">Companies</Link>
           <Link href="/about">About</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/refund-policy">Refunds</Link>
         </nav>
       </div>
     </footer>

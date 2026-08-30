@@ -1,5 +1,6 @@
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
 import type { CompanyOption } from "@/lib/data/companies";
+import LogoSuggestButton from "@/components/admin/LogoSuggestButton";
 
 type Props = {
   mode: "create" | "edit";
@@ -47,7 +48,15 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
           <label>
             New Company Logo URL{" "}
             <span className="hint">(optional — only used when creating a new company above)</span>
-            <input name="new_company_logo_url" type="url" placeholder="https://.../logo.png" />
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <input
+                name="new_company_logo_url"
+                type="url"
+                placeholder="https://.../logo.png"
+                style={{ flex: 1 }}
+              />
+              <LogoSuggestButton logoFieldName="new_company_logo_url" nameFieldName="new_company_name" />
+            </div>
           </label>
         </div>
         <div className="form-grid-2">

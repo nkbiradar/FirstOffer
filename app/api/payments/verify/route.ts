@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import crypto from "crypto";
 import { getUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { verifyRazorpaySignature } from "@/lib/payments/verify-signature";
 
 // Called by the browser right after Razorpay Checkout's success handler
 // fires (see components/UnlockContactCard.tsx). This is the fast path —
@@ -35,14 +35,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Payment not configured." }, { status: 500 });
   }
 
-  // Razorpay's documented signature check: HMAC-SHA256 of
-  // "order_id|payment_id" using the account's key secret.
-  const expectedSignature = crypto
-    .createHmac("sha256", keySecret)
-    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-    .digest("hex");
+  const signatureValid = verifyRazorpaySignature({
+    orderId: razorpay_order_id,
+    paymentId: razorpay_payment_id,
+    signature: razorpay_signature,
+    keySecret,
+  });
 
-  if (expectedSignature !== razorpay_signature) {
+  if (!signatureValid) {
     return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
   }
 

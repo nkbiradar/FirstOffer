@@ -275,3 +275,123 @@ end $$;
 -- No public insert/update policy — all writes go through the service-role
 -- client from the payment API routes (create-order, verify, webhook),
 -- matching lib/supabase/admin.ts's existing pattern.
+
+-- ── Rate limiting (fixed-window counters) ───────────────────────────────
+-- Vercel serverless functions don't share memory between invocations, so
+-- an in-process rate limiter would be a no-op in production. This table
+-- backs a simple fixed-window counter instead: one row per (key, window),
+-- incremented atomically via check_rate_limit() below. Used first on
+-- /api/payments/create-order to slow down abusive order-creation spam
+-- (each call hits the Razorpay API). Rows are cheap and short-lived —
+-- prune old ones periodically (see prune_rate_limit_hits() below), no
+-- cron is wired up for this yet so it currently grows unbounded until run
+-- manually or scheduled via pg_cron/a Vercel cron route.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.rate_limit_hits (
+  key text not null,
+  window_start timestamptz not null,
+  hit_count integer not null default 1,
+  updated_at timestamptz not null default now(),
+  primary key (key, window_start)
+);
+
+create index if not exists rate_limit_hits_window_start_idx
+  on public.rate_limit_hits (window_start);
+
+alter table public.rate_limit_hits enable row level security;
+-- No policies: this table is never read or written by the RLS-scoped
+-- client — only through the service-role client via check_rate_limit(),
+-- which is security definer, and directly by prune_rate_limit_hits().
+
+-- Atomically records one hit for `p_key` in the current fixed window of
+-- length `p_window_seconds`, and reports whether the caller is still
+-- within `p_max_hits` for that window. security definer so it can be
+-- called through the service-role client without a table policy.
+create or replace function public.check_rate_limit(
+  p_key text,
+  p_window_seconds integer,
+  p_max_hits integer
+)
+returns table (allowed boolean, hit_count integer)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_window_start timestamptz;
+  v_hit_count integer;
+begin
+  v_window_start := to_timestamp(
+    floor(extract(epoch from now()) / p_window_seconds) * p_window_seconds
+  );
+
+  insert into public.rate_limit_hits (key, window_start, hit_count, updated_at)
+  values (p_key, v_window_start, 1, now())
+  on conflict (key, window_start)
+    do update set hit_count = public.rate_limit_hits.hit_count + 1,
+                  updated_at = now()
+  returning public.rate_limit_hits.hit_count into v_hit_count;
+
+  return query select v_hit_count <= p_max_hits, v_hit_count;
+end;
+$$;
+
+-- Housekeeping — deletes windows older than 1 hour. Not scheduled
+-- automatically; run manually, via pg_cron, or a periodic Vercel cron
+-- route if row growth becomes a concern.
+create or replace function public.prune_rate_limit_hits()
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  delete from public.rate_limit_hits where window_start < now() - interval '1 hour';
+$$;
+
+-- ── Testimonials (social proof — homepage "Success stories" carousel) ───
+-- Every row here is a real student's real outcome, entered by the admin
+-- from /admin/testimonials one at a time as they come in — nothing here
+-- is generated or seeded. The public homepage only ever reads rows where
+-- is_published = true; the admin can add a testimonial as a private draft
+-- (is_published = false) before deciding to show it.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.testimonials (
+  id uuid primary key default gen_random_uuid(),
+  student_name text not null,
+  company_name text not null,
+  role text,
+  outcome text not null default 'interview' check (outcome in ('interview', 'selected')),
+  quote text,
+  is_published boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists testimonials_published_created_idx
+  on public.testimonials (is_published, created_at desc);
+
+alter table public.testimonials enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'testimonials'
+      and policyname = 'Anyone can view published testimonials'
+  ) then
+    create policy "Anyone can view published testimonials"
+      on public.testimonials for select
+      using (is_published = true);
+  end if;
+end $$;
+
+-- No public insert/update/delete policy — all writes go through the
+-- service-role client from the admin testimonials routes.

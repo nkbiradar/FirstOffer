@@ -11,7 +11,7 @@ function adminEmails() {
 // Only /admin routes require authentication. The public site is open to
 // everyone, and /admin/login itself must stay reachable so an admin can
 // actually sign in.
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const pathname = request.nextUrl.pathname;
 

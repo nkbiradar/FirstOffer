@@ -1,4 +1,5 @@
 import { getAllCompaniesForAdmin } from "@/lib/data/companies";
+import LogoSuggestButton from "@/components/admin/LogoSuggestButton";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -76,6 +77,7 @@ export default async function AdminCompaniesPage({
                       placeholder="https://.../logo.png"
                       style={{ flex: 1 }}
                     />
+                    <LogoSuggestButton logoFieldName="logo_url" companyName={company.name} />
                     <button className="btn btn-secondary btn-sm" type="submit">
                       Save
                     </button>

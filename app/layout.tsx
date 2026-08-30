@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Inter, Manrope } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           {children}
           <Footer />
         </div>
+        <Analytics />
       </body>
     </html>
   );
