@@ -39,10 +39,10 @@ export default function PrivacyPolicyPage() {
         If you sign in with Google, we receive your email address, name, and profile picture from
         Google — we never see or store your Google password. If you mark an opportunity as
         applied, we store which opportunity, when, and — if you choose to answer — whether you
-        heard back. If you pay to unlock an opportunity&apos;s application details, we store the
-        Razorpay order ID, payment ID, amount, and status for that transaction. We do not receive
-        or store your card number, UPI ID, or any other payment credential — that exchange happens
-        directly between you and Razorpay inside their own checkout.
+        heard back. If you make the one-time payment that unlocks application details site-wide, we
+        store the Razorpay order ID, payment ID, amount, and status for that transaction. We do not
+        receive or store your card number, UPI ID, or any other payment credential — that exchange
+        happens directly between you and Razorpay inside their own checkout.
       </p>
       <p style={{ marginTop: 12 }}>
         We also collect basic, privacy-preserving usage analytics (which pages are visited, which
@@ -53,8 +53,8 @@ export default function PrivacyPolicyPage() {
       <h2 style={{ marginTop: 32 }}>Why we collect it</h2>
       <p style={{ marginTop: 12 }}>
         To run your signed-in session, to power the &quot;mark as applied&quot; tracking feature you
-        opt into, to fulfill a paid unlock and prevent being charged twice for the same
-        opportunity, and to understand which parts of the site are actually useful so we can
+        opt into, to fulfill your one-time unlock payment and know not to charge you again once
+        you&apos;ve paid, and to understand which parts of the site are actually useful so we can
         improve it.
       </p>
 

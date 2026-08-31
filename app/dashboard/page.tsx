@@ -2,11 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
-import { getUserAccess } from "@/lib/data/user-access";
+import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
-import { avatarGradient, formatRelativeTime, initials } from "@/lib/ui-format";
+import { formatRelativeTime } from "@/lib/ui-format";
 import type { ApplicationOutcome } from "@/types/supabase";
 
 // "Did you hear back?" only shows up once enough time has passed to be a
@@ -37,9 +37,12 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 
 // The replacement for the old /applications page — same underlying data
 // (user_applications + OutcomeTracker), but framed as a real dashboard:
-// summary stat tiles, a status filter, and a second panel for what the
-// user has actually paid to unlock (opportunity_unlocks). Deliberately
-// still a server component reading a `status` query param, no client-side
+// summary stat tiles, a status filter, and a panel showing whether this
+// user has full site-wide access (opportunity_unlocks). The unlock is now
+// a single one-time payment, not per-opportunity, so `unlocks` here will
+// only ever hold 0 or 1 row for a given user — see
+// lib/data/opportunity-unlocks.ts's hasFullAccess(). Deliberately still a
+// server component reading a `status` query param, no client-side
 // filtering JS — same convention /opportunities already uses for its
 // filter pills, so this page degrades gracefully with JS off too.
 export default async function DashboardPage({
@@ -56,10 +59,14 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, userAccess] = await Promise.all([getUserApplications(user.id), getUserAccess(user.id)]);
+  const [applications, unlocks] = await Promise.all([getUserApplications(user.id), getUserUnlocks(user.id)]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
   const offerCount = applications.filter((a) => a.outcome === "offer").length;
+  // One-time payment model: a user has at most one paid row, ever — its
+  // presence means full site-wide access, not "this many opportunities."
+  const fullAccessUnlock = unlocks[0] ?? null;
+  const hasFullAccess = Boolean(fullAccessUnlock);
 
   const filtered =
     status === "all"
@@ -110,16 +117,16 @@ export default async function DashboardPage({
           </div>
           <div className="admin-stat">
             <span className="admin-stat-icon">
-              <StatIcon path="M12 15v2M7 10V7a5 5 0 0110 0v3M5 10h14v9a2 2 0 01-2 2H7a2 2 0 01-2-2v-9z" />
+              <StatIcon
+                path={
+                  hasFullAccess
+                    ? "M5 13l4 4L19 7"
+                    : "M12 15v2M7 10V7a5 5 0 0110 0v3M5 10h14v9a2 2 0 01-2 2H7a2 2 0 01-2-2v-9z"
+                }
+              />
             </span>
-            <span className="admin-stat-value">
-              {userAccess ? (
-                <span className="text-green-600">Active</span>
-              ) : (
-                <span className="text-gray-500">Not yet</span>
-              )}
-            </span>
-            <span className="admin-stat-label">Platform Access</span>
+            <span className="admin-stat-value">{hasFullAccess ? "Unlocked" : "Locked"}</span>
+            <span className="admin-stat-label">Full Site Access</span>
           </div>
         </div>
 
@@ -171,22 +178,37 @@ export default async function DashboardPage({
 
         <div className="dashboard-section">
           <div className="dashboard-section-header">
-            <h2>Platform Access</h2>
+            <h2>Site access</h2>
           </div>
 
-          {userAccess ? (
-            <div className="access-card">
-              <span className="access-badge access-badge-active">Full Access Active</span>
-              <p>Unlocked on {userAccess.paid_at ? new Date(userAccess.paid_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</p>
-              <p>All HR emails and apply links on FirstOffer are visible to you.</p>
-            </div>
-          ) : (
+          {!fullAccessUnlock ? (
             <div className="empty-state">
-              <h3>No access yet</h3>
-              <p>Pay once to unlock every company's application link, HR email, and contact on FirstOffer — including all future opportunities.</p>
+              <h3>Full access not unlocked yet</h3>
+              <p>
+                A single one-time payment unlocks the application link, Google Form, and HR email/contact on{" "}
+                <strong>every</strong> opportunity on FirstOffer — not just one.
+              </p>
               <Link className="btn btn-secondary btn-sm" href="/opportunities">
                 Browse Opportunities
               </Link>
+            </div>
+          ) : (
+            <div className="unlock-list">
+              <div className="unlock-item" style={{ cursor: "default" }}>
+                <span className="unlock-item-avatar">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <div className="unlock-item-body">
+                  <p className="unlock-item-role">Full access — every opportunity, unlocked</p>
+                  <p className="unlock-item-meta">One-time payment · never expires</p>
+                </div>
+                <span className="unlock-item-amount">
+                  ₹{(fullAccessUnlock.amount_paise / 100).toFixed(0)}
+                  <span className="unlock-item-date">{formatRelativeTime(fullAccessUnlock.paid_at) ?? ""}</span>
+                </span>
+              </div>
             </div>
           )}
         </div>

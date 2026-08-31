@@ -3,12 +3,18 @@ import { getUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getRazorpayClient, CONTACT_UNLOCK_PRICE_PAISE } from "@/lib/payments/razorpay";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 
-// Starts a Razorpay order for one-time platform access — unlocks
-// every company's application link, HR email, and contact on FirstOffer.
-// All future opportunities included. Any signed-in user (not admin-gated).
-// Uses the service-role client because it needs to upsert a user_access
-// row keyed by a user_id it already trusts from the verified session.
+// Starts a Razorpay order for a single ONE-TIME ₹49 payment that unlocks
+// full apply details — application link, Google Form, HR email/contact,
+// and the free-text "how to apply" instructions — across EVERY
+// opportunity on the site, not just the one the user is currently
+// viewing. Any signed-in user (not admin-gated) — mirrors
+// app/api/applications/route.ts's shape. Uses the service-role client
+// (not the RLS-scoped one) because it needs to read an opportunity
+// regardless of who's asking and upsert an opportunity_unlocks row keyed
+// by a user_id it already trusts from the verified session, the same way
+// the admin write paths do.
 export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) {
@@ -31,15 +37,44 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let body: { opportunityId?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+  }
+
+  const opportunityId = typeof body.opportunityId === "string" ? body.opportunityId : "";
+  if (!opportunityId) {
+    return NextResponse.json({ error: "opportunityId is required." }, { status: 400 });
+  }
+
   const admin = createAdminClient();
 
-  const { data: existing } = await admin
-    .from("user_access")
-    .select("status")
-    .eq("user_id", user.id)
+  const { data: opportunity, error: opportunityError } = await admin
+    .from("opportunities")
+    .select("id, hr_email, hr_contact, application_url, google_form_url, how_to_apply, status")
+    .eq("id", opportunityId)
     .maybeSingle();
 
-  if (existing?.status === "paid") {
+  if (opportunityError || !opportunity || opportunity.status !== "published") {
+    return NextResponse.json({ error: "Opportunity not found." }, { status: 404 });
+  }
+  const hasApplyContent = Boolean(
+    opportunity.hr_email ||
+      opportunity.hr_contact ||
+      opportunity.application_url ||
+      opportunity.google_form_url ||
+      opportunity.how_to_apply,
+  );
+  if (!hasApplyContent) {
+    return NextResponse.json({ error: "Nothing to unlock for this opportunity." }, { status: 400 });
+  }
+
+  // Site-wide check, not per-opportunity — one successful payment ever
+  // means this user already has full access, regardless of which
+  // opportunity they're looking at right now.
+  if (await hasFullAccess(user.id)) {
     return NextResponse.json({ alreadyUnlocked: true });
   }
 
@@ -49,21 +84,22 @@ export async function POST(request: NextRequest) {
     order = await razorpay.orders.create({
       amount: CONTACT_UNLOCK_PRICE_PAISE,
       currency: "INR",
-      notes: { user_id: user.id, purpose: "platform_access" },
+      notes: { user_id: user.id, opportunity_id: opportunityId, purpose: "full_access_unlock" },
     });
   } catch (err) {
     console.error("Razorpay order creation failed:", err);
     return NextResponse.json({ error: "Could not start payment. Try again." }, { status: 502 });
   }
 
-  const { error: upsertError } = await admin.from("user_access").upsert(
+  const { error: upsertError } = await admin.from("opportunity_unlocks").upsert(
     {
       user_id: user.id,
+      opportunity_id: opportunityId,
       razorpay_order_id: order.id,
       amount_paise: CONTACT_UNLOCK_PRICE_PAISE,
       status: "created",
     },
-    { onConflict: "user_id" },
+    { onConflict: "user_id,opportunity_id" },
   );
 
   if (upsertError) {

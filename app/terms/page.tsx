@@ -58,11 +58,13 @@ export default function TermsPage() {
 
       <h2 style={{ marginTop: 32 }}>Paid unlocks</h2>
       <p style={{ marginTop: 12 }}>
-        Some opportunities require a one-time payment to reveal the application link, form, HR
-        contact, or apply instructions. Prices are shown before you pay and may change over time.
-        Payments are processed by Razorpay; we never see or store your card or UPI details. See
-        our <Link href="/refund-policy">Refund Policy</Link> for what happens if something goes
-        wrong with a payment.
+        Viewing the application link, form, HR contact, or apply instructions for opportunities
+        that require it needs a single one-time payment. That one payment unlocks apply details on
+        every opportunity on FirstOffer for your account, not just one — you never pay again after
+        that. The price is shown before you pay and may change over time. Payments are processed
+        by Razorpay; we never see or store your card or UPI details. See our{" "}
+        <Link href="/refund-policy">Refund Policy</Link> for what happens if something goes wrong
+        with a payment.
       </p>
 
       <h2 style={{ marginTop: 32 }}>Acceptable use</h2>

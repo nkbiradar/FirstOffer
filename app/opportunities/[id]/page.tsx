@@ -8,7 +8,7 @@ import { avatarGradient, initials } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getUser } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
-import { hasPlatformAccess } from "@/lib/data/user-access";
+import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { CONTACT_UNLOCK_PRICE_INR } from "@/lib/payments/razorpay";
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
@@ -121,10 +121,10 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   const user = await getUser();
   const isApplied = user ? await isOpportunityApplied(user.id, id) : false;
   // Every apply route — a direct application link, a Google Form, HR
-  // email/contact, and the free-text "how to apply" instructions — is
-  // gated behind a one-time platform access payment. `applyAction` below
-  // still resolves to the real destination; `canShowApply` decides whether
-  // it's actually rendered.
+  // email/contact, and the free-text "how to apply" instructions — across
+  // EVERY opportunity on the site is gated behind a single one-time ₹49
+  // payment. `applyAction` below still resolves to the real destination;
+  // `canShowApply` decides whether it's actually rendered.
   const hasApplyContent = Boolean(
     opportunity.application_url ||
       opportunity.google_form_url ||
@@ -132,7 +132,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.hr_contact ||
       opportunity.how_to_apply,
   );
-  const applyUnlocked = user && hasApplyContent ? await hasPlatformAccess(user.id) : false;
+  const applyUnlocked = user && hasApplyContent ? await hasFullAccess(user.id) : false;
   const canShowApply = !hasApplyContent || applyUnlocked;
 
   const {
@@ -221,7 +221,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           )}
           {!canShowApply && (
             <div className="apply-inline">
-              <UnlockContactCard isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
+              <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
             </div>
           )}
 

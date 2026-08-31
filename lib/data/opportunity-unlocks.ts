@@ -23,6 +23,34 @@ export async function hasUnlockedContact(userId: string, opportunityId: string):
   return Boolean(data);
 }
 
+/**
+ * Site-wide access check — the ₹49 unlock is a single ONE-TIME payment
+ * that grants a signed-in user apply-details access to every opportunity,
+ * not just the one they happened to be viewing when they paid. We still
+ * insert one `opportunity_unlocks` row per purchase (keyed to whichever
+ * opportunity triggered it, useful as a purchase record), but access is
+ * granted the moment ANY row for this user has `status = 'paid'` —
+ * opportunity_id is intentionally ignored here. This also means any user
+ * who already paid under the old per-opportunity model is automatically
+ * grandfathered into full access with zero migration needed.
+ */
+export async function hasFullAccess(userId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("opportunity_unlocks")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("status", "paid")
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("hasFullAccess failed:", error.message);
+    return false;
+  }
+  return Boolean(data);
+}
+
 export type UserUnlock = {
   amount_paise: number;
   paid_at: string | null;
