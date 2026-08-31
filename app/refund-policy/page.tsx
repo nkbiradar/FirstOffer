@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
       </span>
       <h1 style={{ marginTop: 14 }}>Refund Policy</h1>
       <p style={{ marginTop: 6, fontSize: 13.5 }}>
-        Last updated: [fill in date before publishing]
+        Last updated: August 31, 2026
       </p>
 
       <p style={{ marginTop: 20 }}>
@@ -51,9 +51,9 @@ export default function RefundPolicyPage() {
 
       <h2 style={{ marginTop: 32 }}>How to request a refund</h2>
       <p style={{ marginTop: 12 }}>
-        Email us at [fill in your support email before publishing] with your Razorpay payment ID
-        (from your payment confirmation) and a link to the opportunity. We&apos;ll review it and get
-        back to you within a few days.
+        Email us at <a href="mailto:nayankumarb3110@gmail.com">nayankumarb3110@gmail.com</a> with
+        your Razorpay payment ID (from your payment confirmation) and a link to the opportunity.
+        We&apos;ll review it and get back to you within a few days.
       </p>
 
       <h2 style={{ marginTop: 32 }}>Refund timeline</h2>

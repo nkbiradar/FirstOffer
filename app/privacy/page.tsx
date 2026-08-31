@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
       </span>
       <h1 style={{ marginTop: 14 }}>Privacy Policy</h1>
       <p style={{ marginTop: 6, fontSize: 13.5 }}>
-        Last updated: [fill in date before publishing]
+        Last updated: August 31, 2026
       </p>
 
       <p style={{ marginTop: 20 }}>
@@ -97,14 +97,14 @@ export default function PrivacyPolicyPage() {
 
       <h2 style={{ marginTop: 32 }}>Contact</h2>
       <p style={{ marginTop: 12 }}>
-        Questions about this policy or your data — [fill in your support email before publishing].
+        Questions about this policy or your data — email us at{" "}
+        <a href="mailto:nayankumarb3110@gmail.com">nayankumarb3110@gmail.com</a>.
       </p>
 
       <p style={{ marginTop: 40, fontSize: 12.5, color: "var(--color-text-tertiary)" }}>
         This is a first draft written to accurately describe what FirstOffer actually does with
         data today. It isn&apos;t legal advice, and we&apos;d recommend a quick review by a lawyer
-        familiar with Indian data-protection law (the DPDP Act) before treating it as final —
-        especially the business-details placeholders on this and the Terms and Refund pages.
+        familiar with Indian data-protection law (the DPDP Act) before treating it as final.
       </p>
     </main>
   );

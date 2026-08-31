@@ -15,7 +15,7 @@ export default function TermsPage() {
       </span>
       <h1 style={{ marginTop: 14 }}>Terms of Service</h1>
       <p style={{ marginTop: 6, fontSize: 13.5 }}>
-        Last updated: [fill in date before publishing]
+        Last updated: August 31, 2026
       </p>
 
       <p style={{ marginTop: 20 }}>
@@ -95,7 +95,7 @@ export default function TermsPage() {
       <h2 style={{ marginTop: 32 }}>Governing law</h2>
       <p style={{ marginTop: 12 }}>
         These terms are governed by the laws of India, and any dispute will be handled in the
-        courts of [fill in your city/jurisdiction before publishing].
+        courts of Bengaluru, Karnataka.
       </p>
 
       <h2 style={{ marginTop: 32 }}>Changes to these terms</h2>
@@ -105,13 +105,14 @@ export default function TermsPage() {
 
       <h2 style={{ marginTop: 32 }}>Contact</h2>
       <p style={{ marginTop: 12 }}>
-        Questions about these terms — [fill in your support email before publishing].
+        Questions about these terms — email us at{" "}
+        <a href="mailto:nayankumarb3110@gmail.com">nayankumarb3110@gmail.com</a>.
       </p>
 
       <p style={{ marginTop: 40, fontSize: 12.5, color: "var(--color-text-tertiary)" }}>
         This is a first draft, written to match how FirstOffer actually works today. It isn&apos;t
-        legal advice — a quick review by a lawyer before this is treated as final is worth it,
-        especially the business-details placeholders here and on the Privacy and Refund pages.
+        legal advice — a quick review by a lawyer before this is treated as final is still worth
+        it.
       </p>
     </main>
   );
