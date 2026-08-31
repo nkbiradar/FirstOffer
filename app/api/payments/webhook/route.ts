@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Reliability backstop for the contact-unlock payment flow — independent
+// Reliability backstop for the platform-access payment flow — independent
 // of the client-side call in app/api/payments/verify/route.ts, which is
 // skipped if the browser tab closes or loses network right after a
 // successful payment. Configure this in the Razorpay Dashboard -> Settings
@@ -50,27 +50,25 @@ export async function POST(request: NextRequest) {
   const paymentId = payment?.id;
   const notes = payment?.notes ?? {};
   const userId = notes.user_id;
-  const opportunityId = notes.opportunity_id;
 
-  if (!orderId || !paymentId || !userId || !opportunityId) {
+  if (!orderId || !paymentId || !userId) {
     console.error("Webhook payload missing expected fields.");
     return NextResponse.json({ ok: true });
   }
 
   const admin = createAdminClient();
   const { error } = await admin
-    .from("opportunity_unlocks")
+    .from("user_access")
     .update({
       razorpay_payment_id: paymentId,
       status: "paid",
       paid_at: new Date().toISOString(),
     })
     .eq("user_id", userId)
-    .eq("opportunity_id", opportunityId)
     .eq("razorpay_order_id", orderId);
 
   if (error) {
-    console.error("Webhook: could not mark unlock as paid:", error.message);
+    console.error("Webhook: could not mark platform access as paid:", error.message);
   }
 
   return NextResponse.json({ ok: true });

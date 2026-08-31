@@ -23,14 +23,13 @@ declare global {
 // Shown in place of every apply route on the opportunity detail page —
 // application link, Google Form, HR email/contact, and the free-text "how
 // to apply" instructions are all hidden until the signed-in visitor pays
-// to unlock (see app/opportunities/[id]/page.tsx). Once unlocked, the real
-// ApplyButton/apply instructions render in this same spot instead.
+// once for platform access (see app/opportunities/[id]/page.tsx). Once
+// unlocked, the real ApplyButton/apply instructions render in this same
+// spot instead.
 export default function UnlockContactCard({
-  opportunityId,
   isSignedIn,
   price,
 }: {
-  opportunityId: string;
   isSignedIn: boolean;
   price: number;
 }) {
@@ -44,11 +43,11 @@ export default function UnlockContactCard({
     // funnel, so these five events are what let the "how many people who
     // click Unlock actually pay" question get answered from real data
     // instead of a guess. See rebuild-plan.md Step 19.
-    track("unlock_clicked", { opportunityId });
+    track("unlock_clicked");
 
     if (!isSignedIn) {
-      track("unlock_login_redirect", { opportunityId });
-      router.push(`/login?next=${encodeURIComponent(`/opportunities/${opportunityId}`)}`);
+      track("unlock_login_redirect");
+      router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
@@ -64,12 +63,12 @@ export default function UnlockContactCard({
       const orderResponse = await fetch("/api/payments/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId }),
+        body: JSON.stringify({}),
       });
       const orderData = await orderResponse.json();
 
       if (!orderResponse.ok) {
-        track("order_create_failed", { opportunityId, error: orderData.error ?? "unknown" });
+        track("order_create_failed", { error: orderData.error ?? "unknown" });
         setError(orderData.error ?? "Could not start payment.");
         setIsLoading(false);
         return;
@@ -86,7 +85,7 @@ export default function UnlockContactCard({
         currency: orderData.currency,
         order_id: orderData.orderId,
         name: "FirstOffer",
-        description: "Unlock application details",
+        description: "Full platform access",
         method: {
           upi: true,
           card: false,
@@ -99,13 +98,13 @@ export default function UnlockContactCard({
           const verifyResponse = await fetch("/api/payments/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...response, opportunityId }),
+            body: JSON.stringify(response),
           });
           if (verifyResponse.ok) {
-            track("payment_succeeded", { opportunityId, price });
+            track("payment_succeeded", { price });
             router.refresh();
           } else {
-            track("payment_verify_failed", { opportunityId });
+            track("payment_verify_failed");
             setError("Payment succeeded but confirmation failed — refresh in a minute, or contact support.");
           }
           setIsLoading(false);
@@ -117,12 +116,12 @@ export default function UnlockContactCard({
       });
 
       razorpay.on("payment.failed", () => {
-        track("payment_failed", { opportunityId });
+        track("payment_failed");
         setError("Payment failed — try again.");
         setIsLoading(false);
       });
 
-      track("checkout_opened", { opportunityId, price });
+      track("checkout_opened", { price });
       razorpay.open();
     } catch {
       setError("Network error — try again.");
@@ -145,21 +144,20 @@ export default function UnlockContactCard({
         </svg>
         Premium
       </span>
-      <p className="unlock-contact-title">How to apply is locked</p>
+      <p className="unlock-contact-title">Full access required</p>
       <p className="unlock-contact-desc">
-        Pay ₹{price} via UPI to unlock the application link, Google Form, and HR email/contact for this opportunity.
+        Pay ₹{price} once via UPI — unlock every company's application link, HR email, and contact on FirstOffer. All future opportunities included.
       </p>
       <p className="unlock-contact-highlight">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
           <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span>
-          <strong>Every apply route unlocked</strong> — direct HR emails, official Google Forms, and application
-          links. No dead ends.
+          <strong>One-time access</strong> — every HR email, apply link, and contact on FirstOffer. Unlocks every opportunity, now and future ones.
         </span>
       </p>
       <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
-        {isLoading ? "Opening payment..." : `Unlock for ₹${price}`}
+        {isLoading ? "Opening payment..." : `Get Full Access for ₹${price}`}
       </button>
       {error && <p className="unlock-contact-error">{error}</p>}
     </div>

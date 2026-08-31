@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
     razorpay_order_id?: string;
     razorpay_payment_id?: string;
     razorpay_signature?: string;
-    opportunityId?: string;
   };
   try {
     body = await request.json();
@@ -25,8 +24,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, opportunityId } = body;
-  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !opportunityId) {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
     return NextResponse.json({ error: "Missing payment details." }, { status: 400 });
   }
 
@@ -48,18 +47,17 @@ export async function POST(request: NextRequest) {
 
   const admin = createAdminClient();
   const { error } = await admin
-    .from("opportunity_unlocks")
+    .from("user_access")
     .update({
       razorpay_payment_id,
       status: "paid",
       paid_at: new Date().toISOString(),
     })
     .eq("user_id", user.id)
-    .eq("opportunity_id", opportunityId)
     .eq("razorpay_order_id", razorpay_order_id);
 
   if (error) {
-    console.error("Could not mark unlock as paid:", error.message);
+    console.error("Could not mark platform access as paid:", error.message);
     return NextResponse.json({ error: "Could not confirm payment. Contact support." }, { status: 500 });
   }
 

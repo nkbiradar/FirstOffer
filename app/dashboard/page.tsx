@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
-import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
+import { getUserAccess } from "@/lib/data/user-access";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
@@ -56,11 +56,10 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, unlocks] = await Promise.all([getUserApplications(user.id), getUserUnlocks(user.id)]);
+  const [applications, userAccess] = await Promise.all([getUserApplications(user.id), getUserAccess(user.id)]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
   const offerCount = applications.filter((a) => a.outcome === "offer").length;
-  const totalSpentRupees = unlocks.reduce((sum, u) => sum + u.amount_paise, 0) / 100;
 
   const filtered =
     status === "all"
@@ -114,9 +113,13 @@ export default async function DashboardPage({
               <StatIcon path="M12 15v2M7 10V7a5 5 0 0110 0v3M5 10h14v9a2 2 0 01-2 2H7a2 2 0 01-2-2v-9z" />
             </span>
             <span className="admin-stat-value">
-              <CountUp value={unlocks.length} />
+              {userAccess ? (
+                <span className="text-green-600">Active</span>
+              ) : (
+                <span className="text-gray-500">Not yet</span>
+              )}
             </span>
-            <span className="admin-stat-label">Opportunities Unlocked</span>
+            <span className="admin-stat-label">Platform Access</span>
           </div>
         </div>
 
@@ -168,51 +171,22 @@ export default async function DashboardPage({
 
         <div className="dashboard-section">
           <div className="dashboard-section-header">
-            <h2>Unlocked opportunities</h2>
-            {unlocks.length > 0 && (
-              <span className="dashboard-section-count">
-                ₹{totalSpentRupees.toFixed(0)} spent total
-              </span>
-            )}
+            <h2>Platform Access</h2>
           </div>
 
-          {unlocks.length === 0 ? (
-            <div className="empty-state">
-              <h3>No unlocks yet</h3>
-              <p>When you unlock an opportunity&apos;s apply details, it&apos;ll show up here.</p>
+          {userAccess ? (
+            <div className="access-card">
+              <span className="access-badge access-badge-active">Full Access Active</span>
+              <p>Unlocked on {userAccess.paid_at ? new Date(userAccess.paid_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</p>
+              <p>All HR emails and apply links on FirstOffer are visible to you.</p>
             </div>
           ) : (
-            <div className="unlock-list">
-              {unlocks.map((unlock, index) => {
-                const company = unlock.opportunity.company;
-                const companyName = company?.name ?? "";
-                const { a, b } = avatarGradient(companyName || unlock.opportunity.role);
-                return (
-                  <Link
-                    key={`${unlock.opportunity.id}-${index}`}
-                    href={`/opportunities/${unlock.opportunity.id}`}
-                    className="unlock-item"
-                    style={{ ["--avatar-a" as string]: a, ["--avatar-b" as string]: b }}
-                  >
-                    <span className="unlock-item-avatar">
-                      {company?.logo_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img alt="" src={company.logo_url} style={{ width: "100%", height: "100%", borderRadius: "inherit", objectFit: "cover" }} />
-                      ) : (
-                        initials(companyName || unlock.opportunity.role)
-                      )}
-                    </span>
-                    <div className="unlock-item-body">
-                      <p className="unlock-item-role">{unlock.opportunity.role}</p>
-                      <p className="unlock-item-meta">{companyName || "—"}</p>
-                    </div>
-                    <span className="unlock-item-amount">
-                      ₹{(unlock.amount_paise / 100).toFixed(0)}
-                      <span className="unlock-item-date">{formatRelativeTime(unlock.paid_at) ?? ""}</span>
-                    </span>
-                  </Link>
-                );
-              })}
+            <div className="empty-state">
+              <h3>No access yet</h3>
+              <p>Pay once to unlock every company's application link, HR email, and contact on FirstOffer — including all future opportunities.</p>
+              <Link className="btn btn-secondary btn-sm" href="/opportunities">
+                Browse Opportunities
+              </Link>
             </div>
           )}
         </div>

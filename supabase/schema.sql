@@ -352,6 +352,53 @@ as $$
   delete from public.rate_limit_hits where window_start < now() - interval '1 hour';
 $$;
 
+-- ── user_access (Platform-wide access — one-time payment) ──────────────────
+-- A signed-in job seeker pays once for full platform access — reveals HR
+-- email/contact and apply links on EVERY opportunity, current and future.
+-- One row per user. The create-order route upserts it (status starts
+-- 'created'), and either the client-side verify call or the webhook backstop
+-- flips it to 'paid'.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.user_access (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade unique,
+  razorpay_order_id text not null,
+  razorpay_payment_id text,
+  amount_paise integer not null,
+  status text not null default 'created' check (status in ('created', 'paid', 'failed')),
+  created_at timestamptz not null default now(),
+  paid_at timestamptz
+);
+
+create index if not exists user_access_user_id_idx
+  on public.user_access (user_id);
+create index if not exists user_access_razorpay_order_id_idx
+  on public.user_access (razorpay_order_id);
+
+alter table public.user_access enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'user_access'
+      and policyname = 'Users can view their own access'
+  ) then
+    create policy "Users can view their own access"
+      on public.user_access for select
+      using (auth.uid() = user_id);
+  end if;
+end $$;
+
+-- No public insert/update policy — all writes go through the service-role
+-- client from the payment API routes (create-order, verify, webhook),
+-- matching lib/supabase/admin.ts's existing pattern.
+
 -- ── Testimonials (social proof — homepage "Success stories" carousel) ───
 -- Every row here is a real student's real outcome, entered by the admin
 -- from /admin/testimonials one at a time as they come in — nothing here
