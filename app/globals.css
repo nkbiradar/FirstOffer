@@ -937,6 +937,32 @@ button.btn-danger {
   color: var(--color-text-secondary);
 }
 
+/* The "what you actually get" reassurance line — sits between the price
+   description and the unlock button, right where someone's deciding
+   whether to pay, since that's the moment this claim matters most. */
+.unlock-contact-highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-mint);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.unlock-contact-highlight svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-mint-strong);
+}
+
+.unlock-contact-highlight strong {
+  font-weight: 800;
+  color: var(--color-mint-strong);
+}
+
 .unlock-contact-error {
   font-size: 12.5px;
   color: var(--color-danger);

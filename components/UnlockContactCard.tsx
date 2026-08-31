@@ -149,6 +149,15 @@ export default function UnlockContactCard({
       <p className="unlock-contact-desc">
         Pay ₹{price} via UPI to unlock the application link, Google Form, and HR email/contact for this opportunity.
       </p>
+      <p className="unlock-contact-highlight">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span>
+          <strong>Every apply route unlocked</strong> — direct HR emails, official Google Forms, and application
+          links. No dead ends.
+        </span>
+      </p>
       <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
         {isLoading ? "Opening payment..." : `Unlock for ₹${price}`}
       </button>
