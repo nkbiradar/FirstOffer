@@ -32,7 +32,7 @@ const HOW_IT_WORKS = [
 ];
 
 export default async function HomePage() {
-  const [{ today, earlier, todayDateLabel }, stats, companies, testimonials] = await Promise.all([
+  const [{ today, earlier, todayDateLabel, todayCount }, stats, companies, testimonials] = await Promise.all([
     getHomepageOpportunities(),
     getSiteStats(),
     getCompaniesWithPublishedCounts(),
@@ -162,7 +162,7 @@ export default async function HomePage() {
           <div className="hero-stats">
             <div className="stat-tile">
               <span className="stat-value">
-                <CountUp value={today.length} />
+                <CountUp value={todayCount} />
               </span>
               <span className="stat-label">Opportunities today</span>
             </div>

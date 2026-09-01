@@ -1,4 +1,4 @@
-import { createClient, createPublicClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import type { Opportunity, OpportunityType, WorkMode } from "@/types/supabase";
 
 export type OpportunityCompanySummary = {
@@ -130,7 +130,7 @@ function applyPublishedFilter(builder: QueryBuilder): QueryBuilder {
 
 /** Latest published, non-expired opportunities — used on the homepage. */
 export async function getLatestOpportunities(limit = 6): Promise<OpportunityWithCompany[]> {
-  const supabase = await createPublicClient();
+  const supabase = await createClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select(OPPORTUNITY_SELECT),
   );
@@ -156,6 +156,16 @@ export type HomepageOpportunities = {
   today: OpportunityWithCompany[];
   earlier: OpportunityWithCompany[];
   todayDateLabel: string;
+  /**
+   * The REAL count of everything published today (IST), independent of
+   * `limit` below. `today.length` is NOT this number once more than
+   * `limit` opportunities go live in a day — `today` is capped for card
+   * rendering, so on a busy day (e.g. 41 published, limit 30) the old code
+   * used `today.length` for the "Opportunities today" stat tile and quietly
+   * undercounted it, because the display query's `.limit(30)` had already
+   * dropped rows before the today/earlier split ever ran.
+   */
+  todayCount: number;
 };
 
 /**
@@ -165,14 +175,10 @@ export type HomepageOpportunities = {
  * every opportunity comes straight from Supabase on every request.
  */
 export async function getHomepageOpportunities(limit = 30): Promise<HomepageOpportunities> {
-  const supabase = await createPublicClient();
+  const supabase = await createClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select(OPPORTUNITY_SELECT),
   );
-
-  const { data, error } = await builder
-    .order("published_at", { ascending: false })
-    .limit(limit);
 
   const todayDateLabel = new Date().toLocaleDateString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -180,19 +186,36 @@ export async function getHomepageOpportunities(limit = 30): Promise<HomepageOppo
     month: "long",
     year: "numeric",
   });
+  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+  const [{ data, error }, todayCountResult] = await Promise.all([
+    builder.order("published_at", { ascending: false }).limit(limit),
+    // Separate, uncapped lookup just for the accurate "published today"
+    // count — cheap (only the published_at column, and the live table is
+    // small), and never truncated by `limit` the way the display query is.
+    applyPublishedFilter(supabase.from("opportunities").select("published_at")),
+  ]);
 
   if (error) {
     console.error("getHomepageOpportunities failed:", error.message);
-    return { today: [], earlier: [], todayDateLabel };
+    return { today: [], earlier: [], todayDateLabel, todayCount: 0 };
   }
 
   const rows = (data ?? []) as OpportunityWithCompany[];
-  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
   const today = rows.filter((row) => row.published_at && istDateKey(row.published_at) === todayKey);
   const earlier = rows.filter((row) => !row.published_at || istDateKey(row.published_at) !== todayKey);
 
-  return { today, earlier, todayDateLabel };
+  let todayCount = today.length;
+  if (todayCountResult.error) {
+    console.error("getHomepageOpportunities (todayCount) failed:", todayCountResult.error.message);
+  } else {
+    todayCount = ((todayCountResult.data ?? []) as { published_at: string | null }[]).filter(
+      (row) => row.published_at && istDateKey(row.published_at) === todayKey,
+    ).length;
+  }
+
+  return { today, earlier, todayDateLabel, todayCount };
 }
 
 export type SiteStats = {
@@ -207,7 +230,7 @@ export type SiteStats = {
  * existing query, just two cheap `count: "exact", head: true` lookups.
  */
 export async function getSiteStats(): Promise<SiteStats> {
-  const supabase = await createPublicClient();
+  const supabase = await createClient();
 
   const [totalResult, companyRowsResult] = await Promise.all([
     applyPublishedFilter(
@@ -244,7 +267,7 @@ export async function getPublishedOpportunities(
 ): Promise<ListOpportunitiesResult> {
   const page = Math.max(1, options.page ?? 1);
   const pageSize = options.pageSize ?? 12;
-  const supabase = await createPublicClient();
+  const supabase = await createClient();
 
   let builder: QueryBuilder = supabase
     .from("opportunities")
@@ -308,7 +331,7 @@ export async function getPublishedOpportunities(
  * opportunity's id correctly gets no row back, not just a client-side check.
  */
 export async function getOpportunityById(id: string): Promise<OpportunityWithCompany | null> {
-  const supabase = await createPublicClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("opportunities")
     .select(OPPORTUNITY_SELECT)
@@ -331,7 +354,7 @@ export type OpportunitySitemapEntry = { id: string; updated_at: string };
  * row) so the sitemap doesn't pull down every field for every opportunity.
  */
 export async function getAllPublishedOpportunityIds(): Promise<OpportunitySitemapEntry[]> {
-  const supabase = await createPublicClient();
+  const supabase = await createClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select("id, updated_at"),
   );

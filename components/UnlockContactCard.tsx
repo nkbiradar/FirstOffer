@@ -145,9 +145,12 @@ export default function UnlockContactCard({
           <rect x="5" y="11" width="14" height="9" rx="2" />
           <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        Premium
+        One-Time Unlock
       </span>
       <p className="unlock-contact-title">How to apply is locked</p>
+      <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
+        Only one-time payment. Lifetime access.
+      </p>
       <p className="unlock-contact-desc">
         Pay ₹{price} once via UPI to unlock apply details on this opportunity — and every other opportunity on
         FirstOffer, for good.
