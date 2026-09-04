@@ -524,15 +524,10 @@ code {
 }
 
 .brand-mark {
-  display: inline-grid;
-  place-items: center;
+  display: block;
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: linear-gradient(135deg, var(--color-brand-light), var(--color-accent));
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
   box-shadow: var(--shadow-xs);
 }
 

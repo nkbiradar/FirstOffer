@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -86,7 +87,7 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
       <div className="container">
         <div className="navbar-inner">
           <Link className="brand" href="/" onClick={() => setOpen(false)}>
-            <span className="brand-mark">F</span>
+            <Image src="/images/brand-mark.png" alt="" width={30} height={30} className="brand-mark" priority />
             FirstOffer
           </Link>
 
@@ -178,7 +179,7 @@ function NavbarFallback({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) 
       <div className="container">
         <div className="navbar-inner">
           <span className="brand">
-            <span className="brand-mark">F</span>
+            <Image src="/images/brand-mark.png" alt="" width={30} height={30} className="brand-mark" />
             FirstOffer
           </span>
           <nav className="nav-links" aria-label="Primary">
