@@ -4,9 +4,11 @@ import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import TestimonialsMarquee from "@/components/TestimonialsMarquee";
+import UserReviewsSection from "@/components/UserReviewsSection";
 import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
+import { getUserReviews } from "@/lib/data/user-reviews";
 import { avatarGradient, initials } from "@/lib/ui-format";
 
 // Static — describes real site mechanics (Google sign-in, direct-apply
@@ -371,6 +373,10 @@ export default async function HomePage() {
             </section>
           </Reveal>
         )}
+
+        <Reveal>
+          <UserReviewsSection reviews={getUserReviews()} />
+        </Reveal>
 
         <Reveal>
           <section className="section closing-section">
