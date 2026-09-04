@@ -30,6 +30,13 @@ export default function Reveal({
       return;
     }
 
+    // threshold near 0 + no negative rootMargin: on short mobile viewports a
+    // section taller than the screen (like a long opportunity grid) could
+    // need an unrealistically large scroll before 12% of its *total* height
+    // was ever inside a viewport already shrunk by -60px — so the observer
+    // could simply never fire and the section stayed at opacity:0 forever,
+    // which is exactly what "opportunities missing on mobile" turned out to
+    // be. Firing as soon as even a sliver is visible avoids that entirely.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -37,10 +44,20 @@ export default function Reveal({
           observer.disconnect();
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
+      { threshold: 0, rootMargin: "0px 0px 200px 0px" },
     );
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Belt-and-suspenders: some in-app/older mobile WebViews (bank apps,
+    // older Android browsers) have flaky IntersectionObserver behavior.
+    // Never let that permanently hide real content — force it visible
+    // shortly after mount regardless.
+    const fallback = window.setTimeout(() => setVisible(true), 1200);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, []);
 
   return (
