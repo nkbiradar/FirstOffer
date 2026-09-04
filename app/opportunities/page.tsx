@@ -29,14 +29,26 @@ export default async function OpportunitiesPage({
   const location = firstValue(params.location)?.trim() || "";
   const page = Math.max(1, Number(firstValue(params.page)) || 1);
 
-  const { opportunities, total, pageSize } = await getPublishedOpportunities({
-    query,
-    type,
-    workMode,
-    batch: batch || undefined,
-    location: location || undefined,
-    page,
-  });
+  // The filtered listing, plus two cheap unfiltered count-only queries
+  // (pageSize: 1 — only `total` is used) for the hero's live stat trio.
+  // internshipTotals + fullTimeTotals should equal siteTotals, but full-time
+  // is derived by subtraction rather than a 4th query, so it stays correct
+  // even if some published row somehow has no opportunity_type set.
+  const [{ opportunities, total, pageSize }, siteTotals, internshipTotals] = await Promise.all([
+    getPublishedOpportunities({
+      query,
+      type,
+      workMode,
+      batch: batch || undefined,
+      location: location || undefined,
+      page,
+    }),
+    getPublishedOpportunities({ pageSize: 1 }),
+    getPublishedOpportunities({ type: "internship", pageSize: 1 }),
+  ]);
+  const liveTotal = siteTotals.total;
+  const internshipTotal = internshipTotals.total;
+  const fullTimeTotal = Math.max(0, liveTotal - internshipTotal);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const hasFilters = Boolean(query || type || workMode || batch || location);
@@ -68,84 +80,99 @@ export default async function OpportunitiesPage({
   return (
     <main className="page page-wide opportunities-page">
       <div className="container">
-        <div className="page-header">
-          <span className="eyebrow">
-            <span className="eyebrow-dot" />
-            {total} live right now
-          </span>
-          <h1>Fresher Opportunities</h1>
-          <p>Search and filter internships, full-time roles, and off-campus opportunities.</p>
-        </div>
-
-        <div className="toolbar">
-          <form action="/opportunities" className="search-form" method="get">
-            {type && <input name="type" type="hidden" value={type} />}
-            {workMode && <input name="mode" type="hidden" value={workMode} />}
-            {batch && <input name="batch" type="hidden" value={batch} />}
-            {location && <input name="location" type="hidden" value={location} />}
-            <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-              <circle cx="11" cy="11" r="7" />
-              <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
-            </svg>
-            <input
-              aria-label="Search by company, role, or skill"
-              defaultValue={query}
-              name="q"
-              placeholder="Search by company, role, or skill"
-              type="search"
-            />
-            <button type="submit">Search</button>
-          </form>
-
-          <div className="type-filters">
-            <Link className={`filter-pill ${!type ? "active" : ""}`} href={buildHref({ type: undefined })}>
-              All
-            </Link>
-            <Link
-              className={`filter-pill ${type === "internship" ? "active" : ""}`}
-              href={buildHref({ type: "internship" })}
-            >
-              Internships
-            </Link>
-            <Link
-              className={`filter-pill ${type === "full_time" ? "active" : ""}`}
-              href={buildHref({ type: "full_time" })}
-            >
-              Full-Time
-            </Link>
-          </div>
-        </div>
-
-        <div className="toolbar" style={{ marginTop: -8, flexWrap: "wrap", gap: 12 }}>
-          <div className="type-filters">
-            <Link className={`filter-pill ${!workMode ? "active" : ""}`} href={buildHref({ mode: undefined })}>
-              Any Work Mode
-            </Link>
-            <Link className={`filter-pill ${workMode === "remote" ? "active" : ""}`} href={buildHref({ mode: "remote" })}>
-              Remote
-            </Link>
-            <Link className={`filter-pill ${workMode === "hybrid" ? "active" : ""}`} href={buildHref({ mode: "hybrid" })}>
-              Hybrid
-            </Link>
-            <Link className={`filter-pill ${workMode === "onsite" ? "active" : ""}`} href={buildHref({ mode: "onsite" })}>
-              On-site
-            </Link>
+        <section className="opportunities-hero">
+          <div className="opportunities-hero-text">
+            <span className="eyebrow">
+              <span className="eyebrow-dot" />
+              {total} live right now
+            </span>
+            <h1>Fresher Opportunities</h1>
+            <p>Search and filter internships, full-time roles, and off-campus opportunities.</p>
           </div>
 
-          <form
-            action="/opportunities"
-            method="get"
-            style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}
-          >
-            {query && <input name="q" type="hidden" value={query} />}
-            {type && <input name="type" type="hidden" value={type} />}
-            {workMode && <input name="mode" type="hidden" value={workMode} />}
-            <input name="batch" defaultValue={batch} placeholder="Batch (e.g. 2026)" type="text" style={{ width: 140 }} />
-            <input name="location" defaultValue={location} placeholder="Location" type="text" style={{ width: 160 }} />
-            <button className="btn btn-secondary btn-sm" type="submit">
-              Apply
-            </button>
-          </form>
+          <div className="opps-stats">
+            <div className="opps-stat">
+              <span className="opps-stat-value">{liveTotal}</span>
+              <span className="opps-stat-label">Live openings</span>
+            </div>
+            <div className="opps-stat">
+              <span className="opps-stat-value">{internshipTotal}</span>
+              <span className="opps-stat-label">Internships</span>
+            </div>
+            <div className="opps-stat">
+              <span className="opps-stat-value">{fullTimeTotal}</span>
+              <span className="opps-stat-label">Full-time</span>
+            </div>
+          </div>
+        </section>
+
+        <div className="filter-bar">
+          <div className="toolbar">
+            <form action="/opportunities" className="search-form" method="get">
+              {type && <input name="type" type="hidden" value={type} />}
+              {workMode && <input name="mode" type="hidden" value={workMode} />}
+              {batch && <input name="batch" type="hidden" value={batch} />}
+              {location && <input name="location" type="hidden" value={location} />}
+              <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
+              </svg>
+              <input
+                aria-label="Search by company, role, or skill"
+                defaultValue={query}
+                name="q"
+                placeholder="Search by company, role, or skill"
+                type="search"
+              />
+              <button type="submit">Search</button>
+            </form>
+
+            <div className="type-filters">
+              <Link className={`filter-pill ${!type ? "active" : ""}`} href={buildHref({ type: undefined })}>
+                All
+              </Link>
+              <Link
+                className={`filter-pill ${type === "internship" ? "active" : ""}`}
+                href={buildHref({ type: "internship" })}
+              >
+                Internships
+              </Link>
+              <Link
+                className={`filter-pill ${type === "full_time" ? "active" : ""}`}
+                href={buildHref({ type: "full_time" })}
+              >
+                Full-Time
+              </Link>
+            </div>
+          </div>
+
+          <div className="toolbar filter-bar-row-secondary">
+            <div className="type-filters">
+              <Link className={`filter-pill ${!workMode ? "active" : ""}`} href={buildHref({ mode: undefined })}>
+                Any Work Mode
+              </Link>
+              <Link className={`filter-pill ${workMode === "remote" ? "active" : ""}`} href={buildHref({ mode: "remote" })}>
+                Remote
+              </Link>
+              <Link className={`filter-pill ${workMode === "hybrid" ? "active" : ""}`} href={buildHref({ mode: "hybrid" })}>
+                Hybrid
+              </Link>
+              <Link className={`filter-pill ${workMode === "onsite" ? "active" : ""}`} href={buildHref({ mode: "onsite" })}>
+                On-site
+              </Link>
+            </div>
+
+            <form action="/opportunities" method="get" className="filter-form">
+              {query && <input name="q" type="hidden" value={query} />}
+              {type && <input name="type" type="hidden" value={type} />}
+              {workMode && <input name="mode" type="hidden" value={workMode} />}
+              <input className="filter-input" name="batch" defaultValue={batch} placeholder="Batch (e.g. 2026)" type="text" />
+              <input className="filter-input" name="location" defaultValue={location} placeholder="Location" type="text" />
+              <button className="btn btn-secondary btn-sm" type="submit">
+                Apply
+              </button>
+            </form>
+          </div>
         </div>
 
         <p className="result-count">
@@ -182,11 +209,29 @@ export default async function OpportunitiesPage({
 
             {totalPages > 1 && (
               <nav aria-label="Pagination" className="pagination">
-                {page > 1 ? <Link href={buildHref({ page: page - 1 })}>&larr; Previous</Link> : <span />}
+                {page > 1 ? (
+                  <Link href={buildHref({ page: page - 1 })}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Previous
+                  </Link>
+                ) : (
+                  <span />
+                )}
                 <span>
                   Page {page} of {totalPages}
                 </span>
-                {page < totalPages ? <Link href={buildHref({ page: page + 1 })}>Next &rarr;</Link> : <span />}
+                {page < totalPages ? (
+                  <Link href={buildHref({ page: page + 1 })}>
+                    Next
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                ) : (
+                  <span />
+                )}
               </nav>
             )}
           </>

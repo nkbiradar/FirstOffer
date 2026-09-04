@@ -1660,14 +1660,14 @@ button.btn-danger {
 .opportunity-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 18px;
+  gap: 20px;
 }
 
 .opportunity-card {
   position: relative;
   display: grid;
   gap: 14px;
-  padding: 22px;
+  padding: 24px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -1754,14 +1754,34 @@ button.btn-danger {
 
 .opportunity-posted {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   color: var(--color-text-tertiary);
   font-size: 12px;
   font-weight: 550;
 }
 
+/* Called out for roles published today — a small live-accent dot rather
+   than a full badge, so "freshness" reads at a glance without competing
+   with the type/urgency badges below the title. */
+.opportunity-posted-fresh {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.opportunity-fresh-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
 .opportunity-role {
   margin: 0;
-  font-size: 17.5px;
+  font-family: var(--font-display);
+  font-size: 18px;
   font-weight: 750;
   letter-spacing: -0.01em;
   line-height: 1.35;
@@ -1805,6 +1825,22 @@ button.btn-danger {
   background: var(--color-surface-muted);
   color: var(--color-text-secondary);
   border-color: var(--color-border);
+}
+
+/* Deadline-urgency badges — see lib/ui-format.ts formatDeadlineUrgency().
+   "critical" (today/tomorrow) uses the danger tone, "soon" (2-5 days out)
+   the warning tone, both reusing existing soft/border tokens rather than
+   new colors. */
+.badge-urgency-critical {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+
+.badge-urgency-soon {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
 }
 
 .opportunity-meta {
@@ -1980,6 +2016,131 @@ button.btn-danger {
   margin-bottom: 4px;
 }
 
+/* ── Opportunities hero panel ───────────────────────────────────────── */
+/* A raised, softly-tinted band that opens the listing pages — a brand/accent
+   wash plus the same faint dot texture as the page background, giving the
+   header real presence instead of bare heading text on the plain page bg.
+   The live stat trio next to it uses real, currently-published counts
+   (fetched in app/opportunities/page.tsx) — never placeholder numbers. */
+.opportunities-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 24px;
+  padding: 32px 36px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-brand-soft-border);
+  background:
+    radial-gradient(color-mix(in srgb, var(--color-text) 5%, transparent) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(120deg, var(--color-brand-soft) 0%, var(--color-surface) 55%, var(--color-accent-soft) 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.opportunities-hero-text {
+  display: grid;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.opportunities-hero-text h1 {
+  margin: 0;
+}
+
+.opportunities-hero-text p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Named opps- (not hero-stat*) — the homepage already defines a
+   .hero-stats/.stat-tile grid layout above; a same-named class here would
+   silently override that section's CSS since both load in one stylesheet. */
+.opps-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.opps-stat {
+  display: grid;
+  gap: 2px;
+  min-width: 96px;
+  padding: 14px 18px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.opps-stat-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.opps-stat-label {
+  color: var(--color-text-tertiary);
+  font-size: 11.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Filter bar ──────────────────────────────────────────────────────── */
+/* Groups both toolbar rows (search + type, work-mode + batch/location)
+   inside one raised card instead of pills floating loose on the page
+   background, and separates the two rows with a hairline. */
+.filter-bar {
+  display: grid;
+  /* minmax(0, 1fr), not the implicit auto column a bare `display:grid`
+     would use — an auto track grows to fit its content's min-content
+     width (grid's own version of the flexbox min-width:auto trap), which
+     is exactly what let the toolbar row below blow out past this card's
+     edge on narrow screens. 0 as the floor lets the column — and every
+     flex child inside it — actually shrink to fit. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.filter-bar-row-secondary {
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13.5px;
+  width: 150px;
+  transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+}
+
+.filter-input:focus {
+  border-color: var(--color-brand);
+  box-shadow: var(--shadow-focus);
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -1987,6 +2148,43 @@ button.btn-danger {
   justify-content: space-between;
   gap: 14px;
   margin-bottom: 22px;
+}
+
+.filter-bar .toolbar {
+  margin-bottom: 0;
+}
+
+/* .search-form's min-width:240px (below) is a *floor* meant to keep the
+   field usable on desktop — but as a flex item it also has an implicit
+   min-width:auto that's driven by its input/button's content width, which
+   on a narrow phone is wider than the filter bar itself and pushed the
+   field past the viewport edge instead of wrapping. Below 560px the
+   toolbar stacks into a single column and every control goes full-width,
+   so nothing needs to shrink to fit. */
+@media (max-width: 560px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-form {
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .type-filters {
+    width: 100%;
+  }
+
+  .filter-form {
+    width: 100%;
+  }
+
+  .filter-input {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .search-form {
@@ -2011,6 +2209,11 @@ button.btn-danger {
 
 .search-form input {
   flex: 1;
+  /* A text input's default flex min-width is its content/character-size
+     minimum, not 0 — on a narrow phone that alone was wider than the
+     .search-form row and pushed the Search button out past the viewport
+     edge. This lets it actually shrink to fill whatever the row has left. */
+  min-width: 0;
   height: 44px;
   padding: 0 16px 0 40px;
   border: 1px solid var(--color-border-strong);
@@ -2090,24 +2293,35 @@ button.btn-danger {
 .pagination a {
   display: inline-flex;
   align-items: center;
-  height: 38px;
-  padding: 0 16px;
+  gap: 6px;
+  height: 40px;
+  padding: 0 18px;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
   color: var(--color-text);
   font-weight: 650;
-  transition: background 0.15s var(--ease-out), transform 0.15s var(--ease-out), border-color 0.15s var(--ease-out);
+  box-shadow: var(--shadow-xs);
+  transition: background 0.15s var(--ease-out), transform 0.15s var(--ease-out), border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
 }
 
 .pagination a:hover {
-  background: var(--color-surface-muted);
-  border-color: var(--color-text-tertiary);
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-bg);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination a svg {
+  width: 15px;
+  height: 15px;
 }
 
 .pagination span {
   color: var(--color-text-tertiary);
   font-weight: 550;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Companies page ──────────────────────────────────────────────────── */

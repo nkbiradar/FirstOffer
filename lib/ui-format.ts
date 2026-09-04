@@ -43,3 +43,28 @@ export function formatRelativeTime(iso: string | null): string | null {
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
+
+/**
+ * Urgency read on a job's own application `deadline` (a plain yyyy-mm-dd
+ * date, IST) — "Closes today" / "Closes tomorrow" / "Closes in Xd". Only
+ * for deadlines within the next 5 days, so the badge stays reserved for
+ * genuinely time-sensitive roles rather than appearing on every card.
+ * `lib/data/opportunities.ts`'s applyPublishedFilter() already excludes
+ * anything past its deadline, so any value reaching here is still open.
+ */
+export function formatDeadlineUrgency(
+  deadline: string | null,
+): { label: string; level: "critical" | "soon" } | null {
+  if (!deadline) return null;
+
+  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  const today = new Date(`${todayKey}T00:00:00+05:30`).getTime();
+  const due = new Date(`${deadline}T00:00:00+05:30`).getTime();
+  if (Number.isNaN(due)) return null;
+
+  const diffDays = Math.round((due - today) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0 || diffDays > 5) return null;
+  if (diffDays === 0) return { label: "Closes today", level: "critical" };
+  if (diffDays === 1) return { label: "Closes tomorrow", level: "critical" };
+  return { label: `Closes in ${diffDays}d`, level: "soon" };
+}

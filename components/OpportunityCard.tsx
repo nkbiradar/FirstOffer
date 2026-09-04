@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
-import { avatarGradient, formatRelativeTime, initials } from "@/lib/ui-format";
+import { avatarGradient, formatDeadlineUrgency, formatRelativeTime, initials } from "@/lib/ui-format";
 
 const TYPE_LABELS: Record<string, string> = {
   internship: "Internship",
@@ -30,11 +30,14 @@ export default function OpportunityCard({
     work_mode,
     skills,
     published_at,
+    deadline,
     company,
   } = opportunity;
 
   const compensation = stipend || salary;
   const postedLabel = formatRelativeTime(published_at);
+  const isFresh = postedLabel === "Today";
+  const urgency = formatDeadlineUrgency(deadline);
   const workModeLabel = work_mode ? WORK_MODE_LABELS[work_mode] : null;
   const companyName = company?.name ?? "";
   const { a, b } = avatarGradient(companyName || role);
@@ -57,17 +60,23 @@ export default function OpportunityCard({
           </span>
           {companyName && <p className="opportunity-company">{companyName}</p>}
         </div>
-        {postedLabel && <span className="opportunity-posted">{postedLabel}</span>}
+        {postedLabel && (
+          <span className={`opportunity-posted ${isFresh ? "opportunity-posted-fresh" : ""}`}>
+            {isFresh && <span className="opportunity-fresh-dot" />}
+            {postedLabel}
+          </span>
+        )}
       </div>
 
       <h3 className="opportunity-role">{role}</h3>
 
-      {(opportunity_type || batch.length > 0) && (
+      {(opportunity_type || batch.length > 0 || urgency) && (
         <div className="badge-row">
           {opportunity_type && (
             <span className={`badge badge-${opportunity_type}`}>{TYPE_LABELS[opportunity_type]}</span>
           )}
           {batch.length > 0 && <span className="badge badge-neutral">Batch {batch.join(" / ")}</span>}
+          {urgency && <span className={`badge badge-urgency-${urgency.level}`}>{urgency.label}</span>}
         </div>
       )}
 
