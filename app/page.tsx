@@ -51,63 +51,79 @@ export default async function HomePage() {
     <main>
       <section className="hero">
         <div className="container hero-content">
-          <div className="hero-top">
-            <div className="hero-copy">
-              <span className="eyebrow">
-                <span className="eyebrow-dot" />
-                Built for freshers, updated daily
+          <div className="hero-copy hero-copy-centered">
+            <span className="eyebrow">
+              <span className="eyebrow-dot" />
+              Built for freshers, updated daily
+            </span>
+
+            <h1>
+              Same Student.
+              <br />
+              <span className="highlight-swoosh">
+                A Brighter Tomorrow.
+                <svg className="swoosh-svg" viewBox="0 0 320 24" fill="none" aria-hidden="true">
+                  <path d="M4 15c48-12 240-16 312 3" stroke="var(--color-accent)" strokeWidth="6" strokeLinecap="round" />
+                </svg>
               </span>
+            </h1>
 
-              <h1>
-                Fresher opportunities.
-                <br />
-                <span className="highlight">One place.</span>
-              </h1>
+            <p className="hero-values">Opportunities. Guidance. Growth. All in one place.</p>
 
-              {/* Fixed marketing line, not tied to today's actual published count
-                  (that's what the "Opportunities today" stat tile below already
-                  shows live) — a stated freshness promise, not a live figure. */}
-              <p className="hero-tagline">50+ new opportunities added every day</p>
+            {/* Fixed marketing line, not tied to today's actual published count
+                (that's what the "Opportunities today" stat tile below already
+                shows live) — a stated freshness promise, not a live figure. */}
+            <p className="hero-tagline">50+ new opportunities added every day</p>
 
-              {/* Explains *why* listings only stay up 2 days (see the
-                  expires_at logic in lib/data/admin-opportunities.ts) — frames
-                  it as the real-world reason (companies close hiring), not a
-                  site limitation, and nudges urgency without being alarming. */}
-              <p className="hero-note">
-                Older opportunities expire within 2 days as companies close hiring — apply fast.
-              </p>
+            {/* Explains *why* listings only stay up 2 days (see the
+                expires_at logic in lib/data/admin-opportunities.ts) — frames
+                it as the real-world reason (companies close hiring), not a
+                site limitation, and nudges urgency without being alarming. */}
+            <p className="hero-note">
+              Older opportunities expire within 2 days as companies close hiring — apply fast.
+            </p>
 
-              <p className="hero-sub">
-                FirstOffer collects internships, full-time roles and off-campus opportunities from
-                everywhere and organizes them in one clean, searchable feed — so you spend less time
-                hunting and more time applying.
-              </p>
+            <p className="hero-sub">
+              FirstOffer collects internships, full-time roles and off-campus opportunities from
+              everywhere and organizes them in one clean, searchable feed — so you spend less time
+              hunting and more time applying.
+            </p>
 
-              {/* The marketing hook the user asked for directly — honest, not a
-                  guarantee: the real differentiator is speed/directness (apply
-                  same-day, no placement-cell queue), not a promised outcome like
-                  "guaranteed interview calls," which nothing here can actually
-                  back up and isn't claimed. */}
-              <p className="hero-hook">Skip the placement cell. Apply directly, the same day it goes live.</p>
+            {/* The marketing hook the user asked for directly — honest, not a
+                guarantee: the real differentiator is speed/directness (apply
+                same-day, no placement-cell queue), not a promised outcome like
+                "guaranteed interview calls," which nothing here can actually
+                back up and isn't claimed. */}
+            <p className="hero-hook">Skip the placement cell. Apply directly, the same day it goes live.</p>
 
-              <div className="hero-actions">
-                <Link className="btn btn-primary" href="/opportunities">
-                  Explore Opportunities
-                </Link>
-                <Link className="btn btn-secondary" href="/companies">
-                  Browse Companies
-                </Link>
-              </div>
+            <div className="hero-actions">
+              <Link className="btn btn-primary" href="/opportunities">
+                Explore Opportunities
+              </Link>
+              <Link className="btn btn-secondary" href="/companies">
+                Browse Companies
+              </Link>
             </div>
+          </div>
 
+          {/* The journey scene — chaos wall behind, a lit path ahead to a
+              signposted skyline. Purely atmospheric/illustrative (real alt
+              text below carries the meaning for screen readers); the actual
+              claims are the real copy above and the trust-bar/stats below. */}
+          <div className="hero-journey">
             <Image
-              className="hero-photo"
-              alt=""
-              src="/images/hero-illustration.webp"
-              width={560}
-              height={1085}
+              className="hero-journey-img"
+              alt="A student stands at a fork in the road with a wall of scattered notes (confusion, missed deadlines, rejections) behind them, and a lit path ahead leading toward a sunrise skyline, past a signpost reading Internships, Full-Time Jobs, Off-Campus, Startup Roles, Dream Career."
+              src="/images/hero-journey.webp"
+              width={1672}
+              height={941}
               priority
             />
+            <span className="hero-spark hero-spark-1" />
+            <span className="hero-spark hero-spark-2" />
+            <span className="hero-spark hero-spark-3" />
+            <span className="hero-spark hero-spark-4" />
+            <span className="hero-spark hero-spark-5" />
           </div>
 
           {/* Leads with the 48-hour auto-expiry (Step 9) as the actual trust
