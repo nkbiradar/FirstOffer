@@ -25,6 +25,13 @@ export interface Testimonial {
   quote: string | null;
   is_published: boolean;
   created_at: string;
+  // College/batch/rating/avatar — added for the homepage "Success Stories"
+  // card grid (components/SuccessStories.tsx). Nullable: rows created
+  // before this migration have none of these set.
+  college: string | null;
+  graduation_batch: string | null;
+  rating: number | null;
+  avatar_url: string | null;
 }
 
 export interface TestimonialInsert {
@@ -36,6 +43,10 @@ export interface TestimonialInsert {
   quote?: string | null;
   is_published?: boolean;
   created_at?: string;
+  college?: string | null;
+  graduation_batch?: string | null;
+  rating?: number | null;
+  avatar_url?: string | null;
 }
 
 export interface Company {

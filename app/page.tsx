@@ -3,12 +3,10 @@ import Image from "next/image";
 import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
-import TestimonialsMarquee from "@/components/TestimonialsMarquee";
-import UserReviewsSection from "@/components/UserReviewsSection";
+import SuccessStories from "@/components/SuccessStories";
 import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
-import { getUserReviews } from "@/lib/data/user-reviews";
 import { avatarGradient, initials } from "@/lib/ui-format";
 
 // Static — describes real site mechanics (Google sign-in, direct-apply
@@ -359,24 +357,24 @@ export default async function HomePage() {
 
         {testimonials.length > 0 && (
           <Reveal>
-            <section className="section testimonials-section">
+            <section className="section success-stories-section">
               <div className="section-header">
                 <div>
                   <span className="eyebrow">
                     <span className="eyebrow-dot" />
                     Success stories
                   </span>
-                  <h2 style={{ marginTop: 10 }}>Real students, real outcomes</h2>
+                  <h2 style={{ marginTop: 10 }}>Students Who Found Their Next Opportunity</h2>
+                  <p className="section-sub">
+                    Real experiences shared by students who used FirstOffer — submitted by them, not
+                    written by us.
+                  </p>
                 </div>
               </div>
-              <TestimonialsMarquee testimonials={testimonials} />
+              <SuccessStories testimonials={testimonials} />
             </section>
           </Reveal>
         )}
-
-        <Reveal>
-          <UserReviewsSection reviews={getUserReviews()} />
-        </Reveal>
 
         <Reveal>
           <section className="section closing-section">

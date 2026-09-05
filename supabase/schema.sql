@@ -442,3 +442,22 @@ end $$;
 
 -- No public insert/update/delete policy — all writes go through the
 -- service-role client from the admin testimonials routes.
+
+-- ── Testimonials — richer profile fields ─────────────────────────────────
+-- Adds what the homepage "Success Stories" card grid shows beyond the
+-- original marquee: which college the student was at, their graduation
+-- batch, a star rating, and an optional profile photo. All nullable/
+-- optional — existing rows keep working unchanged, and the admin form
+-- (app/admin/testimonials/page.tsx) defaults rating to 5 for new ones.
+-- Still zero seed data: every row is entered by hand at /admin/testimonials
+-- exactly as before, nothing here inserts anything.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+alter table public.testimonials
+  add column if not exists college text,
+  add column if not exists graduation_batch text,
+  add column if not exists rating smallint check (rating is null or rating between 1 and 5),
+  add column if not exists avatar_url text;

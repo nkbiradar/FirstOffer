@@ -19,6 +19,10 @@ export async function POST(request: NextRequest) {
   const role = String(formData.get("role") ?? "").trim();
   const outcomeRaw = String(formData.get("outcome") ?? "");
   const quote = String(formData.get("quote") ?? "").trim();
+  const college = String(formData.get("college") ?? "").trim();
+  const graduationBatch = String(formData.get("graduation_batch") ?? "").trim();
+  const ratingRaw = String(formData.get("rating") ?? "").trim();
+  const avatarUrl = String(formData.get("avatar_url") ?? "").trim();
 
   if (!studentName || !companyName) {
     return NextResponse.redirect(
@@ -31,6 +35,8 @@ export async function POST(request: NextRequest) {
   }
 
   const outcome: TestimonialOutcome = outcomeRaw === "selected" ? "selected" : "interview";
+  const ratingNum = Number(ratingRaw);
+  const rating = Number.isInteger(ratingNum) && ratingNum >= 1 && ratingNum <= 5 ? ratingNum : null;
 
   const admin = createAdminClient();
   const { error } = await admin.from("testimonials").insert({
@@ -40,6 +46,10 @@ export async function POST(request: NextRequest) {
     outcome,
     quote: quote || null,
     is_published: true,
+    college: college || null,
+    graduation_batch: graduationBatch || null,
+    rating,
+    avatar_url: avatarUrl || null,
   });
 
   if (error) {

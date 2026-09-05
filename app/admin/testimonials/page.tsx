@@ -13,9 +13,10 @@ const OUTCOME_LABELS: Record<string, string> = {
 };
 
 // Every row here is a real student's real outcome — this page is the only
-// way one gets onto the homepage's "Success stories" carousel (see
-// components/TestimonialsMarquee.tsx), and there's deliberately no bulk-add
-// or seed path. Add them one at a time as students actually report back.
+// way one gets onto the homepage's "Students Who Found Their Next
+// Opportunity" section (see components/SuccessStories.tsx), and there's
+// deliberately no bulk-add or seed path. Add them one at a time as students
+// actually report back.
 export default async function AdminTestimonialsPage({
   searchParams,
 }: {
@@ -34,9 +35,9 @@ export default async function AdminTestimonialsPage({
           <h1>Testimonials</h1>
         </div>
         <p className="hint" style={{ marginTop: -8, marginBottom: 24 }}>
-          Shown as a sliding carousel on the homepage when published. Only add real students with
-          real outcomes — this is the site&apos;s proof that it actually works, so it only works if
-          it&apos;s true.
+          Shown in the &ldquo;Success Stories&rdquo; grid on the homepage when published. Only add
+          real students with real outcomes — this is the site&apos;s proof that it actually works,
+          so it only works if it&apos;s true.
         </p>
 
         {errorMessage && <p className="form-error">{errorMessage}</p>}
@@ -69,6 +70,32 @@ export default async function AdminTestimonialsPage({
                 </select>
               </label>
             </div>
+            <div className="form-grid-2">
+              <label>
+                College / University <span className="hint">(optional)</span>
+                <input name="college" type="text" placeholder="e.g. IIIT Hyderabad" />
+              </label>
+              <label>
+                Graduation Batch <span className="hint">(optional)</span>
+                <input name="graduation_batch" type="text" placeholder="e.g. 2026" />
+              </label>
+            </div>
+            <div className="form-grid-2">
+              <label>
+                Rating
+                <select name="rating" defaultValue="5">
+                  <option value="5">★★★★★ (5)</option>
+                  <option value="4">★★★★☆ (4)</option>
+                  <option value="3">★★★☆☆ (3)</option>
+                  <option value="2">★★☆☆☆ (2)</option>
+                  <option value="1">★☆☆☆☆ (1)</option>
+                </select>
+              </label>
+              <label>
+                Avatar Photo URL <span className="hint">(optional — leave blank to show initials)</span>
+                <input name="avatar_url" type="url" placeholder="https://..." />
+              </label>
+            </div>
             <label>
               Quote <span className="hint">(optional — a short sentence in their own words)</span>
               <textarea
@@ -86,7 +113,7 @@ export default async function AdminTestimonialsPage({
         {testimonials.length === 0 ? (
           <div className="empty-state">
             <h3>No testimonials yet</h3>
-            <p>The homepage carousel stays hidden until at least one is added here.</p>
+            <p>The homepage section stays hidden until at least one is added here.</p>
           </div>
         ) : (
           <div className="bulk-items">
@@ -99,6 +126,19 @@ export default async function AdminTestimonialsPage({
                       {testimonial.role ? `${testimonial.role} at ` : ""}
                       {testimonial.company_name} — {OUTCOME_LABELS[testimonial.outcome]}
                     </p>
+                    {(testimonial.college || testimonial.graduation_batch) && (
+                      <p className="hint" style={{ margin: "2px 0 0" }}>
+                        {testimonial.college}
+                        {testimonial.college && testimonial.graduation_batch ? " • " : ""}
+                        {testimonial.graduation_batch}
+                      </p>
+                    )}
+                    {testimonial.rating && (
+                      <p style={{ margin: "4px 0 0", fontSize: 13, letterSpacing: 1 }} aria-label={`${testimonial.rating} out of 5 stars`}>
+                        {"★".repeat(testimonial.rating)}
+                        {"☆".repeat(5 - testimonial.rating)}
+                      </p>
+                    )}
                     {testimonial.quote && (
                       <p style={{ marginTop: 8, fontSize: 14 }}>&ldquo;{testimonial.quote}&rdquo;</p>
                     )}

@@ -3,11 +3,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { Testimonial } from "@/types/supabase";
 
 /**
- * Published testimonials for the homepage "Success stories" carousel.
- * RLS only allows anonymous SELECT where is_published = true, so this is
- * already scoped correctly even with the plain (non-admin) client. Fails
- * soft (empty array) rather than crashing the homepage if the migration
- * hasn't been applied yet — same pattern as lib/data/opportunity-unlocks.ts.
+ * Published testimonials for the homepage "Students Who Found Their Next
+ * Opportunity" section (components/SuccessStories.tsx). RLS only allows
+ * anonymous SELECT where is_published = true, so this is already scoped
+ * correctly even with the plain (non-admin) client. Fails soft (empty
+ * array) rather than crashing the homepage if the migration hasn't been
+ * applied yet — same pattern as lib/data/opportunity-unlocks.ts.
  */
 export async function getPublishedTestimonials(): Promise<Testimonial[]> {
   const supabase = await createClient();

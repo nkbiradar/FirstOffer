@@ -113,7 +113,6 @@ interface UserReviewsSectionProps {
 export default function UserReviewsSection({ reviews }: UserReviewsSectionProps) {
   if (reviews.length === 0) return null;
 
-  const hasSampleData = reviews.some((r) => r.isSample);
   // Duplicate the track so the loop is seamless (same trick as TestimonialsMarquee)
   const track = [...reviews, ...reviews];
 
@@ -130,9 +129,7 @@ export default function UserReviewsSection({ reviews }: UserReviewsSectionProps)
             Students Who Found Their Next Opportunity
           </h2>
           <p className="section-sub">
-            {hasSampleData
-              ? "Demo entries — shown for illustration. Will be replaced with real verified reviews once collected."
-              : "These are verified, user-submitted experiences. No placement guarantees are made."}
+            These are verified, user-submitted experiences. No placement guarantees are made.
           </p>
         </div>
       </div>
@@ -171,9 +168,7 @@ export default function UserReviewsSection({ reviews }: UserReviewsSectionProps)
             strokeLinejoin="round"
           />
         </svg>
-        {hasSampleData
-          ? "Demo data shown for illustration only. Real reviews will appear here once verified."
-          : "All reviews are user-submitted. No placement guarantees are made."}
+        All reviews are user-submitted. No placement guarantees are made.
       </p>
     </section>
   );
