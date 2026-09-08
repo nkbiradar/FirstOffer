@@ -40,6 +40,11 @@ export default function UnlockContactCard({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
+  // Payment confirmation is currently reconciled by hand on the backend, so
+  // access doesn't flip the instant Razorpay confirms — set expectations up
+  // front instead of letting the visitor think the payment failed when the
+  // page doesn't unlock immediately after paying.
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   async function handleUnlock() {
     // Custom Vercel Analytics events — this is the site's entire revenue
@@ -105,6 +110,7 @@ export default function UnlockContactCard({
           });
           if (verifyResponse.ok) {
             track("payment_succeeded", { opportunityId, price });
+            setPaymentSuccess(true);
             router.refresh();
           } else {
             track("payment_verify_failed", { opportunityId });
@@ -164,9 +170,21 @@ export default function UnlockContactCard({
           application links on every listing. No repeat charges.
         </span>
       </p>
-      <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
-        {isLoading ? "Opening payment..." : `Unlock everything for ₹${price}`}
-      </button>
+      {paymentSuccess ? (
+        <p className="unlock-contact-desc" style={{ fontWeight: 600 }}>
+          ✅ Payment received! Your apply access will be activated within 6 hours — please check back and refresh
+          this page after that.
+        </p>
+      ) : (
+        <>
+          <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
+            {isLoading ? "Opening payment..." : `Unlock everything for ₹${price}`}
+          </button>
+          <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
+            Note: Apply access is activated within 6 hours of payment — it may not unlock instantly.
+          </p>
+        </>
+      )}
       {error && <p className="unlock-contact-error">{error}</p>}
     </div>
   );
