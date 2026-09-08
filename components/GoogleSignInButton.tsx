@@ -38,6 +38,12 @@ export default function GoogleSignInButton({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        // Without this, Google silently reuses whatever Google account is
+        // already active in the browser instead of showing the account
+        // picker — so switching accounts (e.g. testing as a non-admin
+        // user) silently fails and re-signs you in as whoever was already
+        // logged in. Forcing the picker every time fixes that.
+        queryParams: { prompt: "select_account" },
       },
     });
 
