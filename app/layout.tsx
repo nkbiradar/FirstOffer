@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,8 +24,29 @@ const manrope = Manrope({
 });
 
 export const metadata = {
-  title: "FirstOffer — Fresher opportunities. One place.",
-  description: "FirstOffer helps freshers discover internships, full-time roles and off-campus opportunities, collected and organized in one place.",
+  // metadataBase resolves every relative openGraph/icon path (and any page
+  // that doesn't set its own absolute url) against the real domain instead
+  // of localhost — without it, social previews silently break in
+  // production. Individual pages (homepage, /opportunities, opportunity
+  // detail) override title/description/openGraph with keyword-led copy;
+  // this is the fallback for every other page (About, Companies, etc).
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: "FirstOffer — Fresher Jobs, IT Openings & Internships",
+    template: "%s | FirstOffer",
+  },
+  description:
+    "FirstOffer helps freshers discover fresher jobs, IT openings, internships and off-campus opportunities, collected and organized in one place.",
+  robots: { index: true, follow: true },
+  openGraph: {
+    siteName: "FirstOffer",
+    type: "website",
+    locale: "en_IN",
+    images: [{ url: "/images/hero-journey.webp", width: 1672, height: 941 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

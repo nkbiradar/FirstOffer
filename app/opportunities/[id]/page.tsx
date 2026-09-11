@@ -10,6 +10,7 @@ import { getUser } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { CONTACT_UNLOCK_PRICE_INR } from "@/lib/payments/razorpay";
+import { buildJobPostingJsonLd } from "@/lib/seo/job-posting";
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
 
@@ -68,9 +69,13 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   }
 
   const companyName = opportunity.company?.name ?? "";
+  // Keyword-led (role + "for Freshers" + company) rather than brand-led —
+  // this is what someone searching "<role> fresher jobs" or "<company>
+  // fresher openings" actually types, and it's what shows as the blue link
+  // in search results.
   const title = companyName
-    ? `${opportunity.role} at ${companyName} — FirstOffer`
-    : `${opportunity.role} — FirstOffer`;
+    ? `${opportunity.role} at ${companyName} — Fresher Jobs | FirstOffer`
+    : `${opportunity.role} — Fresher Jobs | FirstOffer`;
 
   const descriptionParts = [
     opportunity.opportunity_type && TYPE_LABELS[opportunity.opportunity_type],
@@ -80,8 +85,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   ].filter(Boolean);
   const description =
     descriptionParts.length > 0
-      ? `${descriptionParts.join(" · ")}. Apply on FirstOffer.`
-      : "Find internships and full-time opportunities for freshers on FirstOffer.";
+      ? `${descriptionParts.join(" · ")} — apply directly on FirstOffer, the fresher jobs and internships board.`
+      : "Find internships, full-time roles and off-campus opportunities for freshers on FirstOffer.";
 
   const url = `${getSiteUrl()}/opportunities/${id}`;
 
@@ -172,8 +177,18 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     batch.length > 0 && `open to the ${batch.join(" / ")} batch${batch.length > 1 ? "es" : ""}`,
   ].filter(Boolean);
 
+  // Google for Jobs (the rich job-search experience inside Google Search)
+  // only picks a page up when it carries valid JobPosting structured data —
+  // this is the single highest-leverage SEO piece on the whole site.
+  const jobPostingJsonLd = buildJobPostingJsonLd(opportunity);
+
   return (
     <main className="page opportunity-detail">
+      {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+      />
       <div className="container" style={{ maxWidth: 760, padding: 0 }}>
         <Link className="back-link" href="/opportunities">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>

@@ -8,6 +8,31 @@ import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { avatarGradient, initials } from "@/lib/ui-format";
+import { getSiteUrl } from "@/lib/site-url";
+
+// Overrides the generic root-layout title/description with copy led by
+// the actual search terms freshers use ("fresher jobs", "fresher IT
+// openings/jobs", "internship for freshers") — the homepage is the page
+// most likely to be someone's very first click from a search result, so
+// it's worth being explicit here rather than relying on the brand name.
+export const metadata = {
+  title: "Fresher Jobs, IT Openings & Internships — Updated Daily | FirstOffer",
+  description:
+    "FirstOffer collects live fresher jobs, fresher IT openings, internships and off-campus opportunities in one searchable feed — updated daily, apply directly, no account needed to browse.",
+  alternates: { canonical: getSiteUrl() },
+  openGraph: {
+    title: "Fresher Jobs, IT Openings & Internships — Updated Daily",
+    description:
+      "Live fresher jobs, IT openings, internships and off-campus opportunities in one place — updated daily, apply directly.",
+    url: getSiteUrl(),
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image" as const,
+    title: "Fresher Jobs, IT Openings & Internships — Updated Daily",
+    description: "Live fresher jobs, IT openings and internships — updated daily on FirstOffer.",
+  },
+};
 
 // Static — describes real site mechanics (Google sign-in, direct-apply
 // links, the applications tracker), not a fabricated "profile/skills" flow.

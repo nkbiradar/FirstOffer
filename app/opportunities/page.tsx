@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import { getPublishedOpportunities } from "@/lib/data/opportunities";
+import { getSiteUrl } from "@/lib/site-url";
 import type { OpportunityType, WorkMode } from "@/types/supabase";
 
 const VALID_TYPES: OpportunityType[] = ["internship", "full_time"];
@@ -10,6 +12,39 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 
 function firstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
+}
+
+// This is the page most likely to rank for the searches that actually
+// bring freshers here — "fresher jobs", "fresher IT openings", "internship
+// for freshers" — so title/description are keyword-led rather than just
+// restating the brand. Kept static (not reading every filter into the
+// title) since query-string variations of this URL aren't separately
+// indexed by Google anyway; the canonical below points every variant back
+// to the one page.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const typeParam = firstValue(params.type);
+  const title =
+    typeParam === "internship"
+      ? "Fresher Internships — Live Openings Updated Daily | FirstOffer"
+      : typeParam === "full_time"
+        ? "Fresher Full-Time Jobs — Live Openings Updated Daily | FirstOffer"
+        : "Fresher Jobs & Internships — Live IT & Off-Campus Openings | FirstOffer";
+  const description =
+    "Browse live fresher jobs, fresher IT openings, internships and off-campus opportunities — updated daily, no account needed to search, apply directly on the company's own link.";
+  const canonical = `${getSiteUrl()}/opportunities`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, type: "website" },
+    twitter: { card: "summary", title, description },
+  };
 }
 
 export default async function OpportunitiesPage({
@@ -86,8 +121,8 @@ export default async function OpportunitiesPage({
               <span className="eyebrow-dot" />
               {total} live right now
             </span>
-            <h1>Fresher Opportunities</h1>
-            <p>Search and filter internships, full-time roles, and off-campus opportunities.</p>
+            <h1>Fresher Jobs &amp; Internships</h1>
+            <p>Search and filter live fresher IT openings, internships, full-time roles, and off-campus opportunities.</p>
           </div>
 
           <div className="opps-stats">
