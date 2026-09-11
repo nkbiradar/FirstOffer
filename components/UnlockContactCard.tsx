@@ -40,10 +40,12 @@ export default function UnlockContactCard({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
-  // Payment confirmation is currently reconciled by hand on the backend, so
-  // access doesn't flip the instant Razorpay confirms — set expectations up
-  // front instead of letting the visitor think the payment failed when the
-  // page doesn't unlock immediately after paying.
+  // Verification (app/api/payments/verify/route.ts) flips opportunity_unlocks
+  // to "paid" synchronously, so access is unlocked instantly — this flag just
+  // holds the confirmation on screen for a moment before router.refresh()
+  // swaps this card out for the real ApplyButton, so the visitor actually
+  // sees the "you're ready to apply" moment instead of the UI silently
+  // changing under them.
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   async function handleUnlock() {
@@ -111,7 +113,9 @@ export default function UnlockContactCard({
           if (verifyResponse.ok) {
             track("payment_succeeded", { opportunityId, price });
             setPaymentSuccess(true);
-            router.refresh();
+            // Brief pause so the success message is actually seen before this
+            // card is replaced by the real ApplyButton on refresh.
+            setTimeout(() => router.refresh(), 1600);
           } else {
             track("payment_verify_failed", { opportunityId });
             setError("Payment succeeded but confirmation failed — refresh in a minute, or contact support.");
@@ -172,8 +176,7 @@ export default function UnlockContactCard({
       </p>
       {paymentSuccess ? (
         <p className="unlock-contact-desc" style={{ fontWeight: 600 }}>
-          ✅ Payment received! Your apply access will be activated within 6 hours — please check back and refresh
-          this page after that.
+          🎉 Payment confirmed — you&apos;re ready to apply now! Loading your apply details...
         </p>
       ) : (
         <>
@@ -181,7 +184,7 @@ export default function UnlockContactCard({
             {isLoading ? "Opening payment..." : `Unlock everything for ₹${price}`}
           </button>
           <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
-            Note: Apply access is activated within 6 hours of payment — it may not unlock instantly.
+            Access unlocks instantly after payment — no waiting.
           </p>
         </>
       )}

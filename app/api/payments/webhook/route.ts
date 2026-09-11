@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
   const admin = createAdminClient();
   const { error } = await admin
-    .from("user_access")
+    .from("opportunity_unlocks")
     .update({
       razorpay_payment_id: paymentId,
       status: "paid",
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     .eq("razorpay_order_id", orderId);
 
   if (error) {
-    console.error("Webhook: could not mark platform access as paid:", error.message);
+    console.error("Webhook: could not mark opportunity_unlocks as paid:", error.message);
   }
 
   return NextResponse.json({ ok: true });

@@ -87,6 +87,16 @@ export default async function DashboardPage({
           <p>Every opportunity you&apos;ve applied to and unlocked, all in one place.</p>
         </div>
 
+        {hasFullAccess && (
+          <div className="access-unlocked-banner">
+            <span className="access-unlocked-icon" aria-hidden="true">✅</span>
+            <p>
+              <strong>You&apos;re ready to apply!</strong> Full apply access is unlocked — HR emails, official
+              application links, and Google Forms are visible on every opportunity, for good.
+            </p>
+          </div>
+        )}
+
         <div className="dashboard-stats">
           <div className="admin-stat">
             <span className="admin-stat-icon">

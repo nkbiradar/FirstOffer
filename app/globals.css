@@ -3787,6 +3787,35 @@ button.btn-danger {
   white-space: nowrap;
 }
 
+/* ── Dashboard: Access Unlocked Banner ("ready to apply" message) ──────── */
+.access-unlocked-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: color-mix(in srgb, #16a34a 10%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, #16a34a 30%, transparent);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+}
+
+.access-unlocked-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.access-unlocked-banner p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.access-unlocked-banner strong {
+  color: #16a34a;
+}
+
 /* ── SEO: Expired Opportunity Banner ──────────────────────────────────── */
 .expired-banner {
   display: flex;

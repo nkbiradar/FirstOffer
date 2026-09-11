@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   const admin = createAdminClient();
   const { error } = await admin
-    .from("user_access")
+    .from("opportunity_unlocks")
     .update({
       razorpay_payment_id,
       status: "paid",
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     .eq("razorpay_order_id", razorpay_order_id);
 
   if (error) {
-    console.error("Could not mark platform access as paid:", error.message);
+    console.error("Could not mark opportunity_unlocks as paid:", error.message);
     return NextResponse.json({ error: "Could not confirm payment. Contact support." }, { status: 500 });
   }
 
