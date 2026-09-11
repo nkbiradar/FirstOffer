@@ -3,6 +3,7 @@ import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import { getPublishedOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
+import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import type { OpportunityType, WorkMode } from "@/types/supabase";
 
 const VALID_TYPES: OpportunityType[] = ["internship", "full_time"];
@@ -112,9 +113,21 @@ export default async function OpportunitiesPage({
     return qs ? `/opportunities?${qs}` : "/opportunities";
   }
 
+  const breadcrumbsJsonLd = buildLandingBreadcrumbsJsonLd("All Opportunities", "/opportunities");
+
   return (
     <main className="page page-wide opportunities-page">
+      {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+      />
       <div className="container">
+        <nav className="breadcrumbs" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="breadcrumbs-sep" aria-hidden="true">/</span>
+          <span className="breadcrumbs-current" aria-current="page">All Opportunities</span>
+        </nav>
         <section className="opportunities-hero">
           <div className="opportunities-hero-text">
             <span className="eyebrow">

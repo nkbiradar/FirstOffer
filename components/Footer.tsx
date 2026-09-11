@@ -4,9 +4,12 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
-        <span>&copy; {new Date().getFullYear()} FirstOffer &mdash; Fresher opportunities, one place.</span>
+        <span>&copy; {new Date().getFullYear()} FirstOffer &mdash; Fresher opportunities across India.</span>
         <nav className="footer-links" aria-label="Footer">
-          <Link href="/opportunities">Opportunities</Link>
+          <Link href="/fresher-jobs">Fresher Jobs</Link>
+          <Link href="/tech-jobs">Tech Jobs</Link>
+          <Link href="/off-campus-jobs">Off-Campus</Link>
+          <Link href="/opportunities">All Openings</Link>
           <Link href="/companies">Companies</Link>
           <Link href="/about">About</Link>
           <Link href="/terms">Terms</Link>

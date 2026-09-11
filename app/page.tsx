@@ -10,33 +10,27 @@ import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { avatarGradient, initials } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 
-// Overrides the generic root-layout title/description with copy led by
-// the actual search terms freshers use ("fresher jobs", "fresher IT
-// openings/jobs", "internship for freshers") — the homepage is the page
-// most likely to be someone's very first click from a search result, so
-// it's worth being explicit here rather than relying on the brand name.
 export const metadata = {
-  title: "Fresher Jobs, IT Openings & Internships — Updated Daily | FirstOffer",
+  title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
   description:
-    "FirstOffer collects live fresher jobs, fresher IT openings, internships and off-campus opportunities in one searchable feed — updated daily, apply directly, no account needed to browse.",
+    "Find your first offer faster. Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India. Updated daily.",
   alternates: { canonical: getSiteUrl() },
   openGraph: {
-    title: "Fresher Jobs, IT Openings & Internships — Updated Daily",
+    title: "Find Your First Offer Faster | FirstOffer",
     description:
-      "Live fresher jobs, IT openings, internships and off-campus opportunities in one place — updated daily, apply directly.",
+      "Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
     url: getSiteUrl(),
     type: "website",
+    images: [{ url: "/images/hero-journey.webp", width: 1672, height: 941 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Fresher Jobs, IT Openings & Internships — Updated Daily",
-    description: "Live fresher jobs, IT openings and internships — updated daily on FirstOffer.",
+    title: "Find Your First Offer Faster | FirstOffer",
+    description:
+      "Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
   },
 };
 
-// Static — describes real site mechanics (Google sign-in, direct-apply
-// links, the applications tracker), not a fabricated "profile/skills" flow.
-// No live data needed here, unlike the companies/stats sections below.
 const HOW_IT_WORKS = [
   {
     title: "Browse, no sign-in needed",
@@ -64,81 +58,77 @@ export default async function HomePage() {
     getPublishedTestimonials(),
   ]);
 
-  // Real companies with at least one live, published opportunity right
-  // now — sorted by how many they have open. No fixed roster, no fake
-  // "Verified" claim; whatever's actually live is what shows up here.
   const topCompanies = companies
     .filter((company) => company.publishedOpportunityCount > 0)
     .sort((a, b) => b.publishedOpportunityCount - a.publishedOpportunityCount)
     .slice(0, 8);
 
+  const siteUrl = getSiteUrl();
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "FirstOffer",
+    url: siteUrl,
+    description:
+      "Find your first offer faster. Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/opportunities?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <main>
+      {/* WebSite Schema for SearchAction */}
+      {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+
       <section className="hero">
         <div className="container hero-content">
           <div className="hero-copy hero-copy-centered">
             <span className="eyebrow">
               <span className="eyebrow-dot" />
-              Built for freshers, updated daily
+              Built for Freshers • Updated Daily
             </span>
 
             <h1>
-              Same Student.
+              Find Your First Offer
               <br />
               <span className="highlight-swoosh">
-                A Brighter Tomorrow.
+                Faster.
                 <svg className="swoosh-svg" viewBox="0 0 320 24" fill="none" aria-hidden="true">
                   <path d="M4 15c48-12 240-16 312 3" stroke="var(--color-accent)" strokeWidth="6" strokeLinecap="round" />
                 </svg>
               </span>
             </h1>
 
-            <p className="hero-values">Opportunities. Guidance. Growth. All in one place.</p>
+            <p className="hero-sub" style={{ fontSize: 17, maxWidth: 640 }}>
+              Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.
+            </p>
 
-            {/* Fixed marketing line, not tied to today's actual published count
-                (that's what the "Opportunities today" stat tile below already
-                shows live) — a stated freshness promise, not a live figure. */}
-            <p className="hero-tagline">50+ new opportunities added every day</p>
-
-            {/* Explains *why* listings only stay up 2 days (see the
-                expires_at logic in lib/data/admin-opportunities.ts) — frames
-                it as the real-world reason (companies close hiring), not a
-                site limitation, and nudges urgency without being alarming. */}
             <p className="hero-note">
               Older opportunities expire within 2 days as companies close hiring — apply fast.
             </p>
 
-            <p className="hero-sub">
-              FirstOffer collects internships, full-time roles and off-campus opportunities from
-              everywhere and organizes them in one clean, searchable feed — so you spend less time
-              hunting and more time applying.
-            </p>
-
-            {/* The marketing hook the user asked for directly — honest, not a
-                guarantee: the real differentiator is speed/directness (apply
-                same-day, no placement-cell queue), not a promised outcome like
-                "guaranteed interview calls," which nothing here can actually
-                back up and isn't claimed. */}
-            <p className="hero-hook">Skip the placement cell. Apply directly, the same day it goes live.</p>
-
             <div className="hero-actions">
-              <Link className="btn btn-primary" href="/opportunities">
-                Explore Opportunities
+              <Link className="btn btn-primary" href="/fresher-jobs">
+                Find Fresher Jobs
               </Link>
-              <Link className="btn btn-secondary" href="/companies">
-                Browse Companies
+              <Link className="btn btn-secondary" href="/tech-jobs">
+                Browse Tech Jobs
               </Link>
             </div>
           </div>
 
-          {/* The journey scene — chaos wall behind, a lit path ahead to a
-              signposted skyline. Purely atmospheric/illustrative (real alt
-              text below carries the meaning for screen readers); the actual
-              claims are the real copy above and the trust-bar/stats below. */}
           <div className="hero-journey">
             <Image
               className="hero-journey-img"
-              alt="A student stands at a fork in the road with a wall of scattered notes (confusion, missed deadlines, rejections) behind them, and a lit path ahead leading toward a sunrise skyline, past a signpost reading Internships, Full-Time Jobs, Off-Campus, Startup Roles, Dream Career."
+              alt="Students navigating fresh opportunities towards sunrise skyline with FirstOffer"
               src="/images/hero-journey.webp"
               width={1672}
               height={941}
@@ -151,10 +141,6 @@ export default async function HomePage() {
             <span className="hero-spark hero-spark-5" />
           </div>
 
-          {/* Leads with the 48-hour auto-expiry (Step 9) as the actual trust
-              pitch, not just a tagline — the real differentiator against
-              stale listings elsewhere is that nothing here can go stale.
-              Purely additive/presentational; no data or query changes. */}
           <div className="trust-bar">
             <div className="trust-item">
               <span className="trust-item-icon" aria-hidden="true">
@@ -171,11 +157,7 @@ export default async function HomePage() {
             <div className="trust-item">
               <span className="trust-item-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path
-                    d="M5 12h14M13 6l6 6-6 6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                  <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
               <p className="trust-item-title">Straight to the source</p>
@@ -224,6 +206,81 @@ export default async function HomePage() {
       </section>
 
       <div className="container">
+        {/* Explore by Category: SEO Internal Linking Hub */}
+        <Reveal>
+          <section className="section" style={{ paddingTop: 16 }}>
+            <div className="section-header">
+              <div>
+                <span className="eyebrow">
+                  <span className="eyebrow-dot" />
+                  Explore Opportunities
+                </span>
+                <h2 style={{ marginTop: 8 }}>Find Your Next Opportunity by Category</h2>
+                <p className="section-sub">
+                  Targeted pathways for freshers, engineers, and recent graduates looking for verified roles.
+                </p>
+              </div>
+            </div>
+
+            <div className="seo-categories-grid">
+              <Link href="/fresher-jobs" className="seo-category-card">
+                <div className="seo-category-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                </div>
+                <h3>
+                  Fresher Jobs
+                  <span>&rarr;</span>
+                </h3>
+                <p>Entry-level jobs and internships tailored for freshers and the 2026 batch.</p>
+              </Link>
+
+              <Link href="/tech-jobs" className="seo-category-card">
+                <div className="seo-category-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" />
+                  </svg>
+                </div>
+                <h3>
+                  Tech &amp; Software Jobs
+                  <span>&rarr;</span>
+                </h3>
+                <p>Software development, frontend, backend, QA, and data roles across India.</p>
+              </Link>
+
+              <Link href="/off-campus-jobs" className="seo-category-card">
+                <div className="seo-category-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <h3>
+                  Off-Campus Drives
+                  <span>&rarr;</span>
+                </h3>
+                <p>Open recruitment drives and direct application links with no placement cell queue.</p>
+              </Link>
+
+              <Link href="/companies" className="seo-category-card">
+                <div className="seo-category-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                </div>
+                <h3>
+                  Companies Hiring
+                  <span>&rarr;</span>
+                </h3>
+                <p>Browse active companies with live, verified openings on FirstOffer.</p>
+              </Link>
+            </div>
+          </section>
+        </Reveal>
+
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
             <div className="section-header">
@@ -242,8 +299,8 @@ export default async function HomePage() {
                 </span>
                 <h3>Nothing published today just yet</h3>
                 <p>Check back soon, or browse everything that&apos;s currently live.</p>
-                <Link className="btn btn-secondary btn-sm" href="/opportunities">
-                  View all opportunities
+                <Link className="btn btn-secondary btn-sm" href="/fresher-jobs">
+                  View all fresher jobs
                 </Link>
               </div>
             ) : (
@@ -285,13 +342,13 @@ export default async function HomePage() {
                   stale, it&apos;s pulled within 48 hours. No account walls, no recruiter middlemen — just a direct
                   line from what&apos;s hiring to where you apply.
                 </p>
-                <Link className="btn btn-secondary btn-sm" href="/opportunities">
+                <Link className="btn btn-secondary btn-sm" href="/fresher-jobs">
                   See what&apos;s live right now
                 </Link>
               </div>
               <Image
                 className="mission-photo"
-                alt=""
+                alt="Direct application to fresher jobs on FirstOffer"
                 src="/images/apply-illustration.webp"
                 width={500}
                 height={745}
@@ -360,7 +417,7 @@ export default async function HomePage() {
             <div className="steps-panel">
               <Image
                 className="steps-photo"
-                alt=""
+                alt="Student journey to finding their first job"
                 src="/images/journey-illustration.webp"
                 width={520}
                 height={729}
@@ -406,7 +463,7 @@ export default async function HomePage() {
             <div className="closing-panel">
               <Image
                 className="closing-photo"
-                alt="Students reviewing an opportunity together"
+                alt="Students reviewing a fresher job opportunity together"
                 src="/images/students.jpg"
                 width={1200}
                 height={800}
@@ -417,8 +474,8 @@ export default async function HomePage() {
                   No account walls, no stale listings, no guessing whether a posting is still open. Just every live
                   fresher opportunity, in one place, for as long as it&apos;s actually hiring.
                 </p>
-                <Link className="btn btn-primary" href="/opportunities">
-                  Explore Opportunities
+                <Link className="btn btn-primary" href="/fresher-jobs">
+                  Find Fresher Jobs
                 </Link>
               </div>
             </div>

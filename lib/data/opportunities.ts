@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { Opportunity, OpportunityType, WorkMode } from "@/types/supabase";
 
 export type OpportunityCompanySummary = {
@@ -6,6 +7,7 @@ export type OpportunityCompanySummary = {
   name: string;
   slug: string;
   logo_url: string | null;
+  website: string | null;
 };
 
 export type OpportunityWithCompany = Opportunity & {
@@ -31,7 +33,7 @@ export type ListOpportunitiesResult = {
   pageSize: number;
 };
 
-const OPPORTUNITY_SELECT = "*, company:companies(id, name, slug, logo_url)";
+const OPPORTUNITY_SELECT = "*, company:companies(id, name, slug, logo_url, website)";
 
 /**
  * Removes characters that would otherwise break a PostgREST filter
@@ -370,3 +372,156 @@ export async function getAllPublishedOpportunityIds(): Promise<OpportunitySitema
 
   return (data ?? []) as OpportunitySitemapEntry[];
 }
+
+export type OpportunityDetailResult = {
+  opportunity: OpportunityWithCompany | null;
+  isExpired: boolean;
+};
+
+/**
+ * Loads an opportunity and checks whether it is active or expired.
+ * If expired (passed 48hr window or deadline passed), allows the detail page
+ * to show a polite 'Expired' notice and related active jobs instead of an abrupt 404,
+ * while preventing active Google Jobs schema from remaining attached.
+ */
+export async function getOpportunityWithExpiryStatus(id: string): Promise<OpportunityDetailResult> {
+  const active = await getOpportunityById(id);
+  if (active) {
+    return { opportunity: active, isExpired: false };
+  }
+
+  // If not found via public RLS client, inspect via admin client
+  // to detect if it is an expired job rather than an unknown URL.
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from("opportunities")
+      .select(OPPORTUNITY_SELECT)
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error || !data) {
+      return { opportunity: null, isExpired: false };
+    }
+
+    const row = data as OpportunityWithCompany;
+    if (row.status === "draft") {
+      return { opportunity: null, isExpired: false };
+    }
+
+    const isPastExpires = row.expires_at ? new Date(row.expires_at) <= new Date() : false;
+    const isPastDeadline = row.deadline ? row.deadline < todayDateKey() : false;
+    const isExpired = row.status === "expired" || isPastExpires || isPastDeadline;
+
+    return {
+      opportunity: row,
+      isExpired,
+    };
+  } catch {
+    return { opportunity: null, isExpired: false };
+  }
+}
+
+/**
+ * Fetches real related opportunities for an opportunity detail page.
+ * Prioritizes active jobs in similar roles or same opportunity type.
+ */
+export async function getRelatedOpportunities(
+  current: OpportunityWithCompany,
+  limit = 3,
+): Promise<OpportunityWithCompany[]> {
+  const supabase = await createClient();
+  let builder = applyPublishedFilter(supabase.from("opportunities").select(OPPORTUNITY_SELECT));
+  builder = builder.neq("id", current.id);
+
+  if (current.opportunity_type) {
+    builder = builder.eq("opportunity_type", current.opportunity_type);
+  }
+
+  const { data, error } = await builder
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data || data.length === 0) {
+    return getLatestOpportunities(limit);
+  }
+
+  return (data ?? []) as OpportunityWithCompany[];
+}
+
+/**
+ * Queries real jobs for /tech-jobs SEO landing page.
+ * Targets software engineering, web development, data and IT fresher openings.
+ */
+export async function getTechOpportunities(limit = 24): Promise<{
+  opportunities: OpportunityWithCompany[];
+  total: number;
+}> {
+  const supabase = await createClient();
+  const techKeywords = [
+    "developer",
+    "engineer",
+    "software",
+    "frontend",
+    "backend",
+    "full stack",
+    "data",
+    "analyst",
+    "qa",
+    "intern",
+    "tech",
+  ];
+
+  let builder = applyPublishedFilter(
+    supabase.from("opportunities").select(OPPORTUNITY_SELECT, { count: "exact" }),
+  );
+
+  const orFilter = techKeywords.map((k) => `role.ilike.%${k}%`).join(",");
+  builder = builder.or(orFilter);
+
+  const { data, count, error } = await builder
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data || data.length === 0) {
+    const fallback = await getPublishedOpportunities({ pageSize: limit });
+    return { opportunities: fallback.opportunities, total: fallback.total };
+  }
+
+  return {
+    opportunities: (data ?? []) as OpportunityWithCompany[],
+    total: count ?? data.length,
+  };
+}
+
+/**
+ * Queries real jobs for /off-campus-jobs SEO landing page.
+ * Targets off-campus fresher drives with direct application URLs or forms.
+ */
+export async function getOffCampusOpportunities(limit = 24): Promise<{
+  opportunities: OpportunityWithCompany[];
+  total: number;
+}> {
+  const supabase = await createClient();
+  let builder = applyPublishedFilter(
+    supabase.from("opportunities").select(OPPORTUNITY_SELECT, { count: "exact" }),
+  );
+
+  // Focus on listings with direct application routes
+  builder = builder.or("application_url.not.is.null,google_form_url.not.is.null,hr_email.not.is.null");
+
+  const { data, count, error } = await builder
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data || data.length === 0) {
+    const fallback = await getPublishedOpportunities({ pageSize: limit });
+    return { opportunities: fallback.opportunities, total: fallback.total };
+  }
+
+  return {
+    opportunities: (data ?? []) as OpportunityWithCompany[],
+    total: count ?? data.length,
+  };
+}
+

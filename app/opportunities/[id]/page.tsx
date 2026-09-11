@@ -2,7 +2,10 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getOpportunityById } from "@/lib/data/opportunities";
+import {
+  getOpportunityWithExpiryStatus,
+  getRelatedOpportunities,
+} from "@/lib/data/opportunities";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
 import { avatarGradient, initials } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
@@ -10,9 +13,13 @@ import { getUser } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { CONTACT_UNLOCK_PRICE_INR } from "@/lib/payments/razorpay";
-import { buildJobPostingJsonLd } from "@/lib/seo/job-posting";
+import {
+  buildJobPostingJsonLd,
+  buildJobBreadcrumbsJsonLd,
+} from "@/lib/seo/job-posting";
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
+import OpportunityCard from "@/components/OpportunityCard";
 
 const TYPE_LABELS: Record<string, string> = {
   internship: "Internship",
@@ -29,13 +36,8 @@ type ApplyAction = { label: string; href: string };
 
 type Params = { id: string };
 
-// generateMetadata() and the page component both need this opportunity —
-// cache() (React's per-request memoization) means the second call reuses
-// the first request's result instead of hitting Supabase twice.
-const getCachedOpportunity = cache(getOpportunityById);
+const getCachedOpportunityDetail = cache(getOpportunityWithExpiryStatus);
 
-// Priority: Application Link -> Google Form -> HR Email (mailto). No
-// internal application system — this just points at the real destination.
 function getApplyAction(
   opportunity: Pick<OpportunityWithCompany, "application_url" | "google_form_url" | "hr_email">,
 ): ApplyAction | null {
@@ -62,31 +64,32 @@ function formatDate(value: string | null) {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { id } = await params;
-  const opportunity = await getCachedOpportunity(id);
+  const { opportunity, isExpired } = await getCachedOpportunityDetail(id);
 
   if (!opportunity) {
     return { title: "Opportunity not found — FirstOffer" };
   }
 
   const companyName = opportunity.company?.name ?? "";
-  // Keyword-led (role + "for Freshers" + company) rather than brand-led —
-  // this is what someone searching "<role> fresher jobs" or "<company>
-  // fresher openings" actually types, and it's what shows as the blue link
-  // in search results.
+  const is2026Batch = opportunity.batch?.some((b) => b.includes("2026"));
+  const batchKeyword = is2026Batch ? "2026 Batch" : "Freshers";
+
   const title = companyName
-    ? `${opportunity.role} at ${companyName} — Fresher Jobs | FirstOffer`
-    : `${opportunity.role} — Fresher Jobs | FirstOffer`;
+    ? `${opportunity.role} at ${companyName} — Fresher Jobs ${is2026Batch ? "2026 " : ""}| FirstOffer`
+    : `${opportunity.role} — Fresher Jobs in India | FirstOffer`;
 
   const descriptionParts = [
     opportunity.opportunity_type && TYPE_LABELS[opportunity.opportunity_type],
     companyName && `at ${companyName}`,
     opportunity.location,
     opportunity.work_mode && WORK_MODE_LABELS[opportunity.work_mode],
+    `Open for ${batchKeyword}`,
   ].filter(Boolean);
+
   const description =
     descriptionParts.length > 0
-      ? `${descriptionParts.join(" · ")} — apply directly on FirstOffer, the fresher jobs and internships board.`
-      : "Find internships, full-time roles and off-campus opportunities for freshers on FirstOffer.";
+      ? `${opportunity.role} ${descriptionParts.join(" · ")} — find fresher jobs, tech jobs, and off-campus opportunities on FirstOffer.`
+      : "Find internships, full-time tech roles and off-campus opportunities for freshers on FirstOffer.";
 
   const url = `${getSiteUrl()}/opportunities/${id}`;
 
@@ -94,8 +97,29 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "article" },
-    twitter: { card: "summary", title, description },
+    robots: isExpired
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      siteName: "FirstOffer",
+      images: [
+        {
+          url: opportunity.company?.logo_url || "/images/hero-journey.webp",
+          width: 1200,
+          height: 630,
+          alt: `${opportunity.role} at ${companyName}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -115,21 +139,18 @@ function ApplyButton({ action, className = "" }: { action: ApplyAction; classNam
   );
 }
 
-// Relies on RLS (status='published' and not expired) to hide drafts/expired
-// opportunities — a direct hit on this URL for one of those correctly gets
-// no row back from Supabase, not just a client-side check.
 export default async function OpportunityDetailPage({ params }: { params: Promise<Params> }) {
   const { id } = await params;
-  const opportunity = await getCachedOpportunity(id);
+  const { opportunity, isExpired } = await getCachedOpportunityDetail(id);
   if (!opportunity) notFound();
 
-  const user = await getUser();
+  const [user, relatedOpportunities] = await Promise.all([
+    getUser(),
+    getRelatedOpportunities(opportunity, 3),
+  ]);
+
   const isApplied = user ? await isOpportunityApplied(user.id, id) : false;
-  // Every apply route — a direct application link, a Google Form, HR
-  // email/contact, and the free-text "how to apply" instructions — across
-  // EVERY opportunity on the site is gated behind a single one-time ₹49
-  // payment. `applyAction` below still resolves to the real destination;
-  // `canShowApply` decides whether it's actually rendered.
+
   const hasApplyContent = Boolean(
     opportunity.application_url ||
       opportunity.google_form_url ||
@@ -138,7 +159,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.how_to_apply,
   );
   const applyUnlocked = user && hasApplyContent ? await hasFullAccess(user.id) : false;
-  const canShowApply = !hasApplyContent || applyUnlocked;
+  const canShowApply = !isExpired && (!hasApplyContent || applyUnlocked);
 
   const {
     role,
@@ -162,7 +183,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     company,
   } = opportunity;
 
-  const applyAction = getApplyAction(opportunity);
+  const applyAction = !isExpired ? getApplyAction(opportunity) : null;
   const compensation = [stipend, salary].filter(Boolean);
   const workModeLabel = work_mode ? WORK_MODE_LABELS[work_mode] : null;
   const deadlineLabel = formatDate(deadline);
@@ -177,25 +198,67 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     batch.length > 0 && `open to the ${batch.join(" / ")} batch${batch.length > 1 ? "es" : ""}`,
   ].filter(Boolean);
 
-  // Google for Jobs (the rich job-search experience inside Google Search)
-  // only picks a page up when it carries valid JobPosting structured data —
-  // this is the single highest-leverage SEO piece on the whole site.
-  const jobPostingJsonLd = buildJobPostingJsonLd(opportunity);
+  // Structured data:
+  // Valid JobPosting schema is only applied to ACTIVE opportunities.
+  // Google guidance explicitly says to remove JobPosting schema or set validThrough in past for expired jobs.
+  const jobPostingJsonLd = !isExpired ? buildJobPostingJsonLd(opportunity) : null;
+  const breadcrumbsJsonLd = buildJobBreadcrumbsJsonLd(opportunity);
 
   return (
     <main className="page opportunity-detail">
+      {/* BreadcrumbList schema */}
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
+
+      {/* JobPosting schema for Google for Jobs */}
+      {jobPostingJsonLd && (
+        /* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+        />
+      )}
+
       <div className="container" style={{ maxWidth: 760, padding: 0 }}>
-        <Link className="back-link" href="/opportunities">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-            <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          Back to Opportunities
-        </Link>
+        {/* Visual Breadcrumbs */}
+        <nav className="breadcrumbs" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="breadcrumbs-sep" aria-hidden="true">/</span>
+          <Link href="/fresher-jobs">Fresher Jobs</Link>
+          <span className="breadcrumbs-sep" aria-hidden="true">/</span>
+          <span className="breadcrumbs-current" aria-current="page">
+            {companyName ? `${role} at ${companyName}` : role}
+          </span>
+        </nav>
+
+        {isExpired && (
+          <div className="expired-banner" role="alert">
+            <div className="expired-banner-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>Applications Closed for This Position</span>
+            </div>
+            <p>
+              This job opening at {companyName || "the company"} has reached its deadline or expired.
+              FirstOffer updates listings daily so you only spend time on active fresher jobs. Explore
+              similar live openings below.
+            </p>
+            <div className="expired-banner-actions">
+              <Link className="btn btn-primary btn-sm" href="/fresher-jobs">
+                Browse Live Fresher Jobs
+              </Link>
+              <Link className="btn btn-secondary btn-sm" href="/tech-jobs">
+                Tech Jobs
+              </Link>
+            </div>
+          </div>
+        )}
 
         <header className="card detail-header">
           {companyName && (
@@ -219,25 +282,30 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             {location && <span className="badge badge-neutral">{location}</span>}
             {workModeLabel && <span className="badge badge-neutral">{workModeLabel}</span>}
             {batch.length > 0 && <span className="badge badge-neutral">Batch {batch.join(" / ")}</span>}
+            {isExpired && <span className="badge badge-urgency-critical">Expired</span>}
           </div>
 
           {compensation.length > 0 && <p className="opportunity-comp">{compensation.join(" · ")}</p>}
 
-          {canShowApply && applyAction && (
-            <div className="apply-inline">
-              <ApplyButton action={applyAction} />
-              <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
-            </div>
-          )}
-          {canShowApply && !applyAction && (
-            <div className="apply-inline">
-              <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
-            </div>
-          )}
-          {!canShowApply && (
-            <div className="apply-inline">
-              <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
-            </div>
+          {!isExpired && (
+            <>
+              {canShowApply && applyAction && (
+                <div className="apply-inline">
+                  <ApplyButton action={applyAction} />
+                  <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
+                </div>
+              )}
+              {canShowApply && !applyAction && (
+                <div className="apply-inline">
+                  <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
+                </div>
+              )}
+              {!canShowApply && (
+                <div className="apply-inline">
+                  <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
+                </div>
+              )}
+            </>
           )}
 
           <div className="resume-tip-banner">
@@ -251,7 +319,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               </svg>
             </span>
             <p>
-              <strong>Tailor your resume to the JD.</strong> That&apos;s what actually gets you shortlisted.
+              <strong>Tailor your resume to the JD.</strong> That&apos;s what actually gets freshers shortlisted.
             </p>
           </div>
         </header>
@@ -268,7 +336,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
         {(degree.length > 0 || branches.length > 0 || eligibility) && (
           <section className="card">
-            <h2>Eligibility</h2>
+            <h2>Eligibility Criteria</h2>
             {degree.length > 0 && <p>Degree: {degree.join(", ")}</p>}
             {branches.length > 0 && <p>Branch: {branches.join(", ")}</p>}
             {eligibility && <p className="preserve-whitespace">{eligibility}</p>}
@@ -277,7 +345,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
         {skills.length > 0 && (
           <section className="card">
-            <h2>Skills</h2>
+            <h2>Required Skills</h2>
             <p className="opportunity-skills">
               {skills.map((skill) => (
                 <span className="skill-chip" key={skill}>
@@ -317,7 +385,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </section>
         )}
 
-        {(canShowApply ? Boolean(how_to_apply || hr_email || hr_contact) : hasApplyContent) || deadlineLabel ? (
+        {!isExpired && ((canShowApply ? Boolean(how_to_apply || hr_email || hr_contact) : hasApplyContent) || deadlineLabel) && (
           <section className="card">
             <h2>Application Information</h2>
             {canShowApply && how_to_apply && <p className="preserve-whitespace">{how_to_apply}</p>}
@@ -334,12 +402,37 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             )}
             {deadlineLabel && <p>Application Deadline: {deadlineLabel}</p>}
           </section>
-        ) : null}
+        )}
 
-        {canShowApply && applyAction && <ApplyButton action={applyAction} className="btn-block" />}
+        {!isExpired && canShowApply && applyAction && (
+          <ApplyButton action={applyAction} className="btn-block" />
+        )}
+
+        {/* Related Opportunities Section */}
+        {relatedOpportunities.length > 0 && (
+          <section className="related-jobs-section">
+            <div className="related-jobs-header">
+              <div>
+                <h2>Related Fresher Jobs &amp; Opportunities</h2>
+                <p>Explore more live openings matching your background and interests.</p>
+              </div>
+              <Link href="/fresher-jobs">
+                View all jobs
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+            <div className="opportunity-grid">
+              {relatedOpportunities.map((relOpp) => (
+                <OpportunityCard key={relOpp.id} opportunity={relOpp} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
-      {canShowApply && applyAction && (
+      {!isExpired && canShowApply && applyAction && (
         <div className="apply-bar">
           <ApplyButton action={applyAction} />
         </div>

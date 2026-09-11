@@ -6,11 +6,11 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const LINKS = [
-  { href: "/opportunities", label: "Opportunities" },
-  { href: "/opportunities?type=internship", label: "Internships" },
-  { href: "/opportunities?type=full_time", label: "Full-Time" },
+  { href: "/fresher-jobs", label: "Fresher Jobs" },
+  { href: "/tech-jobs", label: "Tech Jobs" },
+  { href: "/off-campus-jobs", label: "Off-Campus" },
+  { href: "/opportunities", label: "All Openings" },
   { href: "/companies", label: "Companies" },
-  { href: "/about", label: "About" },
 ];
 
 type NavUser = { email: string | null } | null;
