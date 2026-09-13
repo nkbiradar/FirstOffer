@@ -319,7 +319,8 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               </svg>
             </span>
             <p>
-              <strong>Tailor your resume to the JD.</strong> That&apos;s what actually gets freshers shortlisted.
+              <strong>Tailor your resume to the JD.</strong> That&apos;s what actually gets freshers shortlisted.{" "}
+              <Link href={`/resume-match?opportunityId=${id}`}>Check your resume&apos;s keyword match &rarr;</Link>
             </p>
           </div>
         </header>
