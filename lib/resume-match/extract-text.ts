@@ -2,7 +2,24 @@
 // into memory, converted to plain text, compared against the job, and then
 // discarded — nothing here writes the resume to disk, Supabase Storage, or
 // any database table. See app/api/resume-match/route.ts.
-import { PDFParse } from "pdf-parse";
+//
+// Uses pdf-parse@1.x (not 2.x) deliberately: 2.x pulls in pdfjs-dist +
+// @napi-rs/canvas, a native/compiled dependency that needs system shared
+// libraries pdf-parse's own build doesn't ship. It worked in local dev and
+// in this project's Linux verification container, but crashed on every
+// upload in Vercel's actual serverless runtime -- and because the import
+// is evaluated at module load, it broke DOCX/TXT uploads too, not just
+// PDFs. pdf-parse@1.x only depends on "debug" + "node-ensure", both pure
+// JS, so there's no native binary to break in any environment.
+//
+// Importing "pdf-parse/lib/pdf-parse.js" instead of the package root is
+// also deliberate: pdf-parse's own index.js has a leftover debug harness
+// gated on `!module.parent` that's meant to no-op when the package is
+// required normally, but that check doesn't hold up under how Next.js
+// evaluates ESM imports -- it fires for real and crashes every request
+// with "ENOENT: ./test/data/05-versions-space.pdf". The actual parser
+// lives one level down with none of that, so import it directly.
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import mammoth from "mammoth";
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB — generous for a text resume
@@ -35,13 +52,8 @@ export async function extractResumeText(file: File): Promise<ExtractResult> {
 
   try {
     if (name.endsWith(".pdf") || file.type === "application/pdf") {
-      const parser = new PDFParse({ data: buffer });
-      try {
-        const result = await parser.getText();
-        return finalize(result.text);
-      } finally {
-        await parser.destroy();
-      }
+      const data = await pdfParse(buffer);
+      return finalize(data.text);
     }
 
     if (

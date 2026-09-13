@@ -17,7 +17,7 @@
     "@vercel/analytics": "^2.0.1",
     "mammoth": "^1.12.3",
     "next": "^16.3.3",
-    "pdf-parse": "^2.4.5",
+    "pdf-parse": "^1.1.1",
     "razorpay": "^2.9.8",
     "react": "latest",
     "react-dom": "latest",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@types/node": "latest",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/web-push": "^3.6.4",

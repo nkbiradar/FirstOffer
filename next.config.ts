@@ -13,12 +13,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
-  // pdf-parse (Resume Keyword Matcher, see lib/resume-match/extract-text.ts)
-  // pulls in @napi-rs/canvas, a native (compiled) dependency. Bundling a
-  // native module into the serverless function/dev server breaks its
-  // binary loading — this tells Next.js to leave these as plain
-  // require()s resolved from node_modules at runtime instead.
-  serverExternalPackages: ["pdf-parse", "@napi-rs/canvas", "pdfjs-dist"],
 };
 
 export default nextConfig;
