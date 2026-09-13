@@ -6,6 +6,7 @@ import {
   updateOpportunity,
 } from "@/lib/data/admin-opportunities";
 import { parseOpportunityFormData, str, VALID_STATUSES } from "@/lib/data/opportunity-form-data";
+import { sendPushToAllSubscribers } from "@/lib/push/web-push-client";
 import type { OpportunityStatus } from "@/types/supabase";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -28,7 +29,14 @@ async function handleUpdate(request: NextRequest, context: RouteContext) {
   const input = parseOpportunityFormData(formData, status);
 
   try {
-    await updateOpportunity(id, input);
+    const { opportunity, publishingNow } = await updateOpportunity(id, input);
+    if (publishingNow) {
+      void sendPushToAllSubscribers({
+        title: "1 new opportunity just added!",
+        body: `${opportunity.role} — go fast and apply before it's gone.`,
+        url: `/opportunities/${opportunity.id}`,
+      });
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update opportunity.";
     return NextResponse.redirect(

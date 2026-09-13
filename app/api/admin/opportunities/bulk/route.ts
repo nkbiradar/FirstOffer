@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
 import { parseOpportunityBulkItem, type BulkOpportunityItem } from "@/lib/data/opportunity-form-data";
+import { sendPushToAllSubscribers } from "@/lib/push/web-push-client";
 
 type BulkResult =
   | { index: number; success: true; id: string }
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
   }
 
   const results: BulkResult[] = [];
+  let publishedCount = 0;
 
   // Sequential, not parallel: company find-or-create races (two brand-new
   // opportunities for the same new company, submitted in the same batch)
@@ -47,10 +49,23 @@ export async function POST(request: NextRequest) {
       const input = parseOpportunityBulkItem(items[index]);
       const opportunity = await createOpportunity(input);
       results.push({ index, success: true, id: opportunity.id });
+      if (opportunity.status === "published") publishedCount += 1;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create opportunity.";
       results.push({ index, success: false, error: message });
     }
+  }
+
+  // One batched "go fast and apply" push for the whole daily import, not
+  // one per opportunity — a 20-item import shouldn't fire 20 notifications.
+  // Never awaited into the response's critical path failing it: push
+  // delivery is fire-and-forget from the admin's point of view.
+  if (publishedCount > 0) {
+    void sendPushToAllSubscribers({
+      title: publishedCount === 1 ? "1 new opportunity just added!" : `${publishedCount} new opportunities just added!`,
+      body: "Go fast and apply before they're gone.",
+      url: "/opportunities",
+    });
   }
 
   return NextResponse.json({ results });

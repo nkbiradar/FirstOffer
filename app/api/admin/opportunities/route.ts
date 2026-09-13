@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
 import { parseOpportunityFormData } from "@/lib/data/opportunity-form-data";
+import { sendPushToAllSubscribers } from "@/lib/push/web-push-client";
 import type { OpportunityStatus } from "@/types/supabase";
 
 // Not covered by middleware.ts (its matcher is only /admin/:path*), so every
@@ -21,6 +22,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const opportunity = await createOpportunity(input);
+    if (opportunity.status === "published") {
+      void sendPushToAllSubscribers({
+        title: "1 new opportunity just added!",
+        body: `${opportunity.role} — go fast and apply before it's gone.`,
+        url: `/opportunities/${opportunity.id}`,
+      });
+    }
     return NextResponse.redirect(
       new URL(`/admin/opportunities?created=${opportunity.id}`, request.url),
       303,

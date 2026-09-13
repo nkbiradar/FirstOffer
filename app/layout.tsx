@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -74,6 +75,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <Footer />
         </div>
         <Analytics />
+        <PushNotificationPrompt />
       </body>
     </html>
   );

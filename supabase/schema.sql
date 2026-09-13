@@ -461,3 +461,28 @@ alter table public.testimonials
   add column if not exists graduation_batch text,
   add column if not exists rating smallint check (rating is null or rating between 1 and 5),
   add column if not exists avatar_url text;
+
+-- ── push_subscriptions (Web Push — "new opportunities added" alerts) ───────
+-- Browser Push API subscriptions. Deliberately NOT tied to a signed-in
+-- user — the site never requires an account to browse, so anyone can
+-- enable notifications regardless of login state. One row per browser/
+-- device subscription (the endpoint URL is unique per browser+origin).
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.push_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  endpoint text not null unique,
+  p256dh text not null,
+  auth text not null,
+  user_agent text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.push_subscriptions enable row level security;
+
+-- No public select/insert/update/delete policy — every read/write goes
+-- through app/api/push/subscribe and app/api/push/unsubscribe using the
+-- service-role client, same pattern as opportunity_unlocks/user_access.

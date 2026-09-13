@@ -210,7 +210,7 @@ export async function createOpportunity(input: OpportunityFormInput): Promise<Op
 export async function updateOpportunity(
   id: string,
   input: OpportunityFormInput,
-): Promise<Opportunity> {
+): Promise<{ opportunity: Opportunity; publishingNow: boolean }> {
   validate(input);
 
   const existing = await getOpportunityByIdForAdmin(id);
@@ -225,7 +225,9 @@ export async function updateOpportunity(
   // re-publish (draft/expired -> published again) does reset both
   // published_at and expires_at, restarting the 2-day visibility window —
   // same as a brand-new upload, which matches how the admin would think
-  // about "putting it back up."
+  // about "putting it back up." Also the signal the caller uses to decide
+  // whether to fire a "new opportunity" push notification — an edit that
+  // was already published shouldn't re-notify.
   const publishingNow = input.status === "published" && existing.status !== "published";
 
   const payload: Partial<OpportunityInsert> = {
@@ -247,7 +249,7 @@ export async function updateOpportunity(
     .single();
 
   if (error) throw new Error(`Update failed: ${error.message}`);
-  return data as Opportunity;
+  return { opportunity: data as Opportunity, publishingNow };
 }
 
 export async function deleteOpportunity(id: string): Promise<void> {
