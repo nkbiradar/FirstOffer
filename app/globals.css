@@ -3576,6 +3576,44 @@ button.btn-danger {
   color: var(--color-text);
 }
 
+/* Site-wide trust row -- sits above the copyright/link line so the
+   reassurance (secure, verified, real support) is the first thing anyone
+   scanning the footer sees, on every page, not just the homepage. Kept
+   deliberately quiet (text-secondary, no color blocks) since the hero's
+   .trust-bar already carries the bolder pitch -- this is backup evidence,
+   not a repeat of it. */
+.footer-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  padding: 22px 0 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.footer-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+a.footer-trust-item:hover {
+  color: var(--color-text);
+}
+
+.footer-trust-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+@media (max-width: 480px) {
+  .footer-trust {
+    gap: 8px 14px;
+  }
+}
+
 /* ── Error / not-found pages ─────────────────────────────────────────── */
 
 .state-page {
