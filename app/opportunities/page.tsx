@@ -5,6 +5,7 @@ import { getPublishedOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import type { OpportunityType, WorkMode } from "@/types/supabase";
+import { getNonce } from "@/lib/security/csp";
 
 const VALID_TYPES: OpportunityType[] = ["internship", "full_time"];
 const VALID_MODES: WorkMode[] = ["remote", "hybrid", "onsite"];
@@ -53,6 +54,7 @@ export default async function OpportunitiesPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const nonce = await getNonce();
   const params = await searchParams;
   const query = firstValue(params.q)?.trim() || "";
   const typeParam = firstValue(params.type);
@@ -120,6 +122,7 @@ export default async function OpportunitiesPage({
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
       <div className="container">

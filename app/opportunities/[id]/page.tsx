@@ -20,6 +20,7 @@ import {
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import OpportunityCard from "@/components/OpportunityCard";
+import { getNonce } from "@/lib/security/csp";
 
 const TYPE_LABELS: Record<string, string> = {
   internship: "Internship",
@@ -140,6 +141,7 @@ function ApplyButton({ action, className = "" }: { action: ApplyAction; classNam
 }
 
 export default async function OpportunityDetailPage({ params }: { params: Promise<Params> }) {
+  const nonce = await getNonce();
   const { id } = await params;
   const { opportunity, isExpired } = await getCachedOpportunityDetail(id);
   if (!opportunity) notFound();
@@ -210,6 +212,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
 
@@ -218,6 +221,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
         /* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */
         <script
           type="application/ld+json"
+        nonce={nonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
         />
       )}

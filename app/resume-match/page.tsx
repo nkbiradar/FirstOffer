@@ -4,6 +4,7 @@ import { getOpportunityById } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import ResumeMatchTool from "@/components/ResumeMatchTool";
+import { getNonce } from "@/lib/security/csp";
 
 export const metadata: Metadata = {
   title: "Resume Keyword Matcher — Check Your Resume Against Any Job | FirstOffer",
@@ -49,6 +50,7 @@ export default async function ResumeMatchPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const nonce = await getNonce();
   const params = await searchParams;
   const opportunityIdParam = Array.isArray(params.opportunityId) ? params.opportunityId[0] : params.opportunityId;
 
@@ -74,10 +76,12 @@ export default async function ResumeMatchPage({
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json"
+        nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <div className="container">
         <nav className="breadcrumbs" aria-label="Breadcrumb">

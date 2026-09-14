@@ -9,6 +9,7 @@ import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { avatarGradient, initials } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
+import { getNonce } from "@/lib/security/csp";
 
 export const metadata = {
   title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
@@ -51,6 +52,7 @@ const HOW_IT_WORKS = [
 ];
 
 export default async function HomePage() {
+  const nonce = await getNonce();
   const [{ today, earlier, todayDateLabel, todayCount }, stats, companies, testimonials] = await Promise.all([
     getHomepageOpportunities(),
     getSiteStats(),
@@ -85,6 +87,7 @@ export default async function HomePage() {
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 

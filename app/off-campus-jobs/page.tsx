@@ -4,6 +4,7 @@ import OpportunityCard from "@/components/OpportunityCard";
 import { getOffCampusOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
+import { getNonce } from "@/lib/security/csp";
 
 export const metadata: Metadata = {
   title: "Off-Campus Jobs & Hiring Drives for Freshers (2026) | FirstOffer",
@@ -41,6 +42,7 @@ const OFF_CAMPUS_FAQS = [
 ];
 
 export default async function OffCampusJobsLandingPage() {
+  const nonce = await getNonce();
   const { opportunities, total } = await getOffCampusOpportunities(24);
 
   const breadcrumbsJsonLd = buildLandingBreadcrumbsJsonLd("Off-Campus Jobs", "/off-campus-jobs");
@@ -64,11 +66,13 @@ export default async function OffCampusJobsLandingPage() {
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 

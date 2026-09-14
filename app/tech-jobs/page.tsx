@@ -4,6 +4,7 @@ import OpportunityCard from "@/components/OpportunityCard";
 import { getTechOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
+import { getNonce } from "@/lib/security/csp";
 
 export const metadata: Metadata = {
   title: "Tech Jobs for Freshers — Software Engineer & IT Openings | FirstOffer",
@@ -41,6 +42,7 @@ const TECH_FAQS = [
 ];
 
 export default async function TechJobsLandingPage() {
+  const nonce = await getNonce();
   const { opportunities, total } = await getTechOpportunities(24);
 
   const breadcrumbsJsonLd = buildLandingBreadcrumbsJsonLd("Tech Jobs", "/tech-jobs");
@@ -64,11 +66,13 @@ export default async function TechJobsLandingPage() {
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
