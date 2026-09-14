@@ -94,6 +94,37 @@ export default async function HomePage() {
       <section className="hero">
         <div className="container hero-content">
           <div className="hero-copy hero-copy-centered">
+            <div className="apply-channels" role="list" aria-label="Ways to apply on every listing">
+              <div className="apply-channel-card" role="listitem">
+                <span className="apply-channel-icon" aria-hidden="true">
+                  📧
+                </span>
+                <p className="apply-channel-title">HR Email IDs</p>
+                <p className="apply-channel-desc">Apply directly through available HR email IDs</p>
+              </div>
+              <div className="apply-channel-card" role="listitem">
+                <span className="apply-channel-icon" aria-hidden="true">
+                  📞
+                </span>
+                <p className="apply-channel-title">HR / Recruiter Numbers</p>
+                <p className="apply-channel-desc">Direct contact details wherever available</p>
+              </div>
+              <div className="apply-channel-card" role="listitem">
+                <span className="apply-channel-icon" aria-hidden="true">
+                  📝
+                </span>
+                <p className="apply-channel-title">Direct Google Forms</p>
+                <p className="apply-channel-desc">Application forms shared directly by companies</p>
+              </div>
+              <div className="apply-channel-card" role="listitem">
+                <span className="apply-channel-icon" aria-hidden="true">
+                  🔗
+                </span>
+                <p className="apply-channel-title">Direct Company Links</p>
+                <p className="apply-channel-desc">Apply through official career/application links</p>
+              </div>
+            </div>
+
             <span className="eyebrow">
               <span className="eyebrow-dot" />
               Built for Freshers • Updated Daily

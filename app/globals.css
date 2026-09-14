@@ -1700,6 +1700,78 @@ button.btn-danger {
   color: var(--color-text-secondary);
 }
 
+/* The 4 "how you actually apply" cards at the very top of the hero, above
+   the eyebrow pill. White cards with a colored top border (same treatment
+   as .stat-tile below) rather than the trust-bar's solid pastel blocks --
+   these sit directly on the hero's mint background, so a mint-colored card
+   here would disappear into it. */
+.apply-channels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.apply-channel-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border-top: 3px solid var(--color-mint-strong);
+  padding: 14px 10px;
+  box-shadow: var(--shadow-xs);
+  text-align: center;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.apply-channel-card:nth-child(2) {
+  border-top-color: var(--color-lavender-strong);
+}
+
+.apply-channel-card:nth-child(3) {
+  border-top-color: var(--color-blush-strong);
+}
+
+.apply-channel-card:nth-child(4) {
+  border-top-color: var(--color-peach-strong);
+}
+
+.apply-channel-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.apply-channel-icon {
+  display: inline-flex;
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.apply-channel-title {
+  margin: 0 0 3px;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--color-text);
+}
+
+.apply-channel-desc {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .apply-channels {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .apply-channel-card {
+    padding: 12px 8px;
+  }
+}
+
 .hero-stats {
   position: relative;
   z-index: 1;
