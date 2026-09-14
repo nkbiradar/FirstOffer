@@ -3578,25 +3578,28 @@ button.btn-danger {
 
 /* Site-wide trust row -- sits above the copyright/link line so the
    reassurance (secure, verified, real support) is the first thing anyone
-   scanning the footer sees, on every page, not just the homepage. Kept
-   deliberately quiet (text-secondary, no color blocks) since the hero's
-   .trust-bar already carries the bolder pitch -- this is backup evidence,
-   not a repeat of it. */
+   scanning the footer sees, on every page, not just the homepage. Styled
+   like the muted, monochrome trust rows on established sites (outline
+   icons, small caption-weight text, one neutral color) rather than the
+   hero's bolder pastel .trust-bar -- this is quiet supporting evidence,
+   not a second sales pitch. */
 .footer-trust {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 22px;
-  padding: 22px 0 20px;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 20px 0;
   border-bottom: 1px solid var(--color-border);
 }
 
 .footer-trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 12.5px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.01em;
 }
 
 a.footer-trust-item:hover {
@@ -3604,13 +3607,14 @@ a.footer-trust-item:hover {
 }
 
 .footer-trust-icon {
-  font-size: 14px;
-  line-height: 1;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 480px) {
   .footer-trust {
-    gap: 8px 14px;
+    gap: 8px 16px;
   }
 }
 

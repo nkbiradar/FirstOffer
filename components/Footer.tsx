@@ -6,32 +6,72 @@ export default function Footer() {
       <div className="container">
         <div className="footer-trust" role="list" aria-label="Trust and security">
           <span className="footer-trust-item" role="listitem">
-            <span className="footer-trust-icon" aria-hidden="true">
-              🔒
-            </span>
-            SSL Secured
+            <svg
+              className="footer-trust-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            SSL Encrypted
           </span>
           <span className="footer-trust-item" role="listitem">
-            <span className="footer-trust-icon" aria-hidden="true">
-              ✅
-            </span>
+            <svg
+              className="footer-trust-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
             Verified Listings
           </span>
           <span className="footer-trust-item" role="listitem">
-            <span className="footer-trust-icon" aria-hidden="true">
-              💳
-            </span>
-            Secure Payments via Razorpay
+            <svg
+              className="footer-trust-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="6" width="18" height="12" rx="2" />
+              <path d="M3 10h18" />
+            </svg>
+            Secure Payments &middot; Razorpay
           </span>
           <a
             className="footer-trust-item"
             href="mailto:nayankumarb3110@gmail.com"
             role="listitem"
           >
-            <span className="footer-trust-icon" aria-hidden="true">
-              ✉️
-            </span>
-            Real Human Support
+            <svg
+              className="footer-trust-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="M3 7l9 6 9-6" />
+            </svg>
+            Email Support
           </a>
         </div>
         <div className="footer-inner">
