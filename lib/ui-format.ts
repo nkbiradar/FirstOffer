@@ -45,6 +45,21 @@ export function formatRelativeTime(iso: string | null): string | null {
 }
 
 /**
+ * "14 Sep" — today's real date (IST), computed fresh on every request since
+ * these pages are server-rendered dynamically. Used in landing-page eyebrow
+ * pills ("X Live Roles • Updated 14 Sep") so the freshness signal shown to
+ * visitors (and present in the actual HTML Google/Bing crawl) is always the
+ * real current date, never a hardcoded or stale string.
+ */
+export function todayShortLabel(): string {
+  return new Date().toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "short",
+  });
+}
+
+/**
  * Urgency read on a job's own application `deadline` (a plain yyyy-mm-dd
  * date, IST) — "Closes today" / "Closes tomorrow" / "Closes in Xd". Only
  * for deadlines within the next 5 days, so the badge stays reserved for

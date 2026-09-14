@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
 
       <p style={{ marginTop: 20 }}>
         This policy explains what FirstOffer (&quot;we&quot;, &quot;us&quot;) collects when you use{" "}
-        firstoffer.app, why we collect it, and who we share it with. Browsing and applying to
+        firstoffer.online, why we collect it, and who we share it with. Browsing and applying to
         opportunities never requires an account — this policy mostly applies to the parts of the
         site where you choose to sign in.
       </p>

@@ -5,6 +5,7 @@ import { getTechOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import { getNonce } from "@/lib/security/csp";
+import { todayShortLabel } from "@/lib/ui-format";
 
 export const metadata: Metadata = {
   title: "Tech Jobs for Freshers — Software Engineer & IT Openings | FirstOffer",
@@ -89,7 +90,7 @@ export default async function TechJobsLandingPage() {
           <div className="opportunities-hero-text">
             <span className="eyebrow">
               <span className="eyebrow-dot" />
-              {total} Live Tech Openings
+              {total} Live Tech Openings • Updated {todayShortLabel()}
             </span>
             <h1>Tech Jobs &amp; Software Openings for Freshers</h1>
             <p>

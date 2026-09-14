@@ -5,6 +5,7 @@ import { getPublishedOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import { getNonce } from "@/lib/security/csp";
+import { todayShortLabel } from "@/lib/ui-format";
 
 export const metadata: Metadata = {
   title: "Fresher Jobs & Openings in India (2026 Batch) | FirstOffer",
@@ -89,7 +90,7 @@ export default async function FresherJobsLandingPage() {
           <div className="opportunities-hero-text">
             <span className="eyebrow">
               <span className="eyebrow-dot" />
-              {total} Live Fresher Roles
+              {total} Live Fresher Roles • Updated {todayShortLabel()}
             </span>
             <h1>Fresher Jobs &amp; Opportunities in India (2026 Batch)</h1>
             <p>

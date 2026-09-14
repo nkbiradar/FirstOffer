@@ -7,7 +7,7 @@ import SuccessStories from "@/components/SuccessStories";
 import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
-import { avatarGradient, initials } from "@/lib/ui-format";
+import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 
@@ -59,6 +59,11 @@ export default async function HomePage() {
     getCompaniesWithPublishedCounts(),
     getPublishedTestimonials(),
   ]);
+
+  // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
+  // 2026") above is already computed for the "Today's Opportunities"
+  // heading further down, but that's too long for a one-line pill.
+  const heroDateLabel = todayShortLabel();
 
   const topCompanies = companies
     .filter((company) => company.publishedOpportunityCount > 0)
@@ -127,7 +132,7 @@ export default async function HomePage() {
 
             <span className="eyebrow">
               <span className="eyebrow-dot" />
-              Built for Freshers • Updated Daily
+              {todayCount > 0 ? `${todayCount} New Today` : "Live"} • Updated {heroDateLabel}
             </span>
 
             <h1>

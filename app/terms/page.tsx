@@ -19,7 +19,7 @@ export default function TermsPage() {
       </p>
 
       <p style={{ marginTop: 20 }}>
-        By using firstoffer.app, you agree to these terms. If you don&apos;t agree, please don&apos;t
+        By using firstoffer.online, you agree to these terms. If you don&apos;t agree, please don&apos;t
         use the site.
       </p>
 

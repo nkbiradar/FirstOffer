@@ -5,6 +5,7 @@ import { getOffCampusOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import { getNonce } from "@/lib/security/csp";
+import { todayShortLabel } from "@/lib/ui-format";
 
 export const metadata: Metadata = {
   title: "Off-Campus Jobs & Hiring Drives for Freshers (2026) | FirstOffer",
@@ -89,7 +90,7 @@ export default async function OffCampusJobsLandingPage() {
           <div className="opportunities-hero-text">
             <span className="eyebrow">
               <span className="eyebrow-dot" />
-              {total} Live Off-Campus Roles
+              {total} Live Off-Campus Roles • Updated {todayShortLabel()}
             </span>
             <h1>Off-Campus Jobs &amp; Hiring Drives for Freshers</h1>
             <p>

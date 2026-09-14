@@ -6,6 +6,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import type { OpportunityType, WorkMode } from "@/types/supabase";
 import { getNonce } from "@/lib/security/csp";
+import { todayShortLabel } from "@/lib/ui-format";
 
 const VALID_TYPES: OpportunityType[] = ["internship", "full_time"];
 const VALID_MODES: WorkMode[] = ["remote", "hybrid", "onsite"];
@@ -135,7 +136,7 @@ export default async function OpportunitiesPage({
           <div className="opportunities-hero-text">
             <span className="eyebrow">
               <span className="eyebrow-dot" />
-              {total} live right now
+              {total} live right now • Updated {todayShortLabel()}
             </span>
             <h1>Fresher Jobs &amp; Internships</h1>
             <p>Search and filter live fresher IT openings, internships, full-time roles, and off-campus opportunities.</p>
