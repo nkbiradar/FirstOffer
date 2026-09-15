@@ -35,6 +35,25 @@ Skills: SQL, Excel, AI
 Google Form: https://forms.gle/example
 ---END---`;
 
+// A deliberately shorter example for the daily Internal HR quick-add flow
+// below — these come in fast from direct HR contacts and usually only have
+// a company, a role, and a way to apply, not the full CTC/skills/
+// responsibilities detail a regular listing has. Uses the exact same
+// Label: value parser as the main box above (parseBulkOpportunities), so
+// any field from EXAMPLE_FORMAT also works here if it's known — nothing
+// left blank is required, and no ---OPPORTUNITY---/---END--- markers are
+// needed either, since the parser falls back to splitting on blank lines
+// when it doesn't see that marker at all.
+const EXAMPLE_INTERNAL_FORMAT = `Company: Zeta Corp
+Role: Backend Developer Intern
+HR Email: priya@zetacorp.com
+Application URL: https://forms.gle/xyz
+
+Company: Nimbus Labs
+Role: Frontend Engineer
+HR Contact: +91 98765 43210
+Google Form: https://forms.gle/abc`;
+
 let nextId = 1;
 function newItemId() {
   nextId += 1;
@@ -116,6 +135,7 @@ type DbMatch = { existingId: string; existingStatus: string };
 export default function BulkImportClient() {
   const router = useRouter();
   const [rawText, setRawText] = useState("");
+  const [internalRawText, setInternalRawText] = useState("");
   const [items, setItems] = useState<EditableItem[]>([]);
   const [isPublishing, setIsPublishing] = useState(false);
   const [topError, setTopError] = useState<string | null>(null);
@@ -151,6 +171,31 @@ export default function BulkImportClient() {
         status: "published",
       })),
     );
+    setDbMatches(new Map());
+    setSummary(null);
+    setTopError(null);
+  }
+
+  // The daily Internal HR quick-add flow — same parser as handleParse()
+  // above (so any field from the full format still works if it's known),
+  // but every resulting item is forced to isInternal: true, and parsed
+  // items are APPENDED to the review list rather than replacing it, since
+  // this box is meant to be used alongside the main one (a day's regular
+  // postings plus a handful of internal ones, reviewed and published
+  // together). Re-running "Parse Opportunities" on the main box above will
+  // still replace the whole list, same as before this existed.
+  function handleParseInternal() {
+    const drafts = parseBulkOpportunities(internalRawText);
+    setItems((prev) => [
+      ...prev,
+      ...drafts.map((draft) => ({
+        ...draft,
+        id: newItemId(),
+        status: "published",
+        isInternal: true,
+      })),
+    ]);
+    setInternalRawText("");
     setDbMatches(new Map());
     setSummary(null);
     setTopError(null);
@@ -334,6 +379,38 @@ export default function BulkImportClient() {
             disabled={!rawText.trim() || isExtractingWithAi}
           >
             {isExtractingWithAi ? "Extracting with AI..." : "Parse with AI"}
+          </button>
+        </div>
+      </section>
+
+      <section className="card bulk-import-paste bulk-import-paste-internal">
+        <h2 className="bulk-import-internal-heading">
+          <span className="internal-hr-promo-badge">🔥 Internal HR Openings — Quick Add</span>
+        </h2>
+        <label className="bulk-field bulk-field-wide">
+          Paste today&apos;s internal openings
+          <textarea
+            rows={8}
+            value={internalRawText}
+            onChange={(e) => setInternalRawText(e.target.value)}
+            placeholder={EXAMPLE_INTERNAL_FORMAT}
+          />
+        </label>
+        <p className="hint">
+          For the ₹39/month Internal HR Openings product — just Company, Role, and how to apply is enough. Separate
+          each opening with a blank line (no <code>---OPPORTUNITY---</code>/<code>---END---</code> markers needed
+          here). Add any other field from the format above too if you have it — Type, Batch, Location, Skills, and
+          so on all still work. Everything parsed here is automatically marked as Internal HR and added to the
+          review list below, alongside anything from the regular box above.
+        </p>
+        <div className="form-actions">
+          <button
+            className="btn btn-primary internal-hr-promo-cta"
+            type="button"
+            onClick={handleParseInternal}
+            disabled={!internalRawText.trim()}
+          >
+            Parse as Internal HR Openings
           </button>
         </div>
       </section>

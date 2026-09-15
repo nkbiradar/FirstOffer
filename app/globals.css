@@ -4892,3 +4892,27 @@ a.footer-trust-item:hover {
     padding: 24px 20px;
   }
 }
+
+/* ── Admin: bulk import — Internal HR quick-add card ──────────────────── */
+/* A lighter, gold-accented treatment (not the full premium-dark surface
+   used on the public-facing promo/hero) — this is a repeated-use admin
+   utility, not a marketing moment, so it just needs to read as clearly
+   distinct from the regular-postings card above it. */
+
+.bulk-import-paste-internal {
+  border: 1px solid var(--color-gold-soft-border);
+  background:
+    linear-gradient(155deg, var(--color-gold-soft) 0%, var(--color-surface) 55%);
+}
+
+.bulk-import-internal-heading {
+  margin: 0;
+}
+
+.bulk-import-paste-internal .hint {
+  color: var(--color-text-secondary);
+}
+
+.bulk-import-paste-internal textarea {
+  border-color: var(--color-gold-soft-border);
+}
