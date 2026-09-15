@@ -121,13 +121,37 @@ function todayDateKey() {
  * Either one passing is enough to hide it from every public read here,
  * even before the lazy admin-side sweep (see sweepExpiredOpportunities in
  * lib/data/admin-opportunities.ts) gets a chance to flip its `status` to
- * "expired" in the database.
+ * "expired" in the database. Shared by applyPublishedFilter and
+ * applyInternalFilter below — everything about "is this live" is
+ * identical between the two products; only is_internal differs.
  */
-function applyPublishedFilter(builder: QueryBuilder): QueryBuilder {
+function applyStatusAndExpiryFilter(builder: QueryBuilder): QueryBuilder {
   return builder
     .eq("status", "published")
     .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .or(`deadline.is.null,deadline.gte.${todayDateKey()}`);
+}
+
+/**
+ * Published + not expired + NOT an Internal HR Opening. Used by every
+ * general public listing (homepage, /opportunities, category pages,
+ * sitemap, related-opportunities) — internal openings are deliberately
+ * excluded here so they only ever surface through /internal-openings (see
+ * getInternalOpportunities below). That exclusion is the actual substance
+ * behind the "not on regular job portals" pitch of that product, not just
+ * copy.
+ */
+function applyPublishedFilter(builder: QueryBuilder): QueryBuilder {
+  return applyStatusAndExpiryFilter(builder).eq("is_internal", false);
+}
+
+/**
+ * The mirror image of applyPublishedFilter — published + not expired +
+ * IS an Internal HR Opening. Used only by getInternalOpportunities, for
+ * the /internal-openings page.
+ */
+function applyInternalFilter(builder: QueryBuilder): QueryBuilder {
+  return applyStatusAndExpiryFilter(builder).eq("is_internal", true);
 }
 
 /** Latest published, non-expired opportunities — used on the homepage. */
@@ -323,6 +347,38 @@ export async function getPublishedOpportunities(
     page,
     pageSize,
   };
+}
+
+export type InternalOpportunitiesResult = {
+  opportunities: OpportunityWithCompany[];
+  total: number;
+};
+
+/**
+ * Published, non-expired Internal HR Openings, newest first — the entire
+ * listing behind /internal-openings. Cards render exactly like any other
+ * opportunity (role, company, batch, location — see OpportunityCard),
+ * since the actual gated content is the apply details on the detail page,
+ * not the card itself; browsing this list requires no subscription, only
+ * unlocking a specific opportunity's apply details does (see
+ * hasInternalAccess in lib/data/subscriptions.ts).
+ */
+export async function getInternalOpportunities(limit = 50): Promise<InternalOpportunitiesResult> {
+  const supabase = await createClient();
+  const builder = applyInternalFilter(
+    supabase.from("opportunities").select(OPPORTUNITY_SELECT, { count: "exact" }),
+  );
+
+  const { data, count, error } = await builder
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("getInternalOpportunities failed:", error.message);
+    return { opportunities: [], total: 0 };
+  }
+
+  return { opportunities: (data ?? []) as OpportunityWithCompany[], total: count ?? 0 };
 }
 
 /**

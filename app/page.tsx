@@ -335,6 +335,44 @@ export default async function HomePage() {
           </section>
         </Reveal>
 
+        {/* Internal HR Openings — a separately-sold, deliberately
+            higher-contrast promo distinct from the rest of the site's
+            indigo/teal branding, linking to /internal-openings. The copy
+            here mirrors PRODUCT_COPY.internal_hr in UnlockContactCard.tsx
+            and is only truthful because getInternalOpportunities() /
+            applyInternalFilter() (lib/data/opportunities.ts) structurally
+            keep these roles out of every other listing on the site. */}
+        <Reveal>
+          <section className="section" style={{ paddingTop: 8 }}>
+            <Link href="/internal-openings" className="internal-hr-promo">
+              <span className="internal-hr-promo-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <rect x="5" y="11" width="14" height="9" rx="2" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Exclusive Access
+              </span>
+              <h2 className="internal-hr-promo-heading">🔥 Internal HR Openings</h2>
+              <p className="internal-hr-promo-title">Get Jobs Before Everyone Else 🚀</p>
+              <p className="internal-hr-promo-sub">
+                Exclusive openings shared directly by HRs &amp; recruiters — with significantly lower competition.
+              </p>
+              <ul className="internal-hr-promo-checklist">
+                <li>Direct HR-shared openings</li>
+                <li>Low-competition opportunities</li>
+                <li>Early access to fresh roles</li>
+                <li>Roles that may not be widely posted</li>
+              </ul>
+              <span className="btn btn-primary internal-hr-promo-cta">
+                Unlock Internal Openings — ₹39/month
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </Link>
+          </section>
+        </Reveal>
+
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
             <div className="section-header">

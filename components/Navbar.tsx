@@ -11,6 +11,10 @@ const LINKS = [
   { href: "/off-campus-jobs", label: "Off-Campus" },
   { href: "/opportunities", label: "All Openings" },
   { href: "/companies", label: "Companies" },
+  // Deliberately styled differently below (nav-link-hot) — this is the
+  // entry point to the ₹39/month Internal HR Openings product and is meant
+  // to stand out from the plain listing links next to it.
+  { href: "/internal-openings", label: "🔥 Internal HR", hot: true },
 ];
 
 type NavUser = { email: string | null } | null;
@@ -96,7 +100,12 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
               <Link
                 key={link.label}
                 href={link.href}
-                className={isActive(link.href, pathname, search) ? "active" : ""}
+                className={[
+                  isActive(link.href, pathname, search) ? "active" : "",
+                  link.hot ? "nav-link-hot" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               >
                 {link.label}
               </Link>
@@ -135,7 +144,12 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
             <Link
               key={link.label}
               href={link.href}
-              className={isActive(link.href, pathname, search) ? "active" : ""}
+              className={[
+                isActive(link.href, pathname, search) ? "active" : "",
+                link.hot ? "nav-link-hot" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               onClick={() => setOpen(false)}
             >
               {link.label}
@@ -184,7 +198,7 @@ function NavbarFallback({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) 
           </span>
           <nav className="nav-links" aria-label="Primary">
             {LINKS.map((link) => (
-              <Link key={link.label} href={link.href}>
+              <Link key={link.label} href={link.href} className={link.hot ? "nav-link-hot" : ""}>
                 {link.label}
               </Link>
             ))}

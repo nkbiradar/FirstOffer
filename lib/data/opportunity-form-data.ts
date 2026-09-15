@@ -45,6 +45,10 @@ export type OpportunityFormInput = {
   deadline: string;
   sourceText: string;
   status: OpportunityStatus;
+  // Marks this as part of the ₹39/month "Internal HR Openings" product
+  // instead of a regular listing — see supabase/schema.sql's note on
+  // opportunities.is_internal.
+  isInternal: boolean;
 };
 
 export function str(formData: FormData, key: string): string {
@@ -112,6 +116,7 @@ export function parseOpportunityFormData(
     deadline: str(formData, "deadline"),
     sourceText: str(formData, "source_text"),
     status,
+    isInternal: formData.get("is_internal") === "on",
   };
 }
 
@@ -175,5 +180,8 @@ export function parseOpportunityBulkItem(item: BulkOpportunityItem): Opportunity
     deadline: (item.deadline ?? "").trim(),
     sourceText: (item.sourceText ?? "").trim(),
     status: parseEnumValue(item.status ?? "", VALID_STATUSES) || "draft",
+    // Bulk import doesn't currently support flagging internal openings —
+    // always false; mark individually via the edit form if needed.
+    isInternal: false,
   };
 }

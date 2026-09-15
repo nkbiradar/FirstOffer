@@ -107,6 +107,12 @@ export interface Opportunity {
 
   status: OpportunityStatus;
 
+  // Part of the ₹39/month "Internal HR Openings" product, not the regular
+  // free-to-browse listings — see supabase/schema.sql's note on this
+  // column and lib/data/opportunities.ts's applyPublishedFilter/
+  // getInternalOpportunities.
+  is_internal: boolean;
+
   imported_at: string;
   published_at: string | null;
   expires_at: string | null;
@@ -149,6 +155,8 @@ export interface OpportunityInsert {
   source_text: string;
 
   status?: OpportunityStatus;
+
+  is_internal?: boolean;
 
   imported_at?: string;
   published_at?: string | null;

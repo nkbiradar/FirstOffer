@@ -37,6 +37,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      // The paywall/marketing page itself is fine to index — it's the
+      // individual internal opportunity detail pages (noindex'd in
+      // app/opportunities/[id]/page.tsx) and getAllPublishedOpportunityIds
+      // (which excludes is_internal rows) that keep the actual internal
+      // openings out of search results.
+      url: `${siteUrl}/internal-openings`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
       url: `${siteUrl}/companies`,
       lastModified: new Date(),
       changeFrequency: "daily",

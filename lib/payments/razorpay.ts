@@ -54,3 +54,51 @@ export function getMonthlyPlanId(): string {
   }
   return planId;
 }
+
+// ── Internal HR Openings (a second, independent ₹39/month product) ──────
+// Same Subscriptions-API mechanics as the ₹49/month full-access plan
+// above, but its own Plan, its own price, and its own access dimension —
+// a user can hold neither, either, or both. See lib/data/subscriptions.ts
+// (hasActiveSubscription is parameterized by product) and
+// app/internal-openings/page.tsx.
+export const INTERNAL_PRICE_INR = 39;
+export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
+
+export function getInternalPlanId(): string {
+  const planId = process.env.RAZORPAY_INTERNAL_PLAN_ID;
+  if (!planId) {
+    throw new Error("Missing RAZORPAY_INTERNAL_PLAN_ID.");
+  }
+  return planId;
+}
+
+export type SubscriptionProduct = "full_access" | "internal_hr";
+
+/**
+ * Single lookup table for everything that differs between the two
+ * subscription products — keeps the create/cancel API routes under
+ * app/api/subscriptions and components/UnlockContactCard.tsx from each
+ * hand-rolling their own product-to-plan/price mapping (and risking the
+ * two falling out of sync).
+ */
+export function getProductConfig(product: SubscriptionProduct): {
+  planId: string;
+  priceInr: number;
+  pricePaise: number;
+  description: string;
+} {
+  if (product === "internal_hr") {
+    return {
+      planId: getInternalPlanId(),
+      priceInr: INTERNAL_PRICE_INR,
+      pricePaise: INTERNAL_PRICE_PAISE,
+      description: "Internal HR Openings membership",
+    };
+  }
+  return {
+    planId: getMonthlyPlanId(),
+    priceInr: MONTHLY_PRICE_INR,
+    pricePaise: MONTHLY_PRICE_PAISE,
+    description: "Monthly membership — full site access",
+  };
+}

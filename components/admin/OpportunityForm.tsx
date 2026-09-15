@@ -233,6 +233,24 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
       </section>
 
       <section className="card">
+        <h2>Internal HR Openings</h2>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: "row" }}>
+          <input
+            name="is_internal"
+            type="checkbox"
+            defaultChecked={o?.is_internal ?? false}
+            style={{ width: "auto" }}
+          />
+          <span>
+            This is an internal, HR-direct opening for the ₹39/month Internal HR Openings product{" "}
+            <span className="hint">
+              (hidden from all regular listings — only visible on /internal-openings to subscribers)
+            </span>
+          </span>
+        </label>
+      </section>
+
+      <section className="card">
         <h2>Original Telegram Message</h2>
         <label>
           Paste whatever original content you have — never overwritten by editing other fields

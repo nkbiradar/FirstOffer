@@ -12,7 +12,8 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getUser } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { MONTHLY_PRICE_INR } from "@/lib/payments/razorpay";
+import { hasInternalAccess } from "@/lib/data/subscriptions";
+import { MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
   buildJobBreadcrumbsJsonLd,
@@ -98,9 +99,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title,
     description,
     alternates: { canonical: url },
-    robots: isExpired
-      ? { index: false, follow: true }
-      : { index: true, follow: true },
+    // Internal HR Openings are deliberately excluded from every public
+    // listing/sitemap (see lib/data/opportunities.ts's applyInternalFilter)
+    // so they're only discoverable via /internal-openings — noindex here
+    // keeps them out of search results too, consistent with that.
+    robots:
+      isExpired || opportunity.is_internal
+        ? { index: false, follow: true }
+        : { index: true, follow: true },
     openGraph: {
       title,
       description,
@@ -160,7 +166,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.hr_contact ||
       opportunity.how_to_apply,
   );
-  const applyUnlocked = user && hasApplyContent ? await hasFullAccess(user.id) : false;
+  const applyUnlocked =
+    user && hasApplyContent
+      ? opportunity.is_internal
+        ? await hasInternalAccess(user.id)
+        : await hasFullAccess(user.id)
+      : false;
   const canShowApply = !isExpired && (!hasApplyContent || applyUnlocked);
 
   const {
@@ -306,7 +317,16 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               )}
               {!canShowApply && (
                 <div className="apply-inline">
-                  <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={MONTHLY_PRICE_INR} />
+                  {opportunity.is_internal ? (
+                    <UnlockContactCard
+                      opportunityId={id}
+                      isSignedIn={Boolean(user)}
+                      price={INTERNAL_PRICE_INR}
+                      product="internal_hr"
+                    />
+                  ) : (
+                    <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={MONTHLY_PRICE_INR} />
+                  )}
                 </div>
               )}
             </>

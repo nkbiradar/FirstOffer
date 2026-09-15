@@ -61,6 +61,7 @@ type OpportunityDbFields = Pick<
   | "how_to_apply"
   | "deadline"
   | "source_text"
+  | "is_internal"
 >;
 
 function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
@@ -86,6 +87,7 @@ function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
     how_to_apply: input.howToApply.trim() || null,
     deadline: input.deadline || null,
     source_text: input.sourceText.trim(),
+    is_internal: input.isInternal,
   };
 }
 

@@ -72,10 +72,11 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, unlocks, subscription] = await Promise.all([
+  const [applications, unlocks, subscription, internalSubscription] = await Promise.all([
     getUserApplications(user.id),
     getUserUnlocks(user.id),
     getUserSubscription(user.id),
+    getUserSubscription(user.id, "internal_hr"),
   ]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
@@ -86,6 +87,7 @@ export default async function DashboardPage({
   const fullAccessUnlock = unlocks[0] ?? null;
   const subscriptionActive = subscription?.status === "active";
   const hasFullAccess = Boolean(fullAccessUnlock) || subscriptionActive;
+  const internalActive = internalSubscription?.status === "active";
 
   const filtered =
     status === "all"
@@ -274,6 +276,68 @@ export default async function DashboardPage({
               </p>
               <Link className="btn btn-secondary btn-sm" href="/opportunities">
                 Browse Opportunities
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="dashboard-section">
+          <div className="dashboard-section-header">
+            <h2>🔥 Internal HR Openings access</h2>
+          </div>
+
+          {internalSubscription && internalSubscription.status !== "created" ? (
+            <div className="unlock-list">
+              <div className="unlock-item unlock-item-internal" style={{ cursor: "default" }}>
+                <span className="unlock-item-avatar unlock-item-avatar-internal">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                    <rect x="5" y="11" width="14" height="9" rx="2" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <div className="unlock-item-body">
+                  <p className="unlock-item-role">
+                    {internalActive ? "Internal HR Openings — unlocked" : "Membership ended"}
+                  </p>
+                  <p className="unlock-item-meta">
+                    {internalActive && !internalSubscription.cancelled_at && (
+                      <>
+                        ₹39/month membership
+                        {internalSubscription.current_period_end && (
+                          <> · renews {formatFutureDate(internalSubscription.current_period_end)}</>
+                        )}
+                      </>
+                    )}
+                    {internalActive && internalSubscription.cancelled_at && (
+                      <>
+                        Cancelled — access ends{" "}
+                        {internalSubscription.current_period_end
+                          ? formatFutureDate(internalSubscription.current_period_end)
+                          : "at period end"}
+                      </>
+                    )}
+                    {!internalActive && "Resubscribe from /internal-openings to unlock access again"}
+                  </p>
+                </div>
+                {internalActive && !internalSubscription.cancelled_at && (
+                  <CancelSubscriptionButton product="internal_hr" />
+                )}
+                {!internalActive && (
+                  <Link className="btn btn-secondary btn-sm" href="/internal-openings">
+                    Resubscribe
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h3>Internal HR Openings not unlocked yet</h3>
+              <p>
+                A ₹39/month membership unlocks internal, HR-shared roles with significantly lower competition —
+                openings that may never be widely posted elsewhere. Cancel anytime.
+              </p>
+              <Link className="btn btn-secondary btn-sm" href="/internal-openings">
+                View Internal Openings
               </Link>
             </div>
           )}

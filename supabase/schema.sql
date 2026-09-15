@@ -556,3 +556,55 @@ end $$;
 -- client from app/api/subscriptions/create, app/api/subscriptions/verify,
 -- app/api/subscriptions/cancel, and app/api/payments/webhook, matching
 -- opportunity_unlocks's existing pattern.
+
+-- ── subscriptions.product (multiple paid products on one table) ─────────
+-- The subscriptions table above was built for the single ₹49/month "full
+-- access" plan. Adding a second, fully independent product — ₹39/month
+-- "Internal HR Openings" — reuses the same table rather than duplicating
+-- it: one row per Razorpay subscription either way, `product` says which
+-- offering it is, and `razorpay_subscription_id` stays globally unique
+-- regardless of product. A user can hold an active row of each product at
+-- once; access checks (see lib/data/subscriptions.ts's
+-- hasActiveSubscription(userId, product)) always filter by product, so the
+-- two are never conflated.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+alter table public.subscriptions
+  add column if not exists product text not null default 'full_access';
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'subscriptions_product_check'
+  ) then
+    alter table public.subscriptions
+      add constraint subscriptions_product_check check (product in ('full_access', 'internal_hr'));
+  end if;
+end $$;
+
+create index if not exists subscriptions_user_id_product_idx
+  on public.subscriptions (user_id, product);
+
+-- ── opportunities.is_internal (the "Internal HR Openings" product) ──────
+-- Marks an opportunity as part of the ₹39/month Internal HR Openings
+-- product instead of the regular free-to-browse listings — set by the
+-- admin via the "Internal (HR-direct)" checkbox on the opportunity form.
+-- applyPublishedFilter() in lib/data/opportunities.ts excludes these from
+-- every general public listing (homepage, /opportunities, category pages,
+-- sitemap, related-opportunities) so they genuinely only surface through
+-- /internal-openings — the entire point of the product is that these
+-- roles aren't findable the normal way. getInternalOpportunities() is the
+-- mirror-image query used only by that page.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+alter table public.opportunities
+  add column if not exists is_internal boolean not null default false;
+
+create index if not exists opportunities_is_internal_idx
+  on public.opportunities (is_internal) where is_internal;
