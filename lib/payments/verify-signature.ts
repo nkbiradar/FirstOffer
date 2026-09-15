@@ -38,3 +38,32 @@ export function verifyRazorpaySignature({
 
   return crypto.timingSafeEqual(expected, actual);
 }
+
+/**
+ * Same idea as verifyRazorpaySignature above, but for the Subscriptions
+ * flow: Razorpay's documented plaintext for a subscription checkout is
+ * "payment_id|subscription_id" (payment first, not order first). Used by
+ * app/api/subscriptions/verify/route.ts.
+ */
+export function verifyRazorpaySubscriptionSignature({
+  subscriptionId,
+  paymentId,
+  signature,
+  keySecret,
+}: {
+  subscriptionId: string;
+  paymentId: string;
+  signature: string;
+  keySecret: string;
+}): boolean {
+  const expectedSignature = crypto
+    .createHmac("sha256", keySecret)
+    .update(`${paymentId}|${subscriptionId}`)
+    .digest("hex");
+
+  const expected = Buffer.from(expectedSignature, "hex");
+  const actual = Buffer.from(signature, "hex");
+  if (expected.length !== actual.length) return false;
+
+  return crypto.timingSafeEqual(expected, actual);
+}

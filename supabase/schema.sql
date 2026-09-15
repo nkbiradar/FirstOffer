@@ -486,3 +486,73 @@ alter table public.push_subscriptions enable row level security;
 -- No public select/insert/update/delete policy — every read/write goes
 -- through app/api/push/subscribe and app/api/push/unsubscribe using the
 -- service-role client, same pattern as opportunity_unlocks/user_access.
+
+-- ── subscriptions (recurring ₹49/month access) ───────────────────────────
+-- Replaces the one-time ₹49 unlock for NEW purchases going forward. Anyone
+-- who already has a 'paid' row in opportunity_unlocks keeps that lifetime
+-- access untouched (see lib/data/opportunity-unlocks.ts's hasFullAccess,
+-- which now checks this table OR that one) — this table is additive, not a
+-- migration of existing customers.
+--
+-- One row per Razorpay subscription. Razorpay's subscriptions API has no
+-- literal "until cancelled" option — every subscription needs a
+-- total_count of billing cycles — so app/api/subscriptions/create/route.ts
+-- creates each one with a large total_count (effectively "until the user
+-- cancels" for practical purposes) rather than the site imposing its own
+-- end date.
+--
+-- `status` mirrors Razorpay's own subscription lifecycle. Access is
+-- granted by hasActiveSubscription() purely on `status = 'active'` — not
+-- on `current_period_end`, which is only stored for display ("renews on
+-- ...") on the dashboard. The reason: current_period_end is only known
+-- once the FIRST charge webhook arrives, and trusting a hand-rolled
+-- expiry comparison instead of Razorpay's own status risks revoking
+-- access early on webhook delay, or missing a real cancellation the
+-- webhook already reported. Razorpay's own `subscription.halted` /
+-- `subscription.cancelled` / `subscription.completed` events are what
+-- flip `status` away from 'active' (see app/api/payments/webhook/route.ts).
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  razorpay_subscription_id text not null unique,
+  razorpay_plan_id text not null,
+  status text not null default 'created' check (
+    status in ('created', 'authenticated', 'active', 'pending', 'halted', 'cancelled', 'completed', 'expired')
+  ),
+  amount_paise integer not null,
+  current_period_end timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  cancelled_at timestamptz
+);
+
+create index if not exists subscriptions_user_id_idx
+  on public.subscriptions (user_id);
+create index if not exists subscriptions_razorpay_subscription_id_idx
+  on public.subscriptions (razorpay_subscription_id);
+
+alter table public.subscriptions enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'public'
+      and tablename = 'subscriptions'
+      and policyname = 'Users can view their own subscriptions'
+  ) then
+    create policy "Users can view their own subscriptions"
+      on public.subscriptions for select
+      using (auth.uid() = user_id);
+  end if;
+end $$;
+
+-- No public insert/update policy — all writes go through the service-role
+-- client from app/api/subscriptions/create, app/api/subscriptions/verify,
+-- app/api/subscriptions/cancel, and app/api/payments/webhook, matching
+-- opportunity_unlocks's existing pattern.

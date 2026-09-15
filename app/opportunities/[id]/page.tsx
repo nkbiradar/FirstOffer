@@ -12,7 +12,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getUser } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { CONTACT_UNLOCK_PRICE_INR } from "@/lib/payments/razorpay";
+import { MONTHLY_PRICE_INR } from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
   buildJobBreadcrumbsJsonLd,
@@ -306,7 +306,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               )}
               {!canShowApply && (
                 <div className="apply-inline">
-                  <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={CONTACT_UNLOCK_PRICE_INR} />
+                  <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={MONTHLY_PRICE_INR} />
                 </div>
               )}
             </>

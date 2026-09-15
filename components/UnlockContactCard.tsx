@@ -6,7 +6,7 @@ import Script from "next/script";
 import { track } from "@vercel/analytics";
 
 type RazorpaySuccessResponse = {
-  razorpay_order_id: string;
+  razorpay_subscription_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
 };
@@ -22,10 +22,12 @@ declare global {
 
 // Shown in place of every apply route on the opportunity detail page —
 // application link, Google Form, HR email/contact, and the free-text "how
-// to apply" instructions are all hidden until the signed-in visitor makes
-// ONE ₹49 payment (see app/opportunities/[id]/page.tsx). That single
-// payment unlocks apply details on every opportunity site-wide, forever —
-// not just this one. Once unlocked, the real ApplyButton/apply
+// to apply" instructions are all hidden until the signed-in visitor has
+// full access (see app/opportunities/[id]/page.tsx). Full access now comes
+// from a ₹49/month recurring subscription (see
+// app/api/subscriptions/create/route.ts) — existing lifetime customers
+// from the old one-time ₹49 unlock keep that access unchanged and never
+// see this card. Once access is granted, the real ApplyButton/apply
 // instructions render in this same spot instead.
 export default function UnlockContactCard({
   opportunityId,
@@ -40,19 +42,19 @@ export default function UnlockContactCard({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
-  // Verification (app/api/payments/verify/route.ts) flips opportunity_unlocks
-  // to "paid" synchronously, so access is unlocked instantly — this flag just
-  // holds the confirmation on screen for a moment before router.refresh()
-  // swaps this card out for the real ApplyButton, so the visitor actually
-  // sees the "you're ready to apply" moment instead of the UI silently
-  // changing under them.
+  // Verification (app/api/subscriptions/verify/route.ts) flips the
+  // subscription to "active" synchronously, so access is unlocked
+  // instantly — this flag just holds the confirmation on screen for a
+  // moment before router.refresh() swaps this card out for the real
+  // ApplyButton, so the visitor actually sees the "you're ready to apply"
+  // moment instead of the UI silently changing under them.
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   async function handleUnlock() {
     // Custom Vercel Analytics events — this is the site's entire revenue
-    // funnel, so these five events are what let the "how many people who
-    // click Unlock actually pay" question get answered from real data
-    // instead of a guess. See rebuild-plan.md Step 19.
+    // funnel, so these events are what let the "how many people who click
+    // Unlock actually pay" question get answered from real data instead
+    // of a guess. See rebuild-plan.md Step 19.
     track("unlock_clicked", { opportunityId });
 
     if (!isSignedIn) {
@@ -70,54 +72,48 @@ export default function UnlockContactCard({
     setError(null);
 
     try {
-      const orderResponse = await fetch("/api/payments/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId }),
-      });
-      const orderData = await orderResponse.json();
+      const subResponse = await fetch("/api/subscriptions/create", { method: "POST" });
+      const subData = await subResponse.json();
 
-      if (!orderResponse.ok) {
-        track("order_create_failed", { opportunityId, error: orderData.error ?? "unknown" });
-        setError(orderData.error ?? "Could not start payment.");
+      if (!subResponse.ok) {
+        track("subscription_create_failed", { opportunityId, error: subData.error ?? "unknown" });
+        setError(subData.error ?? "Could not start payment.");
         setIsLoading(false);
         return;
       }
 
-      if (orderData.alreadyUnlocked) {
+      if (subData.alreadyUnlocked) {
         router.refresh();
         return;
       }
 
       const razorpay = new window.Razorpay({
-        key: orderData.keyId,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        order_id: orderData.orderId,
+        key: subData.keyId,
+        subscription_id: subData.subscriptionId,
         name: "FirstOffer",
-        description: "One-time unlock — full site access",
+        description: "Monthly membership — full site access",
         method: {
           upi: true,
-          card: false,
+          card: true,
           netbanking: false,
           wallet: false,
           paylater: false,
           emi: false,
         },
         handler: async (response: RazorpaySuccessResponse) => {
-          const verifyResponse = await fetch("/api/payments/verify", {
+          const verifyResponse = await fetch("/api/subscriptions/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...response, opportunityId }),
+            body: JSON.stringify(response),
           });
           if (verifyResponse.ok) {
-            track("payment_succeeded", { opportunityId, price });
+            track("subscription_payment_succeeded", { opportunityId, price });
             setPaymentSuccess(true);
             // Brief pause so the success message is actually seen before this
             // card is replaced by the real ApplyButton on refresh.
             setTimeout(() => router.refresh(), 1600);
           } else {
-            track("payment_verify_failed", { opportunityId });
+            track("subscription_verify_failed", { opportunityId });
             setError("Payment succeeded but confirmation failed — refresh in a minute, or contact support.");
           }
           setIsLoading(false);
@@ -129,7 +125,7 @@ export default function UnlockContactCard({
       });
 
       razorpay.on("payment.failed", () => {
-        track("payment_failed", { opportunityId });
+        track("subscription_payment_failed", { opportunityId });
         setError("Payment failed — try again.");
         setIsLoading(false);
       });
@@ -155,23 +151,24 @@ export default function UnlockContactCard({
           <rect x="5" y="11" width="14" height="9" rx="2" />
           <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        One-Time Unlock
+        Full Access Membership
       </span>
       <p className="unlock-contact-title">How to apply is locked</p>
       <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
-        Only one-time payment. Lifetime access.
+        ₹{price}/month. Cancel anytime, in one click.
       </p>
       <p className="unlock-contact-desc">
-        Pay ₹{price} once via UPI to unlock apply details on this opportunity — and every other opportunity on
-        FirstOffer, for good.
+        Most freshers waste weeks applying through crowded portals and hoping someone notices. For less than the
+        price of an auto ride, unlock the direct HR email, official Google Form, or application link on this
+        opportunity — and every opportunity on FirstOffer, including new ones added regularly.
       </p>
       <p className="unlock-contact-highlight">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
           <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span>
-          <strong>One payment, full access forever</strong> — direct HR emails, official Google Forms, and
-          application links on every listing. No repeat charges.
+          <strong>One membership, every opportunity, unlocked</strong> — direct HR emails, official Google Forms,
+          and application links, updated as new roles go live. Skip straight to applying instead of guessing.
         </span>
       </p>
       {paymentSuccess ? (
@@ -181,10 +178,11 @@ export default function UnlockContactCard({
       ) : (
         <>
           <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
-            {isLoading ? "Opening payment..." : `Unlock everything for ₹${price}`}
+            {isLoading ? "Opening payment..." : `Unlock everything for ₹${price}/month`}
           </button>
           <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
-            Access unlocks instantly after payment — no waiting.
+            Access unlocks instantly after payment. Renews monthly at ₹{price} — cancel anytime from your dashboard,
+            no questions asked.
           </p>
         </>
       )}

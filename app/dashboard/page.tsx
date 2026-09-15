@@ -3,9 +3,11 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
+import { getUserSubscription } from "@/lib/data/subscriptions";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
+import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
 import { formatRelativeTime } from "@/lib/ui-format";
 import type { ApplicationOutcome } from "@/types/supabase";
 
@@ -33,18 +35,29 @@ function StatIcon({ path }: { path: string }) {
   );
 }
 
+// formatRelativeTime (imported above) is built for PAST dates ("2d ago") —
+// wrong for a subscription's renewal/cancellation date, which is in the
+// future. This is the future-facing counterpart, used only for those two
+// fields below.
+function formatFutureDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 // The replacement for the old /applications page — same underlying data
 // (user_applications + OutcomeTracker), but framed as a real dashboard:
 // summary stat tiles, a status filter, and a panel showing whether this
-// user has full site-wide access (opportunity_unlocks). The unlock is now
-// a single one-time payment, not per-opportunity, so `unlocks` here will
-// only ever hold 0 or 1 row for a given user — see
-// lib/data/opportunity-unlocks.ts's hasFullAccess(). Deliberately still a
-// server component reading a `status` query param, no client-side
-// filtering JS — same convention /opportunities already uses for its
-// filter pills, so this page degrades gracefully with JS off too.
+// user has full site-wide access. Two independent sources feed that panel
+// now: a legacy one-time `opportunity_unlocks` row (grandfathered lifetime
+// customers from before the pricing switch — `unlocks` here will only
+// ever hold 0 or 1 row for a given user) and a recurring `subscriptions`
+// row (the current ₹49/month plan — see lib/data/subscriptions.ts). A
+// user has at most one of the two in practice, but both are read so
+// whichever applies renders correctly. Deliberately still a server
+// component reading a `status` query param, no client-side filtering JS —
+// same convention /opportunities already uses for its filter pills, so
+// this page degrades gracefully with JS off too.
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -59,14 +72,20 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, unlocks] = await Promise.all([getUserApplications(user.id), getUserUnlocks(user.id)]);
+  const [applications, unlocks, subscription] = await Promise.all([
+    getUserApplications(user.id),
+    getUserUnlocks(user.id),
+    getUserSubscription(user.id),
+  ]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
   const offerCount = applications.filter((a) => a.outcome === "offer").length;
-  // One-time payment model: a user has at most one paid row, ever — its
-  // presence means full site-wide access, not "this many opportunities."
+  // Legacy one-time payment model: a user has at most one paid row, ever —
+  // its presence means grandfathered lifetime access, not "this many
+  // opportunities."
   const fullAccessUnlock = unlocks[0] ?? null;
-  const hasFullAccess = Boolean(fullAccessUnlock);
+  const subscriptionActive = subscription?.status === "active";
+  const hasFullAccess = Boolean(fullAccessUnlock) || subscriptionActive;
 
   const filtered =
     status === "all"
@@ -92,7 +111,7 @@ export default async function DashboardPage({
             <span className="access-unlocked-icon" aria-hidden="true">✅</span>
             <p>
               <strong>You&apos;re ready to apply!</strong> Full apply access is unlocked — HR emails, official
-              application links, and Google Forms are visible on every opportunity, for good.
+              application links, and Google Forms are visible on every opportunity.
             </p>
           </div>
         )}
@@ -191,18 +210,7 @@ export default async function DashboardPage({
             <h2>Site access</h2>
           </div>
 
-          {!fullAccessUnlock ? (
-            <div className="empty-state">
-              <h3>Full access not unlocked yet</h3>
-              <p>
-                A single one-time payment unlocks the application link, Google Form, and HR email/contact on{" "}
-                <strong>every</strong> opportunity on FirstOffer — not just one.
-              </p>
-              <Link className="btn btn-secondary btn-sm" href="/opportunities">
-                Browse Opportunities
-              </Link>
-            </div>
-          ) : (
+          {fullAccessUnlock ? (
             <div className="unlock-list">
               <div className="unlock-item" style={{ cursor: "default" }}>
                 <span className="unlock-item-avatar">
@@ -219,6 +227,54 @@ export default async function DashboardPage({
                   <span className="unlock-item-date">{formatRelativeTime(fullAccessUnlock.paid_at) ?? ""}</span>
                 </span>
               </div>
+            </div>
+          ) : subscription && subscription.status !== "created" ? (
+            <div className="unlock-list">
+              <div className="unlock-item" style={{ cursor: "default" }}>
+                <span className="unlock-item-avatar">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <div className="unlock-item-body">
+                  <p className="unlock-item-role">
+                    {subscriptionActive ? "Full access — every opportunity, unlocked" : "Membership ended"}
+                  </p>
+                  <p className="unlock-item-meta">
+                    {subscriptionActive && !subscription.cancelled_at && (
+                      <>
+                        ₹49/month membership
+                        {subscription.current_period_end && <> · renews {formatFutureDate(subscription.current_period_end)}</>}
+                      </>
+                    )}
+                    {subscriptionActive && subscription.cancelled_at && (
+                      <>
+                        Cancelled — access ends{" "}
+                        {subscription.current_period_end ? formatFutureDate(subscription.current_period_end) : "at period end"}
+                      </>
+                    )}
+                    {!subscriptionActive && "Resubscribe from any opportunity page to unlock access again"}
+                  </p>
+                </div>
+                {subscriptionActive && !subscription.cancelled_at && <CancelSubscriptionButton />}
+                {!subscriptionActive && (
+                  <Link className="btn btn-secondary btn-sm" href="/opportunities">
+                    Resubscribe
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h3>Full access not unlocked yet</h3>
+              <p>
+                A ₹49/month membership unlocks the application link, Google Form, and HR email/contact on{" "}
+                <strong>every</strong> opportunity on FirstOffer — including new ones as they go live. Cancel
+                anytime.
+              </p>
+              <Link className="btn btn-secondary btn-sm" href="/opportunities">
+                Browse Opportunities
+              </Link>
             </div>
           )}
         </div>

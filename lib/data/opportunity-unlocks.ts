@@ -5,6 +5,7 @@
 // applied yet. See supabase/schema.sql for the table and its RLS policy.
 import { createClient } from "@/lib/supabase/server";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
+import { hasActiveSubscription } from "@/lib/data/subscriptions";
 
 export async function hasUnlockedContact(userId: string, opportunityId: string): Promise<boolean> {
   const supabase = await createClient();
@@ -24,31 +25,31 @@ export async function hasUnlockedContact(userId: string, opportunityId: string):
 }
 
 /**
- * Site-wide access check — the ₹49 unlock is a single ONE-TIME payment
- * that grants a signed-in user apply-details access to every opportunity,
- * not just the one they happened to be viewing when they paid. We still
- * insert one `opportunity_unlocks` row per purchase (keyed to whichever
- * opportunity triggered it, useful as a purchase record), but access is
- * granted the moment ANY row for this user has `status = 'paid'` —
- * opportunity_id is intentionally ignored here. This also means any user
- * who already paid under the old per-opportunity model is automatically
- * grandfathered into full access with zero migration needed.
+ * Site-wide access check. Two independent ways in, checked in parallel:
+ *
+ * 1. Legacy one-time ₹49 payment — a `paid` row in `opportunity_unlocks`.
+ *    New purchases no longer create these, but anyone who already has one
+ *    keeps lifetime access untouched, forever — this is the grandfathering
+ *    guarantee for existing customers when the pricing model changed to
+ *    recurring billing. opportunity_id is intentionally ignored: ANY paid
+ *    row for this user grants access to everything.
+ * 2. Current ₹49/month subscription — an `active` row in `subscriptions`
+ *    (see lib/data/subscriptions.ts). This is what new purchases create.
+ *
+ * A user only ever needs one of these to be true.
  */
 export async function hasFullAccess(userId: string): Promise<boolean> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("opportunity_unlocks")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("status", "paid")
-    .limit(1)
-    .maybeSingle();
+  const [{ data, error }, subscribed] = await Promise.all([
+    supabase.from("opportunity_unlocks").select("id").eq("user_id", userId).eq("status", "paid").limit(1).maybeSingle(),
+    hasActiveSubscription(userId),
+  ]);
 
   if (error) {
     console.error("hasFullAccess failed:", error.message);
-    return false;
+    return subscribed;
   }
-  return Boolean(data);
+  return Boolean(data) || subscribed;
 }
 
 export type UserUnlock = {

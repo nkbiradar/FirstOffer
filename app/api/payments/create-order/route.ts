@@ -1,116 +1,18 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { getUser } from "@/lib/supabase/auth";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { getRazorpayClient, CONTACT_UNLOCK_PRICE_PAISE } from "@/lib/payments/razorpay";
-import { checkRateLimit } from "@/lib/rate-limit";
-import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
+import { NextResponse } from "next/server";
 
-// Starts a Razorpay order for a single ONE-TIME ₹49 payment that unlocks
-// full apply details — application link, Google Form, HR email/contact,
-// and the free-text "how to apply" instructions — across EVERY
-// opportunity on the site, not just the one the user is currently
-// viewing. Any signed-in user (not admin-gated) — mirrors
-// app/api/applications/route.ts's shape. Uses the service-role client
-// (not the RLS-scoped one) because it needs to read an opportunity
-// regardless of who's asking and upsert an opportunity_unlocks row keyed
-// by a user_id it already trusts from the verified session, the same way
-// the admin write paths do.
-export async function POST(request: NextRequest) {
-  const user = await getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Sign in required." }, { status: 401 });
-  }
-
-  // Each call hits the Razorpay API and writes a row, so cap how often one
-  // user can start orders — 10 per minute is generous for a real checkout
-  // flow (which only calls this once per unlock attempt) but blocks a
-  // scripted hammering of this endpoint. Keyed per-user, not per-IP, since
-  // the route already requires a signed-in session.
-  const { allowed } = await checkRateLimit(`create-order:${user.id}`, {
-    windowSeconds: 60,
-    maxHits: 10,
-  });
-  if (!allowed) {
-    return NextResponse.json(
-      { error: "Too many requests. Please wait a moment and try again." },
-      { status: 429 },
-    );
-  }
-
-  let body: { opportunityId?: string };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
-  }
-
-  const opportunityId = typeof body.opportunityId === "string" ? body.opportunityId : "";
-  if (!opportunityId) {
-    return NextResponse.json({ error: "opportunityId is required." }, { status: 400 });
-  }
-
-  const admin = createAdminClient();
-
-  const { data: opportunity, error: opportunityError } = await admin
-    .from("opportunities")
-    .select("id, hr_email, hr_contact, application_url, google_form_url, how_to_apply, status")
-    .eq("id", opportunityId)
-    .maybeSingle();
-
-  if (opportunityError || !opportunity || opportunity.status !== "published") {
-    return NextResponse.json({ error: "Opportunity not found." }, { status: 404 });
-  }
-  const hasApplyContent = Boolean(
-    opportunity.hr_email ||
-      opportunity.hr_contact ||
-      opportunity.application_url ||
-      opportunity.google_form_url ||
-      opportunity.how_to_apply,
+// RETIRED — full access is now sold as a ₹49/month recurring subscription
+// (see app/api/subscriptions/create/route.ts and
+// components/UnlockContactCard.tsx, which no longer calls this route).
+// Kept as a disabled stub rather than deleted so the route path itself
+// still resolves (returning a clear error) instead of a bare 404 for
+// anything still pointing at it. app/api/payments/verify/route.ts and the
+// payment.captured branch of app/api/payments/webhook/route.ts stay fully
+// active — they service historical rows for customers who already
+// completed a one-time purchase before this change, who keep lifetime
+// access (see lib/data/opportunity-unlocks.ts's hasFullAccess()).
+export async function POST() {
+  return NextResponse.json(
+    { error: "This is no longer available. Full access is now a ₹49/month membership." },
+    { status: 410 },
   );
-  if (!hasApplyContent) {
-    return NextResponse.json({ error: "Nothing to unlock for this opportunity." }, { status: 400 });
-  }
-
-  // Site-wide check, not per-opportunity — one successful payment ever
-  // means this user already has full access, regardless of which
-  // opportunity they're looking at right now.
-  if (await hasFullAccess(user.id)) {
-    return NextResponse.json({ alreadyUnlocked: true });
-  }
-
-  let order;
-  try {
-    const razorpay = getRazorpayClient();
-    order = await razorpay.orders.create({
-      amount: CONTACT_UNLOCK_PRICE_PAISE,
-      currency: "INR",
-      notes: { user_id: user.id, opportunity_id: opportunityId, purpose: "full_access_unlock" },
-    });
-  } catch (err) {
-    console.error("Razorpay order creation failed:", err);
-    return NextResponse.json({ error: "Could not start payment. Try again." }, { status: 502 });
-  }
-
-  const { error: upsertError } = await admin.from("opportunity_unlocks").upsert(
-    {
-      user_id: user.id,
-      opportunity_id: opportunityId,
-      razorpay_order_id: order.id,
-      amount_paise: CONTACT_UNLOCK_PRICE_PAISE,
-      status: "created",
-    },
-    { onConflict: "user_id,opportunity_id" },
-  );
-
-  if (upsertError) {
-    console.error("Could not save order record:", upsertError.message);
-    return NextResponse.json({ error: "Could not start payment. Try again." }, { status: 500 });
-  }
-
-  return NextResponse.json({
-    orderId: order.id,
-    amount: CONTACT_UNLOCK_PRICE_PAISE,
-    currency: "INR",
-    keyId: process.env.RAZORPAY_KEY_ID,
-  });
 }
