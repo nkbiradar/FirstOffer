@@ -151,6 +151,9 @@ export type BulkOpportunityItem = {
   deadline: string;
   sourceText: string;
   status: string;
+  // Optional so older/unrelated callers of this type still compile —
+  // parseOpportunityBulkItem below treats a missing value as false.
+  isInternal?: boolean;
 };
 
 export function parseOpportunityBulkItem(item: BulkOpportunityItem): OpportunityFormInput {
@@ -180,8 +183,9 @@ export function parseOpportunityBulkItem(item: BulkOpportunityItem): Opportunity
     deadline: (item.deadline ?? "").trim(),
     sourceText: (item.sourceText ?? "").trim(),
     status: parseEnumValue(item.status ?? "", VALID_STATUSES) || "draft",
-    // Bulk import doesn't currently support flagging internal openings —
-    // always false; mark individually via the edit form if needed.
-    isInternal: false,
+    // Set from the per-item checkbox (or "Mark all as Internal") in
+    // BulkImportClient.tsx — defaults to false so a normal paste never
+    // accidentally becomes an Internal HR Opening.
+    isInternal: Boolean(item.isInternal),
   };
 }

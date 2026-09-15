@@ -237,6 +237,18 @@ export default function BulkImportClient() {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, status } : item)));
   }
 
+  function updateIsInternal(id: string, isInternal: boolean) {
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, isInternal } : item)));
+  }
+
+  // Quick action for the common case of a whole batch coming from the same
+  // HR/recruiter source — ticks every currently-parsed item at once instead
+  // of clicking each one individually. Still fully overridable per item
+  // afterward for a mixed batch.
+  function markAllInternal(isInternal: boolean) {
+    setItems((prev) => prev.map((item) => ({ ...item, isInternal })));
+  }
+
   function removeItem(id: string) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }
@@ -370,6 +382,16 @@ export default function BulkImportClient() {
             >
               {isCheckingDuplicates ? "Checking..." : "Check Against Database"}
             </button>
+            {/* For a batch that's entirely HR-direct roles from the same
+                source — ticks every item's Internal HR Opening checkbox at
+                once. Each item can still be toggled individually below for
+                a mixed batch. */}
+            <button className="btn btn-secondary btn-sm" type="button" onClick={() => markAllInternal(true)}>
+              🔥 Mark All as Internal HR
+            </button>
+            <button className="btn btn-secondary btn-sm" type="button" onClick={() => markAllInternal(false)}>
+              Unmark All
+            </button>
           </div>
 
           <div className="bulk-items">
@@ -399,11 +421,29 @@ export default function BulkImportClient() {
                           Already in database ({dbMatch.existingStatus})
                         </span>
                       )}
+                      {item.isInternal && (
+                        <span className="badge" style={{ background: "var(--color-gold-soft)", color: "var(--color-gold-strong)", borderColor: "var(--color-gold-soft-border)" }}>
+                          🔥 Internal HR
+                        </span>
+                      )}
                     </div>
                     <button className="btn-danger" type="button" onClick={() => removeItem(item.id)}>
                       Remove
                     </button>
                   </div>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, margin: "4px 0 12px" }}>
+                    <input
+                      type="checkbox"
+                      style={{ width: "auto" }}
+                      checked={Boolean(item.isInternal)}
+                      onChange={(e) => updateIsInternal(item.id, e.target.checked)}
+                    />
+                    <span style={{ fontSize: 13.5 }}>
+                      Internal HR Opening — part of the ₹39/month Internal HR Openings product{" "}
+                      <span className="hint">(hidden from all regular listings — only visible on /internal-openings)</span>
+                    </span>
+                  </label>
 
                   {item.error && <p className="form-error">{item.error}</p>}
 

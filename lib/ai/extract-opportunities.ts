@@ -101,6 +101,11 @@ function normalizeAiItem(raw: Record<string, unknown>, fallbackSourceText: strin
     howToApply: fieldStr(raw.howToApply),
     deadline: fieldStr(raw.deadline),
     sourceText: fieldStr(raw.sourceText) || fallbackSourceText,
+    // The AI is never asked to guess this (see FIELD_DESCRIPTIONS above) —
+    // internal/HR-direct status isn't something to infer from the pasted
+    // text, only something the admin marks explicitly, per-item or via
+    // "Mark all as Internal" in BulkImportClient.tsx after reviewing.
+    isInternal: false,
   };
 }
 
