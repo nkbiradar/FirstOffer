@@ -4916,3 +4916,110 @@ a.footer-trust-item:hover {
 .bulk-import-paste-internal textarea {
   border-color: var(--color-gold-soft-border);
 }
+
+/* ── Internal HR Openings — locked "mystery" teaser grid ──────────────── */
+/* Shown instead of real OpportunityCards to a visitor who hasn't unlocked
+   yet — a fixed number of redacted placeholder cards (see
+   MYSTERY_SLOT_COUNT in app/internal-openings/page.tsx), never real
+   company/role data. Deliberately reads as "redacted document" rather than
+   a fake job listing, so nothing here could be mistaken for genuine
+   content. */
+
+.internal-mystery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.internal-mystery-card {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--color-premium-surface-raised);
+  border: 1px solid var(--color-premium-border);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+}
+
+.internal-mystery-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in srgb, var(--color-gold) 10%, transparent) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: mysteryShimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.internal-mystery-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-gold-strong);
+}
+
+.internal-mystery-lock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-gold) 16%, transparent);
+  color: var(--color-gold);
+}
+
+.internal-mystery-bar {
+  display: block;
+  height: 11px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-premium-text) 14%, transparent);
+}
+
+.internal-mystery-bar-title {
+  width: 70%;
+  height: 14px;
+}
+
+.internal-mystery-bar-sub {
+  width: 45%;
+}
+
+.internal-mystery-bar-meta {
+  width: 55%;
+}
+
+.internal-mystery-cta {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-gold) 16%, transparent);
+  border: 1px solid var(--color-gold-strong);
+  color: var(--color-gold);
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes mysteryShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .internal-mystery-card::before {
+    animation: none;
+  }
+}

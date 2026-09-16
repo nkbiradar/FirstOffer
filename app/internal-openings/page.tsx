@@ -30,13 +30,25 @@ export const metadata: Metadata = {
 // application link, how-to-apply text), so nothing gated leaks here. The
 // actual unlock happens on an individual opportunity's detail page
 // (app/opportunities/[id]/page.tsx), exactly like the ₹49/month product.
+// Fixed number of locked "mystery" teaser slots shown to a visitor who
+// hasn't unlocked yet — deliberately NOT tied to the real count of internal
+// openings that day (see MYSTERY_SLOT_COUNT below). The actual number of
+// openings is still shown honestly as text; only the identity of the
+// companies/roles behind that number is withheld, which is the actual
+// paywall — see applyInternalFilter/getInternalOpportunities for the
+// exclusion that backs this on the public listings side too.
+const MYSTERY_SLOT_COUNT = 6;
+
 export default async function InternalOpeningsPage() {
   const nonce = await getNonce();
-  const [user, { opportunities, total }] = await Promise.all([
-    getUser(),
-    getInternalOpportunities(),
-  ]);
+  const user = await getUser();
   const isUnlocked = user ? await hasInternalAccess(user.id) : false;
+  // A locked visitor never needs the actual company/role rows — only the
+  // total count for the "N exclusive openings" line — so this fetches just
+  // 1 row (discarded below) instead of the real listing data whenever
+  // locked. Real rows are only ever fetched, and only ever rendered, once
+  // isUnlocked is true.
+  const { opportunities, total } = await getInternalOpportunities(isUnlocked ? 50 : 1);
 
   const breadcrumbsJsonLd = buildLandingBreadcrumbsJsonLd("Internal HR Openings", "/internal-openings");
 
@@ -104,24 +116,58 @@ export default async function InternalOpeningsPage() {
               You&apos;re unlocked — open any opening below to see the full apply details.
             </p>
           ) : (
-            <UnlockContactCard isSignedIn={Boolean(user)} price={INTERNAL_PRICE_INR} product="internal_hr" />
+            <div id="unlock-internal-hr">
+              <UnlockContactCard isSignedIn={Boolean(user)} price={INTERNAL_PRICE_INR} product="internal_hr" />
+            </div>
           )}
         </section>
 
         <div className="dashboard-section-header" style={{ marginTop: 40 }}>
           <h2>Internal Openings</h2>
-          <p className="section-sub">{total} exclusive opening{total === 1 ? "" : "s"} shared by HRs right now.</p>
+          <p className="section-sub">
+            {total === 0
+              ? "No internal openings live right now."
+              : `${total} exclusive opening${total === 1 ? "" : "s"} shared by HRs today.`}
+          </p>
         </div>
 
-        {opportunities.length === 0 ? (
+        {total === 0 ? (
           <div className="empty-state">
             <h3>No internal openings live right now</h3>
             <p>New HR-shared roles are added as they come in — check back soon, or unlock above to get notified first.</p>
           </div>
-        ) : (
+        ) : isUnlocked ? (
           <div className="opportunity-grid">
             {opportunities.map((opportunity) => (
               <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+            ))}
+          </div>
+        ) : (
+          // The suspense/paywall grid: real openings exist (total > 0,
+          // confirmed above), but not one company name or role title
+          // renders here — only a fixed number of locked placeholder
+          // cards, regardless of how many openings there actually are
+          // today. Each links back up to the unlock card rather than
+          // anywhere real, since there's nothing real to link to yet.
+          <div className="internal-mystery-grid">
+            {Array.from({ length: MYSTERY_SLOT_COUNT }).map((_, index) => (
+              <Link
+                href="#unlock-internal-hr"
+                className="internal-mystery-card"
+                key={index}
+                aria-label="Locked internal opening — unlock to see company and role details"
+              >
+                <span className="internal-mystery-lock" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                    <rect x="5" y="11" width="14" height="9" rx="2" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span className="internal-mystery-bar internal-mystery-bar-title" aria-hidden="true" />
+                <span className="internal-mystery-bar internal-mystery-bar-sub" aria-hidden="true" />
+                <span className="internal-mystery-bar internal-mystery-bar-meta" aria-hidden="true" />
+                <span className="internal-mystery-cta" aria-hidden="true">Unlock to reveal</span>
+              </Link>
             ))}
           </div>
         )}
