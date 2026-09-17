@@ -21,6 +21,7 @@
     "razorpay": "^2.9.8",
     "react": "latest",
     "react-dom": "latest",
+    "resend": "^6.28.1",
     "uuid": "^14.0.1",
     "web-push": "^3.6.7"
   },

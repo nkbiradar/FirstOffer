@@ -2162,6 +2162,20 @@ button.btn-danger {
   border-radius: var(--radius-lg);
 }
 
+.unsubscribe-page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 96px 16px;
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+}
+
+.unsubscribe-page p {
+  color: var(--color-text-secondary);
+}
+
 .empty-state-icon {
   width: 46px;
   height: 46px;

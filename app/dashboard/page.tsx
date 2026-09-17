@@ -4,6 +4,7 @@ import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
 import { getUserSubscription } from "@/lib/data/subscriptions";
+import { isEmailOptedOut } from "@/lib/data/email-preference";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
@@ -72,11 +73,12 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, unlocks, subscription, internalSubscription] = await Promise.all([
+  const [applications, unlocks, subscription, internalSubscription, emailOptedOut] = await Promise.all([
     getUserApplications(user.id),
     getUserUnlocks(user.id),
     getUserSubscription(user.id),
     getUserSubscription(user.id, "internal_hr"),
+    isEmailOptedOut(user.id),
   ]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
@@ -341,6 +343,34 @@ export default async function DashboardPage({
               </Link>
             </div>
           )}
+        </div>
+
+        <div className="dashboard-section">
+          <div className="dashboard-section-header">
+            <h2>Email alerts</h2>
+          </div>
+          <div className="unlock-list">
+            <div className="unlock-item" style={{ cursor: "default" }}>
+              <div className="unlock-item-body">
+                <p className="unlock-item-role">{emailOptedOut ? "Email alerts are off" : "Email alerts are on"}</p>
+                <p className="unlock-item-meta">
+                  {emailOptedOut
+                    ? "You won't get emailed when new opportunities go live."
+                    : `We'll email you at ${user.email} whenever new opportunities are posted — go fast and apply.`}
+                </p>
+              </div>
+              <form action="/api/email/preference" method="post">
+                <button
+                  className="btn btn-secondary btn-sm"
+                  name="intent"
+                  value={emailOptedOut ? "on" : "off"}
+                  type="submit"
+                >
+                  {emailOptedOut ? "Turn On" : "Turn Off"}
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </main>

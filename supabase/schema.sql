@@ -656,3 +656,29 @@ end $$;
 
 -- No public insert/update/delete policy — all writes go through the
 -- service-role client from app/api/admin/announcement/route.ts.
+
+-- ── email_optouts ("new opportunity" email alerts) ──────────────────────
+-- Every signed-up user gets emailed (at the address they logged in with)
+-- whenever new opportunities go live — see lib/email/resend-client.ts and
+-- lib/notify/new-opportunity-alerts.ts. Recipients come straight from
+-- auth.admin.listUsers(), so there's no separate "subscribed" list to
+-- maintain — this table is just the exception list: presence of a row
+-- means that user opted out (one-click unsubscribe link in every email,
+-- or the toggle on their dashboard), same convention as push_subscriptions
+-- being additive/exception-based rather than a full mailing list.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.email_optouts (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+alter table public.email_optouts enable row level security;
+
+-- No public select/insert/update/delete policy — every read/write goes
+-- through app/api/email/unsubscribe, app/api/email/preference, and
+-- lib/email/resend-client.ts using the service-role client, same pattern
+-- as push_subscriptions/opportunity_unlocks.
