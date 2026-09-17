@@ -7,6 +7,7 @@ import SuccessStories from "@/components/SuccessStories";
 import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
+import { getActiveAnnouncement } from "@/lib/data/site-announcement";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
@@ -53,12 +54,14 @@ const HOW_IT_WORKS = [
 
 export default async function HomePage() {
   const nonce = await getNonce();
-  const [{ today, earlier, todayDateLabel, todayCount }, stats, companies, testimonials] = await Promise.all([
-    getHomepageOpportunities(),
-    getSiteStats(),
-    getCompaniesWithPublishedCounts(),
-    getPublishedTestimonials(),
-  ]);
+  const [{ today, earlier, todayDateLabel, todayCount }, stats, companies, testimonials, announcement] =
+    await Promise.all([
+      getHomepageOpportunities(),
+      getSiteStats(),
+      getCompaniesWithPublishedCounts(),
+      getPublishedTestimonials(),
+      getActiveAnnouncement(),
+    ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
   // 2026") above is already computed for the "Today's Opportunities"
@@ -389,8 +392,17 @@ export default async function HomePage() {
                     <path d="M12 8v4l3 3M12 3a9 9 0 100 18 9 9 0 000-18z" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <h3>Nothing published today just yet</h3>
-                <p>Check back soon, or browse everything that&apos;s currently live.</p>
+                {announcement ? (
+                  <>
+                    <h3>A note from the FirstOffer team</h3>
+                    <p>{announcement}</p>
+                  </>
+                ) : (
+                  <>
+                    <h3>Nothing published today just yet</h3>
+                    <p>Check back soon, or browse everything that&apos;s currently live.</p>
+                  </>
+                )}
                 <Link className="btn btn-secondary btn-sm" href="/fresher-jobs">
                   View all fresher jobs
                 </Link>

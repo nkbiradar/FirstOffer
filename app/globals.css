@@ -5023,3 +5023,48 @@ a.footer-trust-item:hover {
     animation: none;
   }
 }
+
+/* ── Admin: homepage announcement card ────────────────────────────────── */
+
+.announcement-card {
+  display: grid;
+  gap: 10px;
+  margin-top: 28px;
+  padding: 22px 24px;
+  max-width: 620px;
+}
+
+.announcement-card .hint {
+  margin: 0;
+}
+
+.announcement-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-success-soft);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.announcement-live-badge .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-success);
+}
+
+.announcement-form {
+  display: grid;
+  gap: 12px;
+}
+
+.announcement-form textarea {
+  resize: vertical;
+}

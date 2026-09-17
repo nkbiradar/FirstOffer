@@ -16,6 +16,15 @@ export type OpportunityStatus = "draft" | "published" | "expired";
 export type ApplicationOutcome = "interview" | "offer" | "rejected" | "no_response";
 export type TestimonialOutcome = "interview" | "selected";
 
+// The single admin-postable homepage banner row — see the design note on
+// public.site_announcement in supabase/schema.sql. Always id: "singleton".
+export interface SiteAnnouncement {
+  id: string;
+  message: string;
+  is_active: boolean;
+  updated_at: string;
+}
+
 export interface Testimonial {
   id: string;
   student_name: string;

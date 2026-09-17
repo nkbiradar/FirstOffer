@@ -1,14 +1,29 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminDashboardStats } from "@/lib/data/admin-opportunities";
+import { getAnnouncementForAdmin } from "@/lib/data/site-announcement";
 import CountUp from "@/components/CountUp";
 
-export default async function AdminDashboardPage() {
+type SearchParams = { [key: string]: string | string[] | undefined };
+
+function firstValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const announcementError = firstValue(params.announcement_error);
+  const announcementStatus = firstValue(params.announcement_status);
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const stats = await getAdminDashboardStats();
+  const [stats, announcement] = await Promise.all([getAdminDashboardStats(), getAnnouncementForAdmin()]);
 
   return (
     <div className="admin-shell">
@@ -87,6 +102,51 @@ export default async function AdminDashboardPage() {
             Manage Testimonials
           </Link>
         </div>
+
+        <section className="card announcement-card">
+          <h2>Homepage Announcement</h2>
+          <p className="hint">
+            For a day nothing new gets published — post a message here and it replaces the usual
+            &ldquo;Nothing published today just yet&rdquo; note under Today&apos;s Opportunities on the
+            homepage. It only ever shows when there&apos;s genuinely nothing published today — the moment a
+            real opportunity goes up, this disappears automatically, posted or not.
+          </p>
+
+          {announcementError && <p className="form-error">{announcementError}</p>}
+          {announcementStatus === "posted" && (
+            <p className="bulk-summary">Announcement posted — it&apos;ll show on a day with nothing published.</p>
+          )}
+          {announcementStatus === "removed" && <p className="bulk-summary">Announcement removed.</p>}
+
+          {announcement?.is_active && (
+            <p className="announcement-live-badge">
+              <span className="dot" /> Currently live on the homepage
+            </p>
+          )}
+
+          <form action="/api/admin/announcement" method="post" className="announcement-form">
+            <label className="bulk-field bulk-field-wide">
+              Message
+              <textarea
+                name="message"
+                rows={2}
+                maxLength={280}
+                defaultValue={announcement?.message ?? ""}
+                placeholder="e.g. Today's opportunities are delayed — new roles will be added shortly. Check back soon!"
+              />
+            </label>
+            <div className="form-actions">
+              <button className="btn btn-primary" name="intent" value="post" type="submit">
+                {announcement?.is_active ? "Update Announcement" : "Post Announcement"}
+              </button>
+              {announcement?.is_active && (
+                <button className="btn btn-secondary" name="intent" value="remove" type="submit">
+                  Remove Announcement
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
       </main>
     </div>
   );
