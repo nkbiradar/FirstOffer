@@ -34,6 +34,17 @@ const WORK_MODE_LABELS: Record<string, string> = {
   onsite: "Work From Office",
 };
 
+// Some (not all) Google Forms used for applying ask a gatekeeping question
+// like "Name of Premium Membership group?" to confirm the applicant is a
+// real, paying subscriber. Checking every single Google Form by hand isn't
+// realistic, so instead of an opt-in field admins fill in per-opportunity,
+// this note is shown automatically on every opportunity that uses a Google
+// Form to apply — a subscriber who doesn't hit that question on a given
+// form simply ignores the tip. opportunity.premium_group_hint (set from the
+// admin edit form) can still override this per-opportunity for the rare
+// case where a different answer is needed.
+const DEFAULT_PREMIUM_GROUP_HINT = "SDE Premium Group";
+
 type ApplyAction = { label: string; href: string };
 
 type Params = { id: string };
@@ -193,10 +204,18 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     how_to_apply,
     hr_email,
     hr_contact,
-    premium_group_hint,
     deadline,
     company,
   } = opportunity;
+
+  // Auto-applies to every Google-Form opportunity (see the constant's
+  // comment above) — opportunity.premium_group_hint overrides it when the
+  // admin has explicitly set a different answer for this specific listing.
+  const premiumGroupHint = opportunity.premium_group_hint?.trim()
+    ? opportunity.premium_group_hint.trim()
+    : opportunity.google_form_url
+      ? DEFAULT_PREMIUM_GROUP_HINT
+      : null;
 
   const applyAction = !isExpired ? getApplyAction(opportunity) : null;
   const compensation = [stipend, salary].filter(Boolean);
@@ -414,7 +433,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
         {!isExpired &&
           ((canShowApply
-            ? Boolean(how_to_apply || hr_email || hr_contact || premium_group_hint)
+            ? Boolean(how_to_apply || hr_email || hr_contact || premiumGroupHint)
             : hasApplyContent) ||
             deadlineLabel) && (
           <section className="card">
@@ -426,15 +445,15 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               </p>
             )}
             {canShowApply && hr_contact && <p>HR Contact: {hr_contact}</p>}
-            {canShowApply && premium_group_hint && (
+            {canShowApply && premiumGroupHint && (
               <p className="premium-group-hint">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                   <rect x="3" y="11" width="18" height="10" rx="2" />
                   <path d="M7 11V7a5 5 0 0110 0v4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <span>
-                  If this form asks for your <strong>&quot;Premium Membership Group&quot;</strong>, enter:{" "}
-                  <strong>{premium_group_hint}</strong>
+                  Some application forms for this role ask for a <strong>&quot;Premium Membership Group&quot;</strong> —
+                  if yours does, enter: <strong>{premiumGroupHint}</strong>
                 </span>
               </p>
             )}

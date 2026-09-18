@@ -223,17 +223,19 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
           <textarea name="how_to_apply" defaultValue={o?.how_to_apply ?? ""} rows={4} />
         </label>
         <label>
-          Premium Group Answer{" "}
+          Premium Group Answer Override{" "}
           <span className="hint">
-            (optional — only fill this in if THIS opportunity&apos;s application form asks a question like
-            &quot;Name of Premium Membership group?&quot;. Leave blank for every other opportunity. Shown
-            only to subscribers who&apos;ve unlocked this listing — never shown publicly.)
+            (leave blank — every opportunity with a Google Form already shows subscribers &quot;SDE Premium
+            Group&quot; automatically as the answer to a possible &quot;Premium Membership group&quot;
+            question, no setup needed. Only fill this in if THIS specific opportunity needs a different
+            answer instead. Shown only to subscribers who&apos;ve unlocked this listing — never shown
+            publicly.)
           </span>
           <input
             name="premium_group_hint"
             type="text"
             defaultValue={o?.premium_group_hint ?? ""}
-            placeholder="e.g. SDE Premium Group"
+            placeholder="Leave blank unless this listing needs a different answer"
           />
         </label>
       </section>
