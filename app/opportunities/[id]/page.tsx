@@ -38,12 +38,23 @@ const WORK_MODE_LABELS: Record<string, string> = {
 // like "Name of Premium Membership group?" to confirm the applicant is a
 // real, paying subscriber. Checking every single Google Form by hand isn't
 // realistic, so instead of an opt-in field admins fill in per-opportunity,
-// this note is shown automatically on every opportunity that uses a Google
-// Form to apply — a subscriber who doesn't hit that question on a given
+// this note is shown automatically on every opportunity whose apply link is
+// a Google Form — a subscriber who doesn't hit that question on a given
 // form simply ignores the tip. opportunity.premium_group_hint (set from the
 // admin edit form) can still override this per-opportunity for the rare
 // case where a different answer is needed.
 const DEFAULT_PREMIUM_GROUP_HINT = "SDE Premium Group";
+
+// The admin form has a dedicated "Google Form URL" field, but plenty of
+// existing opportunities have their Google Form link pasted into the
+// generic "Application URL" field instead (getApplyAction() below treats
+// them identically for the Apply button, so there's never been a reason to
+// be consistent about which one is used) — check whichever URL actually
+// ends up as the apply link, not just the google_form_url column.
+function isGoogleFormLink(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return /forms\.gle|docs\.google\.com\/forms/i.test(url);
+}
 
 type ApplyAction = { label: string; href: string };
 
@@ -208,16 +219,17 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     company,
   } = opportunity;
 
-  // Auto-applies to every Google-Form opportunity (see the constant's
-  // comment above) — opportunity.premium_group_hint overrides it when the
-  // admin has explicitly set a different answer for this specific listing.
+  const applyAction = !isExpired ? getApplyAction(opportunity) : null;
+
+  // Auto-applies to every opportunity whose resolved apply link is a Google
+  // Form (see isGoogleFormLink()'s comment above) — opportunity.premium_group_hint
+  // overrides it when the admin has explicitly set a different answer for
+  // this specific listing.
   const premiumGroupHint = opportunity.premium_group_hint?.trim()
     ? opportunity.premium_group_hint.trim()
-    : opportunity.google_form_url
+    : isGoogleFormLink(applyAction?.href)
       ? DEFAULT_PREMIUM_GROUP_HINT
       : null;
-
-  const applyAction = !isExpired ? getApplyAction(opportunity) : null;
   const compensation = [stipend, salary].filter(Boolean);
   const workModeLabel = work_mode ? WORK_MODE_LABELS[work_mode] : null;
   const deadlineLabel = formatDate(deadline);
