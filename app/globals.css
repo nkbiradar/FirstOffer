@@ -993,6 +993,34 @@ button.btn-danger {
   color: var(--color-danger);
 }
 
+/* The "answer to the hidden form question" callout on an unlocked
+   opportunity's Application Information card — deliberately eye-catching
+   since missing it means the applicant's form submission looks illegitimate.
+   Only ever rendered for viewers who've already unlocked full apply access. */
+.premium-group-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-mint);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.premium-group-hint svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-mint-strong);
+}
+
+.premium-group-hint strong {
+  font-weight: 800;
+  color: var(--color-mint-strong);
+}
+
 @media (max-width: 720px) {
   .unlock-contact-card {
     max-width: none;

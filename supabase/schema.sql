@@ -706,3 +706,24 @@ alter table public.email_optouts enable row level security;
 alter table public.subscriptions
   add column if not exists razorpay_payment_id text,
   add column if not exists razorpay_order_id text;
+
+-- ── opportunities.premium_group_hint ─────────────────────────────────────
+-- Some (not all) external application forms — typically the Google Forms
+-- used for a referral-style application — ask a gatekeeping question like
+-- "Name of Premium Membership group?" to confirm the applicant is a real,
+-- paying FirstOffer subscriber rather than someone who stumbled onto the
+-- form link. The admin fills this in per-opportunity with the expected
+-- answer (e.g. "SDE Premium Group") only for the listings that actually
+-- have that question; it's left blank for every other opportunity. Shown
+-- on the opportunity detail page (app/opportunities/[id]/page.tsx) only
+-- once the viewer has unlocked full apply access (the same canShowApply
+-- check that reveals the HR email/contact/how-to-apply text) — never shown
+-- to a locked/unsubscribed visitor, since the whole point is that only
+-- genuine subscribers should know the answer.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+alter table public.opportunities
+  add column if not exists premium_group_hint text;

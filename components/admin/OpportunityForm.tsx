@@ -222,6 +222,20 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
           How to Apply <span className="hint">(preserve instructions exactly)</span>
           <textarea name="how_to_apply" defaultValue={o?.how_to_apply ?? ""} rows={4} />
         </label>
+        <label>
+          Premium Group Answer{" "}
+          <span className="hint">
+            (optional — only fill this in if THIS opportunity&apos;s application form asks a question like
+            &quot;Name of Premium Membership group?&quot;. Leave blank for every other opportunity. Shown
+            only to subscribers who&apos;ve unlocked this listing — never shown publicly.)
+          </span>
+          <input
+            name="premium_group_hint"
+            type="text"
+            defaultValue={o?.premium_group_hint ?? ""}
+            placeholder="e.g. SDE Premium Group"
+          />
+        </label>
       </section>
 
       <section className="card">

@@ -109,6 +109,13 @@ export interface Opportunity {
   hr_contact: string | null;
   how_to_apply: string | null;
 
+  // The expected answer to a "gatekeeping" question some (not all)
+  // application forms ask (e.g. "Name of Premium Membership group?"),
+  // proving the applicant is a real paying subscriber. Only shown to
+  // unlocked/subscribed viewers — see supabase/schema.sql's note on this
+  // column and app/opportunities/[id]/page.tsx.
+  premium_group_hint: string | null;
+
   deadline: string | null;
 
   source: string;
@@ -157,6 +164,7 @@ export interface OpportunityInsert {
   hr_email?: string | null;
   hr_contact?: string | null;
   how_to_apply?: string | null;
+  premium_group_hint?: string | null;
 
   deadline?: string | null;
 

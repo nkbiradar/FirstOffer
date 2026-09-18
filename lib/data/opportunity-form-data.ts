@@ -42,6 +42,11 @@ export type OpportunityFormInput = {
   hrEmail: string;
   hrContact: string;
   howToApply: string;
+  // The expected answer to a "gatekeeping" question some (not all)
+  // application forms ask (e.g. "Name of Premium Membership group?") —
+  // left blank unless this specific opportunity's form has that question.
+  // See supabase/schema.sql's note on opportunities.premium_group_hint.
+  premiumGroupHint: string;
   deadline: string;
   sourceText: string;
   status: OpportunityStatus;
@@ -113,6 +118,7 @@ export function parseOpportunityFormData(
     hrEmail: str(formData, "hr_email"),
     hrContact: str(formData, "hr_contact"),
     howToApply: str(formData, "how_to_apply"),
+    premiumGroupHint: str(formData, "premium_group_hint"),
     deadline: str(formData, "deadline"),
     sourceText: str(formData, "source_text"),
     status,
@@ -154,6 +160,11 @@ export type BulkOpportunityItem = {
   // Optional so older/unrelated callers of this type still compile —
   // parseOpportunityBulkItem below treats a missing value as false.
   isInternal?: boolean;
+  // Optional — the bulk-import UI doesn't currently expose this field, so
+  // it's always blank for bulk-imported opportunities today; add it via
+  // the single-opportunity edit form afterwards if a bulk-imported listing
+  // needs it. See OpportunityFormInput.premiumGroupHint above.
+  premiumGroupHint?: string;
 };
 
 export function parseOpportunityBulkItem(item: BulkOpportunityItem): OpportunityFormInput {
@@ -180,6 +191,7 @@ export function parseOpportunityBulkItem(item: BulkOpportunityItem): Opportunity
     hrEmail: (item.hrEmail ?? "").trim(),
     hrContact: (item.hrContact ?? "").trim(),
     howToApply: (item.howToApply ?? "").trim(),
+    premiumGroupHint: (item.premiumGroupHint ?? "").trim(),
     deadline: (item.deadline ?? "").trim(),
     sourceText: (item.sourceText ?? "").trim(),
     status: parseEnumValue(item.status ?? "", VALID_STATUSES) || "draft",

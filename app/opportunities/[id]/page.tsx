@@ -164,7 +164,8 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.google_form_url ||
       opportunity.hr_email ||
       opportunity.hr_contact ||
-      opportunity.how_to_apply,
+      opportunity.how_to_apply ||
+      opportunity.premium_group_hint,
   );
   const applyUnlocked =
     user && hasApplyContent
@@ -192,6 +193,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     how_to_apply,
     hr_email,
     hr_contact,
+    premium_group_hint,
     deadline,
     company,
   } = opportunity;
@@ -410,7 +412,11 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </section>
         )}
 
-        {!isExpired && ((canShowApply ? Boolean(how_to_apply || hr_email || hr_contact) : hasApplyContent) || deadlineLabel) && (
+        {!isExpired &&
+          ((canShowApply
+            ? Boolean(how_to_apply || hr_email || hr_contact || premium_group_hint)
+            : hasApplyContent) ||
+            deadlineLabel) && (
           <section className="card">
             <h2>Application Information</h2>
             {canShowApply && how_to_apply && <p className="preserve-whitespace">{how_to_apply}</p>}
@@ -420,6 +426,18 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               </p>
             )}
             {canShowApply && hr_contact && <p>HR Contact: {hr_contact}</p>}
+            {canShowApply && premium_group_hint && (
+              <p className="premium-group-hint">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span>
+                  If this form asks for your <strong>&quot;Premium Membership Group&quot;</strong>, enter:{" "}
+                  <strong>{premium_group_hint}</strong>
+                </span>
+              </p>
+            )}
             {!canShowApply && hasApplyContent && (
               <p className="unlock-contact-desc">
                 How to apply — including any email, contact, or application link — is locked. Unlock above to view it.

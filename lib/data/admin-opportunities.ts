@@ -59,6 +59,7 @@ type OpportunityDbFields = Pick<
   | "hr_email"
   | "hr_contact"
   | "how_to_apply"
+  | "premium_group_hint"
   | "deadline"
   | "source_text"
   | "is_internal"
@@ -85,6 +86,7 @@ function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
     hr_email: input.hrEmail.trim() || null,
     hr_contact: input.hrContact.trim() || null,
     how_to_apply: input.howToApply.trim() || null,
+    premium_group_hint: input.premiumGroupHint.trim() || null,
     deadline: input.deadline || null,
     source_text: input.sourceText.trim(),
     is_internal: input.isInternal,
