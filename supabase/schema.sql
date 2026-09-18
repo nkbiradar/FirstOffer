@@ -682,3 +682,26 @@ alter table public.email_optouts enable row level security;
 -- through app/api/email/unsubscribe, app/api/email/preference, and
 -- lib/email/resend-client.ts using the service-role client, same pattern
 -- as push_subscriptions/opportunity_unlocks.
+
+-- ── subscriptions.razorpay_payment_id / razorpay_order_id ────────────────
+-- Lets a row in this table be matched back to an exact payment in the
+-- Razorpay dashboard (Payments) without guessing from timestamps alone.
+-- Populated by app/api/subscriptions/verify/route.ts (the browser-side
+-- confirmation right after Razorpay Checkout succeeds) and
+-- app/api/payments/webhook/route.ts (subscription.activated/charged
+-- events) — both record the payment id for whichever charge most recently
+-- activated/renewed the subscription, so this always reflects the LATEST
+-- payment, not a full history of every monthly renewal. razorpay_order_id
+-- is nullable because Razorpay doesn't always attach an order to a
+-- subscription charge (it does for many, but not guaranteed for every
+-- renewal cycle).
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file. Existing rows created before this migration will have both
+-- columns NULL until their subscription's next renewal (or a cancel and
+-- re-subscribe) fills them in.
+
+alter table public.subscriptions
+  add column if not exists razorpay_payment_id text,
+  add column if not exists razorpay_order_id text;

@@ -113,6 +113,18 @@ export async function POST(request: NextRequest) {
       // for display ("renews on ..."), never to gate access.
       update.current_period_end = new Date(subscriptionEntity.current_end * 1000).toISOString();
     }
+    // subscription.activated/charged events also carry the payment that
+    // triggered them — recorded so a row here can be matched back to an
+    // exact entry in the Razorpay dashboard's Payments list (see the
+    // razorpay_payment_id/razorpay_order_id note in supabase/schema.sql).
+    // Always reflects the LATEST charge, not a history of every renewal.
+    const webhookPayment = payload.payload?.payment?.entity;
+    if (webhookPayment?.id) {
+      update.razorpay_payment_id = webhookPayment.id;
+    }
+    if (webhookPayment?.order_id) {
+      update.razorpay_order_id = webhookPayment.order_id;
+    }
 
     const { error } = await admin.from("subscriptions").update(update).eq("razorpay_subscription_id", subscriptionId);
     if (error) {

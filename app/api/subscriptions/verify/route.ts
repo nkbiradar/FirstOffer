@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
     .from("subscriptions")
     .update({
       status: "active",
+      razorpay_payment_id,
       updated_at: new Date().toISOString(),
     })
     .eq("user_id", user.id)
