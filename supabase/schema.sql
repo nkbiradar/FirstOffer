@@ -609,19 +609,20 @@ alter table public.opportunities
 create index if not exists opportunities_is_internal_idx
   on public.opportunities (is_internal) where is_internal;
 
--- ── site_announcement (admin-postable "nothing new today" banner) ───────
--- A single, manually-controlled banner the admin can post to the homepage
--- for days nothing new goes up — e.g. "Today's opportunities are delayed,
--- check back shortly" — so a quiet day doesn't read as a dead site. Always
--- exactly one row (fixed id 'singleton') rather than a growing table:
--- posting a new announcement overwrites the previous one, and there's no
--- history to manage. It's shown on the homepage only when BOTH is_active
--- is true AND there are genuinely no opportunities published today (see
--- app/page.tsx) — real content always wins over the placeholder message,
--- so a stale announcement can never sit on top of opportunities that got
--- posted later. is_active starts (and returns to) false; the message text
--- is kept even after being turned off, so re-posting the same wording is
--- one click of pre-filled text rather than retyping it.
+-- ── site_announcement (admin-postable homepage banner) ───────────────────
+-- A single, manually-controlled banner the admin can post above "Today's
+-- Opportunities" on the homepage — e.g. "Today's opportunities are
+-- delayed, check back shortly" on a quiet day, or "15 posted today, more
+-- coming shortly" on a busy one. Always exactly one row (fixed id
+-- 'singleton') rather than a growing table: posting a new announcement
+-- overwrites the previous one, and there's no history to manage. Shown
+-- whenever is_active is true, regardless of how many opportunities were
+-- published that day (see app/page.tsx) — it's a general-purpose note,
+-- not tied to the empty state, so the admin is responsible for removing
+-- it once it's no longer relevant. is_active starts (and returns to)
+-- false; the message text is kept even after being turned off, so
+-- re-posting the same wording is one click of pre-filled text rather than
+-- retyping it.
 --
 -- NOTE: this block is additive and safe to run on its own against the live
 -- database — do NOT re-run the drop/create statements at the top of this

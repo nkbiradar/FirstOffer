@@ -3982,6 +3982,31 @@ a.footer-trust-item:hover {
   color: #16a34a;
 }
 
+/* ── Homepage: Admin Announcement Banner ─────────────────────────────── */
+.homepage-announcement-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.homepage-announcement-icon {
+  flex-shrink: 0;
+  color: var(--color-accent);
+  margin-top: 1px;
+}
+
+.homepage-announcement-banner p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
 /* ── SEO: Expired Opportunity Banner ──────────────────────────────────── */
 .expired-banner {
   display: flex;

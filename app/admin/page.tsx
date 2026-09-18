@@ -106,15 +106,16 @@ export default async function AdminDashboardPage({
         <section className="card announcement-card">
           <h2>Homepage Announcement</h2>
           <p className="hint">
-            For a day nothing new gets published — post a message here and it replaces the usual
-            &ldquo;Nothing published today just yet&rdquo; note under Today&apos;s Opportunities on the
-            homepage. It only ever shows when there&apos;s genuinely nothing published today — the moment a
-            real opportunity goes up, this disappears automatically, posted or not.
+            Post a message here and it shows as a banner above Today&apos;s Opportunities on the homepage —
+            whether or not anything&apos;s been published today. Use it for &ldquo;nothing&apos;s up
+            yet, check back soon&rdquo; on a slow day, or &ldquo;15 posted today, more coming shortly&rdquo; on
+            a busy one. It stays live until you remove it below, so take it down once it&apos;s no longer
+            relevant.
           </p>
 
           {announcementError && <p className="form-error">{announcementError}</p>}
           {announcementStatus === "posted" && (
-            <p className="bulk-summary">Announcement posted — it&apos;ll show on a day with nothing published.</p>
+            <p className="bulk-summary">Announcement posted — it&apos;s now live on the homepage.</p>
           )}
           {announcementStatus === "removed" && <p className="bulk-summary">Announcement removed.</p>}
 

@@ -385,6 +385,21 @@ export default async function HomePage() {
               </div>
             </div>
 
+            {announcement && (
+              <div className="homepage-announcement-banner">
+                <span className="homepage-announcement-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path
+                      d="M3 11v2a2 2 0 002 2h1l3.5 5v-5H15l5 3V6l-5 3H9.5L6 4v5H5a2 2 0 00-2 2z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <p>{announcement}</p>
+              </div>
+            )}
+
             {today.length === 0 ? (
               <div className="empty-state">
                 <span className="empty-state-icon">
@@ -392,17 +407,8 @@ export default async function HomePage() {
                     <path d="M12 8v4l3 3M12 3a9 9 0 100 18 9 9 0 000-18z" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                {announcement ? (
-                  <>
-                    <h3>A note from the FirstOffer team</h3>
-                    <p>{announcement}</p>
-                  </>
-                ) : (
-                  <>
-                    <h3>Nothing published today just yet</h3>
-                    <p>Check back soon, or browse everything that&apos;s currently live.</p>
-                  </>
-                )}
+                <h3>Nothing published today just yet</h3>
+                <p>Check back soon, or browse everything that&apos;s currently live.</p>
                 <Link className="btn btn-secondary btn-sm" href="/fresher-jobs">
                   View all fresher jobs
                 </Link>
