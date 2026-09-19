@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
+import VisitTracker from "@/components/VisitTracker";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -76,6 +77,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         </div>
         <Analytics />
         <PushNotificationPrompt />
+        <VisitTracker isAdmin={isAdmin} />
       </body>
     </html>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminDashboardStats } from "@/lib/data/admin-opportunities";
 import { getAnnouncementForAdmin } from "@/lib/data/site-announcement";
+import { getSiteVisitStats } from "@/lib/data/site-visits";
 import CountUp from "@/components/CountUp";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -23,7 +24,11 @@ export default async function AdminDashboardPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const [stats, announcement] = await Promise.all([getAdminDashboardStats(), getAnnouncementForAdmin()]);
+  const [stats, announcement, visitStats] = await Promise.all([
+    getAdminDashboardStats(),
+    getAnnouncementForAdmin(),
+    getSiteVisitStats(),
+  ]);
 
   return (
     <div className="admin-shell">
@@ -83,7 +88,37 @@ export default async function AdminDashboardPage({
             </span>
             <span className="admin-stat-label">Expired</span>
           </div>
+          <div className="card admin-stat">
+            <span className="admin-stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </span>
+            <span className="admin-stat-value">
+              <CountUp value={visitStats.today} />
+            </span>
+            <span className="admin-stat-label">Visitors Today</span>
+          </div>
+          <div className="card admin-stat">
+            <span className="admin-stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="9" cy="8" r="3" />
+                <circle cx="16.5" cy="9.5" r="2.5" />
+                <path d="M3 20c0-3 3-5 6-5s6 2 6 5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M15 15c2.5.3 4 2 4 5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="admin-stat-value">
+              <CountUp value={visitStats.allTime} />
+            </span>
+            <span className="admin-stat-label">Total Visitors</span>
+          </div>
         </div>
+        <p className="hint" style={{ marginTop: -8, marginBottom: 24 }}>
+          Visitors are counted per unique browser (via a cookie), admin visits excluded — not a full analytics
+          suite, just the headline number.
+        </p>
 
         <div className="admin-dashboard-actions">
           <Link className="btn btn-primary" href="/admin/opportunities/new">

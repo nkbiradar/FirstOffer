@@ -730,3 +730,37 @@ alter table public.subscriptions
 
 alter table public.opportunities
   add column if not exists premium_group_hint text;
+
+-- ── site_visits (admin-only "how many strangers visited" counter) ───────
+-- Backs the "Visitors Today" / "Total Visitors" tiles on /admin — see
+-- lib/data/site-visits.ts. One row per (visitor, day): every real page
+-- load pings app/api/track-visit/route.ts, which mints a long-lived
+-- anonymous cookie the first time a browser is seen and upserts a row here
+-- with today's date, ignoring the conflict on every later page load that
+-- same day. That's what makes both tiles mean UNIQUE visitors rather than
+-- raw page views — a person browsing ten pages, or coming back five times
+-- in one day, still only ever adds one row for that day. "Total Visitors"
+-- then counts distinct visitor_id across every row ever, so a visitor who
+-- returns on a different day doesn't get double-counted either. Not a full
+-- analytics system on purpose — no page-level detail, no referrers, no
+-- geography — just the one headline number that was asked for. Never read
+-- or written by the RLS-scoped client, same convention as rate_limit_hits.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.site_visits (
+  visitor_id text not null,
+  day date not null,
+  first_seen_at timestamptz not null default now(),
+  primary key (visitor_id, day)
+);
+
+create index if not exists site_visits_day_idx
+  on public.site_visits (day);
+
+alter table public.site_visits enable row level security;
+-- No policies: only app/api/track-visit/route.ts (write) and
+-- lib/data/site-visits.ts's getSiteVisitStats() (read) ever touch this
+-- table, both through the service-role client.
