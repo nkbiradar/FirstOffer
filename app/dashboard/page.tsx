@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
-import { getUserSubscription } from "@/lib/data/subscriptions";
+import { getUserSubscription, isSubscriptionAccessActive } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
@@ -87,9 +87,9 @@ export default async function DashboardPage({
   // its presence means grandfathered lifetime access, not "this many
   // opportunities."
   const fullAccessUnlock = unlocks[0] ?? null;
-  const subscriptionActive = subscription?.status === "active";
+  const subscriptionActive = isSubscriptionAccessActive(subscription);
   const hasFullAccess = Boolean(fullAccessUnlock) || subscriptionActive;
-  const internalActive = internalSubscription?.status === "active";
+  const internalActive = isSubscriptionAccessActive(internalSubscription);
 
   const filtered =
     status === "all"

@@ -110,8 +110,22 @@ export async function POST(request: NextRequest) {
     const update: Record<string, unknown> = { status, updated_at: new Date().toISOString() };
     if (typeof subscriptionEntity?.current_end === "number") {
       // Razorpay sends Unix seconds; current_period_end is only ever used
-      // for display ("renews on ..."), never to gate access.
+      // for display ("renews on ...") PLUS — since isSubscriptionAccessActive()
+      // in lib/data/subscriptions.ts — as the grace-period cutoff for a
+      // 'cancelled' row, so keep it accurate even on a cancellation event.
       update.current_period_end = new Date(subscriptionEntity.current_end * 1000).toISOString();
+    }
+    // A subscription reaching any of these terminal statuses stops
+    // renewing regardless of how it got there (customer-initiated cancel
+    // via /dashboard, a revoked UPI Autopay mandate, or failed renewal
+    // retries) — recorded the same way app/api/subscriptions/cancel/route.ts
+    // does for the in-app cancel flow, so /dashboard's "Cancelled — access
+    // ends ..." messaging is accurate no matter which flow triggered it.
+    // Access itself isn't cut off here: for 'cancelled' specifically,
+    // isSubscriptionAccessActive() keeps the customer's access live until
+    // current_period_end passes, honoring whatever they already paid for.
+    if (status === "cancelled" || status === "halted" || status === "completed") {
+      update.cancelled_at = new Date().toISOString();
     }
     // subscription.activated/charged events also carry the payment that
     // triggered them — recorded so a row here can be matched back to an

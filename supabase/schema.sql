@@ -502,15 +502,18 @@ alter table public.push_subscriptions enable row level security;
 -- end date.
 --
 -- `status` mirrors Razorpay's own subscription lifecycle. Access is
--- granted by hasActiveSubscription() purely on `status = 'active'` — not
--- on `current_period_end`, which is only stored for display ("renews on
--- ...") on the dashboard. The reason: current_period_end is only known
--- once the FIRST charge webhook arrives, and trusting a hand-rolled
--- expiry comparison instead of Razorpay's own status risks revoking
--- access early on webhook delay, or missing a real cancellation the
--- webhook already reported. Razorpay's own `subscription.halted` /
--- `subscription.cancelled` / `subscription.completed` events are what
--- flip `status` away from 'active' (see app/api/payments/webhook/route.ts).
+-- granted by lib/data/subscriptions.ts's isSubscriptionAccessActive() when
+-- `status = 'active'`, OR when `status = 'cancelled'` and
+-- `current_period_end` is still in the future — a grace period so a
+-- mandate cancelled early (the customer revokes UPI Autopay from their own
+-- banking app, or a mandate fails right after the first charge) doesn't
+-- lock out someone who already paid for the current cycle. `halted`
+-- (renewal charge failed after retries) gets no such grace, since by
+-- definition that cycle was never paid for. Razorpay's own
+-- `subscription.halted` / `subscription.cancelled` / `subscription.completed`
+-- events are what flip `status` away from 'active' (see
+-- app/api/payments/webhook/route.ts, which also stamps `cancelled_at` at
+-- that point so /dashboard's messaging stays accurate).
 --
 -- NOTE: this block is additive and safe to run on its own against the live
 -- database — do NOT re-run the drop/create statements at the top of this
