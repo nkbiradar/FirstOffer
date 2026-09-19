@@ -33,12 +33,12 @@ export function notifySingleOpportunity(opportunity: Opportunity): void {
   }
 
   void sendPushToAllSubscribers({
-    title: "1 new opportunity just added!",
+    title: "🔥 New opportunity just added!",
     body: `${opportunity.role} — go fast and apply before it's gone.`,
     url: `/opportunities/${opportunity.id}`,
   });
   void sendEmailToAllUsers({
-    subject: `New opportunity: ${opportunity.role} — FirstOffer`,
+    subject: `🔥 New opportunity: ${opportunity.role} — FirstOffer`,
     heading: "A new opportunity just went live",
     body: `${opportunity.role} was just published on FirstOffer. Go fast and apply before it's gone.`,
     ctaLabel: "View Opportunity",
@@ -49,17 +49,18 @@ export function notifySingleOpportunity(opportunity: Opportunity): void {
 export function notifyBulkOpportunities(counts: { public: number; internal: number }): void {
   if (counts.public > 0) {
     void sendPushToAllSubscribers({
-      title: counts.public === 1 ? "1 new opportunity just added!" : `${counts.public} new opportunities just added!`,
+      title:
+        counts.public === 1 ? "🔥 New opportunity just added!" : `🔥 ${counts.public} new opportunities just added!`,
       body: "Go fast and apply before they're gone.",
       url: "/opportunities",
     });
     void sendEmailToAllUsers({
       subject:
         counts.public === 1
-          ? "1 new opportunity just added — FirstOffer"
-          : `${counts.public} new opportunities just added — FirstOffer`,
+          ? "🔥 New opportunity just added — FirstOffer"
+          : `🔥 ${counts.public} new opportunities just added — FirstOffer`,
       heading:
-        counts.public === 1 ? "1 new opportunity just went live" : `${counts.public} new opportunities just went live`,
+        counts.public === 1 ? "New opportunity just went live" : `${counts.public} new opportunities just went live`,
       body: "Go fast and apply before they're gone.",
       ctaLabel: "Browse Opportunities",
       url: "/opportunities",
