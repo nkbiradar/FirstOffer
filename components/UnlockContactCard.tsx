@@ -6,7 +6,7 @@ import Script from "next/script";
 import { track } from "@vercel/analytics";
 
 type RazorpaySuccessResponse = {
-  razorpay_subscription_id: string;
+  razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
 };
@@ -43,7 +43,7 @@ const PRODUCT_COPY: Record<
   full_access: {
     eyebrow: "Full Access Membership",
     title: "How to apply is locked",
-    priceLine: "Cancel anytime, in one click.",
+    priceLine: "One-time payment — unlocks 30 days of access.",
     description:
       "Most freshers waste weeks applying through crowded portals and hoping someone notices. For less than the price of an auto ride, unlock the direct HR email, official Google Form, or application link on this opportunity — and every opportunity on FirstOffer, including new ones added regularly.",
     highlightTitle: "One membership, every opportunity, unlocked",
@@ -56,7 +56,7 @@ const PRODUCT_COPY: Record<
   internal_hr: {
     eyebrow: "Internal HR Openings",
     title: "This is an internal, HR-shared opening",
-    priceLine: "Cancel anytime, in one click.",
+    priceLine: "One-time payment — unlocks 30 days of access.",
     description:
       "This role was shared directly by an HR or recruiter — it isn't posted on the regular job portals, so competition is far lower than a public listing. Unlock it (and every other internal opening as it comes in) for less than the price of an auto ride.",
     highlightTitle: "Direct HR access, before everyone else",
@@ -79,6 +79,9 @@ const PRODUCT_COPY: Record<
 // customers from the old one-time ₹49 unlock keep that access unchanged
 // and never see this card for full_access. Once access is granted, the
 // real ApplyButton/apply instructions render in this same spot instead.
+// Checkout itself is a plain one-time Razorpay Order (30 days of access
+// per payment), not a recurring Autopay Subscription — see
+// app/api/subscriptions/create/route.ts's comment for why.
 export default function UnlockContactCard({
   opportunityId,
   isSignedIn,
@@ -146,7 +149,7 @@ export default function UnlockContactCard({
 
       const razorpay = new window.Razorpay({
         key: subData.keyId,
-        subscription_id: subData.subscriptionId,
+        order_id: subData.orderId,
         name: "FirstOffer",
         description: copy.checkoutDescription,
         method: {
@@ -233,8 +236,8 @@ export default function UnlockContactCard({
             {isLoading ? "Opening payment..." : copy.unlockLabel(price)}
           </button>
           <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
-            Access unlocks instantly after payment. Renews monthly at ₹{price} — cancel anytime from your dashboard,
-            no questions asked.
+            Access unlocks instantly after payment and lasts 30 days. No auto-renewal, no mandate saved — just come
+            back and pay ₹{price} again whenever you want to keep going.
           </p>
         </>
       )}

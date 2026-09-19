@@ -90,6 +90,13 @@ export default async function DashboardPage({
   const subscriptionActive = isSubscriptionAccessActive(subscription);
   const hasFullAccess = Boolean(fullAccessUnlock) || subscriptionActive;
   const internalActive = isSubscriptionAccessActive(internalSubscription);
+  // A one-time monthly payment (current model) stores an Order id here
+  // ("order_..."); a real recurring Autopay mandate from before the switch
+  // stores a Subscription id ("sub_...") — see
+  // app/api/subscriptions/create/route.ts's comment. Used to show accurate
+  // "pay again" vs "renews"/Cancel copy for each case.
+  const isManualFullAccess = !subscription?.razorpay_subscription_id.startsWith("sub_");
+  const isManualInternal = !internalSubscription?.razorpay_subscription_id.startsWith("sub_");
 
   const filtered =
     status === "all"
@@ -245,25 +252,33 @@ export default async function DashboardPage({
                     {subscriptionActive ? "Full access — every opportunity, unlocked" : "Membership ended"}
                   </p>
                   <p className="unlock-item-meta">
-                    {subscriptionActive && !subscription.cancelled_at && (
+                    {subscriptionActive && isManualFullAccess && (
+                      <>
+                        ₹49 one-time payment
+                        {subscription?.current_period_end && (
+                          <> · valid until {formatFutureDate(subscription.current_period_end)}, pay again anytime to keep it going</>
+                        )}
+                      </>
+                    )}
+                    {subscriptionActive && !isManualFullAccess && !subscription?.cancelled_at && (
                       <>
                         ₹49/month membership
-                        {subscription.current_period_end && <> · renews {formatFutureDate(subscription.current_period_end)}</>}
+                        {subscription?.current_period_end && <> · renews {formatFutureDate(subscription.current_period_end)}</>}
                       </>
                     )}
-                    {subscriptionActive && subscription.cancelled_at && (
+                    {subscriptionActive && !isManualFullAccess && subscription?.cancelled_at && (
                       <>
                         Cancelled — access ends{" "}
-                        {subscription.current_period_end ? formatFutureDate(subscription.current_period_end) : "at period end"}
+                        {subscription?.current_period_end ? formatFutureDate(subscription.current_period_end) : "at period end"}
                       </>
                     )}
-                    {!subscriptionActive && "Resubscribe from any opportunity page to unlock access again"}
+                    {!subscriptionActive && "Pay again from any opportunity page to unlock access"}
                   </p>
                 </div>
-                {subscriptionActive && !subscription.cancelled_at && <CancelSubscriptionButton />}
+                {subscriptionActive && !isManualFullAccess && !subscription?.cancelled_at && <CancelSubscriptionButton />}
                 {!subscriptionActive && (
                   <Link className="btn btn-secondary btn-sm" href="/opportunities">
-                    Resubscribe
+                    Pay again
                   </Link>
                 )}
               </div>
@@ -272,9 +287,9 @@ export default async function DashboardPage({
             <div className="empty-state">
               <h3>Full access not unlocked yet</h3>
               <p>
-                A ₹49/month membership unlocks the application link, Google Form, and HR email/contact on{" "}
-                <strong>every</strong> opportunity on FirstOffer — including new ones as they go live. Cancel
-                anytime.
+                A ₹49 one-time payment unlocks the application link, Google Form, and HR email/contact on{" "}
+                <strong>every</strong> opportunity on FirstOffer — including new ones as they go live — for 30
+                days. No auto-renewal; pay again whenever you want to keep it going.
               </p>
               <Link className="btn btn-secondary btn-sm" href="/opportunities">
                 Browse Opportunities
@@ -302,31 +317,39 @@ export default async function DashboardPage({
                     {internalActive ? "Internal HR Openings — unlocked" : "Membership ended"}
                   </p>
                   <p className="unlock-item-meta">
-                    {internalActive && !internalSubscription.cancelled_at && (
+                    {internalActive && isManualInternal && (
+                      <>
+                        ₹39 one-time payment
+                        {internalSubscription?.current_period_end && (
+                          <> · valid until {formatFutureDate(internalSubscription.current_period_end)}, pay again anytime to keep it going</>
+                        )}
+                      </>
+                    )}
+                    {internalActive && !isManualInternal && !internalSubscription?.cancelled_at && (
                       <>
                         ₹39/month membership
-                        {internalSubscription.current_period_end && (
+                        {internalSubscription?.current_period_end && (
                           <> · renews {formatFutureDate(internalSubscription.current_period_end)}</>
                         )}
                       </>
                     )}
-                    {internalActive && internalSubscription.cancelled_at && (
+                    {internalActive && !isManualInternal && internalSubscription?.cancelled_at && (
                       <>
                         Cancelled — access ends{" "}
-                        {internalSubscription.current_period_end
+                        {internalSubscription?.current_period_end
                           ? formatFutureDate(internalSubscription.current_period_end)
                           : "at period end"}
                       </>
                     )}
-                    {!internalActive && "Resubscribe from /internal-openings to unlock access again"}
+                    {!internalActive && "Pay again from /internal-openings to unlock access"}
                   </p>
                 </div>
-                {internalActive && !internalSubscription.cancelled_at && (
+                {internalActive && !isManualInternal && !internalSubscription?.cancelled_at && (
                   <CancelSubscriptionButton product="internal_hr" />
                 )}
                 {!internalActive && (
                   <Link className="btn btn-secondary btn-sm" href="/internal-openings">
-                    Resubscribe
+                    Pay again
                   </Link>
                 )}
               </div>
@@ -335,8 +358,9 @@ export default async function DashboardPage({
             <div className="empty-state">
               <h3>Internal HR Openings not unlocked yet</h3>
               <p>
-                A ₹39/month membership unlocks internal, HR-shared roles with significantly lower competition —
-                openings that may never be widely posted elsewhere. Cancel anytime.
+                A ₹39 one-time payment unlocks internal, HR-shared roles with significantly lower competition —
+                openings that may never be widely posted elsewhere — for 30 days. No auto-renewal; pay again
+                whenever you want to keep it going.
               </p>
               <Link className="btn btn-secondary btn-sm" href="/internal-openings">
                 View Internal Openings

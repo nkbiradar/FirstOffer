@@ -23,38 +23,42 @@ export type UserSubscription = {
  * place both hasActiveSubscription() below and /dashboard's display logic
  * derive this from, so they can never disagree.
  *
- * `status = 'active'` always grants access (the normal case, including a
- * user-initiated cancel via /dashboard: that flow — see
- * app/api/subscriptions/cancel/route.ts — deliberately leaves `status`
- * alone and only sets `cancelled_at`, so Razorpay's own end-of-cycle
- * webhook is what later flips `status` away from 'active').
+ * As of the switch away from Razorpay Autopay (see
+ * app/api/subscriptions/create/route.ts's comment on why: UPI Autopay's
+ * extra mandate-authorization step was causing a lot of real customers to
+ * cancel mid-checkout), new purchases are a plain one-time payment that
+ * buys exactly 30 days of access — there is no recurring mandate to keep
+ * renewing it, so this function can't just trust `status === 'active'`
+ * forever the way it used to. Instead, both 'active' and 'cancelled' rows
+ * are checked the same way: access holds for as long as
+ * `current_period_end` is in the future, and lapses on its own the moment
+ * it passes — no cron/sweep needed, consistent with the rest of this
+ * project (see sweepExpiredOpportunities()'s comment in
+ * lib/data/admin-opportunities.ts). A row with no `current_period_end` at
+ * all (shouldn't normally happen once a payment is verified) falls back to
+ * trusting `status === 'active'` alone, so nothing old breaks.
  *
- * `status = 'cancelled'` ALSO grants access for as long as
- * `current_period_end` is still in the future. This matters because
- * Razorpay can send `subscription.cancelled` immediately — e.g. the
- * customer revokes the UPI Autopay mandate from their own banking app, or
- * the mandate registration itself fails right after the first charge —
- * well before the period they already paid for has actually ended. Without
- * this, a customer who paid and then had their mandate cancelled minutes
- * later would be locked out despite having paid for a full cycle (this
- * fixed exactly that incident). Once current_period_end passes, this
- * returns false on its own — no cron/sweep needed, consistent with the
- * rest of this project (see sweepExpiredOpportunities()'s comment in
- * lib/data/admin-opportunities.ts).
+ * This also still correctly covers every pre-existing Autopay row from
+ * before this switch: the webhook keeps bumping `current_period_end`
+ * forward on every successful renewal charge, and a cancelled-but-not-yet-
+ * lapsed mandate (e.g. the customer revoked the UPI Autopay mandate from
+ * their own banking app right after paying) keeps access exactly until the
+ * period already paid for actually ends — same behavior as before, just
+ * expressed as one rule instead of two.
  *
- * `halted` (renewal charge failed after retries) is NOT given this grace
- * period — by definition the customer didn't pay for whatever cycle
- * triggered the halt, so there's no fresh paid time to honor.
+ * `halted` (a recurring charge that failed after retries) is NOT given
+ * this grace period — by definition the customer didn't pay for whatever
+ * cycle triggered the halt, so there's no fresh paid time to honor. Falls
+ * through to `false` below along with every other non-active/cancelled
+ * status.
  */
 export function isSubscriptionAccessActive(
   subscription: Pick<UserSubscription, "status" | "current_period_end"> | null | undefined,
 ): boolean {
   if (!subscription) return false;
-  if (subscription.status === "active") return true;
-  if (subscription.status === "cancelled" && subscription.current_period_end) {
-    return new Date(subscription.current_period_end).getTime() > Date.now();
-  }
-  return false;
+  if (subscription.status !== "active" && subscription.status !== "cancelled") return false;
+  if (!subscription.current_period_end) return subscription.status === "active";
+  return new Date(subscription.current_period_end).getTime() > Date.now();
 }
 
 /**

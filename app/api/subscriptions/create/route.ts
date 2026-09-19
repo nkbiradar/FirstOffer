@@ -3,24 +3,42 @@ import { getUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   getRazorpayClient,
-  getProductConfig,
-  MONTHLY_SUBSCRIPTION_TOTAL_COUNT,
+  getProductPricing,
+  MANUAL_PLAN_MARKER,
   type SubscriptionProduct,
 } from "@/lib/payments/razorpay";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
 
-// Starts a Razorpay Subscription for one of the two products this site
-// sells — the ₹49/month full-access plan (the recurring replacement for
-// the old one-time app/api/payments/create-order/route.ts) or the
-// ₹39/month Internal HR Openings plan, chosen by the `product` field in
-// the POST body (defaults to "full_access" for existing callers that
-// don't send one). Any signed-in user, same shape/conventions as the old
-// one-time route (service-role client, per-user rate limit), but hits
-// razorpay.subscriptions.create() with a plan_id instead of
-// razorpay.orders.create() with a raw amount, since recurring billing on
-// Razorpay only exists through a Plan.
+// Starts a payment for one of the two products this site sells — the
+// ₹49/month full-access plan or the ₹39/month Internal HR Openings plan,
+// chosen by the `product` field in the POST body (defaults to
+// "full_access" for existing callers that don't send one).
+//
+// This used to create a Razorpay Subscription (recurring UPI Autopay/card
+// e-mandate, billed automatically every month). Switched to a plain
+// one-time Order after real customers kept abandoning checkout at the
+// mandate-authorization step specifically — Autopay asks for an extra
+// "authorize this recurring mandate" approval that a lot of first-time UPI
+// users don't expect, on top of the payment itself, and Razorpay reports
+// that step as a `payment_cancelled` failure indistinguishable from the
+// customer just changing their mind. A plain Order is one approval, not
+// two, so it can't fail at a step that no longer exists. The real
+// trade-off: this doesn't auto-renew — see isSubscriptionAccessActive() in
+// lib/data/subscriptions.ts for how a paid `subscriptions` row now grants
+// access for exactly 30 days and then quietly lapses, and
+// components/UnlockContactCard.tsx's copy, which is honest with the
+// customer that they need to pay again next month.
+//
+// Reuses the `subscriptions` table as-is (no schema change): the
+// razorpay_subscription_id column — kept NOT NULL + UNIQUE for the old
+// Autopay flow — now holds this Order's id instead of a real subscription
+// id. The two are easy to tell apart later (a real one starts "sub_", an
+// order starts "order_") — see app/api/subscriptions/cancel/route.ts,
+// which uses exactly that to keep working for anyone who subscribed before
+// this switch. razorpay_plan_id (also NOT NULL) is set to the literal
+// MANUAL_PLAN_MARKER since there's no real Plan behind a one-time Order.
 export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) {
@@ -48,8 +66,9 @@ export async function POST(request: NextRequest) {
   }
 
   // For full_access: covers BOTH the legacy lifetime unlock and an
-  // already-active subscription. For internal_hr: this product has no
-  // legacy lifetime equivalent, so it's just the active-subscription check.
+  // already-active (still within its 30-day window, or a still-valid
+  // grandfathered Autopay row) subscription. For internal_hr: this product
+  // has no legacy lifetime equivalent, so it's just the active check.
   const alreadyHasAccess =
     product === "internal_hr" ? await hasInternalAccess(user.id) : await hasFullAccess(user.id);
   if (alreadyHasAccess) {
@@ -57,41 +76,39 @@ export async function POST(request: NextRequest) {
   }
 
   const admin = createAdminClient();
-  const { planId, pricePaise } = getProductConfig(product);
+  const { pricePaise, description } = getProductPricing(product);
 
-  let subscription;
+  let order;
   try {
     const razorpay = getRazorpayClient();
-    subscription = await razorpay.subscriptions.create({
-      plan_id: planId,
-      total_count: MONTHLY_SUBSCRIPTION_TOTAL_COUNT,
-      customer_notify: 1,
-      notes: { user_id: user.id, purpose: `monthly_${product}` },
+    order = await razorpay.orders.create({
+      amount: pricePaise,
+      currency: "INR",
+      notes: { user_id: user.id, product },
     });
   } catch (err) {
-    console.error("Razorpay subscription creation failed:", err);
+    console.error("Razorpay order creation failed:", err);
     return NextResponse.json({ error: "Could not start payment. Try again." }, { status: 502 });
   }
 
-  const { error: upsertError } = await admin.from("subscriptions").upsert(
-    {
-      user_id: user.id,
-      product,
-      razorpay_subscription_id: subscription.id,
-      razorpay_plan_id: planId,
-      amount_paise: pricePaise,
-      status: "created",
-    },
-    { onConflict: "razorpay_subscription_id" },
-  );
+  const { error: insertError } = await admin.from("subscriptions").insert({
+    user_id: user.id,
+    product,
+    razorpay_subscription_id: order.id,
+    razorpay_plan_id: MANUAL_PLAN_MARKER,
+    amount_paise: pricePaise,
+    status: "created",
+  });
 
-  if (upsertError) {
-    console.error("Could not save subscription record:", upsertError.message);
+  if (insertError) {
+    console.error("Could not save subscription record:", insertError.message);
     return NextResponse.json({ error: "Could not start payment. Try again." }, { status: 500 });
   }
 
   return NextResponse.json({
-    subscriptionId: subscription.id,
+    orderId: order.id,
+    amount: pricePaise,
     keyId: process.env.RAZORPAY_KEY_ID,
+    description,
   });
 }

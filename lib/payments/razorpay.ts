@@ -80,6 +80,12 @@ export type SubscriptionProduct = "full_access" | "internal_hr";
  * app/api/subscriptions and components/UnlockContactCard.tsx from each
  * hand-rolling their own product-to-plan/price mapping (and risking the
  * two falling out of sync).
+ *
+ * Kept as-is for any grandfathered Autopay row still being cancelled via
+ * app/api/subscriptions/cancel/route.ts. New purchases no longer go
+ * through Razorpay's Plan/Subscription APIs at all (see
+ * getProductPricing() below) — this is why `planId` is still here but
+ * nothing creates a new subscription against it anymore.
  */
 export function getProductConfig(product: SubscriptionProduct): {
   planId: string;
@@ -102,3 +108,37 @@ export function getProductConfig(product: SubscriptionProduct): {
     description: "Monthly membership — full site access",
   };
 }
+
+/**
+ * Same price/description lookup as getProductConfig() above, but without
+ * requiring a Razorpay Plan id — used by the current one-time-per-month
+ * checkout (app/api/subscriptions/create/route.ts), which sells access via
+ * a plain Order rather than a Subscription against a Plan. Plans/Autopay
+ * are no longer used for new purchases (see that route's comment for why),
+ * so this is the version new code should reach for.
+ */
+export function getProductPricing(product: SubscriptionProduct): {
+  priceInr: number;
+  pricePaise: number;
+  description: string;
+} {
+  if (product === "internal_hr") {
+    return {
+      priceInr: INTERNAL_PRICE_INR,
+      pricePaise: INTERNAL_PRICE_PAISE,
+      description: "Internal HR Openings — 30 days access",
+    };
+  }
+  return {
+    priceInr: MONTHLY_PRICE_INR,
+    pricePaise: MONTHLY_PRICE_PAISE,
+    description: "Full access — 30 days",
+  };
+}
+
+/** Every manual (non-Autopay) subscription row stores this in place of a
+ * real Razorpay Plan id, since there is no plan behind a one-time Order. */
+export const MANUAL_PLAN_MARKER = "manual";
+
+/** Access period bought by a single manual monthly payment. */
+export const MANUAL_ACCESS_PERIOD_MS = 30 * 24 * 60 * 60 * 1000;

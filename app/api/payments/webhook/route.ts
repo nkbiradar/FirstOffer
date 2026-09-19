@@ -50,20 +50,48 @@ export async function POST(request: NextRequest) {
   const admin = createAdminClient();
 
   if (payload.event === "payment.captured") {
-    // Legacy one-time full-access unlock. New purchases no longer go
-    // through this path (see app/api/payments/create-order/route.ts is
-    // no longer linked from the UI), but existing customers' historical
-    // rows still flow through it.
     const payment = payload.payload?.payment?.entity;
     const orderId = payment?.order_id;
     const paymentId = payment?.id;
     const userId = payment?.notes?.user_id;
+    const product = payment?.notes?.product;
 
     if (!orderId || !paymentId || !userId) {
       console.error("Webhook payload missing expected fields (payment.captured).");
       return NextResponse.json({ ok: true });
     }
 
+    // The current ₹49/₹39 one-time-per-month payment (see
+    // app/api/subscriptions/create/route.ts) carries `product` in its
+    // order notes — the legacy per-opportunity unlock below never did.
+    // This is the reliability backstop for that flow, same idea as the
+    // opportunity_unlocks handling further down: if the browser tab closed
+    // right after paying and app/api/subscriptions/verify/route.ts's
+    // client-side call never fired, this is what still grants access.
+    if (product === "full_access" || product === "internal_hr") {
+      const currentPeriodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { error } = await admin
+        .from("subscriptions")
+        .update({
+          status: "active",
+          razorpay_payment_id: paymentId,
+          current_period_end: currentPeriodEnd,
+          cancelled_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId)
+        .eq("razorpay_subscription_id", orderId);
+
+      if (error) {
+        console.error("Webhook: could not activate subscriptions row (payment.captured):", error.message);
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    // Legacy one-time full-access unlock. New purchases no longer go
+    // through this path (see app/api/payments/create-order/route.ts is
+    // no longer linked from the UI), but existing customers' historical
+    // rows still flow through it.
     const { error } = await admin
       .from("opportunity_unlocks")
       .update({
