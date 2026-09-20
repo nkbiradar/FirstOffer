@@ -4,6 +4,7 @@ import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import InAppBrowserWarning from "@/components/InAppBrowserWarning";
 
 function AdminLoginForm() {
   const router = useRouter();
@@ -54,6 +55,7 @@ function AdminLoginForm() {
             allowlist check as password login — see middleware.ts and
             getAdminUser() in lib/supabase/auth.ts. A Google account that
             isn't allowlisted lands right back on this page. */}
+        <InAppBrowserWarning />
         <GoogleSignInButton next={next} label="Sign in with Google" />
         {oauthError && <p className="admin-login-error">{oauthError}</p>}
 

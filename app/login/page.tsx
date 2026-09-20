@@ -1,4 +1,5 @@
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import InAppBrowserWarning from "@/components/InAppBrowserWarning";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -30,6 +31,7 @@ export default async function LoginPage({
         <p className="admin-login-sub">Sign in to track which opportunities you&apos;ve applied to.</p>
 
         {error && <p className="admin-login-error">{error}</p>}
+        <InAppBrowserWarning />
 
         <GoogleSignInButton next={next} label="Continue with Google" />
 
