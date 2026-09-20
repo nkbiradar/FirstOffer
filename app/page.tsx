@@ -102,6 +102,11 @@ export default async function HomePage() {
       <section className="hero">
         <div className="container hero-content">
           <div className="hero-copy hero-copy-centered">
+            <p className="apply-channels-kicker">Not Just Another Job Listing</p>
+            <p className="apply-channels-headline">
+              Every Opportunity Comes With a Real Way In — HR&apos;s Email, Number, Form, or Link.
+            </p>
+
             <div className="apply-channels" role="list" aria-label="Ways to apply on every listing">
               <div className="apply-channel-card" role="listitem">
                 <span className="apply-channel-icon" aria-hidden="true">

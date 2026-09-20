@@ -1758,6 +1758,30 @@ button.btn-danger {
   color: var(--color-text-secondary);
 }
 
+/* Sits directly above .apply-channels, explaining in one glance what those
+   4 cards actually are — a first-time visitor otherwise hits 4 icon cards
+   with zero context before anything else on the page. Kicker names WHAT
+   this is; the bold line underneath is the actual sell (every listing
+   comes with a real, direct way to apply — not just a title and a company
+   name), tying into the same "no middlemen, no detours" promise as
+   .trust-item further down. */
+.apply-channels-kicker {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-mint-strong);
+}
+
+.apply-channels-headline {
+  margin: 4px 0 14px;
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
 /* The 4 "how you actually apply" cards at the very top of the hero, above
    the eyebrow pill. White cards with a colored top border (same treatment
    as .stat-tile below) rather than the trust-bar's solid pastel blocks --
