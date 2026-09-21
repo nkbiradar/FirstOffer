@@ -564,7 +564,9 @@ code {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .nav-links a {
@@ -573,6 +575,7 @@ code {
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text-secondary);
+  white-space: nowrap;
   transition: color 0.15s var(--ease-out), background 0.15s var(--ease-out);
 }
 
@@ -590,6 +593,10 @@ code {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+  padding-left: 14px;
+  margin-left: 4px;
+  border-left: 1px solid var(--color-border);
 }
 
 .nav-admin-link {
@@ -602,6 +609,7 @@ code {
   padding: 8px 12px;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-border);
+  white-space: nowrap;
   transition: border-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
 }
 
@@ -614,6 +622,33 @@ code {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Groups the avatar initial + email into one visual "who's signed in"
+   pill, rather than a bare string of text floating between the Dashboard
+   and Sign out buttons. */
+.nav-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+}
+
+.nav-user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .nav-user-email {
@@ -633,6 +668,7 @@ code {
   border: none;
   cursor: pointer;
   padding: 8px 4px;
+  white-space: nowrap;
   transition: color 0.15s var(--ease-out);
 }
 
@@ -683,19 +719,82 @@ code {
   color: var(--color-brand);
 }
 
+.mobile-menu a.nav-link-hot {
+  display: inline-flex;
+  width: fit-content;
+}
+
+.mobile-menu-divider {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--color-border);
+}
+
+.mobile-menu-account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
+.mobile-menu-signout {
+  width: 100%;
+  text-align: left;
+  padding: 12px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s var(--ease-out);
+}
+
+.mobile-menu-signout:hover {
+  color: var(--color-text);
+}
+
 .mobile-menu.open {
-  max-height: 480px;
+  max-height: 560px;
   opacity: 1;
   padding: 10px 0 18px;
   border-top-color: var(--color-border);
 }
 
-@media (max-width: 860px) {
+/* Collapses to the hamburger well before the full nav would start
+   squeezing into a cramped, wrapping mess (long email + several pill
+   buttons competing with six nav links for room) — better to switch
+   cleanly to the mobile menu a bit earlier than let that in-between state
+   show up on laptop/tablet widths. */
+@media (max-width: 1040px) {
   .nav-links {
     display: none;
   }
+  .navbar-actions {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
   .nav-toggle {
     display: inline-flex;
+  }
+}
+
+/* On a real phone-width screen, the Dashboard pill + user chip + Sign out +
+   Admin pill previously never hid — they sat in the top bar next to the
+   hamburger button, competing for space in ~360-400px, while the exact
+   same links already exist one tap away in the mobile-menu drawer below.
+   Below this width the top bar collapses to just the brand and the
+   hamburger; everything else lives in the drawer instead of being shown
+   twice. */
+@media (max-width: 640px) {
+  .navbar-actions > .nav-admin-link,
+  .navbar-actions > .nav-user {
+    display: none;
   }
 }
 
@@ -4735,10 +4834,14 @@ a.footer-trust-item:hover {
 .nav-link-hot {
   color: var(--color-gold-strong) !important;
   font-weight: 700;
+  background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-gold-strong) 40%, transparent);
 }
 
 .nav-link-hot:hover {
   color: var(--color-gold) !important;
+  background: color-mix(in srgb, var(--color-gold) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-gold-strong) 60%, transparent);
 }
 
 /* Homepage promo — a full-width dark card linking to /internal-openings,

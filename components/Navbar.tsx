@@ -50,12 +50,25 @@ function AuthActions({ user }: { user: NavUser }) {
     );
   }
 
+  // A single "who's signed in" chip (initial-letter avatar + email) instead
+  // of a bare email string floating between the Dashboard and Sign out
+  // buttons — same information, but it reads as one grouped identity
+  // element rather than three loose, competing pieces of text.
+  const initial = user.email ? user.email.charAt(0).toUpperCase() : "?";
+
   return (
     <div className="nav-user">
       <Link className="nav-admin-link" href="/dashboard">
         Dashboard
       </Link>
-      {user.email && <span className="nav-user-email">{user.email}</span>}
+      {user.email && (
+        <span className="nav-user-chip" title={user.email}>
+          <span className="nav-user-avatar" aria-hidden="true">
+            {initial}
+          </span>
+          <span className="nav-user-email">{user.email}</span>
+        </span>
+      )}
       <form action="/api/auth/signout" method="post" className="nav-signout-form">
         <button type="submit">Sign out</button>
       </form>
@@ -155,13 +168,22 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
               {link.label}
             </Link>
           ))}
+          <div className="mobile-menu-divider" role="separator" />
           {user ? (
             <>
+              {user.email && (
+                <span className="mobile-menu-account">
+                  <span className="nav-user-avatar" aria-hidden="true">
+                    {user.email.charAt(0).toUpperCase()}
+                  </span>
+                  {user.email}
+                </span>
+              )}
               <Link href="/dashboard" onClick={() => setOpen(false)}>
                 Dashboard
               </Link>
               <form action="/api/auth/signout" method="post">
-                <button type="submit" style={{ width: "100%", textAlign: "left" }}>
+                <button type="submit" className="mobile-menu-signout">
                   Sign out
                 </button>
               </form>
