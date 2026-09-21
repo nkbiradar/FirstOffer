@@ -2058,72 +2058,14 @@ button.btn-danger {
   }
 }
 
-/* ── Homepage credibility banner ──────────────────────────────────────
-   Sits directly under the hero as a bold, full-bleed ribbon. The
-   institute logos used to live here too, but moved up into
-   .top-credibility-strip (below) so the "built by" claim and its logos
-   sit together in one place — this banner is just the trust headline +
-   feature list now. */
-
-.credibility-banner {
-  --cb-text: #f5f5f7;
-  --cb-text-soft: rgba(245, 245, 247, 0.76);
-  --cb-text-faint: rgba(245, 245, 247, 0.42);
-  padding: clamp(26px, 4.5vw, 40px) 20px;
-  background: #0c0d11;
-  text-align: center;
-}
-
-.credibility-banner-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.credibility-headline {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(19px, 3vw, 25px);
-  font-weight: 800;
-  line-height: 1.35;
-  color: var(--cb-text);
-  text-wrap: balance;
-}
-
-.credibility-features {
-  margin: 0;
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--cb-text-soft);
-}
-
-.credibility-dot {
-  margin: 0 2px;
-  color: var(--cb-text-faint);
-}
-
-@media (max-width: 640px) {
-  .credibility-features {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px 0;
-  }
-}
-
 /* ── Top-of-page credibility strip ────────────────────────────────────
    A single understated line sitting right under the sticky nav, above
-   the hero — separate from .credibility-banner further down the page.
-   Deliberately quiet (small type, soft brand tint, no emoji-chip styling)
-   since this is the first thing under the nav and reads as a factual
-   credential line, not a marketing callout. Each institute name carries
-   its own small logo inline, on a fixed white chip since the source
-   logos are flat JPEGs/WEBPs on their own white backgrounds that can't
-   adapt to dark mode. */
+   the hero. Deliberately quiet (small type, soft brand tint, no
+   emoji-chip styling) since this is the first thing under the nav and
+   reads as a factual credential line, not a marketing callout. Each
+   institute name carries its own small logo inline, on a fixed white
+   chip since the source logos are flat JPEGs/WEBPs on their own white
+   backgrounds that can't adapt to dark mode. */
 
 .top-credibility-strip {
   padding: 10px 20px;

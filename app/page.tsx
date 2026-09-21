@@ -290,22 +290,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <Reveal>
-        <section className="credibility-banner">
-          <div className="container credibility-banner-inner">
-            <p className="credibility-headline">
-              <span aria-hidden="true">🎯</span> Trusted by students. Built to help you find real opportunities
-              faster.
-            </p>
-            <p className="credibility-features">
-              <span aria-hidden="true">💼</span> Jobs <span className="credibility-dot">•</span> Internships{" "}
-              <span className="credibility-dot">•</span> Internal HR Openings{" "}
-              <span className="credibility-dot">•</span> Direct Apply Channels
-            </p>
-          </div>
-        </section>
-      </Reveal>
-
       <div className="container">
         {/* Explore by Category: SEO Internal Linking Hub */}
         <Reveal>
