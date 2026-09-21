@@ -2115,12 +2115,6 @@ button.btn-danger {
   gap: 12px 14px;
 }
 
-.credibility-strip-sep {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text-tertiary);
-}
-
 .institute-pill {
   display: inline-flex;
   align-items: center;
@@ -2184,10 +2178,6 @@ button.btn-danger {
 
   .institute-pill-name {
     font-size: 13.5px;
-  }
-
-  .credibility-strip-sep {
-    font-size: 13px;
   }
 }
 

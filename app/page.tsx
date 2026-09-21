@@ -130,7 +130,6 @@ export default async function HomePage() {
               </span>
               <span className="institute-pill-name">IIIT Dharwad</span>
             </span>
-            <span className="credibility-strip-sep">,</span>
             <span className="institute-pill">
               <span className="institute-pill-logo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -138,7 +137,6 @@ export default async function HomePage() {
               </span>
               <span className="institute-pill-name">IIT Bombay</span>
             </span>
-            <span className="credibility-strip-sep">&amp;</span>
             <span className="institute-pill">
               <span className="institute-pill-logo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
