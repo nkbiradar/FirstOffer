@@ -8,7 +8,7 @@
 // opportunity-unlocks.ts: the normal RLS-scoped client, fails soft so a
 // page never crashes if the migration hasn't been applied yet.
 import { createClient } from "@/lib/supabase/server";
-import type { SubscriptionProduct } from "@/lib/payments/razorpay";
+import { LEGACY_MONTHLY_PRICE_PAISE, type SubscriptionProduct } from "@/lib/payments/razorpay";
 
 export type UserSubscription = {
   status: "created" | "authenticated" | "active" | "pending" | "halted" | "cancelled" | "completed" | "expired";
@@ -92,6 +92,52 @@ export async function hasActiveSubscription(
 /** Thin, explicitly-named wrapper for the Internal HR Openings product — used wherever gating on it reads more clearly than a bare hasActiveSubscription(userId, "internal_hr") call. */
 export async function hasInternalAccess(userId: string): Promise<boolean> {
   return hasActiveSubscription(userId, "internal_hr");
+}
+
+/**
+ * The ₹49→₹99 grandfathering check: true if this user has ever completed a
+ * real full_access payment at the old ₹49 rate — in which case
+ * getProductPricing("full_access", true) (lib/payments/razorpay.ts) should
+ * be used for every future order of theirs, forever, regardless of gaps or
+ * how long ago that payment was. Deliberately data-driven rather than
+ * date-based: there's no separate "cutover date" or "founding member" flag
+ * to keep in sync — a user either has a completed ₹49 row on record or they
+ * don't, which is exactly what determines what they actually paid before.
+ *
+ * Filtered to `razorpay_payment_id is not null` so an abandoned checkout
+ * (a 'created' row that stamped amount_paise but was never actually paid)
+ * can't accidentally grandfather someone who never completed a payment.
+ * Covers both the old real Autopay rows (sub_-prefixed, pre price-update)
+ * and the current one-time Order rows uniformly, since both stamp the same
+ * amount_paise/razorpay_payment_id columns on a successful payment.
+ *
+ * Per-payment, not per-cancellation: this project's manual (non-Autopay)
+ * full_access purchases have nothing to "cancel" in the first place (see
+ * app/api/subscriptions/cancel/route.ts) — access just lapses on its own
+ * after 30 days — so there is no existing cancel-then-resubscribe rule to
+ * honor here beyond "did they ever pay ₹49 for this product."
+ */
+export async function hasLegacyFullAccessPricing(userId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("product", "full_access")
+    .eq("amount_paise", LEGACY_MONTHLY_PRICE_PAISE)
+    .not("razorpay_payment_id", "is", null)
+    .limit(1);
+
+  if (error) {
+    console.error("hasLegacyFullAccessPricing failed:", error.message);
+    // Fail closed on the PRICE check specifically (charge the new ₹99 rate
+    // rather than accidentally undercharging on a DB hiccup) — the
+    // opposite of this file's usual fail-open convention for access
+    // checks, since a wrong answer here has a direct revenue consequence
+    // instead of just a wrongly-locked page.
+    return false;
+  }
+  return (data ?? []).length > 0;
 }
 
 /**

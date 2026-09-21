@@ -12,8 +12,8 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getUser } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasInternalAccess } from "@/lib/data/subscriptions";
-import { MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
+import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
   buildJobBreadcrumbsJsonLd,
@@ -197,6 +197,20 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       : false;
   const canShowApply = !isExpired && (!hasApplyContent || applyUnlocked);
 
+  // Only the full_access product has two price tiers (₹99 regular, ₹49 for
+  // founding members) — see hasLegacyFullAccessPricing()'s doc comment.
+  // Skipped whenever the unlock card won't actually render, so a visitor
+  // who's already unlocked or viewing an internal opening never triggers
+  // this extra lookup.
+  const isLegacyFullAccessUser =
+    user && hasApplyContent && !applyUnlocked && !opportunity.is_internal
+      ? await hasLegacyFullAccessPricing(user.id)
+      : false;
+  const fullAccessPrice = isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR;
+  const fullAccessPriceNote = isLegacyFullAccessUser
+    ? "🔒 Your founding-member price — locked in for as long as you stay subscribed."
+    : "Regular membership price.";
+
   const {
     role,
     opportunity_type,
@@ -358,7 +372,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       product="internal_hr"
                     />
                   ) : (
-                    <UnlockContactCard opportunityId={id} isSignedIn={Boolean(user)} price={MONTHLY_PRICE_INR} />
+                    <UnlockContactCard
+                      opportunityId={id}
+                      isSignedIn={Boolean(user)}
+                      price={fullAccessPrice}
+                      priceNote={fullAccessPriceNote}
+                    />
                   )}
                 </div>
               )}

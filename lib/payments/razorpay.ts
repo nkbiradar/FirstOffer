@@ -26,11 +26,25 @@ export function getRazorpayClient(): Razorpay {
 export const CONTACT_UNLOCK_PRICE_INR = 49;
 export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 
-// Current pricing: ₹49/month, billed on Razorpay's Subscriptions API
-// (recurring UPI Autopay or card e-mandate), not the one-time Orders API
-// above. See app/api/subscriptions/create/route.ts.
-export const MONTHLY_PRICE_INR = 49;
+// Regular price for a brand-new full_access subscriber, from the ₹49→₹99
+// price update. Originally billed on Razorpay's Subscriptions API
+// (recurring UPI Autopay/card e-mandate); new purchases are now a one-time
+// Order instead (see app/api/subscriptions/create/route.ts) — this constant
+// is the display/checkout price for anyone with no prior full_access
+// payment on record. Existing early subscribers do NOT pay this — see
+// LEGACY_MONTHLY_PRICE_INR and getFullAccessPricing() below.
+export const MONTHLY_PRICE_INR = 99;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
+
+// The founding-member rate: anyone who completed at least one full_access
+// payment at this price before the ₹49→₹99 update keeps paying this price
+// on every future renewal, for as long as they keep resubscribing — see
+// hasLegacyFullAccessPricing() in lib/data/subscriptions.ts, which is what
+// actually decides who qualifies. This constant is also what that check
+// compares historical `amount_paise` rows against, so it must never change
+// even after MONTHLY_PRICE_INR moves again in the future.
+export const LEGACY_MONTHLY_PRICE_INR = 49;
+export const LEGACY_MONTHLY_PRICE_PAISE = LEGACY_MONTHLY_PRICE_INR * 100;
 
 // Razorpay subscriptions have no literal "until cancelled" option — every
 // subscription needs a total_count of billing cycles. 120 monthly cycles
@@ -116,8 +130,17 @@ export function getProductConfig(product: SubscriptionProduct): {
  * a plain Order rather than a Subscription against a Plan. Plans/Autopay
  * are no longer used for new purchases (see that route's comment for why),
  * so this is the version new code should reach for.
+ *
+ * `isLegacyFullAccess` only matters for the full_access product — pass
+ * whatever hasLegacyFullAccessPricing() (lib/data/subscriptions.ts) returns
+ * for the paying user, so a founding-member subscriber gets ₹49 on this and
+ * every future call, while everyone else gets the current ₹99 rate.
+ * internal_hr has no such tiering and ignores the flag entirely.
  */
-export function getProductPricing(product: SubscriptionProduct): {
+export function getProductPricing(
+  product: SubscriptionProduct,
+  isLegacyFullAccess = false,
+): {
   priceInr: number;
   pricePaise: number;
   description: string;
@@ -127,6 +150,13 @@ export function getProductPricing(product: SubscriptionProduct): {
       priceInr: INTERNAL_PRICE_INR,
       pricePaise: INTERNAL_PRICE_PAISE,
       description: "Internal HR Openings — 30 days access",
+    };
+  }
+  if (isLegacyFullAccess) {
+    return {
+      priceInr: LEGACY_MONTHLY_PRICE_INR,
+      pricePaise: LEGACY_MONTHLY_PRICE_PAISE,
+      description: "Full access — 30 days (founding-member price)",
     };
   }
   return {

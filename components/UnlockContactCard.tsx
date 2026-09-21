@@ -73,9 +73,11 @@ const PRODUCT_COPY: Record<
 // to apply" instructions are all hidden until the signed-in visitor has
 // access to whichever product this opportunity belongs to (see
 // app/opportunities/[id]/page.tsx). `product` picks which of the site's
-// two independent subscriptions this card sells — the ₹49/month full-site
-// membership, or the ₹39/month Internal HR Openings membership (see
-// lib/payments/razorpay.ts's getProductConfig). Existing lifetime
+// two independent subscriptions this card sells — the full-site membership
+// (₹99/month regular, ₹49/month for founding members — see `priceNote` and
+// lib/data/subscriptions.ts's hasLegacyFullAccessPricing()), or the
+// ₹39/month Internal HR Openings membership (see lib/payments/razorpay.ts's
+// getProductConfig). Existing lifetime
 // customers from the old one-time ₹49 unlock keep that access unchanged
 // and never see this card for full_access. Once access is granted, the
 // real ApplyButton/apply instructions render in this same spot instead.
@@ -87,11 +89,18 @@ export default function UnlockContactCard({
   isSignedIn,
   price,
   product = "full_access",
+  priceNote,
 }: {
   opportunityId?: string;
   isSignedIn: boolean;
   price: number;
   product?: Product;
+  /** Optional line shown right under the price — e.g. telling a founding
+   * member their rate is locked in, or telling a new visitor pricing has
+   * changed. Left out entirely (no fallback text) when not passed, so
+   * callers that don't need it (internal_hr, today) render exactly as
+   * before. */
+  priceNote?: string;
 }) {
   const router = useRouter();
   const copy = PRODUCT_COPY[product];
@@ -217,6 +226,7 @@ export default function UnlockContactCard({
       <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
         ₹{price}/month. {copy.priceLine}
       </p>
+      {priceNote && <p className="unlock-contact-price-note">{priceNote}</p>}
       <p className="unlock-contact-desc">{copy.description}</p>
       <p className="unlock-contact-highlight">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>

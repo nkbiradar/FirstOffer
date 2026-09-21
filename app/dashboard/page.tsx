@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
-import { getUserSubscription, isSubscriptionAccessActive } from "@/lib/data/subscriptions";
+import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
+import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR } from "@/lib/payments/razorpay";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
@@ -53,7 +54,8 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 // now: a legacy one-time `opportunity_unlocks` row (grandfathered lifetime
 // customers from before the pricing switch — `unlocks` here will only
 // ever hold 0 or 1 row for a given user) and a recurring `subscriptions`
-// row (the current ₹49/month plan — see lib/data/subscriptions.ts). A
+// row (the current full-access plan — ₹99/month regular, ₹49/month for
+// founding members, see lib/data/subscriptions.ts). A
 // user has at most one of the two in practice, but both are read so
 // whichever applies renders correctly. Deliberately still a server
 // component reading a `status` query param, no client-side filtering JS —
@@ -73,13 +75,15 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, unlocks, subscription, internalSubscription, emailOptedOut] = await Promise.all([
-    getUserApplications(user.id),
-    getUserUnlocks(user.id),
-    getUserSubscription(user.id),
-    getUserSubscription(user.id, "internal_hr"),
-    isEmailOptedOut(user.id),
-  ]);
+  const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser] =
+    await Promise.all([
+      getUserApplications(user.id),
+      getUserUnlocks(user.id),
+      getUserSubscription(user.id),
+      getUserSubscription(user.id, "internal_hr"),
+      isEmailOptedOut(user.id),
+      hasLegacyFullAccessPricing(user.id),
+    ]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
   const offerCount = applications.filter((a) => a.outcome === "offer").length;
@@ -254,7 +258,7 @@ export default async function DashboardPage({
                   <p className="unlock-item-meta">
                     {subscriptionActive && isManualFullAccess && (
                       <>
-                        ₹49 one-time payment
+                        ₹{((subscription?.amount_paise ?? 0) / 100).toFixed(0)} one-time payment
                         {subscription?.current_period_end && (
                           <> · valid until {formatFutureDate(subscription.current_period_end)}, pay again anytime to keep it going</>
                         )}
@@ -262,7 +266,7 @@ export default async function DashboardPage({
                     )}
                     {subscriptionActive && !isManualFullAccess && !subscription?.cancelled_at && (
                       <>
-                        ₹49/month membership
+                        ₹{((subscription?.amount_paise ?? 0) / 100).toFixed(0)}/month membership
                         {subscription?.current_period_end && <> · renews {formatFutureDate(subscription.current_period_end)}</>}
                       </>
                     )}
@@ -287,10 +291,17 @@ export default async function DashboardPage({
             <div className="empty-state">
               <h3>Full access not unlocked yet</h3>
               <p>
-                A ₹49 one-time payment unlocks the application link, Google Form, and HR email/contact on{" "}
-                <strong>every</strong> opportunity on FirstOffer — including new ones as they go live — for 30
-                days. No auto-renewal; pay again whenever you want to keep it going.
+                A ₹{isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR} one-time payment unlocks
+                the application link, Google Form, and HR email/contact on <strong>every</strong> opportunity on
+                FirstOffer — including new ones as they go live — for 30 days. No auto-renewal; pay again whenever
+                you want to keep it going.
               </p>
+              {isLegacyFullAccessUser && (
+                <p style={{ fontSize: 13, fontWeight: 600, opacity: 0.8 }}>
+                  🔒 You&apos;ve got founding-member pricing locked in at ₹{LEGACY_MONTHLY_PRICE_INR}/month — new
+                  members now pay ₹{MONTHLY_PRICE_INR}.
+                </p>
+              )}
               <Link className="btn btn-secondary btn-sm" href="/opportunities">
                 Browse Opportunities
               </Link>

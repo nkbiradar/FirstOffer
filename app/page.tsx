@@ -11,6 +11,10 @@ import { getActiveAnnouncement } from "@/lib/data/site-announcement";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
+import { getUser } from "@/lib/supabase/auth";
+import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
+import { hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR } from "@/lib/payments/razorpay";
 
 export const metadata = {
   title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
@@ -54,14 +58,24 @@ const HOW_IT_WORKS = [
 
 export default async function HomePage() {
   const nonce = await getNonce();
-  const [{ today, earlier, todayDateLabel, todayCount }, stats, companies, testimonials, announcement] =
-    await Promise.all([
-      getHomepageOpportunities(),
-      getSiteStats(),
-      getCompaniesWithPublishedCounts(),
-      getPublishedTestimonials(),
-      getActiveAnnouncement(),
-    ]);
+  const user = await getUser();
+  const [
+    { today, earlier, todayDateLabel, todayCount },
+    stats,
+    companies,
+    testimonials,
+    announcement,
+    alreadyHasFullAccess,
+    isLegacyFullAccessUser,
+  ] = await Promise.all([
+    getHomepageOpportunities(),
+    getSiteStats(),
+    getCompaniesWithPublishedCounts(),
+    getPublishedTestimonials(),
+    getActiveAnnouncement(),
+    user ? hasFullAccess(user.id) : Promise.resolve(false),
+    user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
+  ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
   // 2026") above is already computed for the "Today's Opportunities"
@@ -339,6 +353,67 @@ export default async function HomePage() {
                 </h3>
                 <p>Free tool — see how your resume matches any job&apos;s required keywords before you apply.</p>
               </Link>
+            </div>
+          </section>
+        </Reveal>
+
+        {/* Full-access membership pricing announcement — ₹99/month is the
+            regular price; anyone with a completed payment on record at the
+            old ₹49 rate (see hasLegacyFullAccessPricing() in
+            lib/data/subscriptions.ts) keeps ₹49 on every future renewal,
+            forever. Personalized for a signed-in visitor who already
+            qualifies or already has access; a signed-out or brand-new
+            visitor sees the current regular price plus the honest reason it
+            moved — no countdown or "before it changes" framing, since the
+            new price is already in effect for anyone without that history. */}
+        <Reveal>
+          <section className="section" style={{ paddingTop: 8 }}>
+            <div className="pricing-promo">
+              <span className="pricing-promo-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Membership Pricing
+              </span>
+              {alreadyHasFullAccess ? (
+                <>
+                  <h2 className="pricing-promo-title">
+                    {isLegacyFullAccessUser
+                      ? `You're on founding-member pricing — ₹${LEGACY_MONTHLY_PRICE_INR}/month`
+                      : "Your full access is active"}
+                  </h2>
+                  <p className="pricing-promo-sub">
+                    Every direct HR email, recruiter number, Google Form, and application link on FirstOffer stays
+                    unlocked while your access is active.
+                    {isLegacyFullAccessUser && " Your rate is locked in for as long as you stay subscribed."}
+                  </p>
+                  <Link href="/dashboard" className="btn btn-primary pricing-promo-cta">
+                    View my membership
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <h2 className="pricing-promo-title">
+                    {isLegacyFullAccessUser
+                      ? `Your founding-member price: ₹${LEGACY_MONTHLY_PRICE_INR}/month`
+                      : `Full access is ₹${MONTHLY_PRICE_INR}/month`}
+                  </h2>
+                  <p className="pricing-promo-sub">
+                    {isLegacyFullAccessUser
+                      ? `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer — at the rate you already locked in, for as long as you stay subscribed.`
+                      : `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer. Members who joined earlier locked in ₹${LEGACY_MONTHLY_PRICE_INR}/month for as long as they stay subscribed — pricing moved to ₹${MONTHLY_PRICE_INR}/month as FirstOffer added Internal HR Openings, the Resume Keyword Matcher, and more categories.`}
+                  </p>
+                  <Link href="/opportunities" className="btn btn-primary pricing-promo-cta">
+                    {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${MONTHLY_PRICE_INR}/month`}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </>
+              )}
             </div>
           </section>
         </Reveal>

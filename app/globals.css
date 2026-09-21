@@ -1086,6 +1086,17 @@ button.btn-danger {
   color: var(--color-text-secondary);
 }
 
+/* Sits right under the bold price line — tells a founding member their
+   rate is locked in, or tells a new visitor this is the regular price.
+   Deliberately quieter than the price itself so it reads as a footnote,
+   not a second headline. */
+.unlock-contact-price-note {
+  margin-top: -6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
 /* The "what you actually get" reassurance line — sits between the price
    description and the unlock button, right where someone's deciding
    whether to pay, since that's the moment this claim matters most. */
@@ -4320,6 +4331,59 @@ a.footer-trust-item:hover {
   font-size: 13px;
   color: var(--color-text-secondary);
   line-height: 1.45;
+}
+
+/* ── Homepage full-access pricing announcement ────────────────────────── */
+/* Distinct from the Internal HR promo's fixed dark/gold treatment just
+   below it — this uses the site's regular brand accent so the two don't
+   read as the same tier. See app/page.tsx for the personalization logic. */
+
+.pricing-promo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(24px, 4vw, 36px);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 8%, transparent), var(--color-surface));
+  border: 1px solid var(--color-border);
+}
+
+.pricing-promo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 10px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pricing-promo-title {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.pricing-promo-sub {
+  margin: 0;
+  max-width: 640px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.pricing-promo-cta {
+  margin-top: 8px;
 }
 
 .seo-faq-section {

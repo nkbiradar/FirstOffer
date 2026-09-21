@@ -9,12 +9,14 @@ import {
 } from "@/lib/payments/razorpay";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasInternalAccess } from "@/lib/data/subscriptions";
+import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 
 // Starts a payment for one of the two products this site sells — the
-// ₹49/month full-access plan or the ₹39/month Internal HR Openings plan,
-// chosen by the `product` field in the POST body (defaults to
-// "full_access" for existing callers that don't send one).
+// full-access plan (₹99/month regular, ₹49/month for founding members who
+// already have a ₹49 payment on record — see hasLegacyFullAccessPricing())
+// or the ₹39/month Internal HR Openings plan, chosen by the `product` field
+// in the POST body (defaults to "full_access" for existing callers that
+// don't send one).
 //
 // This used to create a Razorpay Subscription (recurring UPI Autopay/card
 // e-mandate, billed automatically every month). Switched to a plain
@@ -76,7 +78,10 @@ export async function POST(request: NextRequest) {
   }
 
   const admin = createAdminClient();
-  const { pricePaise, description } = getProductPricing(product);
+  // Only full_access has two tiers — internal_hr's `false` here is a no-op
+  // (getProductPricing ignores the flag for that product).
+  const isLegacyFullAccess = product === "full_access" && (await hasLegacyFullAccessPricing(user.id));
+  const { pricePaise, description } = getProductPricing(product, isLegacyFullAccess);
 
   let order;
   try {

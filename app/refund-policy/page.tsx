@@ -30,8 +30,8 @@ export default function RefundPolicyPage() {
       <p style={{ marginTop: 12 }}>
         Once a payment succeeds and application details become visible on your screen, that unlock
         isn&apos;t refundable. This is standard for instantly-delivered digital content, and it&apos;s
-        what lets us keep the price at a flat ₹49 for full site access instead of building in a
-        buffer for refund abuse.
+        what lets us keep membership pricing predictable instead of building in a buffer for
+        refund abuse.
       </p>
 
       <h2 style={{ marginTop: 32 }}>When you are eligible for a refund</h2>
