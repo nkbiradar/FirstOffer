@@ -113,6 +113,12 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
+      <div className="top-credibility-strip">
+        <p className="top-credibility-text">
+          <span aria-hidden="true">🔐</span> Built by members from IIIT Dharwad, IIT Bombay &amp; IIT Madras
+        </p>
+      </div>
+
       <section className="hero">
         <div className="container hero-content">
           <div className="hero-copy hero-copy-centered">
@@ -269,10 +275,6 @@ export default async function HomePage() {
       <Reveal>
         <section className="credibility-banner">
           <div className="container credibility-banner-inner">
-            <span className="credibility-badge">
-              <span aria-hidden="true">🔐</span>
-              Built by members from IIIT Dharwad, IIT Bombay &amp; IIT Madras
-            </span>
             <div className="credibility-logos" aria-hidden="true">
               <span className="credibility-logo-chip">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
