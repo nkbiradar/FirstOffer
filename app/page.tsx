@@ -273,6 +273,20 @@ export default async function HomePage() {
               <span aria-hidden="true">🔐</span>
               Built by members from IIIT Dharwad, IIT Bombay &amp; IIT Madras
             </span>
+            <div className="credibility-logos" aria-hidden="true">
+              <span className="credibility-logo-chip">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" src="/images/logos/iiit-dharwad.jpg" />
+              </span>
+              <span className="credibility-logo-chip">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" src="/images/logos/iit-bombay.webp" />
+              </span>
+              <span className="credibility-logo-chip">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" src="/images/logos/iit-madras.jpg" />
+              </span>
+            </div>
             <p className="credibility-headline">
               <span aria-hidden="true">🎯</span> Trusted by students. Built to help you find real opportunities
               faster.
