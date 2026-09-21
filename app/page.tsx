@@ -113,29 +113,42 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
-      <div className="top-credibility-strip">
-        <div className="top-credibility-inner">
-          <span aria-hidden="true">🔐</span>
-          <span className="top-credibility-text">Built by members from</span>
-          <span className="top-credibility-institute">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="top-credibility-logo" alt="" src="/images/logos/iiit-dharwad.jpg" />
-            IIIT Dharwad
-          </span>
-          <span className="top-credibility-text">,</span>
-          <span className="top-credibility-institute">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="top-credibility-logo" alt="" src="/images/logos/iit-bombay.webp" />
-            IIT Bombay
-          </span>
-          <span className="top-credibility-text">&amp;</span>
-          <span className="top-credibility-institute">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="top-credibility-logo" alt="" src="/images/logos/iit-madras.jpg" />
-            IIT Madras
-          </span>
+      <section className="credibility-strip">
+        <div className="container credibility-strip-inner">
+          <p className="credibility-strip-label">
+            <span className="credibility-strip-icon" aria-hidden="true">
+              🔐
+            </span>
+            Built by members from
+          </p>
+
+          <div className="credibility-strip-institutes">
+            <span className="institute-pill">
+              <span className="institute-pill-logo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" src="/images/logos/iiit-dharwad.jpg" />
+              </span>
+              <span className="institute-pill-name">IIIT Dharwad</span>
+            </span>
+            <span className="credibility-strip-sep">,</span>
+            <span className="institute-pill">
+              <span className="institute-pill-logo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" src="/images/logos/iit-bombay.webp" />
+              </span>
+              <span className="institute-pill-name">IIT Bombay</span>
+            </span>
+            <span className="credibility-strip-sep">&amp;</span>
+            <span className="institute-pill">
+              <span className="institute-pill-logo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" src="/images/logos/iit-madras.jpg" />
+              </span>
+              <span className="institute-pill-name">IIT Madras</span>
+            </span>
+          </div>
         </div>
-      </div>
+      </section>
 
       <section className="hero">
         <div className="container hero-content">
