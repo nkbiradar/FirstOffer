@@ -114,9 +114,27 @@ export default async function HomePage() {
       />
 
       <div className="top-credibility-strip">
-        <p className="top-credibility-text">
-          <span aria-hidden="true">🔐</span> Built by members from IIIT Dharwad, IIT Bombay &amp; IIT Madras
-        </p>
+        <div className="top-credibility-inner">
+          <span aria-hidden="true">🔐</span>
+          <span className="top-credibility-text">Built by members from</span>
+          <span className="top-credibility-institute">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="top-credibility-logo" alt="" src="/images/logos/iiit-dharwad.jpg" />
+            IIIT Dharwad
+          </span>
+          <span className="top-credibility-text">,</span>
+          <span className="top-credibility-institute">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="top-credibility-logo" alt="" src="/images/logos/iit-bombay.webp" />
+            IIT Bombay
+          </span>
+          <span className="top-credibility-text">&amp;</span>
+          <span className="top-credibility-institute">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="top-credibility-logo" alt="" src="/images/logos/iit-madras.jpg" />
+            IIT Madras
+          </span>
+        </div>
       </div>
 
       <section className="hero">
@@ -275,20 +293,6 @@ export default async function HomePage() {
       <Reveal>
         <section className="credibility-banner">
           <div className="container credibility-banner-inner">
-            <div className="credibility-logos" aria-hidden="true">
-              <span className="credibility-logo-chip">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="" src="/images/logos/iiit-dharwad.jpg" />
-              </span>
-              <span className="credibility-logo-chip">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="" src="/images/logos/iit-bombay.webp" />
-              </span>
-              <span className="credibility-logo-chip">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="" src="/images/logos/iit-madras.jpg" />
-              </span>
-            </div>
             <p className="credibility-headline">
               <span aria-hidden="true">🎯</span> Trusted by students. Built to help you find real opportunities
               faster.

@@ -2059,12 +2059,11 @@ button.btn-danger {
 }
 
 /* ── Homepage credibility banner ──────────────────────────────────────
-   Sits directly under the hero as a bold, full-bleed ribbon. Deliberately
-   a FIXED dark surface rather than the --color-ink token that inverts in
-   dark mode (same reasoning as the Internal HR premium block below): the
-   institute logos are flat JPEGs/WEBPs on their own white backgrounds and
-   can't adapt to theme, so the banner itself has to stay dark in both
-   themes for those white logo chips to keep reading against it. */
+   Sits directly under the hero as a bold, full-bleed ribbon. The
+   institute logos used to live here too, but moved up into
+   .top-credibility-strip (below) so the "built by" claim and its logos
+   sit together in one place — this banner is just the trust headline +
+   feature list now. */
 
 .credibility-banner {
   --cb-text: #f5f5f7;
@@ -2082,33 +2081,6 @@ button.btn-danger {
   gap: 16px;
   max-width: 720px;
   margin: 0 auto;
-}
-
-.credibility-logos {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.credibility-logo-chip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 68px;
-  height: 68px;
-  padding: 7px;
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  box-shadow: var(--shadow-sm);
-}
-
-.credibility-logo-chip img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 5px;
 }
 
 .credibility-headline {
@@ -2141,10 +2113,6 @@ button.btn-danger {
     justify-content: center;
     gap: 4px 0;
   }
-  .credibility-logo-chip {
-    width: 58px;
-    height: 58px;
-  }
 }
 
 /* ── Top-of-page credibility strip ────────────────────────────────────
@@ -2152,7 +2120,10 @@ button.btn-danger {
    the hero — separate from .credibility-banner further down the page.
    Deliberately quiet (small type, soft brand tint, no emoji-chip styling)
    since this is the first thing under the nav and reads as a factual
-   credential line, not a marketing callout. */
+   credential line, not a marketing callout. Each institute name carries
+   its own small logo inline, on a fixed white chip since the source
+   logos are flat JPEGs/WEBPs on their own white backgrounds that can't
+   adapt to dark mode. */
 
 .top-credibility-strip {
   padding: 10px 20px;
@@ -2161,12 +2132,42 @@ button.btn-danger {
   border-bottom: 1px solid var(--color-brand-soft-border);
 }
 
+.top-credibility-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
 .top-credibility-text {
-  margin: 0;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--color-brand-strong);
+}
+
+.top-credibility-institute {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-brand-strong);
+  white-space: nowrap;
+}
+
+.top-credibility-logo {
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  object-fit: contain;
+  border-radius: 5px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-brand) 18%, transparent);
 }
 
 /* ── Opportunity grid & cards ───────────────────────────────────────── */
