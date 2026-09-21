@@ -144,18 +144,23 @@ export default async function InternalOpeningsPage() {
           </div>
         ) : (
           // The suspense/paywall grid: real openings exist (total > 0,
-          // confirmed above), but not one company name or role title
-          // renders here — only a fixed number of locked placeholder
-          // cards, regardless of how many openings there actually are
-          // today. Each links back up to the unlock card rather than
-          // anywhere real, since there's nothing real to link to yet.
+          // confirmed above), but not one real company name or role title
+          // renders here — every card shows the exact same generic
+          // "Company Hidden" label and the same three value-prop tags,
+          // never anything pulled from the actual opportunity rows, so
+          // nothing here could be mistaken for genuine content. This
+          // replaced an earlier version that used blank shimmering bars
+          // instead of readable text/tags — visitors read those as a
+          // rendering bug rather than an intentional paywall. Each card
+          // still links back up to the unlock card rather than anywhere
+          // real, since there's nothing real to link to yet.
           <div className="internal-mystery-grid">
             {Array.from({ length: MYSTERY_SLOT_COUNT }).map((_, index) => (
               <Link
                 href="#unlock-internal-hr"
                 className="internal-mystery-card"
                 key={index}
-                aria-label="Locked internal opening — unlock to see company and role details"
+                aria-label="Locked internal opening — unlock to see the company and role"
               >
                 <span className="internal-mystery-lock" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -163,10 +168,14 @@ export default async function InternalOpeningsPage() {
                     <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <span className="internal-mystery-bar internal-mystery-bar-title" aria-hidden="true" />
-                <span className="internal-mystery-bar internal-mystery-bar-sub" aria-hidden="true" />
-                <span className="internal-mystery-bar internal-mystery-bar-meta" aria-hidden="true" />
-                <span className="internal-mystery-cta" aria-hidden="true">Unlock to reveal</span>
+                <span className="internal-mystery-company">Company Hidden</span>
+                <span className="internal-mystery-role">Role locked until unlock</span>
+                <div className="internal-mystery-tags" aria-hidden="true">
+                  <span className="internal-mystery-tag">Special Hiring</span>
+                  <span className="internal-mystery-tag">Low Competition</span>
+                  <span className="internal-mystery-tag">Shared by HR</span>
+                </div>
+                <span className="internal-mystery-cta" aria-hidden="true">Unlock to Reveal</span>
               </Link>
             ))}
           </div>
