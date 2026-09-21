@@ -14,10 +14,20 @@ const WORK_MODE_LABELS: Record<string, string> = {
 };
 
 // Links by id (schema has no opportunity slug, only companies do).
+//
+// Signed-out visitors get sent to sign in first: the card links to
+// /login?next=/opportunities/{id} instead of the opportunity page itself,
+// so Google sign-in returns them straight to the listing they clicked. This
+// only gates the click — the opportunity URL itself is untouched, so
+// Googlebot (and anyone with a direct/shared link) can still reach and
+// index it; see app/opportunities/[id]/page.tsx's SEO comments for why that
+// matters here.
 export default function OpportunityCard({
   opportunity,
+  isSignedIn,
 }: {
   opportunity: OpportunityWithCompany;
+  isSignedIn: boolean;
 }) {
   const {
     id,
@@ -42,10 +52,12 @@ export default function OpportunityCard({
   const companyName = company?.name ?? "";
   const { a, b } = avatarGradient(companyName || role);
 
+  const href = isSignedIn ? `/opportunities/${id}` : `/login?next=/opportunities/${id}`;
+
   return (
     <Link
       className="opportunity-card"
-      href={`/opportunities/${id}`}
+      href={href}
       style={{ ["--avatar-a" as string]: a, ["--avatar-b" as string]: b }}
     >
       <div className="opportunity-card-top">

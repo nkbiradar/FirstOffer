@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
+import { getUser } from "@/lib/supabase/auth";
 import { getPublishedOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
@@ -56,6 +57,7 @@ export default async function OpportunitiesPage({
   searchParams: Promise<SearchParams>;
 }) {
   const nonce = await getNonce();
+  const user = await getUser();
   const params = await searchParams;
   const query = firstValue(params.q)?.trim() || "";
   const typeParam = firstValue(params.type);
@@ -255,7 +257,7 @@ export default async function OpportunitiesPage({
           <>
             <div className="opportunity-grid">
               {opportunities.map((opportunity) => (
-                <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+                <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
               ))}
             </div>
 

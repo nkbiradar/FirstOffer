@@ -8,8 +8,8 @@ export default function AboutPage() {
       <h1 style={{ marginTop: 14 }}>Built for freshers, not another job board.</h1>
       <p style={{ marginTop: 14 }}>
         FirstOffer collects fresher-focused opportunities — internships, full-time roles, and
-        off-campus drives — and presents them in one clean, searchable place. No accounts, no
-        clutter: just find an opportunity and apply directly, on the company&apos;s own terms.
+        off-campus drives — and presents them in one clean, searchable place. No clutter: just
+        find an opportunity and apply directly, on the company&apos;s own terms.
       </p>
 
       <h2 style={{ marginTop: 32 }}>The 48-hour promise</h2>
@@ -21,11 +21,12 @@ export default function AboutPage() {
         already pulled it down for you.
       </p>
 
-      <h2 style={{ marginTop: 32 }}>No account needed — ever</h2>
+      <h2 style={{ marginTop: 32 }}>Sign in only when you open a role</h2>
       <p style={{ marginTop: 12 }}>
-        Browsing, searching, and applying never require signing in. Creating an account is
-        entirely optional, and only useful if you want to keep track of what you&apos;ve applied
-        to and note whether you heard back.
+        Searching and browsing every listing never requires an account. Opening an individual
+        opportunity to see the full details asks for a quick, free Google sign-in first — it takes
+        a few seconds, and it&apos;s also what lets you keep track of what you&apos;ve applied to
+        and note whether you heard back.
       </p>
     </main>
   );

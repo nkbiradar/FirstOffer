@@ -42,9 +42,10 @@ export default function TermsPage() {
 
       <h2 style={{ marginTop: 32 }}>Accounts</h2>
       <p style={{ marginTop: 12 }}>
-        Browsing and applying never require an account. Signing in with Google is optional and
-        only needed for the &quot;mark as applied&quot; tracking feature and for paid unlocks. You&apos;re
-        responsible for whatever happens through your account while you&apos;re signed in.
+        Searching and browsing listings never require an account. Opening an individual
+        opportunity&apos;s full details requires signing in with Google, which is also used for the
+        &quot;mark as applied&quot; tracking feature and for paid unlocks. You&apos;re responsible for
+        whatever happens through your account while you&apos;re signed in.
       </p>
 
       <h2 style={{ marginTop: 32 }}>Listing accuracy</h2>

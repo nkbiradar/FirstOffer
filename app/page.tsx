@@ -238,7 +238,7 @@ export default async function HomePage() {
               </span>
               <p className="trust-item-title">Browse free, forever</p>
               <p className="trust-item-desc">
-                No account needed to search or apply. Sign in only if you want to track what you&apos;ve applied to.
+                Search every listing with no account. Sign in free with Google to open a role&apos;s full details, or to track what you&apos;ve applied to.
               </p>
             </div>
           </div>
@@ -496,7 +496,7 @@ export default async function HomePage() {
             ) : (
               <div className="opportunity-grid">
                 {today.map((opportunity) => (
-                  <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+                  <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
                 ))}
               </div>
             )}
@@ -511,7 +511,7 @@ export default async function HomePage() {
               </div>
               <div className="opportunity-grid">
                 {earlier.map((opportunity) => (
-                  <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+                  <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
                 ))}
               </div>
             </section>

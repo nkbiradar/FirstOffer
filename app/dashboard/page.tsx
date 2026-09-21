@@ -208,7 +208,7 @@ export default async function DashboardPage({
           <div className="opportunity-grid">
             {filtered.map((opportunity) => (
               <div className="application-item" key={opportunity.id}>
-                <OpportunityCard opportunity={opportunity} />
+                <OpportunityCard opportunity={opportunity} isSignedIn />
                 <OutcomeTracker
                   opportunityId={opportunity.id}
                   appliedLabel={formatRelativeTime(opportunity.applied_at)}

@@ -29,9 +29,9 @@ export default function PrivacyPolicyPage() {
 
       <p style={{ marginTop: 20 }}>
         This policy explains what FirstOffer (&quot;we&quot;, &quot;us&quot;) collects when you use{" "}
-        firstoffer.online, why we collect it, and who we share it with. Browsing and applying to
-        opportunities never requires an account — this policy mostly applies to the parts of the
-        site where you choose to sign in.
+        firstoffer.online, why we collect it, and who we share it with. Searching and browsing
+        listings never requires an account, but opening an individual opportunity&apos;s full
+        details does — this policy covers what we collect once you sign in.
       </p>
 
       <h2 style={{ marginTop: 32 }}>What we collect</h2>

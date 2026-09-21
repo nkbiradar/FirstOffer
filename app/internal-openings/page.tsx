@@ -139,7 +139,7 @@ export default async function InternalOpeningsPage() {
         ) : isUnlocked ? (
           <div className="opportunity-grid">
             {opportunities.map((opportunity) => (
-              <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+              <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
             ))}
           </div>
         ) : (

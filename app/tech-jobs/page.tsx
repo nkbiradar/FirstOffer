@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
+import { getUser } from "@/lib/supabase/auth";
 import { getTechOpportunities } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
@@ -44,6 +45,7 @@ const TECH_FAQS = [
 
 export default async function TechJobsLandingPage() {
   const nonce = await getNonce();
+  const user = await getUser();
   const { opportunities, total } = await getTechOpportunities(24);
 
   const breadcrumbsJsonLd = buildLandingBreadcrumbsJsonLd("Tech Jobs", "/tech-jobs");
@@ -176,7 +178,7 @@ export default async function TechJobsLandingPage() {
         ) : (
           <div className="opportunity-grid">
             {opportunities.map((opportunity) => (
-              <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+              <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
             ))}
           </div>
         )}

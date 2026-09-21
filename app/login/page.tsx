@@ -7,10 +7,12 @@ function firstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-// Job-seeker-facing sign-in — separate from /admin/login. The only reason
-// to sign in as a regular user is application tracking (see
-// components/ApplyTracker.tsx); browsing/searching/applying to
-// opportunities never requires an account.
+// Job-seeker-facing sign-in — separate from /admin/login. Opening an
+// individual opportunity's details now requires signing in first (see
+// components/OpportunityCard.tsx, which routes signed-out visitors here
+// with ?next=/opportunities/{id}); it also doubles as application tracking
+// (see components/ApplyTracker.tsx). Only searching/filtering the listing
+// pages themselves (e.g. /opportunities) stays account-free.
 export default async function LoginPage({
   searchParams,
 }: {
@@ -28,14 +30,14 @@ export default async function LoginPage({
           Sign in
         </span>
         <h1>Welcome to FirstOffer</h1>
-        <p className="admin-login-sub">Sign in to track which opportunities you&apos;ve applied to.</p>
+        <p className="admin-login-sub">Sign in to view opportunity details and track what you&apos;ve applied to.</p>
 
         {error && <p className="admin-login-error">{error}</p>}
         <InAppBrowserWarning />
 
         <GoogleSignInButton next={next} label="Continue with Google" />
 
-        <p className="hint">No account needed to browse opportunities — this is only for tracking applications.</p>
+        <p className="hint">Searching and filtering listings is always free — signing in is just for opening a role and tracking your applications.</p>
       </div>
     </main>
   );

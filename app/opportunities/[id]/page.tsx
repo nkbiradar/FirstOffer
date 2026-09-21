@@ -518,7 +518,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             </div>
             <div className="opportunity-grid">
               {relatedOpportunities.map((relOpp) => (
-                <OpportunityCard key={relOpp.id} opportunity={relOpp} />
+                <OpportunityCard key={relOpp.id} opportunity={relOpp} isSignedIn={Boolean(user)} />
               ))}
             </div>
           </section>
