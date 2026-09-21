@@ -11,7 +11,7 @@
 // EMAIL_UNSUB_SECRET (any random string) to sign one-click unsubscribe
 // links — see lib/data/email-preference.ts. Until all three are set,
 // sendEmailToAllUsers() logs a clear message and does nothing.
-import { Resend } from "resend";
+import { Resend, type CreateBatchOptions } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildUnsubscribeUrl, getOptedOutUserIds } from "@/lib/data/email-preference";
@@ -29,6 +29,14 @@ export type EmailPayload = {
 
 // Resend's batch endpoint accepts at most 100 emails per call.
 const BATCH_SIZE = 100;
+
+// Resend's default plan allows 2 requests/second across the whole account.
+// notifySingleOpportunity() (lib/notify/new-opportunity-alerts.ts) fires one
+// of these per admin "+Add Opportunity" action, each running independently
+// via after() — so a few opportunities added within the same second or two
+// leads to concurrent /emails/batch calls that exceed that limit. This is
+// what actually surfaces as 429s in the Resend dashboard.
+const MAX_RETRY_ATTEMPTS = 4;
 
 let client: Resend | null = null;
 
@@ -87,10 +95,43 @@ function renderHtml(payload: EmailPayload, unsubscribeUrl: string): string {
 </html>`;
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// The Resend SDK never throws for an API-level error (including a rate
+// limit) — every call resolves { data, error, headers }, error included.
+// A bare `await resend.batch.send(...)` inside try/catch, as this used to
+// be written, therefore never actually saw a 429: it resolved normally,
+// the unread `error` field was silently discarded, and that batch of
+// alert emails just never went out. This checks `error` explicitly and,
+// for a 429 specifically, retries with backoff — using the `Retry-After`
+// header Resend sends (in seconds) when present, since that's a more
+// accurate wait than guessing.
+async function sendBatchWithRetry(
+  resend: Resend,
+  chunkPayload: CreateBatchOptions,
+  attempt = 0,
+): Promise<void> {
+  const { error, headers } = await resend.batch.send(chunkPayload);
+  if (!error) return;
+
+  if (error.statusCode === 429 && attempt < MAX_RETRY_ATTEMPTS) {
+    const retryAfterSeconds = Number(headers?.["retry-after"]);
+    const delayMs = Number.isFinite(retryAfterSeconds) ? retryAfterSeconds * 1000 : 500 * 2 ** attempt;
+    await sleep(delayMs);
+    return sendBatchWithRetry(resend, chunkPayload, attempt + 1);
+  }
+
+  console.error(`Email batch send failed (status ${error.statusCode ?? "unknown"}, ${error.name}):`, error.message);
+}
+
 /**
  * Emails every signed-up user (minus anyone who's opted out) about a newly
  * published opportunity. Best-effort, chunked into batches of 100 — a
- * failed chunk is logged and skipped rather than aborting the rest.
+ * failed chunk is logged and skipped rather than aborting the rest. A 429
+ * (rate limit) is retried with backoff instead of being dropped — see
+ * sendBatchWithRetry() above for why that didn't already happen.
  */
 export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> {
   const resend = getClient();
@@ -125,35 +166,38 @@ export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> 
 
   for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
     const chunk = recipients.slice(i, i + BATCH_SIZE);
+    const chunkPayload: CreateBatchOptions = chunk.map((recipient) => {
+      const unsubscribeUrl = buildUnsubscribeUrl(recipient.userId);
+      return {
+        from,
+        to: recipient.email,
+        subject: payload.subject,
+        html: renderHtml(payload, unsubscribeUrl),
+        // The footer link above is for a human reading the email; these
+        // headers are for the mail client itself. Gmail/Outlook/Yahoo
+        // all read List-Unsubscribe to show their own native
+        // "Unsubscribe" button next to the sender name, and
+        // List-Unsubscribe-Post (RFC 8058) tells them it's safe to fire
+        // that instantly with no confirmation page — see the POST
+        // handler in app/api/email/unsubscribe/route.ts, added
+        // specifically to answer that request. Having both is one of
+        // the concrete, checkable signals mailbox providers use when
+        // deciding inbox vs spam for bulk-style senders; it's not a
+        // guarantee by itself, since a lot of the rest is sender/domain
+        // reputation building up over time.
+        headers: {
+          "List-Unsubscribe": `<${unsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
+      };
+    });
+
     try {
-      await resend.batch.send(
-        chunk.map((recipient) => {
-          const unsubscribeUrl = buildUnsubscribeUrl(recipient.userId);
-          return {
-            from,
-            to: recipient.email,
-            subject: payload.subject,
-            html: renderHtml(payload, unsubscribeUrl),
-            // The footer link above is for a human reading the email; these
-            // headers are for the mail client itself. Gmail/Outlook/Yahoo
-            // all read List-Unsubscribe to show their own native
-            // "Unsubscribe" button next to the sender name, and
-            // List-Unsubscribe-Post (RFC 8058) tells them it's safe to fire
-            // that instantly with no confirmation page — see the POST
-            // handler in app/api/email/unsubscribe/route.ts, added
-            // specifically to answer that request. Having both is one of
-            // the concrete, checkable signals mailbox providers use when
-            // deciding inbox vs spam for bulk-style senders; it's not a
-            // guarantee by itself, since a lot of the rest is sender/domain
-            // reputation building up over time.
-            headers: {
-              "List-Unsubscribe": `<${unsubscribeUrl}>`,
-              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-            },
-          };
-        }),
-      );
+      await sendBatchWithRetry(resend, chunkPayload);
     } catch (err) {
+      // Defense in depth only — sendBatchWithRetry resolves rather than
+      // throws for every case the Resend SDK itself can produce (see its
+      // comment above); this is here for a genuinely unexpected exception.
       console.error("Email batch send failed:", err instanceof Error ? err.message : err);
     }
   }
