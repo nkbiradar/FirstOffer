@@ -565,8 +565,14 @@ code {
   display: flex;
   align-items: center;
   gap: 2px;
-  flex-shrink: 1;
-  min-width: 0;
+  /* Never shrink narrower than its own (non-wrapping) content. Letting it
+     shrink while its links stayed nowrap was the cause of a real bug: the
+     browser rendered the overflowing "Internal HR" pill directly on top of
+     the Dashboard button in the next flex item instead of wrapping or
+     scrolling. With flex-shrink: 0, the row instead simply doesn't appear
+     at all once the hamburger breakpoint below hides it — no in-between
+     state where it can collide with anything. */
+  flex-shrink: 0;
 }
 
 .nav-links a {
@@ -631,10 +637,16 @@ code {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px 4px 4px;
+  padding: 4px;
   border-radius: var(--radius-full);
   background: var(--color-surface-muted);
   border: 1px solid var(--color-border);
+}
+
+@media (min-width: 1340px) {
+  .nav-user-chip {
+    padding: 4px 12px 4px 4px;
+  }
 }
 
 .nav-user-avatar {
@@ -658,6 +670,17 @@ code {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Hidden by default — the chip is just the avatar circle, full email on
+     hover via its title="" attribute — and only spelled out inline once
+     there's real room to spare. Keeps the signed-in cluster's width small
+     everywhere the 1220px nav breakpoint doesn't already cover. */
+  display: none;
+}
+
+@media (min-width: 1340px) {
+  .nav-user-email {
+    display: inline;
+  }
 }
 
 .nav-signout-form button {
@@ -765,12 +788,14 @@ code {
   border-top-color: var(--color-border);
 }
 
-/* Collapses to the hamburger well before the full nav would start
-   squeezing into a cramped, wrapping mess (long email + several pill
-   buttons competing with six nav links for room) — better to switch
-   cleanly to the mobile menu a bit earlier than let that in-between state
-   show up on laptop/tablet widths. */
-@media (max-width: 1040px) {
+/* Collapses to the hamburger with real margin to spare — six nav links
+   plus Dashboard + the user chip + Sign out (+ Admin, for an admin
+   account) genuinely need on the order of 1100-1200px combined, so 1040
+   still left it visibly colliding on a real laptop-width window. 1220 is
+   deliberately generous rather than a tightly-measured number, since
+   .nav-links now has flex-shrink: 0 (see above) and will never gracefully
+   degrade on its own below whatever this is set to. */
+@media (max-width: 1220px) {
   .nav-links {
     display: none;
   }
