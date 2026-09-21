@@ -127,12 +127,31 @@ export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> 
     const chunk = recipients.slice(i, i + BATCH_SIZE);
     try {
       await resend.batch.send(
-        chunk.map((recipient) => ({
-          from,
-          to: recipient.email,
-          subject: payload.subject,
-          html: renderHtml(payload, buildUnsubscribeUrl(recipient.userId)),
-        })),
+        chunk.map((recipient) => {
+          const unsubscribeUrl = buildUnsubscribeUrl(recipient.userId);
+          return {
+            from,
+            to: recipient.email,
+            subject: payload.subject,
+            html: renderHtml(payload, unsubscribeUrl),
+            // The footer link above is for a human reading the email; these
+            // headers are for the mail client itself. Gmail/Outlook/Yahoo
+            // all read List-Unsubscribe to show their own native
+            // "Unsubscribe" button next to the sender name, and
+            // List-Unsubscribe-Post (RFC 8058) tells them it's safe to fire
+            // that instantly with no confirmation page — see the POST
+            // handler in app/api/email/unsubscribe/route.ts, added
+            // specifically to answer that request. Having both is one of
+            // the concrete, checkable signals mailbox providers use when
+            // deciding inbox vs spam for bulk-style senders; it's not a
+            // guarantee by itself, since a lot of the rest is sender/domain
+            // reputation building up over time.
+            headers: {
+              "List-Unsubscribe": `<${unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
+          };
+        }),
       );
     } catch (err) {
       console.error("Email batch send failed:", err instanceof Error ? err.message : err);
