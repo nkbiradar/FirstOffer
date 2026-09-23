@@ -12,8 +12,8 @@ const VISIBLE_DURATION_MS = 7000; // how long each card stays up
 const GAP_BETWEEN_MS = 2000; // pause between one card leaving and the next appearing
 
 const OUTCOME_COPY: Record<Testimonial["outcome"], string> = {
-  interview: "just got an interview call at",
-  selected: "just got placed at",
+  interview: "got an interview call at",
+  selected: "got placed at",
 };
 
 /**
