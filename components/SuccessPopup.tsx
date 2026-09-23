@@ -7,7 +7,7 @@ import type { Testimonial } from "@/types/supabase";
 
 // Timing for the rotation below — tuned to feel like a real-time feed
 // without being distracting. All in milliseconds.
-const INITIAL_DELAY_MS = 4000; // wait before the very first card shows
+const INITIAL_DELAY_MS = 1200; // wait before the very first card shows
 const VISIBLE_DURATION_MS = 7000; // how long each card stays up
 const GAP_BETWEEN_MS = 9000; // pause between one card leaving and the next appearing
 
