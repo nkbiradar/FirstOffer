@@ -19,26 +19,12 @@ export default function SuccessStories({ testimonials }: { testimonials: Testimo
         return (
           <article className="success-card" key={testimonial.id}>
             <div className="success-card-top">
-              {testimonial.avatar_url ? (
-                // Admin-entered photo URLs can point anywhere, so this
-                // deliberately skips next/image's remote-host allowlist
-                // rather than opening images.remotePatterns to "any host".
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={testimonial.student_name}
-                  className="success-avatar success-avatar-photo"
-                  height={48}
-                  src={testimonial.avatar_url}
-                  width={48}
-                />
-              ) : (
-                <span
-                  className="success-avatar"
-                  style={{ ["--avatar-a" as string]: a, ["--avatar-b" as string]: b }}
-                >
-                  {initials(testimonial.student_name)}
-                </span>
-              )}
+              <span
+                className="success-avatar"
+                style={{ ["--avatar-a" as string]: a, ["--avatar-b" as string]: b }}
+              >
+                {initials(testimonial.student_name)}
+              </span>
               <div className="success-person">
                 <p className="success-name">{testimonial.student_name}</p>
                 {meta && <p className="success-meta">{meta}</p>}

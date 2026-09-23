@@ -4,8 +4,10 @@ import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
+import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
+import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -58,7 +60,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // Fetched once here (a Server Component) and passed down, rather than
   // Navbar fetching it client-side — every page already goes through this
   // layout, so this is the one place the whole site's auth state is known.
-  const user = await getUser();
+  // testimonials is fetched alongside it for the same reason: SuccessPopup
+  // below needs the published list on every page, not just the homepage.
+  const [user, testimonials] = await Promise.all([getUser(), getPublishedTestimonials()]);
   const navUser = user ? { email: user.email ?? null } : null;
   // Same reasoning as Step 8: the public site shouldn't advertise the admin
   // area to regular visitors. But the actual admin, once signed in, needs a
@@ -77,6 +81,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         </div>
         <Analytics />
         <PushNotificationPrompt />
+        <SuccessPopup testimonials={testimonials} />
         <VisitTracker isAdmin={isAdmin} />
       </body>
     </html>

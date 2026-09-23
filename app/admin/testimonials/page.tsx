@@ -80,22 +80,16 @@ export default async function AdminTestimonialsPage({
                 <input name="graduation_batch" type="text" placeholder="e.g. 2026" />
               </label>
             </div>
-            <div className="form-grid-2">
-              <label>
-                Rating
-                <select name="rating" defaultValue="5">
-                  <option value="5">★★★★★ (5)</option>
-                  <option value="4">★★★★☆ (4)</option>
-                  <option value="3">★★★☆☆ (3)</option>
-                  <option value="2">★★☆☆☆ (2)</option>
-                  <option value="1">★☆☆☆☆ (1)</option>
-                </select>
-              </label>
-              <label>
-                Avatar Photo URL <span className="hint">(optional — leave blank to show initials)</span>
-                <input name="avatar_url" type="url" placeholder="https://..." />
-              </label>
-            </div>
+            <label>
+              Rating
+              <select name="rating" defaultValue="5">
+                <option value="5">★★★★★ (5)</option>
+                <option value="4">★★★★☆ (4)</option>
+                <option value="3">★★★☆☆ (3)</option>
+                <option value="2">★★☆☆☆ (2)</option>
+                <option value="1">★☆☆☆☆ (1)</option>
+              </select>
+            </label>
             <label>
               Quote <span className="hint">(optional — a short sentence in their own words)</span>
               <textarea

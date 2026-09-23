@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
   const college = String(formData.get("college") ?? "").trim();
   const graduationBatch = String(formData.get("graduation_batch") ?? "").trim();
   const ratingRaw = String(formData.get("rating") ?? "").trim();
-  const avatarUrl = String(formData.get("avatar_url") ?? "").trim();
 
   if (!studentName || !companyName) {
     return NextResponse.redirect(
@@ -49,7 +48,6 @@ export async function POST(request: NextRequest) {
     college: college || null,
     graduation_batch: graduationBatch || null,
     rating,
-    avatar_url: avatarUrl || null,
   });
 
   if (error) {

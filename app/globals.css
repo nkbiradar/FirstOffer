@@ -5035,6 +5035,119 @@ a.footer-trust-item:hover {
   }
 }
 
+/* ── Success popup (live "X just got an interview call at Y" widget) ──── */
+/* Same data as the homepage Success Stories grid (components/SuccessStories.tsx),
+   just surfaced as a drifting corner card — see components/SuccessPopup.tsx.
+   Bottom-left so it never collides with .push-prompt, which sits bottom-right
+   on desktop and full-width at the very bottom on mobile (kept higher up here
+   on small screens for the same reason). */
+.success-popup {
+  position: fixed;
+  z-index: 55;
+  left: 16px;
+  right: 16px;
+  bottom: 96px;
+  max-width: 340px;
+  padding: 14px 30px 14px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: success-popup-in 0.4s ease-out;
+}
+
+@keyframes success-popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 640px) {
+  .success-popup {
+    left: 24px;
+    right: auto;
+    bottom: 24px;
+  }
+}
+
+.success-popup-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: none;
+  background: none;
+  color: var(--color-text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.success-popup-close:hover {
+  color: var(--color-text);
+}
+
+.success-popup-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.success-popup-avatar {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.success-popup-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent-soft-border);
+}
+
+.success-popup-avatar-initials.outcome-selected {
+  color: var(--color-gold-strong);
+  background: var(--color-gold-soft);
+  border-color: var(--color-gold-soft-border);
+}
+
+.success-popup-body {
+  min-width: 0;
+}
+
+.success-popup-headline {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.success-popup-detail {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  color: var(--color-text-tertiary);
+}
+
+.success-popup-quote {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
 /* ── Internal HR Openings (₹39/month, second independent product) ────── */
 /* Deliberately a fixed dark/gold "premium" visual language, distinct from
    the indigo/teal used everywhere else on the site, so this product reads
