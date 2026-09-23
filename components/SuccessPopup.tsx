@@ -9,7 +9,7 @@ import type { Testimonial } from "@/types/supabase";
 // without being distracting. All in milliseconds.
 const INITIAL_DELAY_MS = 1200; // wait before the very first card shows
 const VISIBLE_DURATION_MS = 7000; // how long each card stays up
-const GAP_BETWEEN_MS = 9000; // pause between one card leaving and the next appearing
+const GAP_BETWEEN_MS = 2000; // pause between one card leaving and the next appearing
 
 const OUTCOME_COPY: Record<Testimonial["outcome"], string> = {
   interview: "just got an interview call at",
