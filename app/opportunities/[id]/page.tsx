@@ -181,13 +181,19 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
   const isApplied = user ? await isOpportunityApplied(user.id, id) : false;
 
+  // additional_details is a free-text "anything that doesn't fit elsewhere"
+  // catch-all (see components/admin/OpportunityForm.tsx's hint on that
+  // field) -- in practice admins sometimes paste a WhatsApp number or other
+  // contact info into it, same failure mode Step 15's how_to_apply fix
+  // addressed. It's included here (and gated below) for the same reason.
   const hasApplyContent = Boolean(
     opportunity.application_url ||
       opportunity.google_form_url ||
       opportunity.hr_email ||
       opportunity.hr_contact ||
       opportunity.how_to_apply ||
-      opportunity.premium_group_hint,
+      opportunity.premium_group_hint ||
+      opportunity.additional_details,
   );
   const applyUnlocked =
     user && hasApplyContent
@@ -455,7 +461,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </section>
         )}
 
-        {additional_details && (
+        {canShowApply && additional_details && (
           <section className="card">
             <h2>Additional Details</h2>
             <p className="preserve-whitespace">{additional_details}</p>
