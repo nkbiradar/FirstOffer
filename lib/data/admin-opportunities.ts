@@ -13,10 +13,64 @@ const OPPORTUNITY_SELECT = "*, company:companies(id, name, slug, logo_url)";
 
 export class OpportunityValidationError extends Error {}
 
+// Email addresses, plain and simple.
+const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+
+// Indian mobile numbers, in whatever spacing/punctuation someone pastes
+// them with ("+91 90565-22777", "90565 22777", "9056522777", ...). Phone
+// numbers show up split unpredictably, so this first grabs any run of
+// digits-with-separators that STARTS like a mobile number (6-9, optionally
+// preceded by +91), then strips every non-digit and checks the result is
+// exactly 10 digits (or 12 with a 91 prefix) -- that length check is what
+// keeps this from false-positiving on ordinary eligibility text like
+// "1-2 years experience" or "stipend 15000-20000", which never reduce to
+// a 10/12-digit run.
+function containsIndianPhoneNumber(text: string): boolean {
+  const candidates = text.match(/(?:\+?91[\s.-]?)?[6-9][\d\s.-]{7,13}\d/g) ?? [];
+  return candidates.some((candidate) => {
+    const digits = candidate.replace(/\D/g, "");
+    return digits.length === 10 || (digits.length === 12 && digits.startsWith("91"));
+  });
+}
+
+// Fields that render on the public opportunity page with NO paywall check
+// (see app/opportunities/[id]/page.tsx -- eligibility/responsibilities/
+// requirements/additional_details all render unconditionally, unlike
+// hr_email/hr_contact/how_to_apply/application_url/google_form_url, which
+// are properly gated behind canShowApply). A phone number or email pasted
+// into any of these leaks for free to every visitor, paid or not -- this
+// is exactly the bug found in additional_details on 2026-09-24 (a WhatsApp
+// number sitting in "Additional Details", fully public). Checked here,
+// once, so neither the single-add form nor Bulk Import (both funnel
+// through createOpportunity() below) can reintroduce it.
+function findLeakedContactInfo(input: OpportunityFormInput): string | null {
+  const fieldsToCheck: [string, string][] = [
+    ["Eligibility", input.eligibility],
+    ["Additional Details", input.additionalDetails],
+    ["Responsibilities", input.responsibilities.join(" ")],
+    ["Requirements", input.requirements.join(" ")],
+  ];
+  for (const [label, text] of fieldsToCheck) {
+    if (!text) continue;
+    if (containsIndianPhoneNumber(text) || EMAIL_PATTERN.test(text)) {
+      return label;
+    }
+  }
+  return null;
+}
+
 function validate(input: OpportunityFormInput) {
   const errors: string[] = [];
   if (!input.role.trim()) errors.push("Role is required.");
   if (!input.sourceText.trim()) errors.push("Original Telegram message is required.");
+
+  const leakField = findLeakedContactInfo(input);
+  if (leakField) {
+    errors.push(
+      `"${leakField}" looks like it contains a phone number or email address. That field is shown to every visitor for free, even before payment -- move contact info to HR Email or HR Contact instead (those are locked behind the paid unlock).`,
+    );
+  }
+
   if (errors.length > 0) throw new OpportunityValidationError(errors.join(" "));
 }
 
