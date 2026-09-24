@@ -3599,6 +3599,31 @@ button.btn-danger {
   border-color: var(--color-danger-border);
 }
 
+/* Subscription statuses (see /admin/subscriptions) -- active/completed read
+   as success, created/authenticated/pending as "not paid yet" (warning),
+   halted/cancelled/expired as danger. */
+.status-active,
+.status-completed {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+
+.status-created,
+.status-authenticated,
+.status-pending {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
+}
+
+.status-halted,
+.status-cancelled {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+
 /* ── Admin: opportunity form ─────────────────────────────────────────── */
 
 .opportunity-form {

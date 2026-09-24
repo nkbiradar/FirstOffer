@@ -9,6 +9,7 @@
 // page never crashes if the migration hasn't been applied yet.
 import { createClient } from "@/lib/supabase/server";
 import { LEGACY_MONTHLY_PRICE_PAISE, type SubscriptionProduct } from "@/lib/payments/razorpay";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type UserSubscription = {
   status: "created" | "authenticated" | "active" | "pending" | "halted" | "cancelled" | "completed" | "expired";
@@ -166,4 +167,76 @@ export async function getUserSubscription(
     return null;
   }
   return data as UserSubscription | null;
+}
+
+
+// ── Admin: every subscription, with email attached ─────────────────────
+
+export interface SubscriptionForAdmin {
+  id: string;
+  user_id: string;
+  email: string | null;
+  product: string;
+  status: string;
+  amount_paise: number;
+  razorpay_payment_id: string | null;
+  razorpay_order_id: string | null;
+  razorpay_subscription_id: string;
+  current_period_end: string | null;
+  created_at: string;
+  updated_at: string;
+  cancelled_at: string | null;
+}
+
+/**
+ * Every row in `subscriptions`, newest first, with each user's email
+ * attached -- for /admin/subscriptions, which answers "did this payment
+ * actually grant access?" at a glance instead of needing a manual Supabase
+ * query every time someone pays. Service-role only (there's no RLS policy
+ * granting admins broader access than "select their own row"), and the
+ * `subscriptions` table has no email column of its own (it only stores
+ * `user_id`, a foreign key into `auth.users`), so this also goes through
+ * the Auth Admin API (`admin.auth.admin.listUsers`) to attach one -- same
+ * trick lib/email/resend-client.ts already uses for the same reason (no
+ * `profiles` table in this project).
+ */
+export async function getAllSubscriptionsForAdmin(): Promise<SubscriptionForAdmin[]> {
+  const admin = createAdminClient();
+
+  const { data: rows, error } = await admin
+    .from("subscriptions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getAllSubscriptionsForAdmin failed:", error.message);
+    return [];
+  }
+
+  // listUsers() is paginated (Supabase default perPage is 50) -- this admin
+  // page needs every user who's ever subscribed, not just the first page,
+  // so this walks all pages once and builds an id -> email map. Fine at
+  // this project's current user count; revisit if it ever grows into the
+  // tens of thousands.
+  const emailById = new Map<string, string>();
+  let page = 1;
+  const perPage = 1000;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { data, error: usersError } = await admin.auth.admin.listUsers({ page, perPage });
+    if (usersError) {
+      console.error("getAllSubscriptionsForAdmin: listUsers failed:", usersError.message);
+      break;
+    }
+    for (const u of data.users) {
+      if (u.email) emailById.set(u.id, u.email);
+    }
+    if (data.users.length < perPage) break;
+    page += 1;
+  }
+
+  return (rows ?? []).map((row) => ({
+    ...row,
+    email: emailById.get(row.user_id) ?? null,
+  })) as SubscriptionForAdmin[];
 }
