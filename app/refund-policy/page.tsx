@@ -53,7 +53,7 @@ export default function RefundPolicyPage() {
 
       <h2 style={{ marginTop: 32 }}>How to request a refund</h2>
       <p style={{ marginTop: 12 }}>
-        Email us at <a href="mailto:nayankumarb3110@gmail.com">nayankumarb3110@gmail.com</a> with
+        Email us at <a href="mailto:support@firstoffer.online">support@firstoffer.online</a> with
         your Razorpay payment ID (from your payment confirmation) and a link to the opportunity.
         We&apos;ll review it and get back to you within a few days.
       </p>

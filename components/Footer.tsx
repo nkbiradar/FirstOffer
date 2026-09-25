@@ -55,7 +55,7 @@ export default function Footer() {
           </span>
           <a
             className="footer-trust-item"
-            href="mailto:nayankumarb3110@gmail.com"
+            href="mailto:support@firstoffer.online"
             role="listitem"
           >
             <svg

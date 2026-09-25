@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
       <h2 style={{ marginTop: 32 }}>Contact</h2>
       <p style={{ marginTop: 12 }}>
         Questions about this policy or your data — email us at{" "}
-        <a href="mailto:nayankumarb3110@gmail.com">nayankumarb3110@gmail.com</a>.
+        <a href="mailto:support@firstoffer.online">support@firstoffer.online</a>.
       </p>
 
       <p style={{ marginTop: 40, fontSize: 12.5, color: "var(--color-text-tertiary)" }}>
