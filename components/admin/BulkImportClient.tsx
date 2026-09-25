@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseBulkOpportunities, type BulkDraftOpportunity } from "@/lib/bulk-import-parse";
 
@@ -138,6 +138,15 @@ export default function BulkImportClient() {
   const [internalRawText, setInternalRawText] = useState("");
   const [items, setItems] = useState<EditableItem[]>([]);
   const [isPublishing, setIsPublishing] = useState(false);
+  // Belt-and-suspenders against double-submission: React state updates
+  // (and the button's `disabled` attribute that reads them) commit
+  // asynchronously, so two click events dispatched in the same tick (a
+  // fast double-click, or a stuck UI the admin clicks again) can both
+  // slip past the `isPublishing` check before either one re-renders.
+  // This ref is set synchronously, in the same call, so the second
+  // click bails out immediately — this is what caused the duplicate
+  // opportunities from the 25 Sep bulk import.
+  const isPublishingRef = useRef(false);
   const [topError, setTopError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [isExtractingWithAi, setIsExtractingWithAi] = useState(false);
@@ -300,6 +309,8 @@ export default function BulkImportClient() {
 
   async function handlePublishAll() {
     if (items.length === 0) return;
+    if (isPublishingRef.current) return;
+    isPublishingRef.current = true;
     setIsPublishing(true);
     setTopError(null);
     setSummary(null);
@@ -347,6 +358,7 @@ export default function BulkImportClient() {
     } catch {
       setTopError("Network error — could not reach the server. Nothing was published.");
     } finally {
+      isPublishingRef.current = false;
       setIsPublishing(false);
     }
   }
