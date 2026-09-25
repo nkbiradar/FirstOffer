@@ -43,7 +43,7 @@ export default function SuccessStories({ testimonials }: { testimonials: Testimo
               </div>
             )}
 
-            {testimonial.quote && <p className="success-quote">&ldquo;{testimonial.quote}&rdquo;</p>}
+            {testimonial.quote && <p className="success-quote">{testimonial.quote}</p>}
           </article>
         );
       })}

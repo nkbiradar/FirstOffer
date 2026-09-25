@@ -134,7 +134,7 @@ export default async function AdminTestimonialsPage({
                       </p>
                     )}
                     {testimonial.quote && (
-                      <p style={{ marginTop: 8, fontSize: 14 }}>&ldquo;{testimonial.quote}&rdquo;</p>
+                      <p style={{ marginTop: 8, fontSize: 14 }}>{testimonial.quote}</p>
                     )}
                   </div>
                   <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", alignItems: "start" }}>
