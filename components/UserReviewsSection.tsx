@@ -45,7 +45,7 @@ function ReviewCard({ review: r, ariaHidden }: { review: UserReview; ariaHidden?
     >
       {/* Quote ------------------------------------------------------------- */}
       <blockquote className="review-quote">
-        <p>&ldquo;{r.review}&rdquo;</p>
+        <p>{r.review}</p>
       </blockquote>
 
       {/* Stars ------------------------------------------------------------- */}

@@ -34,7 +34,7 @@ export default function TestimonialsMarquee({ testimonials }: { testimonials: Te
               <span className="testimonial-outcome-badge">
                 {OUTCOME_LABELS[testimonial.outcome] ?? "Interview call"}
               </span>
-              {testimonial.quote && <p className="testimonial-quote">&ldquo;{testimonial.quote}&rdquo;</p>}
+              {testimonial.quote && <p className="testimonial-quote">{testimonial.quote}</p>}
               <div className="testimonial-person">
                 <span className="testimonial-avatar">{initials(testimonial.student_name)}</span>
                 <div>

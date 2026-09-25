@@ -109,7 +109,7 @@ export default function SuccessPopup({ testimonials }: { testimonials: Testimoni
             <strong>{testimonial.company_name}</strong>
           </p>
           {detail && <p className="success-popup-detail">{detail}</p>}
-          {testimonial.quote && <p className="success-popup-quote">&ldquo;{testimonial.quote}&rdquo;</p>}
+          {testimonial.quote && <p className="success-popup-quote">{testimonial.quote}</p>}
         </div>
       </div>
     </div>
