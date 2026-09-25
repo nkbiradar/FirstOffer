@@ -142,6 +142,12 @@ export default async function OpportunitiesPage({
             </span>
             <h1>Fresher Jobs &amp; Internships</h1>
             <p>Search and filter live fresher IT openings, internships, full-time roles, and off-campus opportunities.</p>
+            <p className="opportunities-note">
+              <strong>Our role:</strong> we make it easier for your resume to reach the
+              right recruiters and get you the interview call. If calls still
+              aren&apos;t coming, it&apos;s usually the resume &mdash; align it with
+              the job description before you apply.
+            </p>
           </div>
 
           <div className="opps-stats">

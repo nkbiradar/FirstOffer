@@ -2593,6 +2593,20 @@ button.btn-danger {
   color: var(--color-text-secondary);
 }
 
+.opportunities-note {
+  margin-top: 4px !important;
+  padding: 10px 14px;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--color-brand-soft-border);
+  background: var(--color-surface);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.opportunities-note strong {
+  color: var(--color-text);
+}
+
 /* Named opps- (not hero-stat*) — the homepage already defines a
    .hero-stats/.stat-tile grid layout above; a same-named class here would
    silently override that section's CSS since both load in one stylesheet. */
