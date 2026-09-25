@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -30,6 +31,8 @@ async function handleUpdate(request: NextRequest, context: RouteContext) {
     );
   }
 
+  revalidatePath("/admin/companies");
+  revalidatePath("/admin/opportunities");
   return NextResponse.redirect(new URL("/admin/companies?updated=1", request.url), 303);
 }
 

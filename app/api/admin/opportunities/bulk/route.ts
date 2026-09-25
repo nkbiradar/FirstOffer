@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
 import { parseOpportunityBulkItem, type BulkOpportunityItem } from "@/lib/data/opportunity-form-data";
@@ -69,6 +70,15 @@ export async function POST(request: NextRequest) {
   // response's critical path: delivery is fire-and-forget from the
   // admin's point of view.
   notifyBulkOpportunities({ public: publishedPublicCount, internal: publishedInternalCount });
+
+  // BulkImportClient only calls router.refresh() on its own page — that
+  // does not clear the client-side Router Cache for OTHER already-visited
+  // admin routes (Dashboard, Manage Opportunities), so without this,
+  // navigating there via a <Link> click (not a hard reload) served stale
+  // pre-import numbers. revalidatePath purges those cached entries too.
+  revalidatePath("/admin");
+  revalidatePath("/admin/opportunities");
+  revalidatePath("/admin/companies");
 
   return NextResponse.json({ results });
 }

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
 import { parseOpportunityFormData } from "@/lib/data/opportunity-form-data";
@@ -25,6 +26,9 @@ export async function POST(request: NextRequest) {
     if (opportunity.status === "published") {
       notifySingleOpportunity(opportunity);
     }
+    revalidatePath("/admin");
+    revalidatePath("/admin/opportunities");
+    revalidatePath("/admin/companies");
     return NextResponse.redirect(
       new URL(`/admin/opportunities?created=${opportunity.id}`, request.url),
       303,

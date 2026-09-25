@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import {
   deleteOpportunity,
@@ -45,6 +46,9 @@ async function handleUpdate(request: NextRequest, context: RouteContext) {
     );
   }
 
+  revalidatePath("/admin");
+  revalidatePath("/admin/opportunities");
+  revalidatePath("/admin/companies");
   return NextResponse.redirect(new URL("/admin/opportunities", request.url), 303);
 }
 
@@ -75,5 +79,7 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 
+  revalidatePath("/admin");
+  revalidatePath("/admin/opportunities");
   return NextResponse.json({ ok: true });
 }
