@@ -764,3 +764,31 @@ alter table public.site_visits enable row level security;
 -- No policies: only app/api/track-visit/route.ts (write) and
 -- lib/data/site-visits.ts's getSiteVisitStats() (read) ever touch this
 -- table, both through the service-role client.
+
+-- ── opportunities.email_digest_sent_at (batched "new opportunity" emails) ──
+-- Publishing an opportunity used to fire an instant email to every
+-- signed-up user via after() (see lib/notify/new-opportunity-alerts.ts).
+-- With ~38 opportunities/day, that meant ~38 separate broadcasts/day, each
+-- listing every user again — Resend's rate limit (429s, visible in its
+-- Logs tab) and the free plan's 100/day, 3,000/month caps got hit fast.
+--
+-- Fix: publishing no longer sends email at all (push notifications still
+-- fire instantly — see notifyPush() in new-opportunity-alerts.ts, unaffected
+-- by this). Instead, a Vercel Cron job (see vercel.json) hits
+-- /api/cron/email-digest once a day, which collects every published
+-- opportunity with email_digest_sent_at still null, sends ONE combined
+-- digest email per audience (public / Internal HR) instead of one per
+-- opportunity, and stamps every opportunity it just covered with this
+-- timestamp so the next run doesn't repeat them. See
+-- lib/email/opportunity-digest.ts for the actual query + send.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+alter table public.opportunities
+  add column if not exists email_digest_sent_at timestamptz;
+
+create index if not exists opportunities_email_digest_pending_idx
+  on public.opportunities (published_at)
+  where status = 'published' and email_digest_sent_at is null;

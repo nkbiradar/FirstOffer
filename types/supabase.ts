@@ -134,6 +134,11 @@ export interface Opportunity {
   expires_at: string | null;
   created_at: string;
   updated_at: string;
+
+  // Null until the daily digest cron has emailed this opportunity out —
+  // see lib/email/opportunity-digest.ts and the migration note at the end
+  // of supabase/schema.sql.
+  email_digest_sent_at: string | null;
 }
 
 export interface OpportunityInsert {
