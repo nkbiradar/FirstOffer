@@ -325,32 +325,57 @@ export type AdminDashboardStats = {
   expired: number;
 };
 
-/** yyyy-mm-dd in IST — the site's opportunities are India-focused (₹, Bengaluru, etc.), so "today" is judged in IST rather than UTC. */
-function istDateKey(iso: string) {
-  return new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-}
-
-/** Simple counts for the /admin dashboard — no analytics, just the four numbers the spec asks for. */
+/**
+ * Simple counts for the /admin dashboard — no analytics, just the four
+ * numbers the spec asks for.
+ *
+ * NOTE: this used to `.select("status, published_at")` with no `.limit()`
+ * and count client-side in JS. That worked fine while the table had under
+ * 1000 rows, but Supabase/PostgREST caps an unlimited select at 1000 rows
+ * by default — once the table passed that (Sep 2026), the query silently
+ * returned only a 1000-row slice (oldest rows, since there's no explicit
+ * `.order()`), so `total`/`expired` read as a stuck "1000" and freshly
+ * published rows — which never made it into that truncated slice — never
+ * counted toward `todayPublished`. Using `{ count: "exact", head: true }`
+ * per status makes Postgres do the counting server-side instead, so this
+ * is correct (and cheaper) no matter how large the table gets.
+ */
 export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
   await sweepExpiredOpportunities();
 
   const admin = createAdminClient();
-  const { data, error } = await admin.from("opportunities").select("status, published_at");
 
-  if (error) {
-    console.error("getAdminDashboardStats failed:", error.message);
+  // IST day boundaries, expressed with an explicit +05:30 offset so
+  // Postgres compares them against `published_at` (timestamptz) correctly
+  // regardless of the server's own timezone.
+  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  const todayStartIso = `${todayKey}T00:00:00.000+05:30`;
+  const todayEndIso = `${todayKey}T23:59:59.999+05:30`;
+
+  const [totalRes, todayPublishedRes, draftsRes, expiredRes] = await Promise.all([
+    admin.from("opportunities").select("*", { count: "exact", head: true }),
+    admin
+      .from("opportunities")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "published")
+      .gte("published_at", todayStartIso)
+      .lte("published_at", todayEndIso),
+    admin.from("opportunities").select("*", { count: "exact", head: true }).eq("status", "draft"),
+    admin.from("opportunities").select("*", { count: "exact", head: true }).eq("status", "expired"),
+  ]);
+
+  const firstError = [totalRes.error, todayPublishedRes.error, draftsRes.error, expiredRes.error].find(
+    (error) => error != null,
+  );
+  if (firstError) {
+    console.error("getAdminDashboardStats failed:", firstError.message);
     return { total: 0, todayPublished: 0, drafts: 0, expired: 0 };
   }
 
-  const rows = (data ?? []) as { status: OpportunityStatus; published_at: string | null }[];
-  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-
   return {
-    total: rows.length,
-    todayPublished: rows.filter(
-      (row) => row.status === "published" && row.published_at && istDateKey(row.published_at) === todayKey,
-    ).length,
-    drafts: rows.filter((row) => row.status === "draft").length,
-    expired: rows.filter((row) => row.status === "expired").length,
+    total: totalRes.count ?? 0,
+    todayPublished: todayPublishedRes.count ?? 0,
+    drafts: draftsRes.count ?? 0,
+    expired: expiredRes.count ?? 0,
   };
 }
