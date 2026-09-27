@@ -150,14 +150,11 @@ export default async function HomePage() {
 
       <section className="subscriber-strip">
         <div className="container">
-          <div className="subscriber-badge">
-            <span className="subscriber-badge-dot" aria-hidden="true" />
-            <span className="subscriber-badge-text">
-              <strong>
-                <CountUp value={stats.totalSubscribers} />
-              </strong>{" "}
-              Subscribers already getting free job alerts
+          <div className="subscriber-count">
+            <span className="subscriber-count-value">
+              <CountUp value={stats.totalSubscribers} />
             </span>
+            <span className="subscriber-count-label">Subscribers</span>
           </div>
         </div>
       </section>
