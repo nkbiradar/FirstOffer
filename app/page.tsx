@@ -156,7 +156,7 @@ export default async function HomePage() {
               <strong>
                 <CountUp value={stats.totalSubscribers} />
               </strong>{" "}
-              students already get free job alerts on FirstOffer
+              Subscribers already getting free job alerts
             </span>
           </div>
         </div>
