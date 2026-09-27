@@ -301,7 +301,7 @@ export default async function HomePage() {
               <span className="stat-value">
                 <CountUp value={stats.totalSubscribers} />
               </span>
-              <span className="stat-label">Getting job alerts</span>
+              <span className="stat-label">Subscribers</span>
             </div>
           </div>
         </div>
