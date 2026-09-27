@@ -148,6 +148,20 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="subscriber-strip">
+        <div className="container">
+          <div className="subscriber-badge">
+            <span className="subscriber-badge-dot" aria-hidden="true" />
+            <span className="subscriber-badge-text">
+              <strong>
+                <CountUp value={stats.totalSubscribers} />
+              </strong>{" "}
+              students already get free job alerts on FirstOffer
+            </span>
+          </div>
+        </div>
+      </section>
+
       <section className="hero">
         <div className="container hero-content">
           <div className="hero-copy hero-copy-centered">
