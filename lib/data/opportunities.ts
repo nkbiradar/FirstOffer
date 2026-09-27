@@ -247,24 +247,35 @@ export async function getHomepageOpportunities(limit = 30): Promise<HomepageOppo
 export type SiteStats = {
   totalOpportunities: number;
   totalCompanies: number;
+  totalSubscribers: number;
 };
 
 /**
  * Real, live counts for the homepage hero stat tiles — total published
- * (non-expired) opportunities, and how many distinct companies currently
- * have at least one. Purely additive/read-only: does not change any
- * existing query, just two cheap `count: "exact", head: true` lookups.
+ * (non-expired) opportunities, how many distinct companies currently have
+ * at least one, and how many people have signed in with Google (every
+ * signed-in user gets the daily digest, opt-outs aside — see
+ * getOptedOutUserIds() in lib/email/resend-client.ts — so this is a fair
+ * "subscribers" number for the homepage, not a separate mailing list).
+ *
+ * `listUsers({ page: 1, perPage: 1 })` is a cheap way to get the true
+ * total: GoTrue returns it in the `x-total-count` header regardless of
+ * `perPage`, so this doesn't pull all user rows just to count them (the
+ * same class of bug fixed in getAdminDashboardStats() — an unbounded
+ * `.select()` silently capped at Supabase's default 1000-row limit).
  */
 export async function getSiteStats(): Promise<SiteStats> {
   const supabase = await createClient();
+  const admin = createAdminClient();
 
-  const [totalResult, companyRowsResult] = await Promise.all([
+  const [totalResult, companyRowsResult, usersResult] = await Promise.all([
     applyPublishedFilter(
       supabase.from("opportunities").select("id", { count: "exact", head: true }),
     ),
     applyPublishedFilter(
       supabase.from("opportunities").select("company_id").not("company_id", "is", null),
     ),
+    admin.auth.admin.listUsers({ page: 1, perPage: 1 }),
   ]);
 
   if (totalResult.error) {
@@ -273,14 +284,23 @@ export async function getSiteStats(): Promise<SiteStats> {
   if (companyRowsResult.error) {
     console.error("getSiteStats (companies) failed:", companyRowsResult.error.message);
   }
+  if (usersResult.error) {
+    console.error("getSiteStats (subscribers) failed:", usersResult.error.message);
+  }
 
   const companyIds = new Set(
     ((companyRowsResult.data ?? []) as { company_id: string | null }[]).map((row) => row.company_id),
   );
 
+  // listUsers()'s error-path return type (`{ users: [] }`) has no `total`
+  // field at all, so `?.` alone doesn't satisfy TS here — narrow with `in`.
+  const totalSubscribers =
+    usersResult.data && "total" in usersResult.data ? usersResult.data.total : 0;
+
   return {
     totalOpportunities: totalResult.count ?? 0,
     totalCompanies: companyIds.size,
+    totalSubscribers,
   };
 }
 

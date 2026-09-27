@@ -297,6 +297,12 @@ export default async function HomePage() {
               </span>
               <span className="stat-label">Live opportunities</span>
             </div>
+            <div className="stat-tile">
+              <span className="stat-value">
+                <CountUp value={stats.totalSubscribers} />
+              </span>
+              <span className="stat-label">Getting job alerts</span>
+            </div>
           </div>
         </div>
       </section>
