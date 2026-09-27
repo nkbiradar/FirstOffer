@@ -32,22 +32,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const params = await searchParams;
   const typeParam = firstValue(params.type);
-  const title =
+  // Bare title, no "| FirstOffer" suffix: the root layout's title template
+  // ("%s | FirstOffer") already appends it for every nested route segment
+  // like this one — adding it here too produced a live "... | FirstOffer |
+  // FirstOffer" <title> tag. openGraph/twitter titles below are untouched
+  // by that template, so they keep the brand suffix for social shares.
+  const bareTitle =
     typeParam === "internship"
-      ? "Fresher Internships — Live Openings Updated Daily | FirstOffer"
+      ? "Fresher Internships — Live Openings Updated Daily"
       : typeParam === "full_time"
-        ? "Fresher Full-Time Jobs — Live Openings Updated Daily | FirstOffer"
-        : "Fresher Jobs & Internships — Live IT & Off-Campus Openings | FirstOffer";
+        ? "Fresher Full-Time Jobs — Live Openings Updated Daily"
+        : "Fresher Jobs & Internships — Live IT & Off-Campus Openings";
+  const socialTitle = `${bareTitle} | FirstOffer`;
   const description =
     "Browse live fresher jobs, fresher IT openings, internships and off-campus opportunities — updated daily, no account needed to search, apply directly on the company's own link.";
   const canonical = `${getSiteUrl()}/opportunities`;
 
   return {
-    title,
+    title: bareTitle,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical, type: "website" },
-    twitter: { card: "summary", title, description },
+    openGraph: { title: socialTitle, description, url: canonical, type: "website" },
+    twitter: { card: "summary", title: socialTitle, description },
   };
 }
 

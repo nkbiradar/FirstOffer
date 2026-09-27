@@ -9,7 +9,7 @@ import { getNonce } from "@/lib/security/csp";
 import { todayShortLabel } from "@/lib/ui-format";
 
 export const metadata: Metadata = {
-  title: "Off-Campus Jobs & Hiring Drives for Freshers (2026) | FirstOffer",
+  title: "Off-Campus Jobs & Hiring Drives for Freshers (2026)",
   description:
     "Find active off-campus jobs, direct recruitment drives, and walk-in openings for freshers across India. Apply directly on verified company portals without placement cell queues.",
   alternates: { canonical: `${getSiteUrl()}/off-campus-jobs` },

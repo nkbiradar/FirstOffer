@@ -7,7 +7,7 @@ import ResumeMatchTool from "@/components/ResumeMatchTool";
 import { getNonce } from "@/lib/security/csp";
 
 export const metadata: Metadata = {
-  title: "Resume Keyword Matcher — Check Your Resume Against Any Job | FirstOffer",
+  title: "Resume Keyword Matcher — Check Your Resume Against Any Job",
   description:
     "Upload your resume and compare it against any fresher job on FirstOffer. See which required keywords you already have, which are missing, and related skills worth mentioning — free, instant, no rewriting.",
   alternates: { canonical: `${getSiteUrl()}/resume-match` },

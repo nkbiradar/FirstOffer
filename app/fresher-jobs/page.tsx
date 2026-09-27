@@ -9,7 +9,7 @@ import { getNonce } from "@/lib/security/csp";
 import { todayShortLabel } from "@/lib/ui-format";
 
 export const metadata: Metadata = {
-  title: "Fresher Jobs & Openings in India (2026 Batch) | FirstOffer",
+  title: "Fresher Jobs & Openings in India (2026 Batch)",
   description:
     "Explore live fresher jobs, IT openings, internships, and off-campus opportunities from top companies hiring across India. Updated daily, direct applications only.",
   alternates: { canonical: `${getSiteUrl()}/fresher-jobs` },

@@ -15,7 +15,7 @@ import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 // visitors of the site itself, not search engines, since the entire pitch
 // is "these roles aren't posted publicly."
 export const metadata: Metadata = {
-  title: "Internal HR Openings — Exclusive Roles | FirstOffer",
+  title: "Internal HR Openings — Exclusive Roles",
   description:
     "Exclusive openings shared directly by HRs and recruiters, with significantly lower competition than public listings. ₹39/month.",
   alternates: { canonical: `${getSiteUrl()}/internal-openings` },

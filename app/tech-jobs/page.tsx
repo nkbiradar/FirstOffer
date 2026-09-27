@@ -9,7 +9,7 @@ import { getNonce } from "@/lib/security/csp";
 import { todayShortLabel } from "@/lib/ui-format";
 
 export const metadata: Metadata = {
-  title: "Tech Jobs for Freshers — Software Engineer & IT Openings | FirstOffer",
+  title: "Tech Jobs for Freshers — Software Engineer & IT Openings",
   description:
     "Browse live software jobs for freshers, junior developer openings, frontend/backend roles, and tech internships across India. Direct application links with no middleman.",
   alternates: { canonical: `${getSiteUrl()}/tech-jobs` },
