@@ -28,7 +28,11 @@ export type Coupon = {
  * product only matches that one.
  */
 export async function findCoupon(code: string, product: SubscriptionProduct): Promise<Coupon | null> {
-  const normalized = code.trim().toUpperCase();
+  // Strips ALL whitespace, not just leading/trailing — a stray space typed
+  // next to the underscore (e.g. "algocrux _12345" instead of
+  // "algocrux_12345") is an easy typo for a partner's users to make, and
+  // there's no legitimate coupon code that should ever contain a space.
+  const normalized = code.replace(/\s+/g, "").toUpperCase();
   if (!normalized) return null;
 
   const admin = createAdminClient();
