@@ -881,12 +881,23 @@ alter table public.coupon_redemptions enable row level security;
 alter table public.subscriptions
   add column if not exists coupon_id uuid references public.coupons(id);
 
--- ── Seed: ALGOCRUX partner coupon ────────────────────────────────────────
+-- ── Seed: ALGOCRUX_12345 partner coupon ──────────────────────────────────
 -- ₹20 flat off the ₹99/month full_access price (₹79 for the first month),
--- first-payment-only, for Chandrashekhar/Algocrux's users. Safe to re-run —
--- ON CONFLICT (code) DO NOTHING means running this file again never
--- duplicates or resets the coupon if it's since been edited/toggled off.
+-- first-payment-only, for Chandrashekhar/Algocrux's users. The exact code
+-- string ("ALGOCRUX_12345") is what Chandrashekhar asked for over
+-- WhatsApp on 29 Sept 2026, not a placeholder.
+--
+-- The UPDATE first (rather than a plain INSERT) makes this safe to run
+-- whether or not an earlier version of this seed (plain "ALGOCRUX") was
+-- already applied: if that row exists, this renames it in place so its id
+-- (and any coupon_redemptions already pointing at it) carries over
+-- unchanged; if it doesn't exist, the UPDATE matches nothing and the
+-- INSERT ... ON CONFLICT DO NOTHING creates the row fresh. Re-running this
+-- whole file again after that is also safe — the code will already be
+-- "ALGOCRUX_12345" and both statements become no-ops.
+
+update public.coupons set code = 'ALGOCRUX_12345' where code = 'ALGOCRUX';
 
 insert into public.coupons (code, product, discount_type, discount_value, first_time_only, active, partner_label)
-values ('ALGOCRUX', 'full_access', 'flat', 2000, true, true, 'Algocrux')
+values ('ALGOCRUX_12345', 'full_access', 'flat', 2000, true, true, 'Algocrux')
 on conflict (code) do nothing;
