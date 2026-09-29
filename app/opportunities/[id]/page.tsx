@@ -9,7 +9,7 @@ import {
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
 import { avatarGradient, initials } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
-import { getUser } from "@/lib/supabase/auth";
+import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
@@ -21,6 +21,7 @@ import {
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import OpportunityCard from "@/components/OpportunityCard";
+import AdminDeleteOpportunityButton from "@/components/admin/AdminDeleteOpportunityButton";
 import { getNonce } from "@/lib/security/csp";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -178,6 +179,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     getUser(),
     getRelatedOpportunities(opportunity, 3),
   ]);
+  const isAdmin = isAdminEmail(user?.email);
 
   const isApplied = user ? await isOpportunityApplied(user.id, id) : false;
 
@@ -301,6 +303,16 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             {companyName ? `${role} at ${companyName}` : role}
           </span>
         </nav>
+
+        {isAdmin && (
+          <div className="admin-quick-actions">
+            <span className="admin-quick-actions-label">Admin</span>
+            <Link className="btn btn-secondary btn-sm" href={`/admin/opportunities/${id}/edit`}>
+              Edit
+            </Link>
+            <AdminDeleteOpportunityButton id={id} role={role} />
+          </div>
+        )}
 
         {isExpired && (
           <div className="expired-banner" role="alert">
