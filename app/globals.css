@@ -3123,10 +3123,17 @@ button.btn-danger {
   text-transform: none;
 }
 
+/* Was `position: sticky` — in this single-column opportunity-detail layout
+   (max-width: 760px, no side-by-side content) that pinned the Unlock/Apply
+   card near the top of the viewport for the ENTIRE rest of the scroll, so
+   it visually covered whatever scrolled up underneath it — most visibly
+   the "Tailor your resume" tip banner right after it, and worse once the
+   coupon-code UI (see components/UnlockContactCard.tsx) made the card
+   taller. Sticky never had a real "other column" to stay adjacent to
+   here, so it's just normal flow now — the mobile fixed bottom bar
+   (.apply-bar below) already covers "keep the CTA reachable while
+   scrolling" on small screens, where this rule doesn't apply anyway. */
 .apply-inline {
-  position: sticky;
-  top: 84px;
-  z-index: 5;
   margin: 4px 0 0;
 }
 
