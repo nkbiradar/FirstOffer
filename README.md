@@ -14,7 +14,7 @@ FirstOffer is a job board built for one audience: students and freshers in India
 - Browse and search internships and full-time roles with zero sign-up required — filters for type, work mode, batch, and location.
 - Every listing is pulled down automatically 48 hours after it goes live, so nothing stale stays up.
 - Optional Google sign-in unlocks a personal dashboard: track which opportunities you've applied to, and self-report the outcome (interview / offer / rejected / no response) a few days later.
-- **Full Access (₹49/month, UPI Autopay)** unlocks every apply route on a listing — direct application link, official Google Form, HR email and contact number, and any free-text apply instructions.
+- **Full Access (₹99/month, UPI Autopay)** unlocks every apply route on a listing — direct application link, official Google Form, HR email and contact number, and any free-text apply instructions.
 - **Internal HR Openings (₹39/month)** — a separate, curated feed of roles shared directly by HR contacts, kept deliberately "mystery" (company and role hidden) until unlocked, so they're never scraped or reposted elsewhere.
 - Push notifications and email alerts go out the moment new opportunities are published, so subscribers can be first to apply.
 
