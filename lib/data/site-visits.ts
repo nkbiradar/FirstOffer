@@ -41,31 +41,50 @@ export type SiteVisitStats = {
  * Today = count of rows for today's date key (one per unique visitor,
  * thanks to the upsert above). All-time = count of DISTINCT visitor_id
  * across every row ever — a visitor who's come back on five different days
- * still only counts once. There's no `count(distinct ...)` in the
- * supabase-js query builder, so this pulls just the visitor_id column and
- * de-dupes in memory; fine at this site's scale, and simpler than adding a
- * Postgres function for one number (revisit if the table ever gets huge).
+ * still only counts once.
+ *
+ * There's no `count(distinct ...)` in the supabase-js query builder, and a
+ * single unbounded `.select("visitor_id")` silently caps at PostgREST's
+ * default 1000-row limit — the exact same class of bug fixed in
+ * getAdminDashboardStats() (see that file's history). site_visits has one
+ * row per (visitor_id, day), not per distinct visitor, so that cap is hit
+ * quickly once the site's been live for a while — this paginates through
+ * every row in fixed-size pages and de-dupes in memory instead of relying
+ * on a single fetch, so "Total Visitors" keeps growing correctly no matter
+ * how many rows the table has.
  */
 export async function getSiteVisitStats(): Promise<SiteVisitStats> {
   const admin = createAdminClient();
 
-  const [todayResult, allResult] = await Promise.all([
-    admin.from("site_visits").select("visitor_id", { count: "exact", head: true }).eq("day", istDateKey()),
-    admin.from("site_visits").select("visitor_id"),
-  ]);
+  const todayResult = await admin
+    .from("site_visits")
+    .select("visitor_id", { count: "exact", head: true })
+    .eq("day", istDateKey());
 
   if (todayResult.error) {
     console.error("getSiteVisitStats (today) failed:", todayResult.error.message);
   }
-  if (allResult.error) {
-    console.error("getSiteVisitStats (all-time) failed:", allResult.error.message);
-  }
 
-  const allTimeRows = (allResult.data ?? []) as { visitor_id: string }[];
-  const allTime = new Set(allTimeRows.map((row) => row.visitor_id)).size;
+  const allTimeIds = new Set<string>();
+  const PAGE_SIZE = 1000;
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await admin
+      .from("site_visits")
+      .select("visitor_id")
+      .range(from, from + PAGE_SIZE - 1);
+
+    if (error) {
+      console.error("getSiteVisitStats (all-time) failed:", error.message);
+      break;
+    }
+    for (const row of data ?? []) {
+      allTimeIds.add(row.visitor_id);
+    }
+    if (!data || data.length < PAGE_SIZE) break;
+  }
 
   return {
     today: todayResult.count ?? 0,
-    allTime,
+    allTime: allTimeIds.size,
   };
 }
