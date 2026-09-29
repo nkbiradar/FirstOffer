@@ -1131,6 +1131,75 @@ button.btn-danger {
   color: var(--color-danger);
 }
 
+/* Partner/promo coupon input (e.g. "ALGOCRUX") — hidden behind a small
+   toggle link by default so it doesn't clutter the card for the vast
+   majority of visitors who don't have a code. See
+   components/UnlockContactCard.tsx. */
+.unlock-contact-coupon {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.unlock-contact-coupon-toggle {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-lavender-strong);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.unlock-contact-coupon-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.unlock-contact-coupon-field {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.unlock-contact-coupon-applied {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-mint);
+  color: var(--color-text);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.unlock-contact-coupon-applied strong {
+  color: var(--color-mint-strong);
+  font-weight: 800;
+}
+
+.unlock-contact-coupon-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* The "answer to the hidden form question" callout on an unlocked
    opportunity's Application Information card — deliberately eye-catching
    since missing it means the applicant's form submission looks illegitimate.

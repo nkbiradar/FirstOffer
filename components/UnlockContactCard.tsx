@@ -115,6 +115,50 @@ export default function UnlockContactCard({
   // moment instead of the UI silently changing under them.
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
+  // Optional partner/promo coupon (e.g. "ALGOCRUX") — see
+  // lib/payments/coupons.ts and app/api/subscriptions/validate-coupon.
+  // Hidden behind a small toggle so the default checkout stays exactly as
+  // it was for the vast majority of visitors who don't have a code.
+  const [showCouponInput, setShowCouponInput] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponChecking, setCouponChecking] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponApplied, setCouponApplied] = useState<{ code: string; discountedInr: number } | null>(null);
+
+  async function handleApplyCoupon() {
+    const code = couponInput.trim();
+    if (!code) return;
+
+    setCouponChecking(true);
+    setCouponError(null);
+    try {
+      const res = await fetch("/api/subscriptions/validate-coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, product }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setCouponApplied({ code: data.code, discountedInr: data.discountedInr });
+        track("coupon_applied", { opportunityId: opportunityId ?? "", product, code: data.code });
+      } else {
+        setCouponApplied(null);
+        setCouponError(data.error ?? "That coupon code isn't valid.");
+      }
+    } catch {
+      setCouponError("Network error — try again.");
+    } finally {
+      setCouponChecking(false);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setCouponApplied(null);
+    setCouponInput("");
+    setCouponError(null);
+    setShowCouponInput(false);
+  }
+
   async function handleUnlock() {
     // Custom Vercel Analytics events — this is the site's entire revenue
     // funnel, so these events are what let the "how many people who click
@@ -140,7 +184,7 @@ export default function UnlockContactCard({
       const subResponse = await fetch("/api/subscriptions/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ product }),
+        body: JSON.stringify({ product, couponCode: couponApplied?.code }),
       });
       const subData = await subResponse.json();
 
@@ -224,7 +268,16 @@ export default function UnlockContactCard({
       </span>
       <p className="unlock-contact-title">{copy.title}</p>
       <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
-        ₹{price}/month. {copy.priceLine}
+        {couponApplied ? (
+          <>
+            <span style={{ textDecoration: "line-through", opacity: 0.55, marginRight: 6 }}>₹{price}</span>
+            ₹{couponApplied.discountedInr}/month. {copy.priceLine}
+          </>
+        ) : (
+          <>
+            ₹{price}/month. {copy.priceLine}
+          </>
+        )}
       </p>
       {priceNote && <p className="unlock-contact-price-note">{priceNote}</p>}
       <p className="unlock-contact-desc">{copy.description}</p>
@@ -242,8 +295,49 @@ export default function UnlockContactCard({
         </p>
       ) : (
         <>
+          {isSignedIn && (
+            <div className="unlock-contact-coupon">
+              {couponApplied ? (
+                <p className="unlock-contact-coupon-applied">
+                  Coupon <strong>{couponApplied.code}</strong> applied — ₹{couponApplied.discountedInr} for your
+                  first month.{" "}
+                  <button type="button" className="unlock-contact-coupon-remove" onClick={handleRemoveCoupon}>
+                    Remove
+                  </button>
+                </p>
+              ) : showCouponInput ? (
+                <div className="unlock-contact-coupon-row">
+                  <input
+                    type="text"
+                    className="unlock-contact-coupon-field"
+                    placeholder="Coupon code"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    disabled={couponChecking}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    onClick={handleApplyCoupon}
+                    disabled={couponChecking || !couponInput.trim()}
+                  >
+                    {couponChecking ? "Checking..." : "Apply"}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="unlock-contact-coupon-toggle"
+                  onClick={() => setShowCouponInput(true)}
+                >
+                  Have a coupon code?
+                </button>
+              )}
+              {couponError && <p className="unlock-contact-error">{couponError}</p>}
+            </div>
+          )}
           <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
-            {isLoading ? "Opening payment..." : copy.unlockLabel(price)}
+            {isLoading ? "Opening payment..." : copy.unlockLabel(couponApplied?.discountedInr ?? price)}
           </button>
           <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
             Access unlocks instantly after payment and lasts 30 days. No auto-renewal, no mandate saved — just come

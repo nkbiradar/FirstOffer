@@ -10,6 +10,7 @@ import {
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { applyCouponDiscount, validateCouponForCheckout } from "@/lib/payments/coupons";
 
 // Starts a payment for one of the two products this site sells — the
 // full-access plan (₹99/month regular, ₹49/month for founding members who
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  let body: { product?: string } = {};
+  let body: { product?: string; couponCode?: string } = {};
   try {
     body = await request.json();
   } catch {
@@ -83,13 +84,30 @@ export async function POST(request: NextRequest) {
   const isLegacyFullAccess = product === "full_access" && (await hasLegacyFullAccessPricing(user.id));
   const { pricePaise, description } = getProductPricing(product, isLegacyFullAccess);
 
+  // Optional partner/promo coupon (e.g. "ALGOCRUX") — re-validated here
+  // even though app/api/subscriptions/validate-coupon already checked it
+  // for the price preview, since a few seconds pass between that preview
+  // and this real charge (the coupon could be deactivated, or redeemed by
+  // this same user in another tab, in between). See lib/payments/coupons.ts.
+  let finalPricePaise = pricePaise;
+  let appliedCouponId: string | null = null;
+  const rawCouponCode = typeof body.couponCode === "string" ? body.couponCode.trim() : "";
+  if (rawCouponCode) {
+    const couponResult = await validateCouponForCheckout(rawCouponCode, product, user.id);
+    if (!couponResult.valid || !couponResult.coupon) {
+      return NextResponse.json({ error: couponResult.error ?? "Invalid coupon." }, { status: 400 });
+    }
+    finalPricePaise = applyCouponDiscount(pricePaise, couponResult.coupon);
+    appliedCouponId = couponResult.coupon.id;
+  }
+
   let order;
   try {
     const razorpay = getRazorpayClient();
     order = await razorpay.orders.create({
-      amount: pricePaise,
+      amount: finalPricePaise,
       currency: "INR",
-      notes: { user_id: user.id, product },
+      notes: { user_id: user.id, product, ...(appliedCouponId ? { coupon_id: appliedCouponId } : {}) },
     });
   } catch (err) {
     console.error("Razorpay order creation failed:", err);
@@ -101,8 +119,9 @@ export async function POST(request: NextRequest) {
     product,
     razorpay_subscription_id: order.id,
     razorpay_plan_id: MANUAL_PLAN_MARKER,
-    amount_paise: pricePaise,
+    amount_paise: finalPricePaise,
     status: "created",
+    coupon_id: appliedCouponId,
   });
 
   if (insertError) {
@@ -112,7 +131,7 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     orderId: order.id,
-    amount: pricePaise,
+    amount: finalPricePaise,
     keyId: process.env.RAZORPAY_KEY_ID,
     description,
   });

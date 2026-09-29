@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyRazorpaySignature } from "@/lib/payments/verify-signature";
 import { MANUAL_ACCESS_PERIOD_MS } from "@/lib/payments/razorpay";
+import { recordCouponRedemption } from "@/lib/payments/coupons";
 
 // Fast path, called by the browser right after Razorpay Checkout's success
 // handler fires for the one-time monthly payment (see
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
   // plain one-time payment rather than a recurring Autopay mandate.
   const currentPeriodEnd = new Date(Date.now() + MANUAL_ACCESS_PERIOD_MS).toISOString();
 
-  const { error } = await admin
+  const { data: updatedRow, error } = await admin
     .from("subscriptions")
     .update({
       status: "active",
@@ -68,11 +69,22 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString(),
     })
     .eq("user_id", user.id)
-    .eq("razorpay_subscription_id", razorpay_order_id);
+    .eq("razorpay_subscription_id", razorpay_order_id)
+    .select("coupon_id")
+    .maybeSingle();
 
   if (error) {
     console.error("Could not mark subscription as active:", error.message);
     return NextResponse.json({ error: "Could not confirm payment. Contact support." }, { status: 500 });
+  }
+
+  // If this order used a partner coupon (e.g. ALGOCRUX), log the
+  // redemption now that the payment is actually confirmed — this is what
+  // lets a partner's redemption count double as attribution tracking (see
+  // lib/payments/coupons.ts). Payment already succeeded by this point, so
+  // a failure here is logged but never turned into an error response.
+  if (updatedRow?.coupon_id) {
+    await recordCouponRedemption(updatedRow.coupon_id, user.id, razorpay_order_id);
   }
 
   return NextResponse.json({ ok: true });

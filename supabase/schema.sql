@@ -792,3 +792,101 @@ alter table public.opportunities
 create index if not exists opportunities_email_digest_pending_idx
   on public.opportunities (published_at)
   where status = 'published' and email_digest_sent_at is null;
+
+-- ── coupons / coupon_redemptions (partner discount codes) ────────────────
+-- A small, reusable discount-code system so a partner promotion (the
+-- first one: an "ALGOCRUX" code for Chandrashekhar/Algocrux's users) can
+-- offer a reduced price on a subscription product — with each redemption
+-- row doubling as the attribution/tracking Algocrux asked for ("how many
+-- of our users actually signed up") instead of a separate analytics
+-- integration or an embedded iframe (FirstOffer's CSP blocks framing, and
+-- Google Sign-In can't render inside an iframe anyway).
+--
+-- `coupons` is deliberately generic (not "algocrux_coupon") so future
+-- partners/promotions reuse the same table instead of one-off code paths.
+-- `product` matches subscriptions.product's check constraint plus an
+-- 'all' option for a coupon usable on any product. `discount_type` +
+-- `discount_value` support both a flat paise-off coupon (ALGOCRUX: flat
+-- 2000 paise = ₹20 off) and a future percent-off coupon without a schema
+-- change. `first_time_only` gates a coupon to a user's first-ever
+-- completed payment for that product (see lib/payments/coupons.ts's
+-- isFirstTimeSubscriber()) — ALGOCRUX is first-time-only per the
+-- founder's decision, so it can't be reused on every renewal.
+-- `partner_label` is just a human-readable name for admin/reporting
+-- ("Algocrux") — never shown to the paying user. Codes are matched
+-- case-insensitively by upper-casing both sides in application code (see
+-- findCoupon()), so they're stored upper-cased rather than needing a
+-- citext extension.
+--
+-- `coupon_redemptions` records one row per successful redemption
+-- (written by app/api/subscriptions/verify/route.ts right after a
+-- coupon-discounted payment is confirmed) — counting rows per coupon_id
+-- is exactly the "how many people came from Algocrux" number to report
+-- back to a partner. Unique on (coupon_id, user_id) so a retry after an
+-- abandoned/failed checkout can't inflate that count.
+--
+-- Both tables are RLS-enabled with no public policies — service-role
+-- only, matching every other payments-adjacent table in this schema
+-- (opportunity_unlocks, user_access, subscriptions itself).
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+create table if not exists public.coupons (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,
+  product text not null default 'all' check (
+    product in ('full_access', 'internal_hr', 'all')
+  ),
+  discount_type text not null check (discount_type in ('flat', 'percent')),
+  discount_value integer not null check (discount_value > 0),
+  first_time_only boolean not null default true,
+  active boolean not null default true,
+  partner_label text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.coupons enable row level security;
+-- No policies: a coupon is looked up/validated only through the
+-- service-role client (app/api/subscriptions/validate-coupon,
+-- app/api/subscriptions/create) — never queried directly by the browser.
+
+create table if not exists public.coupon_redemptions (
+  id uuid primary key default gen_random_uuid(),
+  coupon_id uuid not null references public.coupons(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  razorpay_order_id text not null,
+  redeemed_at timestamptz not null default now(),
+  unique (coupon_id, user_id)
+);
+
+create index if not exists coupon_redemptions_coupon_id_idx
+  on public.coupon_redemptions (coupon_id);
+
+alter table public.coupon_redemptions enable row level security;
+-- No policies: written once, by the service-role client, right after
+-- app/api/subscriptions/verify confirms a coupon-discounted payment.
+
+-- ── subscriptions.coupon_id (which coupon, if any, a payment used) ──────
+-- Nullable — most subscriptions never use a coupon. Lets
+-- getAllSubscriptionsForAdmin() / /admin/subscriptions show which paid
+-- rows came in through a discount code without joining through
+-- coupon_redemptions every time.
+--
+-- NOTE: this block is additive and safe to run on its own against the live
+-- database — do NOT re-run the drop/create statements at the top of this
+-- file.
+
+alter table public.subscriptions
+  add column if not exists coupon_id uuid references public.coupons(id);
+
+-- ── Seed: ALGOCRUX partner coupon ────────────────────────────────────────
+-- ₹20 flat off the ₹99/month full_access price (₹79 for the first month),
+-- first-payment-only, for Chandrashekhar/Algocrux's users. Safe to re-run —
+-- ON CONFLICT (code) DO NOTHING means running this file again never
+-- duplicates or resets the coupon if it's since been edited/toggled off.
+
+insert into public.coupons (code, product, discount_type, discount_value, first_time_only, active, partner_label)
+values ('ALGOCRUX', 'full_access', 'flat', 2000, true, true, 'Algocrux')
+on conflict (code) do nothing;
