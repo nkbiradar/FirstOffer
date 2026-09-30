@@ -60,6 +60,22 @@ const FIELD_ALIASES: Record<string, FieldKey> = {
   mode: "workMode",
   skills: "skills",
   "skills required": "skills",
+  // "Experience: 0-3 years" is one of the most common lines in a
+  // Telegram/WhatsApp posting, right after Location — and previously had
+  // no recognized label at all. Per parseBlock()'s "unrecognized label
+  // continues the previous field" behavior below, that meant it silently
+  // got appended onto whatever field the line before it belonged to
+  // (almost always location, since that's what usually comes right
+  // before an experience line), producing broken values like
+  // "Jaipur\nExperience: 0-3 years" that then rendered as one garbled
+  // string wherever location is shown (see components/OpportunityCard.tsx).
+  // Eligibility is the right home for it — it's already exactly "any
+  // other eligibility criteria as free text", and it's rendered as its
+  // own section on the opportunity detail page.
+  experience: "eligibility",
+  "experience required": "eligibility",
+  "years of experience": "eligibility",
+  exp: "eligibility",
   responsibilities: "responsibilities",
   requirements: "requirements",
   eligibility: "eligibility",

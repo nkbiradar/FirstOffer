@@ -22,12 +22,12 @@ const FIELD_DESCRIPTIONS = `
 - branches: eligible branches, comma-separated (e.g. "CSE, IT, ECE")
 - stipend: stipend text, free-form (internships)
 - salary: salary/CTC text, free-form (full-time roles)
-- location: work location
+- location: work location ONLY — never include experience requirements, years of experience, or anything else here, even if it appears right next to the location in the source text
 - workMode: "remote", "hybrid", "onsite", or "" if unclear
 - skills: required skills, comma-separated
 - responsibilities: one responsibility per line
 - requirements: one requirement per line
-- eligibility: any other eligibility criteria as free text
+- eligibility: any other eligibility criteria as free text (this is where experience requirements like "Experience: 0-3 years" belong)
 - additionalDetails: anything else worth keeping that doesn't fit elsewhere
 - applicationUrl: direct application link, if any
 - googleFormUrl: Google Form link, if any
