@@ -5808,3 +5808,32 @@ a.footer-trust-item:hover {
   letter-spacing: 0.04em;
   color: var(--color-warning);
 }
+
+/* Sets update-cadence expectations on the Internal HR Openings page (see
+   app/internal-openings/page.tsx) — this section has no fixed refresh
+   schedule, unlike the rest of the site, so a plain informational note
+   heads off "why hasn't this changed in days?" confusion. Lavender/info
+   tone (not warning-amber) since nothing is wrong — this is just how the
+   feature works. */
+.internal-hr-update-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-lavender);
+  color: var(--color-lavender-strong);
+}
+
+.internal-hr-update-note svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.internal-hr-update-note p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-text);
+}

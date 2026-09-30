@@ -131,6 +131,25 @@ export default async function InternalOpeningsPage() {
           </p>
         </div>
 
+        {/* Sets the right expectation for update cadence: unlike the rest of
+            the site (new public opportunities appear continuously and get
+            one combined digest email a day), this section has no fixed
+            schedule — it only changes when an HR actually shares a new
+            internal opening with us, which could be daily or could be a
+            gap of several days. Without this, "why hasn't this updated in
+            2 days?" reads as a bug rather than the expected behavior. */}
+        <div className="internal-hr-update-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 8v5" strokeLinecap="round" />
+            <circle cx="12" cy="16" r="0.5" fill="currentColor" />
+          </svg>
+          <p>
+            This list doesn&apos;t refresh daily like the rest of the site — it updates only when an HR shares a new
+            internal opening with us directly, so it may stay the same for a few days at a time.
+          </p>
+        </div>
+
         {total === 0 ? (
           <div className="empty-state">
             <h3>No internal openings live right now</h3>
