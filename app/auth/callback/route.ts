@@ -45,8 +45,17 @@ export async function GET(request: NextRequest) {
     console.error("Google OAuth callback: exchangeCodeForSession failed:", error.message);
 
     const isMissingVerifier = /code verifier/i.test(error.message);
+    // Previously stated the in-app-browser cause as if certain ("this
+    // usually happens when..."), which reads as flatly wrong to anyone who
+    // hits this in a real desktop browser (an ad blocker, a "clear cookies
+    // on exit" extension, an incognito window, or just clicking the button
+    // twice and re-using a stale code can all produce the exact same
+    // Supabase error). Leading with "try again" is correct no matter which
+    // of those it was, and keeps the in-app-browser tip as a second
+    // possibility to check only if retrying doesn't fix it — rather than a
+    // confident diagnosis this code has no way to actually verify.
     const userMessage = isMissingVerifier
-      ? "Sign-in didn't go through — this usually happens when the page was opened inside another app's built-in browser (like Instagram, Facebook, or WhatsApp). Tap the ⋯ / ⋮ menu and choose \"Open in Chrome\" (or your default browser), then try again."
+      ? "Sign-in didn't go through — this is usually a one-off. Please try \"Continue with Google\" again. If it keeps happening, you may be inside another app's built-in browser (like Instagram, Facebook, or TikTok) — tap the ⋯ / ⋮ menu and choose \"Open in Chrome\" (or your default browser) first."
       : `Could not complete Google sign-in: ${error.message}`;
 
     return NextResponse.redirect(
