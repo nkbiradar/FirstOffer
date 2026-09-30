@@ -25,8 +25,23 @@ const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
 // keeps this from false-positiving on ordinary eligibility text like
 // "1-2 years experience" or "stipend 15000-20000", which never reduce to
 // a 10/12-digit run.
+//
+// The (?<!\d)...(?!\d) guards are load-bearing, not decorative: without
+// them this matched a 10-digit SUBSTRING inside a longer digit run just as
+// happily as a standalone number. Real example that slipped through before
+// this was added -- a Qualcomm job-posting URL pasted into Additional
+// Details, "...careers/job/446719717832?domain=...": the substring
+// "6719717832" (10 digits, starts with 6) sat right in the middle of that
+// 12-digit job ID and got flagged as a leaked phone number, blocking a
+// publish that had no phone number in it at all. Job IDs, order numbers,
+// tracking IDs, and URL path segments are exactly the kind of long digit
+// runs a career-site posting is full of, so this isn't a one-off -- the
+// lookbehind/lookahead require that whatever's immediately before and
+// after the candidate is NOT itself a digit, i.e. the match can't be a
+// fragment of a longer number, which a real phone number pasted into text
+// never is (it's always bounded by a space, punctuation, or line end).
 function containsIndianPhoneNumber(text: string): boolean {
-  const candidates = text.match(/(?:\+?91[\s.-]?)?[6-9][\d\s.-]{7,13}\d/g) ?? [];
+  const candidates = text.match(/(?<!\d)(?:\+?91[\s.-]?)?[6-9][\d\s.-]{7,13}\d(?!\d)/g) ?? [];
   return candidates.some((candidate) => {
     const digits = candidate.replace(/\D/g, "");
     return digits.length === 10 || (digits.length === 12 && digits.startsWith("91"));
