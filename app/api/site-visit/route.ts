@@ -15,6 +15,11 @@ const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2;
 // turns into /admin's "Visitors Today"/"Total Visitors" tiles. No auth
 // check here on purpose: this is meant to record EVERY visitor, signed in
 // or not — VisitTracker is what skips the actual site admin.
+//
+// Route lives at /api/site-visit, not /api/track-visit (its original
+// name) — see the comment in VisitTracker.tsx for why: "track" in a URL
+// gets silently dropped by ad/tracker-blocklists on a meaningful slice of
+// visitors, which was undercounting "Total Visitors" on /admin.
 export async function POST() {
   const cookieStore = await cookies();
   let visitorId = cookieStore.get(VISITOR_COOKIE)?.value;

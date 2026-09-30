@@ -15,7 +15,7 @@ function istDateKey(): string {
 
 /**
  * Records one visit from `visitorId` (the long-lived cookie value minted by
- * app/api/track-visit/route.ts) for today. Upserted with `ignoreDuplicates`
+ * app/api/site-visit/route.ts) for today. Upserted with `ignoreDuplicates`
  * on the (visitor_id, day) primary key, so a visitor loading ten pages in
  * one day still only ever produces one row — this is what makes "Visitors
  * Today" and "Total Visitors" both mean unique people, not raw page loads.
