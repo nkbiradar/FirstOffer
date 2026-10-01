@@ -97,8 +97,8 @@
      itself from the indigo/teal branding used everywhere else on the site
      (nav, homepage promo, /internal-openings hero, and the "internal"
      variant of UnlockContactCard). */
-  --color-gold: #f5b530;
-  --color-gold-strong: #b9790a;
+  --color-gold: #c99a3d;
+  --color-gold-strong: #9c6f12;
   --color-gold-soft: #fdf3dd;
   --color-gold-soft-border: #f3ddaa;
   --color-premium-surface: #0e0b05;
@@ -202,8 +202,8 @@
        premium surface in both themes, not one that inverts like the rest
        of the site. Lightened slightly from the light-mode value so it
        still stands apart from the page's own dark background. */
-    --color-gold: #f7c04f;
-    --color-gold-strong: #ffd876;
+    --color-gold: #d9b356;
+    --color-gold-strong: #e8c878;
     --color-gold-soft: #2a2008;
     --color-gold-soft-border: #4a3a10;
     --color-premium-surface: #17130a;

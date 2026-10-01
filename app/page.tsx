@@ -116,9 +116,6 @@ export default async function HomePage() {
       <section className="credibility-strip">
         <div className="container credibility-strip-inner">
           <p className="credibility-strip-label">
-            <span className="credibility-strip-icon" aria-hidden="true">
-              🔐
-            </span>
             Built by members from
           </p>
 
@@ -452,8 +449,8 @@ export default async function HomePage() {
                 </svg>
                 Exclusive Access
               </span>
-              <h2 className="internal-hr-promo-heading">🔥 Internal HR Openings</h2>
-              <p className="internal-hr-promo-title">Get Jobs Before Everyone Else 🚀</p>
+              <h2 className="internal-hr-promo-heading">Internal HR Openings</h2>
+              <p className="internal-hr-promo-title">Get Jobs Before Everyone Else</p>
               <p className="internal-hr-promo-sub">
                 Exclusive openings shared directly by HRs &amp; recruiters — with significantly lower competition.
               </p>

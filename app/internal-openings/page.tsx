@@ -76,7 +76,7 @@ export default async function InternalOpeningsPage() {
             </svg>
             Exclusive Access
           </span>
-          <h1 className="internal-hr-hero-title">Get Jobs Before Everyone Else 🚀</h1>
+          <h1 className="internal-hr-hero-title">Get Jobs Before Everyone Else</h1>
           <p className="internal-hr-hero-sub">
             Exclusive openings shared directly by HRs &amp; recruiters — with significantly lower competition.
           </p>
