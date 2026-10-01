@@ -1904,30 +1904,27 @@ button.btn-danger {
   margin-top: 20px;
 }
 
-/* Solid pastel color-block cards (Round 5) rather than white bordered
-   cards — one flat pastel per card, matching the reference's bold 3-card
-   feature block. Text stays on the theme's normal text tokens (they already
-   adapt in dark mode, where these pastels flip to muted dark tints), so
-   only the card background + icon badge change per item. */
+/* White cards with a colored top border, alternating the site's two brand
+   hues (indigo/teal) instead of a different pastel per card — keeps the
+   row readable against the hero's own mint wash instead of blending into
+   it, and matches the accent system used by the milestone row above. */
 .trust-item {
-  border: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-brand);
   border-radius: var(--radius-lg);
   padding: 20px 18px;
-  box-shadow: none;
+  box-shadow: var(--shadow-xs);
   text-align: left;
   transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
 }
 
-.trust-item:nth-child(1) {
-  background: var(--color-mint);
-}
-
 .trust-item:nth-child(2) {
-  background: var(--color-lavender);
+  border-top-color: var(--color-accent);
 }
 
 .trust-item:nth-child(3) {
-  background: var(--color-blush);
+  border-top-color: var(--color-brand);
 }
 
 .trust-item:hover {
@@ -1989,85 +1986,13 @@ button.btn-danger {
   color: var(--color-text);
 }
 
-/* The 4 "how you actually apply" cards at the very top of the hero, above
-   the eyebrow pill. White cards with a colored top border (same treatment
-   as .stat-tile below) rather than the trust-bar's solid pastel blocks --
-   these sit directly on the hero's mint background, so a mint-colored card
-   here would disappear into it. */
-.apply-channels {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 4px;
-}
-
-.apply-channel-card {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  border-top: 3px solid var(--color-mint-strong);
-  padding: 14px 10px;
-  box-shadow: var(--shadow-xs);
-  text-align: center;
-  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
-}
-
-.apply-channel-card:nth-child(2) {
-  border-top-color: var(--color-lavender-strong);
-}
-
-.apply-channel-card:nth-child(3) {
-  border-top-color: var(--color-blush-strong);
-}
-
-.apply-channel-card:nth-child(4) {
-  border-top-color: var(--color-peach-strong);
-}
-
-.apply-channel-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.apply-channel-icon {
-  display: inline-flex;
-  font-size: 20px;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-
-.apply-channel-title {
-  margin: 0 0 3px;
-  font-weight: 700;
-  font-size: 12.5px;
-  color: var(--color-text);
-}
-
-.apply-channel-desc {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
-}
-
-@media (max-width: 640px) {
-  .apply-channels {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .apply-channel-card {
-    padding: 12px 8px;
-  }
-}
-
 .hero-stats {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  max-width: 820px;
+  max-width: 640px;
   margin: 44px auto 0;
 }
 
@@ -2081,23 +2006,19 @@ button.btn-danger {
   transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
 }
 
-/* A thin colored top border ties these back to the pastel trust-bar cards
-   right above without repeating a full solid color block two rows in a
-   row, which read as heavy in review. */
+/* A thin colored top border ties these back to the trust-bar cards right
+   above, alternating the same two brand hues instead of a third/fourth
+   pastel. */
 .hero-stats .stat-tile:nth-child(1) {
-  border-top-color: var(--color-mint-strong);
+  border-top-color: var(--color-brand);
 }
 
 .hero-stats .stat-tile:nth-child(2) {
-  border-top-color: var(--color-lavender-strong);
+  border-top-color: var(--color-accent);
 }
 
 .hero-stats .stat-tile:nth-child(3) {
-  border-top-color: var(--color-blush-strong);
-}
-
-.hero-stats .stat-tile:nth-child(4) {
-  border-top-color: var(--color-peach-strong);
+  border-top-color: var(--color-brand);
 }
 
 .stat-tile:hover {
@@ -2318,16 +2239,19 @@ button.btn-danger {
   color: var(--color-brand);
 }
 
-.milestone-value-sky {
-  color: var(--color-sky);
+.milestone-value-accent {
+  color: var(--color-accent);
+}
+
+/* Legacy names kept so nothing else referencing them breaks, repointed at
+   the same two-color brand/accent system instead of a third/fourth hue. */
+.milestone-value-sky,
+.milestone-value-orange {
+  color: var(--color-brand);
 }
 
 .milestone-value-success {
-  color: var(--color-success);
-}
-
-.milestone-value-orange {
-  color: var(--color-orange);
+  color: var(--color-accent);
 }
 
 .milestone-label {

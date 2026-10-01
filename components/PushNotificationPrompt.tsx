@@ -55,7 +55,13 @@ export default function PushNotificationPrompt() {
 
         const dismissed = window.localStorage.getItem(DISMISSED_KEY);
         if (!dismissed && !cancelled) {
-          setVisible(true);
+          // Give the hero a few seconds undisturbed before this floats in --
+          // showing it immediately competed with the page's first
+          // impression (and, on tall heros, visually collided with the
+          // success-popup toast and the hero copy itself).
+          setTimeout(() => {
+            if (!cancelled) setVisible(true);
+          }, 6000);
         }
       } catch {
         // Service worker registration can fail (unsupported browser,

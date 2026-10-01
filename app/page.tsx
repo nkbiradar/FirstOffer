@@ -152,28 +152,28 @@ export default async function HomePage() {
         <div className="container">
           <div className="milestone-row">
             <div className="milestone">
-              <span className="milestone-value milestone-value-orange">
+              <span className="milestone-value milestone-value-brand">
                 <CountUp value={stats.totalStartups} />+
               </span>
               <span className="milestone-label">Startups Hiring Freshers</span>
             </div>
             <span className="milestone-divider" aria-hidden="true" />
             <div className="milestone">
-              <span className="milestone-value milestone-value-brand">
+              <span className="milestone-value milestone-value-accent">
                 <CountUp value={stats.totalSubscribers} />
               </span>
               <span className="milestone-label">Subscribers</span>
             </div>
             <span className="milestone-divider" aria-hidden="true" />
             <div className="milestone">
-              <span className="milestone-value milestone-value-sky">
+              <span className="milestone-value milestone-value-brand">
                 <CountUp value={stats.totalInterviews} />
               </span>
               <span className="milestone-label">Interviews Landed</span>
             </div>
             <span className="milestone-divider" aria-hidden="true" />
             <div className="milestone">
-              <span className="milestone-value milestone-value-success">
+              <span className="milestone-value milestone-value-accent">
                 <CountUp value={stats.totalOffers} />
               </span>
               <span className="milestone-label">Offers Received</span>
@@ -185,42 +185,6 @@ export default async function HomePage() {
       <section className="hero">
         <div className="container hero-content">
           <div className="hero-copy hero-copy-centered">
-            <p className="apply-channels-kicker">Not Just Another Job Listing</p>
-            <p className="apply-channels-headline">
-              Every Opportunity Comes With a Real Way In — HR&apos;s Email, Number, Form, or Link.
-            </p>
-
-            <div className="apply-channels" role="list" aria-label="Ways to apply on every listing">
-              <div className="apply-channel-card" role="listitem">
-                <span className="apply-channel-icon" aria-hidden="true">
-                  📧
-                </span>
-                <p className="apply-channel-title">HR Email IDs</p>
-                <p className="apply-channel-desc">Apply directly through available HR email IDs</p>
-              </div>
-              <div className="apply-channel-card" role="listitem">
-                <span className="apply-channel-icon" aria-hidden="true">
-                  📞
-                </span>
-                <p className="apply-channel-title">HR / Recruiter Numbers</p>
-                <p className="apply-channel-desc">Direct contact details wherever available</p>
-              </div>
-              <div className="apply-channel-card" role="listitem">
-                <span className="apply-channel-icon" aria-hidden="true">
-                  📝
-                </span>
-                <p className="apply-channel-title">Direct Google Forms</p>
-                <p className="apply-channel-desc">Application forms shared directly by companies</p>
-              </div>
-              <div className="apply-channel-card" role="listitem">
-                <span className="apply-channel-icon" aria-hidden="true">
-                  🔗
-                </span>
-                <p className="apply-channel-title">Direct Company Links</p>
-                <p className="apply-channel-desc">Apply through official career/application links</p>
-              </div>
-            </div>
-
             <span className="eyebrow">
               <span className="eyebrow-dot" />
               {todayCount > 0 ? `${todayCount} New Today` : "Live"} • Updated {heroDateLabel}
@@ -253,22 +217,6 @@ export default async function HomePage() {
                 Browse Tech Jobs
               </Link>
             </div>
-          </div>
-
-          <div className="hero-journey">
-            <Image
-              className="hero-journey-img"
-              alt="Students navigating fresh opportunities towards sunrise skyline with FirstOffer"
-              src="/images/hero-journey.webp"
-              width={1672}
-              height={941}
-              priority
-            />
-            <span className="hero-spark hero-spark-1" />
-            <span className="hero-spark hero-spark-2" />
-            <span className="hero-spark hero-spark-3" />
-            <span className="hero-spark hero-spark-4" />
-            <span className="hero-spark hero-spark-5" />
           </div>
 
           <div className="trust-bar">
@@ -330,12 +278,6 @@ export default async function HomePage() {
                 <CountUp value={stats.totalOpportunities} />
               </span>
               <span className="stat-label">Live opportunities</span>
-            </div>
-            <div className="stat-tile">
-              <span className="stat-value">
-                <CountUp value={stats.totalSubscribers} />
-              </span>
-              <span className="stat-label">Subscribers</span>
             </div>
           </div>
         </div>
