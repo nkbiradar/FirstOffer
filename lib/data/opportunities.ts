@@ -259,19 +259,25 @@ export type SiteStats = {
  * signed-in user gets the daily digest, opt-outs aside — see
  * getOptedOutUserIds() in lib/email/resend-client.ts — so this is a fair
  * "subscribers" number for the homepage, not a separate mailing list), and
- * how many users self-reported an interview/offer via the "did you hear
- * back?" outcome tracker (lib/data/user-applications.ts, outcome column:
- * 'interview' | 'offer' | 'rejected' | 'no_response').
+ * how many published testimonials (lib/data/testimonials.ts, added by hand
+ * at /admin/testimonials — see outcome select there) report each outcome.
  *
- * totalInterviews counts outcome IN ('interview', 'offer') rather than just
- * 'interview' — outcome is a single self-reported current status, so once
- * someone who got interviewed later gets an offer they update it to
- * 'offer', overwriting 'interview'. Without folding offers back in, every
- * successful candidate would silently disappear from the interview count
- * the moment they report the good news. These are admin-client (service
- * role) counts deliberately bypassing user_applications' RLS, which scopes
- * normal reads to `auth.uid() = user_id` — a sitewide total has no single
- * user to scope to.
+ * Deliberately sourced from testimonials, NOT the self-serve
+ * user_applications "did you hear back?" tracker — that one depends on
+ * signed-in users bothering to come back and log an outcome, which in
+ * practice almost nobody does (checked live: 0 of 27 rows had an outcome
+ * set), so it would show "0 Interviews / 0 Offers" on the homepage forever.
+ * Testimonials are admin-curated real success stories instead, so this
+ * number only ever grows as new ones are added at /admin/testimonials and
+ * is never stuck at zero.
+ *
+ * totalInterviews counts ALL published testimonials (outcome 'interview'
+ * OR 'selected') rather than just 'interview' — getting selected implies
+ * an interview happened along the way, so folding 'selected' in keeps a
+ * placed student from silently disappearing out of the interview count.
+ * totalOffers counts only outcome = 'selected' (an actual placement).
+ * These use the plain RLS-scoped client, same as getPublishedTestimonials()
+ * — `is_published = true` is public-readable, no admin client needed.
  *
  * `listUsers({ page: 1, perPage: 1 })` is a cheap way to get the true
  * total: GoTrue returns it in the `x-total-count` header regardless of
@@ -291,8 +297,12 @@ export async function getSiteStats(): Promise<SiteStats> {
       supabase.from("opportunities").select("company_id").not("company_id", "is", null),
     ),
     admin.auth.admin.listUsers({ page: 1, perPage: 1 }),
-    admin.from("user_applications").select("id", { count: "exact", head: true }).in("outcome", ["interview", "offer"]),
-    admin.from("user_applications").select("id", { count: "exact", head: true }).eq("outcome", "offer"),
+    supabase.from("testimonials").select("id", { count: "exact", head: true }).eq("is_published", true),
+    supabase
+      .from("testimonials")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true)
+      .eq("outcome", "selected"),
   ]);
 
   if (totalResult.error) {
