@@ -1508,6 +1508,15 @@ button.btn-danger {
   gap: 36px;
 }
 
+/* No illustration alongside the list (the generic stock-mascot image was
+   dropped) -- let the step list take the full width instead of leaving a
+   dead column. */
+.steps-panel-no-photo {
+  grid-template-columns: 1fr;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
 .steps-photo {
   width: 100%;
   height: auto;
@@ -1556,20 +1565,12 @@ button.btn-danger {
   color: var(--color-text-secondary);
 }
 
-.step-row:nth-child(1) .step-number {
-  background: var(--color-mint-strong);
+.step-row:nth-child(odd) .step-number {
+  background: var(--color-brand);
 }
 
-.step-row:nth-child(2) .step-number {
-  background: var(--color-lavender-strong);
-}
-
-.step-row:nth-child(3) .step-number {
-  background: var(--color-blush-strong);
-}
-
-.step-row:nth-child(4) .step-number {
-  background: var(--color-peach-strong);
+.step-row:nth-child(even) .step-number {
+  background: var(--color-accent);
 }
 
 @media (max-width: 800px) {

@@ -618,14 +618,7 @@ export default async function HomePage() {
                 <h2 style={{ marginTop: 10 }}>From browsing to your first offer</h2>
               </div>
             </div>
-            <div className="steps-panel">
-              <Image
-                className="steps-photo"
-                alt="Student journey to finding their first job"
-                src="/images/journey-illustration.webp"
-                width={520}
-                height={729}
-              />
+            <div className="steps-panel steps-panel-no-photo">
               <div className="steps-list">
                 {HOW_IT_WORKS.map((step, index) => (
                   <div className="step-row" key={step.title}>
