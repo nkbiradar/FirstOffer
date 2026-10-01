@@ -150,11 +150,27 @@ export default async function HomePage() {
 
       <section className="subscriber-strip">
         <div className="container">
-          <div className="subscriber-count">
-            <span className="subscriber-count-value">
-              <CountUp value={stats.totalSubscribers} />
-            </span>
-            <span className="subscriber-count-label">Subscribers</span>
+          <div className="milestone-row">
+            <div className="milestone">
+              <span className="milestone-value milestone-value-brand">
+                <CountUp value={stats.totalSubscribers} />
+              </span>
+              <span className="milestone-label">Subscribers</span>
+            </div>
+            <span className="milestone-divider" aria-hidden="true" />
+            <div className="milestone">
+              <span className="milestone-value milestone-value-sky">
+                <CountUp value={stats.totalInterviews} />
+              </span>
+              <span className="milestone-label">Interviews Landed</span>
+            </div>
+            <span className="milestone-divider" aria-hidden="true" />
+            <div className="milestone">
+              <span className="milestone-value milestone-value-success">
+                <CountUp value={stats.totalOffers} />
+              </span>
+              <span className="milestone-label">Offers Received</span>
+            </div>
           </div>
         </div>
       </section>

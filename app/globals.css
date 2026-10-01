@@ -2257,47 +2257,97 @@ button.btn-danger {
   }
 }
 
-/* ── Live subscriber counter ────────────────────────────────────────────
+/* ── Live milestone strip (subscribers / interviews / offers) ──────────
    Sits between the credibility strip and the hero, so it's the first
    thing anyone sees — before any scrolling, before the hero headline —
    since it's the strongest social-proof/FOMO hook on the page and needs
-   zero effort to notice. Styled like a channel-analytics "Subscribers"
-   readout (big bold number, small caption below) rather than a pill with
-   copy, per reference. The count itself (getSiteStats().totalSubscribers
-   in app/page.tsx) is a live, real Supabase Auth user count computed on
-   every request — needs no manual updates, no cron: it just grows as
-   people sign in with Google. */
+   zero effort to notice. Three big numbers in a row with vertical
+   dividers (Wellfound's "27K+ / 10M+ / 100K+" stat bar is the reference),
+   each number in its own accent color so the eye separates "how many
+   people" from "how many got interviews" from "how many got offers"
+   without reading the labels first. All three counts come from
+   getSiteStats() in app/page.tsx — totalSubscribers is a live Supabase
+   Auth user count, totalInterviews/totalOffers come from the
+   user_applications outcome tracker (lib/data/opportunities.ts) — so
+   this grows on its own as people sign in and report outcomes, no
+   manual updates, no cron. */
 
 .subscriber-strip {
-  padding: 28px 20px 24px;
+  padding: 32px 20px 28px;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: center;
 }
 
-.subscriber-count {
+.milestone-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.milestone {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  min-width: 108px;
 }
 
-.subscriber-count-value {
+.milestone-divider {
+  width: 1px;
+  align-self: stretch;
+  min-height: 44px;
+  background: var(--color-border-strong);
+}
+
+.milestone-value {
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 1.9rem + 1.4vw, 3.25rem);
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.9rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1;
-  color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
 
-.subscriber-count-label {
-  font-size: 13.5px;
+.milestone-value-brand {
+  color: var(--color-brand);
+}
+
+.milestone-value-sky {
+  color: var(--color-sky);
+}
+
+.milestone-value-success {
+  color: var(--color-success);
+}
+
+.milestone-label {
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .milestone-row {
+    gap: 14px;
+  }
+
+  .milestone {
+    min-width: 92px;
+  }
+
+  .milestone-divider {
+    min-height: 36px;
+  }
+
+  .milestone-label {
+    font-size: 11.5px;
+  }
 }
 
 /* ── Opportunity grid & cards ───────────────────────────────────────── */

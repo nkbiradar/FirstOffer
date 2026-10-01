@@ -248,15 +248,30 @@ export type SiteStats = {
   totalOpportunities: number;
   totalCompanies: number;
   totalSubscribers: number;
+  totalInterviews: number;
+  totalOffers: number;
 };
 
 /**
  * Real, live counts for the homepage hero stat tiles — total published
  * (non-expired) opportunities, how many distinct companies currently have
- * at least one, and how many people have signed in with Google (every
+ * at least one, how many people have signed in with Google (every
  * signed-in user gets the daily digest, opt-outs aside — see
  * getOptedOutUserIds() in lib/email/resend-client.ts — so this is a fair
- * "subscribers" number for the homepage, not a separate mailing list).
+ * "subscribers" number for the homepage, not a separate mailing list), and
+ * how many users self-reported an interview/offer via the "did you hear
+ * back?" outcome tracker (lib/data/user-applications.ts, outcome column:
+ * 'interview' | 'offer' | 'rejected' | 'no_response').
+ *
+ * totalInterviews counts outcome IN ('interview', 'offer') rather than just
+ * 'interview' — outcome is a single self-reported current status, so once
+ * someone who got interviewed later gets an offer they update it to
+ * 'offer', overwriting 'interview'. Without folding offers back in, every
+ * successful candidate would silently disappear from the interview count
+ * the moment they report the good news. These are admin-client (service
+ * role) counts deliberately bypassing user_applications' RLS, which scopes
+ * normal reads to `auth.uid() = user_id` — a sitewide total has no single
+ * user to scope to.
  *
  * `listUsers({ page: 1, perPage: 1 })` is a cheap way to get the true
  * total: GoTrue returns it in the `x-total-count` header regardless of
@@ -268,7 +283,7 @@ export async function getSiteStats(): Promise<SiteStats> {
   const supabase = await createClient();
   const admin = createAdminClient();
 
-  const [totalResult, companyRowsResult, usersResult] = await Promise.all([
+  const [totalResult, companyRowsResult, usersResult, interviewsResult, offersResult] = await Promise.all([
     applyPublishedFilter(
       supabase.from("opportunities").select("id", { count: "exact", head: true }),
     ),
@@ -276,6 +291,8 @@ export async function getSiteStats(): Promise<SiteStats> {
       supabase.from("opportunities").select("company_id").not("company_id", "is", null),
     ),
     admin.auth.admin.listUsers({ page: 1, perPage: 1 }),
+    admin.from("user_applications").select("id", { count: "exact", head: true }).in("outcome", ["interview", "offer"]),
+    admin.from("user_applications").select("id", { count: "exact", head: true }).eq("outcome", "offer"),
   ]);
 
   if (totalResult.error) {
@@ -286,6 +303,12 @@ export async function getSiteStats(): Promise<SiteStats> {
   }
   if (usersResult.error) {
     console.error("getSiteStats (subscribers) failed:", usersResult.error.message);
+  }
+  if (interviewsResult.error) {
+    console.error("getSiteStats (interviews) failed:", interviewsResult.error.message);
+  }
+  if (offersResult.error) {
+    console.error("getSiteStats (offers) failed:", offersResult.error.message);
   }
 
   const companyIds = new Set(
@@ -301,6 +324,8 @@ export async function getSiteStats(): Promise<SiteStats> {
     totalOpportunities: totalResult.count ?? 0,
     totalCompanies: companyIds.size,
     totalSubscribers,
+    totalInterviews: interviewsResult.count ?? 0,
+    totalOffers: offersResult.count ?? 0,
   };
 }
 
