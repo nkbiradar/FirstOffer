@@ -50,7 +50,7 @@ export type OpportunityFormInput = {
   deadline: string;
   sourceText: string;
   status: OpportunityStatus;
-  // Marks this as part of the ₹39/month "Internal HR Openings" product
+  // Marks this as part of the ₹149/month "Internal HR Openings" product
   // instead of a regular listing — see supabase/schema.sql's note on
   // opportunities.is_internal.
   isInternal: boolean;

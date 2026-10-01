@@ -409,7 +409,7 @@ export default function BulkImportClient() {
           />
         </label>
         <p className="hint">
-          For the ₹39/month Internal HR Openings product — just Company, Role, and how to apply is enough. Separate
+          For the ₹149/month Internal HR Openings product — just Company, Role, and how to apply is enough. Separate
           each opening with a blank line (no <code>---OPPORTUNITY---</code>/<code>---END---</code> markers needed
           here). Add any other field from the format above too if you have it — Type, Batch, Location, Skills, and
           so on all still work. Everything parsed here is automatically marked as Internal HR and added to the
@@ -529,7 +529,7 @@ export default function BulkImportClient() {
                       onChange={(e) => updateIsInternal(item.id, e.target.checked)}
                     />
                     <span style={{ fontSize: 13.5 }}>
-                      Internal HR Opening — part of the ₹39/month Internal HR Openings product{" "}
+                      Internal HR Opening — part of the ₹149/month Internal HR Openings product{" "}
                       <span className="hint">(hidden from all regular listings — only visible on /internal-openings)</span>
                     </span>
                   </label>

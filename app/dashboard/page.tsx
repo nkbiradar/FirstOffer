@@ -330,7 +330,7 @@ export default async function DashboardPage({
                   <p className="unlock-item-meta">
                     {internalActive && isManualInternal && (
                       <>
-                        ₹39 one-time payment
+                        ₹149 one-time payment
                         {internalSubscription?.current_period_end && (
                           <> · valid until {formatFutureDate(internalSubscription.current_period_end)}, pay again anytime to keep it going</>
                         )}
@@ -369,7 +369,7 @@ export default async function DashboardPage({
             <div className="empty-state">
               <h3>Internal HR Openings not unlocked yet</h3>
               <p>
-                A ₹39 one-time payment unlocks internal, HR-shared roles with significantly lower competition —
+                A ₹149 one-time payment unlocks internal, HR-shared roles with significantly lower competition —
                 openings that may never be widely posted elsewhere — for 30 days. No auto-renewal; pay again
                 whenever you want to keep it going.
               </p>
