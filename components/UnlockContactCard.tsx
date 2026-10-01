@@ -76,7 +76,7 @@ const PRODUCT_COPY: Record<
 // two independent subscriptions this card sells — the full-site membership
 // (₹99/month regular, ₹49/month for founding members — see `priceNote` and
 // lib/data/subscriptions.ts's hasLegacyFullAccessPricing()), or the
-// ₹149/month Internal HR Openings membership (see lib/payments/razorpay.ts's
+// ₹79/month Internal HR Openings membership (see lib/payments/razorpay.ts's
 // getProductConfig). Existing lifetime
 // customers from the old one-time ₹49 unlock keep that access unchanged
 // and never see this card for full_access. Once access is granted, the

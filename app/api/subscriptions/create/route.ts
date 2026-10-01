@@ -15,7 +15,7 @@ import { applyCouponDiscount, validateCouponForCheckout } from "@/lib/payments/c
 // Starts a payment for one of the two products this site sells — the
 // full-access plan (₹99/month regular, ₹49/month for founding members who
 // already have a ₹49 payment on record — see hasLegacyFullAccessPricing())
-// or the ₹149/month Internal HR Openings plan, chosen by the `product` field
+// or the ₹79/month Internal HR Openings plan, chosen by the `product` field
 // in the POST body (defaults to "full_access" for existing callers that
 // don't send one).
 //

@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // The current ₹49/₹149 one-time-per-month payment (see
+    // The current ₹49/₹79 one-time-per-month payment (see
     // app/api/subscriptions/create/route.ts) carries `product` in its
     // order notes — the legacy per-opportunity unlock below never did.
     // This is the reliability backstop for that flow, same idea as the

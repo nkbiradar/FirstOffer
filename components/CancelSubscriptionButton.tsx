@@ -25,7 +25,7 @@ const LABEL_COPY: Record<Product, string> = {
 // given `product` (defaults to "full_access"), which cancels at cycle end
 // (access keeps working until the period already paid for ends) rather
 // than instantly. Reused as-is for both the ₹49/month full-access panel
-// and the ₹149/month Internal HR Openings panel — cancelling one never
+// and the ₹79/month Internal HR Openings panel — cancelling one never
 // touches the other, since each is its own row in `subscriptions`.
 export default function CancelSubscriptionButton({
   product = "full_access",
