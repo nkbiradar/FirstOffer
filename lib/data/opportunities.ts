@@ -250,7 +250,50 @@ export type SiteStats = {
   totalSubscribers: number;
   totalInterviews: number;
   totalOffers: number;
+  totalStartups: number;
 };
+
+/**
+ * Every distinct company that has EVER had an opportunity posted (any
+ * status — published, expired, whatever), not just ones with something
+ * live right now. This is the "1000+ startups hire freshers through us"
+ * trust number — lifetime, so it only ever grows, unlike totalCompanies
+ * above which tracks currently-live postings and shrinks as things expire.
+ *
+ * Deliberately counts distinct company_id on `opportunities`, NOT
+ * `select("id", { count: "exact", head: true })` on `companies` — the
+ * companies table has rows for companies that were created (e.g. during a
+ * bulk-import draft) but never actually got a published opportunity (253
+ * of 849 rows, checked live), so counting the table directly would
+ * overstate real hiring companies by a wide margin. Paginated with
+ * `.range()` the same way getSiteVisitStats() in lib/data/site-visits.ts
+ * does, since `opportunities` has 1000+ rows and a plain `.select()` would
+ * silently truncate at Supabase's default cap.
+ */
+async function countLifetimeHiringCompanies(): Promise<number> {
+  const admin = createAdminClient();
+  const companyIds = new Set<string>();
+  const PAGE_SIZE = 1000;
+
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await admin
+      .from("opportunities")
+      .select("company_id")
+      .not("company_id", "is", null)
+      .range(from, from + PAGE_SIZE - 1);
+
+    if (error) {
+      console.error("countLifetimeHiringCompanies failed:", error.message);
+      break;
+    }
+    for (const row of (data ?? []) as { company_id: string | null }[]) {
+      if (row.company_id) companyIds.add(row.company_id);
+    }
+    if (!data || data.length < PAGE_SIZE) break;
+  }
+
+  return companyIds.size;
+}
 
 /**
  * Real, live counts for the homepage hero stat tiles — total published
@@ -289,21 +332,23 @@ export async function getSiteStats(): Promise<SiteStats> {
   const supabase = await createClient();
   const admin = createAdminClient();
 
-  const [totalResult, companyRowsResult, usersResult, interviewsResult, offersResult] = await Promise.all([
-    applyPublishedFilter(
-      supabase.from("opportunities").select("id", { count: "exact", head: true }),
-    ),
-    applyPublishedFilter(
-      supabase.from("opportunities").select("company_id").not("company_id", "is", null),
-    ),
-    admin.auth.admin.listUsers({ page: 1, perPage: 1 }),
-    supabase.from("testimonials").select("id", { count: "exact", head: true }).eq("is_published", true),
-    supabase
-      .from("testimonials")
-      .select("id", { count: "exact", head: true })
-      .eq("is_published", true)
-      .eq("outcome", "selected"),
-  ]);
+  const [totalResult, companyRowsResult, usersResult, interviewsResult, offersResult, totalStartups] =
+    await Promise.all([
+      applyPublishedFilter(
+        supabase.from("opportunities").select("id", { count: "exact", head: true }),
+      ),
+      applyPublishedFilter(
+        supabase.from("opportunities").select("company_id").not("company_id", "is", null),
+      ),
+      admin.auth.admin.listUsers({ page: 1, perPage: 1 }),
+      supabase.from("testimonials").select("id", { count: "exact", head: true }).eq("is_published", true),
+      supabase
+        .from("testimonials")
+        .select("id", { count: "exact", head: true })
+        .eq("is_published", true)
+        .eq("outcome", "selected"),
+      countLifetimeHiringCompanies(),
+    ]);
 
   if (totalResult.error) {
     console.error("getSiteStats (total) failed:", totalResult.error.message);
@@ -336,6 +381,7 @@ export async function getSiteStats(): Promise<SiteStats> {
     totalSubscribers,
     totalInterviews: interviewsResult.count ?? 0,
     totalOffers: offersResult.count ?? 0,
+    totalStartups,
   };
 }
 

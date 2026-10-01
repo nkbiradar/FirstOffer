@@ -2257,19 +2257,21 @@ button.btn-danger {
   }
 }
 
-/* ── Live milestone strip (subscribers / interviews / offers) ──────────
+/* ── Live milestone strip (startups / subscribers / interviews / offers) ─
    Sits between the credibility strip and the hero, so it's the first
    thing anyone sees — before any scrolling, before the hero headline —
    since it's the strongest social-proof/FOMO hook on the page and needs
-   zero effort to notice. Three big numbers in a row with vertical
+   zero effort to notice. Four big numbers in a row with vertical
    dividers (Wellfound's "27K+ / 10M+ / 100K+" stat bar is the reference),
    each number in its own accent color so the eye separates "how many
-   people" from "how many got interviews" from "how many got offers"
-   without reading the labels first. All three counts come from
-   getSiteStats() in app/page.tsx — totalSubscribers is a live Supabase
-   Auth user count, totalInterviews/totalOffers come from the
-   user_applications outcome tracker (lib/data/opportunities.ts) — so
-   this grows on its own as people sign in and report outcomes, no
+   startups hire here" from "how many people" from "how many got
+   interviews" from "how many got offers" without reading the labels
+   first. All four counts come from getSiteStats() in app/page.tsx —
+   totalStartups is every distinct company that's ever posted an
+   opportunity (lifetime, so it only grows), totalSubscribers is a live
+   Supabase Auth user count, totalInterviews/totalOffers come from the
+   admin-curated testimonials table — so this grows on its own as
+   companies post, people sign in, and new success stories are added, no
    manual updates, no cron. */
 
 .subscriber-strip {
@@ -2322,6 +2324,10 @@ button.btn-danger {
 
 .milestone-value-success {
   color: var(--color-success);
+}
+
+.milestone-value-orange {
+  color: var(--color-orange);
 }
 
 .milestone-label {

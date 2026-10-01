@@ -152,6 +152,13 @@ export default async function HomePage() {
         <div className="container">
           <div className="milestone-row">
             <div className="milestone">
+              <span className="milestone-value milestone-value-orange">
+                <CountUp value={stats.totalStartups} />+
+              </span>
+              <span className="milestone-label">Startups Hiring Freshers</span>
+            </div>
+            <span className="milestone-divider" aria-hidden="true" />
+            <div className="milestone">
               <span className="milestone-value milestone-value-brand">
                 <CountUp value={stats.totalSubscribers} />
               </span>
