@@ -4688,6 +4688,40 @@ a.footer-trust-item:hover {
   color: var(--color-text-secondary);
 }
 
+.pricing-promo-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 4px 0 4px;
+  padding: 0;
+  list-style: none;
+  max-width: 640px;
+}
+
+.pricing-promo-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.pricing-promo-checklist li::before {
+  content: "\2713";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
 .pricing-promo-cta {
   margin-top: 8px;
 }

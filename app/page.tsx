@@ -418,8 +418,17 @@ export default async function HomePage() {
                   <p className="pricing-promo-sub">
                     {isLegacyFullAccessUser
                       ? `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer — at the rate you already locked in, for as long as you stay subscribed.`
-                      : `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer. Members who joined earlier locked in ₹${LEGACY_MONTHLY_PRICE_INR}/month for as long as they stay subscribed — pricing moved to ₹${MONTHLY_PRICE_INR}/month as FirstOffer added Internal HR Openings, the Resume Keyword Matcher, and more categories.`}
+                      : "Everything you need to go from browsing to actually applying — unlocked the moment you join."}
                   </p>
+                  {!isLegacyFullAccessUser && (
+                    <ul className="pricing-promo-checklist">
+                      <li>Direct HR email, recruiter number &amp; apply link — every opportunity</li>
+                      <li>New roles added regularly, included automatically</li>
+                      <li>Resume Keyword Matcher — check your fit before you apply</li>
+                      <li>Every listing auto-expires in 48h — never a dead lead</li>
+                      <li>Pay via UPI — no auto-debit, cancel anytime</li>
+                    </ul>
+                  )}
                   <Link href="/opportunities" className="btn btn-primary pricing-promo-cta">
                     {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${MONTHLY_PRICE_INR}/month`}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
