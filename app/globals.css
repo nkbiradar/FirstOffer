@@ -4324,6 +4324,12 @@ a.footer-trust-item:hover {
   margin-top: 8px;
 }
 
+.success-view-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
 .success-card {
   display: flex;
   flex-direction: column;
