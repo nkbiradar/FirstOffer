@@ -73,9 +73,12 @@ export default function OpportunityCard({
           {companyName && <p className="opportunity-company">{companyName}</p>}
         </div>
         {postedLabel && (
-          <span className={`opportunity-posted ${isFresh ? "opportunity-posted-fresh" : ""}`}>
-            {isFresh && <span className="opportunity-fresh-dot" />}
-            {postedLabel}
+          <span className="opportunity-posted-group">
+            <span className={`opportunity-posted ${isFresh ? "opportunity-posted-fresh" : ""}`}>
+              {isFresh && <span className="opportunity-fresh-dot" />}
+              Posted {postedLabel.toLowerCase()}
+            </span>
+            <span className="opportunity-apply-fast">Apply fast</span>
           </span>
         )}
       </div>

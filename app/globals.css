@@ -2404,6 +2404,31 @@ button.btn-danger {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent);
 }
 
+.opportunity-posted-group {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Every listing on FirstOffer auto-expires 48h after it's posted (see
+   sweepExpiredOpportunities / expires_at in lib/data/admin-opportunities.ts)
+   -- so "Apply fast" is never empty hype here, it's literally true for
+   every card shown. Small warning-toned pill, not a full badge, so it
+   doesn't compete with the type/urgency badges below the title. */
+.opportunity-apply-fast {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
+  padding: 3px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .opportunity-role {
   margin: 0;
   font-family: var(--font-display);
