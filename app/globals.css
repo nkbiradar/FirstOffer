@@ -2291,7 +2291,8 @@ button.btn-danger {
 
 .opportunity-card {
   position: relative;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
   padding: 24px;
   background: var(--color-surface);
@@ -2552,12 +2553,17 @@ button.btn-danger {
 }
 
 .opportunity-card-link {
-  justify-self: stretch;
+  /* Cards in a grid row get stretched to match the tallest sibling (longest
+     description etc.) -- margin-top: auto (not a taller box) is what should
+     absorb that extra height, so this button stays the same fixed size on
+     every card regardless of how much content is above it. */
+  align-self: stretch;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: auto;
   padding: 10px 14px;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
