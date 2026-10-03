@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>FirstOffer</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #4f46e5, #0d9488);
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  .mark {
+    width: 72px; height: 72px; border-radius: 20px; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 32px; color: #4f46e5;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  }
+</style>
+</head>
+<body>
+  <div class="mark">F</div>
+  <!--
+    This file is NOT the app. FirstOffer is a server-rendered Next.js app
+    (auth cookies, middleware, API routes, RSC) that cannot be statically
+    bundled into the app without a rewrite — see the architecture report.
+    Capacitor's `server.url` in capacitor.config.ts points the WebView at
+    the live production site instead, so this local page only ever shows
+    for a split second (or if the device is fully offline before the
+    WebView redirect fires) and is never the actual UI.
+  -->
+</body>
+</html>
