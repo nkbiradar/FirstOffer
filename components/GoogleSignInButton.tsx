@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { APP_AUTH_CALLBACK, isFirstOfferApp } from "@/lib/nativeApp";
 
 function GoogleIcon() {
   return (
@@ -37,7 +38,9 @@ export default function GoogleSignInButton({
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        // Inside the Android app, return via the app's deep link so the code
+        // is exchanged inside the app's WebView (see lib/nativeApp.ts).
+        redirectTo: `${isFirstOfferApp() ? APP_AUTH_CALLBACK : `${window.location.origin}/auth/callback`}?next=${encodeURIComponent(next)}`,
         // Without this, Google silently reuses whatever Google account is
         // already active in the browser instead of showing the account
         // picker — so switching accounts (e.g. testing as a non-admin

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isFirstOfferApp } from "@/lib/nativeApp";
 
 // Signals for "this page is open inside another app's built-in browser,
 // not a real browser" — the Facebook/Instagram/TikTok/LinkedIn apps all
@@ -45,7 +46,9 @@ export default function InAppBrowserWarning() {
   const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
-    setShowWarning(isLikelyInAppBrowser(navigator.userAgent));
+    // Our own Android app is a WebView too, but it handles Google sign-in
+    // properly (Custom Tab + deep link), so no warning there.
+    setShowWarning(!isFirstOfferApp() && isLikelyInAppBrowser(navigator.userAgent));
   }, []);
 
   if (!showWarning) return null;
