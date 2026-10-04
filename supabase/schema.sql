@@ -901,3 +901,17 @@ update public.coupons set code = 'ALGOCRUX_12345' where code = 'ALGOCRUX';
 insert into public.coupons (code, product, discount_type, discount_value, first_time_only, active, partner_label)
 values ('ALGOCRUX_12345', 'full_access', 'flat', 2000, true, true, 'Algocrux')
 on conflict (code) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- Public "Share your story" submissions (/share-your-story ->
+-- app/api/stories/route.ts). Users submit their own interview/offer
+-- outcome; rows arrive as drafts (is_published = false) and only appear on
+-- the site after the admin publishes them from /admin/testimonials.
+-- submitter_email / linkedin_url are for the admin to verify the story and
+-- are never shown publicly. Idempotent: safe to re-run.
+-- ---------------------------------------------------------------------------
+alter table public.testimonials
+  add column if not exists source text not null default 'admin',
+  add column if not exists submitter_email text,
+  add column if not exists linkedin_url text,
+  add column if not exists consent_given_at timestamptz;

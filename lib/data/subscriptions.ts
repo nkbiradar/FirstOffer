@@ -240,3 +240,22 @@ export async function getAllSubscriptionsForAdmin(): Promise<SubscriptionForAdmi
     email: emailById.get(row.user_id) ?? null,
   })) as SubscriptionForAdmin[];
 }
+
+/**
+ * True if this user has EVER completed a real payment on FirstOffer — any
+ * product (full_access or internal_hr), any time, plus the old one-time
+ * opportunity_unlocks. Deliberately not "currently active": someone who
+ * paid, landed a job and let their membership lapse is exactly who should
+ * still be able to share their story (/share-your-story).
+ * `razorpay_payment_id is not null` excludes abandoned checkouts.
+ */
+export async function hasEverPaid(userId: string): Promise<boolean> {
+  const admin = createAdminClient();
+  const [subs, unlocks] = await Promise.all([
+    admin.from("subscriptions").select("id").eq("user_id", userId).not("razorpay_payment_id", "is", null).limit(1),
+    admin.from("opportunity_unlocks").select("id").eq("user_id", userId).eq("status", "paid").limit(1),
+  ]);
+  if (subs.error) console.error("hasEverPaid (subscriptions) failed:", subs.error.message);
+  if (unlocks.error) console.error("hasEverPaid (unlocks) failed:", unlocks.error.message);
+  return (subs.data ?? []).length > 0 || (unlocks.data ?? []).length > 0;
+}

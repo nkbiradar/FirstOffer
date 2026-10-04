@@ -83,6 +83,7 @@ export default function Footer() {
             <Link href="/opportunities">All Openings</Link>
             <Link href="/companies">Companies</Link>
             <Link href="/resume-match">Resume Matcher</Link>
+            <Link href="/share-your-story">Got an offer? Share your story</Link>
             <Link href="/about">About</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>

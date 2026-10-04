@@ -41,6 +41,12 @@ export interface Testimonial {
   graduation_batch: string | null;
   rating: number | null;
   avatar_url: string | null;
+  // "Share your story" submissions (app/api/stories/route.ts). Private:
+  // shown only in /admin/testimonials for verification, never publicly.
+  source?: "admin" | "user";
+  submitter_email?: string | null;
+  linkedin_url?: string | null;
+  consent_given_at?: string | null;
 }
 
 export interface TestimonialInsert {
@@ -56,6 +62,10 @@ export interface TestimonialInsert {
   graduation_batch?: string | null;
   rating?: number | null;
   avatar_url?: string | null;
+  source?: "admin" | "user";
+  submitter_email?: string | null;
+  linkedin_url?: string | null;
+  consent_given_at?: string | null;
 }
 
 export interface Company {

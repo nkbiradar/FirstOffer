@@ -37,7 +37,9 @@ export default function SuccessPopup({ testimonials }: { testimonials: Testimoni
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isAdminRoute = pathname?.startsWith("/admin");
+  // Also hidden on /share-your-story: the popup would cover the form fields
+  // on phones while someone is filling in their own story.
+  const isAdminRoute = pathname?.startsWith("/admin") || pathname === "/share-your-story";
   const hasTestimonials = testimonials.length > 0;
 
   useEffect(() => {

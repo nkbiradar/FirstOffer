@@ -136,6 +136,26 @@ export default async function AdminTestimonialsPage({
                     {testimonial.quote && (
                       <p style={{ marginTop: 8, fontSize: 14 }}>{testimonial.quote}</p>
                     )}
+                    {testimonial.source === "user" && (
+                      <p className="hint" style={{ margin: "8px 0 0" }}>
+                        <strong>Submitted by user via /share-your-story</strong>
+                        {testimonial.submitter_email && (
+                          <>
+                            {" · "}
+                            <a href={`mailto:${testimonial.submitter_email}`}>{testimonial.submitter_email}</a>
+                          </>
+                        )}
+                        {testimonial.linkedin_url && (
+                          <>
+                            {" · "}
+                            <a href={testimonial.linkedin_url} target="_blank" rel="noopener noreferrer">
+                              LinkedIn
+                            </a>
+                          </>
+                        )}
+                        {" · verify before publishing"}
+                      </p>
+                    )}
                   </div>
                   <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", alignItems: "start" }}>
                     <form method="post" action={`/api/admin/testimonials/${testimonial.id}`}>
