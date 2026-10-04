@@ -7,16 +7,26 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cap:sync": "cap sync android",
+    "cap:open": "cap open android",
+    "cap:assets": "capacitor-assets generate --android"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/browser": "8.0.4",
+    "@capacitor/core": "8.5.1",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.3",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "latest",
+    "@types/nodemailer": "^8.0.2",
     "@types/uuid": "^11.0.0",
     "@vercel/analytics": "^2.0.1",
     "mammoth": "^1.12.3",
     "next": "^16.3.3",
+    "nodemailer": "^7.0.13",
     "pdf-parse": "^1.1.1",
     "razorpay": "^2.9.8",
     "react": "latest",
@@ -26,6 +36,9 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@capacitor/android": "8.5.1",
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.1",
     "@types/node": "latest",
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "latest",
