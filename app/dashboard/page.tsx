@@ -260,7 +260,7 @@ export default async function DashboardPage({
                       <>
                         ₹{((subscription?.amount_paise ?? 0) / 100).toFixed(0)} one-time payment
                         {subscription?.current_period_end && (
-                          <> · valid until {formatFutureDate(subscription.current_period_end)}, pay again anytime to keep it going</>
+                          <> · valid until {formatFutureDate(subscription.current_period_end)}<span data-app-hide>, pay again anytime to keep it going</span></>
                         )}
                       </>
                     )}
@@ -276,12 +276,12 @@ export default async function DashboardPage({
                         {subscription?.current_period_end ? formatFutureDate(subscription.current_period_end) : "at period end"}
                       </>
                     )}
-                    {!subscriptionActive && "Pay again from any opportunity page to unlock access"}
+                    {!subscriptionActive && <span data-app-hide>Pay again from any opportunity page to unlock access</span>}
                   </p>
                 </div>
                 {subscriptionActive && !isManualFullAccess && !subscription?.cancelled_at && <CancelSubscriptionButton />}
                 {!subscriptionActive && (
-                  <Link className="btn btn-secondary btn-sm" href="/opportunities">
+                  <Link className="btn btn-secondary btn-sm" href="/opportunities" data-app-hide>
                     Pay again
                   </Link>
                 )}
@@ -290,14 +290,14 @@ export default async function DashboardPage({
           ) : (
             <div className="empty-state">
               <h3>Full access not unlocked yet</h3>
-              <p>
+              <p data-app-hide>
                 A ₹{isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR} one-time payment unlocks
                 the application link, Google Form, and HR email/contact on <strong>every</strong> opportunity on
                 FirstOffer — including new ones as they go live — for 30 days. No auto-renewal; pay again whenever
                 you want to keep it going.
               </p>
               {isLegacyFullAccessUser && (
-                <p style={{ fontSize: 13, fontWeight: 600, opacity: 0.8 }}>
+                <p style={{ fontSize: 13, fontWeight: 600, opacity: 0.8 }} data-app-hide>
                   🔒 You&apos;ve got founding-member pricing locked in at ₹{LEGACY_MONTHLY_PRICE_INR}/month — new
                   members now pay ₹{MONTHLY_PRICE_INR}.
                 </p>
@@ -332,7 +332,7 @@ export default async function DashboardPage({
                       <>
                         ₹79 one-time payment
                         {internalSubscription?.current_period_end && (
-                          <> · valid until {formatFutureDate(internalSubscription.current_period_end)}, pay again anytime to keep it going</>
+                          <> · valid until {formatFutureDate(internalSubscription.current_period_end)}<span data-app-hide>, pay again anytime to keep it going</span></>
                         )}
                       </>
                     )}
@@ -352,14 +352,14 @@ export default async function DashboardPage({
                           : "at period end"}
                       </>
                     )}
-                    {!internalActive && "Pay again from /internal-openings to unlock access"}
+                    {!internalActive && <span data-app-hide>Pay again from /internal-openings to unlock access</span>}
                   </p>
                 </div>
                 {internalActive && !isManualInternal && !internalSubscription?.cancelled_at && (
                   <CancelSubscriptionButton product="internal_hr" />
                 )}
                 {!internalActive && (
-                  <Link className="btn btn-secondary btn-sm" href="/internal-openings">
+                  <Link className="btn btn-secondary btn-sm" href="/internal-openings" data-app-hide>
                     Pay again
                   </Link>
                 )}
@@ -368,7 +368,7 @@ export default async function DashboardPage({
           ) : (
             <div className="empty-state">
               <h3>Internal HR Openings not unlocked yet</h3>
-              <p>
+              <p data-app-hide>
                 A ₹79 one-time payment unlocks internal, HR-shared roles with significantly lower competition —
                 openings that may never be widely posted elsewhere — for 30 days. No auto-renewal; pay again
                 whenever you want to keep it going.

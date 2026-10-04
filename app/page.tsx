@@ -381,7 +381,7 @@ export default async function HomePage() {
             moved — no countdown or "before it changes" framing, since the
             new price is already in effect for anyone without that history. */}
         <Reveal>
-          <section className="section" style={{ paddingTop: 8 }}>
+          <section className="section" style={{ paddingTop: 8 }} data-app-hide>
             <div className="pricing-promo">
               <span className="pricing-promo-badge">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -449,7 +449,7 @@ export default async function HomePage() {
             applyInternalFilter() (lib/data/opportunities.ts) structurally
             keep these roles out of every other listing on the site. */}
         <Reveal>
-          <section className="section" style={{ paddingTop: 8 }}>
+          <section className="section" style={{ paddingTop: 8 }} data-app-hide>
             <Link href="/internal-openings" className="internal-hr-promo">
               <span className="internal-hr-promo-badge">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>

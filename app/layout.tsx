@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { isAppRequest } from "@/lib/nativeAppServer";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
@@ -70,9 +71,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // gated on this instead of removed outright. isAdminEmail() reuses the
   // `user` already fetched above rather than a second Supabase round-trip.
   const isAdmin = isAdminEmail(user?.email);
+  // Inside the Android app: hide every price / purchase CTA (data-app-hide,
+  // see globals.css and lib/nativeAppServer.ts).
+  const isApp = await isAppRequest();
 
   return (
-    <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${inter.variable} ${manrope.variable}${isApp ? " fo-app" : ""}`}>
       <body>
         <div className="site-shell">
           <Navbar user={navUser} isAdmin={isAdmin} />

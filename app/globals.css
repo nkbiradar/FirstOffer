@@ -5889,3 +5889,17 @@ a.footer-trust-item:hover {
   line-height: 1.5;
   color: var(--color-text);
 }
+
+/* ------------------------------------------------------------------
+   FirstOffer Android app (html.fo-app, set in app/layout.tsx when the
+   request carries the "FirstOfferApp" user agent). Google Play's
+   Payments policy: the app shows no prices or purchase CTAs, so anything
+   tagged data-app-hide disappears inside the app only.
+   ------------------------------------------------------------------ */
+html.fo-app [data-app-hide] {
+  display: none !important;
+}
+.app-members-note .btn {
+  margin-top: 12px;
+  align-self: flex-start;
+}

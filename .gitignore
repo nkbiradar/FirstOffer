@@ -15,3 +15,6 @@ next-env.d.ts
 # misc
 .DS_Store
 _to_delete/
+
+# Shareable test builds
+*.apk

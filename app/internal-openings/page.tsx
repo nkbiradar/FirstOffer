@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import UnlockContactCard from "@/components/UnlockContactCard";
+import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
+import { isAppRequest } from "@/lib/nativeAppServer";
 import { getInternalOpportunities } from "@/lib/data/opportunities";
 import { getUser } from "@/lib/supabase/auth";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
@@ -43,6 +45,8 @@ export default async function InternalOpeningsPage() {
   const nonce = await getNonce();
   const user = await getUser();
   const isUnlocked = user ? await hasInternalAccess(user.id) : false;
+  // Android app: no prices or purchase buttons (Google Play policy).
+  const inApp = await isAppRequest();
   // A locked visitor never needs the actual company/role rows — only the
   // total count for the "N exclusive openings" line — so this fetches just
   // 1 row (discarded below) instead of the real listing data whenever
@@ -117,7 +121,15 @@ export default async function InternalOpeningsPage() {
             </p>
           ) : (
             <div id="unlock-internal-hr">
-              <UnlockContactCard isSignedIn={Boolean(user)} price={INTERNAL_PRICE_INR} product="internal_hr" />
+              {inApp ? (
+                <AppMembersOnlyNote
+                  isSignedIn={Boolean(user)}
+                  next="/internal-openings"
+                  what="Internal HR Openings are available to FirstOffer Internal HR members."
+                />
+              ) : (
+                <UnlockContactCard isSignedIn={Boolean(user)} price={INTERNAL_PRICE_INR} product="internal_hr" />
+              )}
             </div>
           )}
         </section>
@@ -153,7 +165,10 @@ export default async function InternalOpeningsPage() {
         {total === 0 ? (
           <div className="empty-state">
             <h3>No internal openings live right now</h3>
-            <p>New HR-shared roles are added as they come in — check back soon, or unlock above to get notified first.</p>
+            <p>
+              New HR-shared roles are added as they come in — check back soon
+              {inApp ? "." : ", or unlock above to get notified first."}
+            </p>
           </div>
         ) : isUnlocked ? (
           <div className="opportunity-grid">
@@ -188,13 +203,13 @@ export default async function InternalOpeningsPage() {
                   </svg>
                 </span>
                 <span className="internal-mystery-company">Company Hidden</span>
-                <span className="internal-mystery-role">Role locked until unlock</span>
+                <span className="internal-mystery-role">{inApp ? "Members only" : "Role locked until unlock"}</span>
                 <div className="internal-mystery-tags" aria-hidden="true">
                   <span className="internal-mystery-tag">Special Hiring</span>
                   <span className="internal-mystery-tag">Low Competition</span>
                   <span className="internal-mystery-tag">Shared by HR</span>
                 </div>
-                <span className="internal-mystery-cta" aria-hidden="true">Unlock to Reveal</span>
+                <span className="internal-mystery-cta" aria-hidden="true">{inApp ? "Members only" : "Unlock to Reveal"}</span>
               </Link>
             ))}
           </div>

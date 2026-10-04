@@ -20,6 +20,8 @@ import {
 } from "@/lib/seo/job-posting";
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
+import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
+import { isAppRequest } from "@/lib/nativeAppServer";
 import OpportunityCard from "@/components/OpportunityCard";
 import AdminDeleteOpportunityButton from "@/components/admin/AdminDeleteOpportunityButton";
 import { getNonce } from "@/lib/security/csp";
@@ -204,6 +206,8 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
         : await hasFullAccess(user.id)
       : false;
   const canShowApply = !isExpired && (!hasApplyContent || applyUnlocked);
+  // Android app: no prices or purchase buttons (Google Play policy).
+  const inApp = await isAppRequest();
 
   // Only the full_access product has two price tiers (₹99 regular, ₹49 for
   // founding members) — see hasLegacyFullAccessPricing()'s doc comment.
@@ -382,7 +386,9 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               )}
               {!canShowApply && (
                 <div className="apply-inline">
-                  {opportunity.is_internal ? (
+                  {inApp ? (
+                    <AppMembersOnlyNote isSignedIn={Boolean(user)} next={`/opportunities/${id}`} />
+                  ) : opportunity.is_internal ? (
                     <UnlockContactCard
                       opportunityId={id}
                       isSignedIn={Boolean(user)}
@@ -508,7 +514,9 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             )}
             {!canShowApply && hasApplyContent && (
               <p className="unlock-contact-desc">
-                How to apply — including any email, contact, or application link — is locked. Unlock above to view it.
+                {inApp
+                  ? "How to apply — including any email, contact, or application link — is available to FirstOffer members."
+                  : "How to apply — including any email, contact, or application link — is locked. Unlock above to view it."}
               </p>
             )}
             {deadlineLabel && <p>Application Deadline: {deadlineLabel}</p>}

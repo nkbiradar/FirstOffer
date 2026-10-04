@@ -94,6 +94,21 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: requestHeaders } });
   const pathname = request.nextUrl.pathname;
 
+  // The FirstOffer Android app (user agent contains "FirstOfferApp") must not
+  // start purchases: Google Play requires Play Billing for in-app digital
+  // sales. The app's UI hides every price/purchase CTA (data-app-hide,
+  // lib/nativeAppServer.ts); this is the server-side backstop. Verify and
+  // webhook routes are left alone so nothing already paid can break.
+  if (
+    /FirstOfferApp/.test(request.headers.get("user-agent") ?? "") &&
+    (pathname.startsWith("/api/payments/create-order") || pathname.startsWith("/api/subscriptions/create"))
+  ) {
+    return withSecurityHeaders(
+      NextResponse.json({ error: "Purchases aren't available in the app." }, { status: 403 }),
+      securityHeaders,
+    );
+  }
+
   if (pathname === "/admin/login") {
     return withSecurityHeaders(response, securityHeaders);
   }

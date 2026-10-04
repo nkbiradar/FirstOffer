@@ -37,7 +37,7 @@ export default function Footer() {
             </svg>
             Verified Listings
           </span>
-          <span className="footer-trust-item" role="listitem">
+          <span className="footer-trust-item" role="listitem" data-app-hide>
             <svg
               className="footer-trust-icon"
               viewBox="0 0 24 24"
