@@ -6001,3 +6001,52 @@ html.fo-app [data-app-hide] {
   height: 1px !important;
   opacity: 0 !important;
 }
+
+/* Dashboard "Share your story" banner + OutcomeTracker nudge (paid members only) */
+.share-story-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--color-brand-soft-border);
+  background: linear-gradient(90deg, var(--color-brand-soft), var(--color-accent-soft));
+  color: var(--color-text);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.share-story-banner:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-brand) 14%, transparent);
+}
+.share-story-banner-icon {
+  font-size: 26px;
+  flex: none;
+}
+.share-story-banner-text {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.share-story-banner-text strong {
+  font-size: 15px;
+  color: var(--color-text);
+}
+.share-story-banner-cta {
+  flex: none;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-brand);
+}
+.outcome-share-story {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--color-brand);
+  text-decoration: none;
+}
+.outcome-share-story:hover {
+  text-decoration: underline;
+}

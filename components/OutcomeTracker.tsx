@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { ApplicationOutcome } from "@/types/supabase";
 
 const OUTCOME_LABEL: Record<ApplicationOutcome, string> = {
@@ -36,11 +37,14 @@ export default function OutcomeTracker({
   appliedLabel,
   initialOutcome,
   eligibleForPrompt,
+  canShareStory = false,
 }: {
   opportunityId: string;
   appliedLabel: string | null;
   initialOutcome: ApplicationOutcome | null;
   eligibleForPrompt: boolean;
+  /** Paid members only: after "Interview"/"Offer", nudge them to /share-your-story. */
+  canShareStory?: boolean;
 }) {
   const [outcome, setOutcome] = useState(initialOutcome);
   const [editing, setEditing] = useState(false);
@@ -108,6 +112,12 @@ export default function OutcomeTracker({
             )}
           </div>
         </div>
+      )}
+
+      {canShareStory && !editing && (outcome === "interview" || outcome === "offer") && (
+        <Link href="/share-your-story" className="outcome-share-story">
+          🎉 Share your story
+        </Link>
       )}
 
       {error && <span className="apply-tracker-error">{error}</span>}

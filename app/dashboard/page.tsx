@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
-import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing, hasEverPaid } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
 import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR } from "@/lib/payments/razorpay";
 import OpportunityCard from "@/components/OpportunityCard";
@@ -75,7 +75,7 @@ export default async function DashboardPage({
     ? (statusParam as StatusFilter)
     : "all";
 
-  const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser] =
+  const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
     await Promise.all([
       getUserApplications(user.id),
       getUserUnlocks(user.id),
@@ -83,6 +83,8 @@ export default async function DashboardPage({
       getUserSubscription(user.id, "internal_hr"),
       isEmailOptedOut(user.id),
       hasLegacyFullAccessPricing(user.id),
+      // "Share your story" is only for members who've paid at least once.
+      hasEverPaid(user.id),
     ]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
@@ -129,6 +131,21 @@ export default async function DashboardPage({
               application links, and Google Forms are visible on every opportunity.
             </p>
           </div>
+        )}
+
+        {everPaid && (
+          <Link href="/share-your-story" className="share-story-banner">
+            <span className="share-story-banner-icon" aria-hidden="true">🎉</span>
+            <span className="share-story-banner-text">
+              <strong>
+                {interviewCount + offerCount > 0
+                  ? "Congrats on your interview / offer! Share your story"
+                  : "Got an interview call or an offer? Share your story"}
+              </strong>
+              <span>It takes 1 minute and helps other freshers keep going.</span>
+            </span>
+            <span className="share-story-banner-cta" aria-hidden="true">Share →</span>
+          </Link>
         )}
 
         <div className="dashboard-stats">
@@ -214,6 +231,7 @@ export default async function DashboardPage({
                   appliedLabel={formatRelativeTime(opportunity.applied_at)}
                   initialOutcome={opportunity.outcome}
                   eligibleForPrompt={Date.now() - new Date(opportunity.applied_at).getTime() >= OUTCOME_PROMPT_DELAY_MS}
+                  canShareStory={everPaid}
                 />
               </div>
             ))}
