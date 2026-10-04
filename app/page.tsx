@@ -423,6 +423,7 @@ export default async function HomePage() {
                   {!isLegacyFullAccessUser && (
                     <ul className="pricing-promo-checklist">
                       <li>Direct HR email, recruiter number &amp; apply link — every opportunity</li>
+                      <li>Direct Google Forms from companies — apply straight to the hiring team</li>
                       <li>New roles added regularly, included automatically</li>
                       <li>Resume Keyword Matcher — check your fit before you apply</li>
                       <li>Every listing auto-expires in 48h — never a dead lead</li>
