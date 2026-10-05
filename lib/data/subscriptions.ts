@@ -1,5 +1,5 @@
 // Reads for both recurring subscription products — the ₹49/month full
-// access plan and the ₹79/month Internal HR Openings plan (see
+// access plan and the ₹149/month Internal HR Openings plan (see
 // supabase/schema.sql's `subscriptions` table, which holds both, keyed
 // apart by `product`). Existing lifetime buyers from the old one-time
 // unlock are untouched and keep working through

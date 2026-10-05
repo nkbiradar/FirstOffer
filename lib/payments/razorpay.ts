@@ -69,13 +69,13 @@ export function getMonthlyPlanId(): string {
   return planId;
 }
 
-// ── Internal HR Openings (a second, independent ₹79/month product) ─────
+// ── Internal HR Openings (a second, independent ₹149/month product; was ₹79 until Oct 2026) ─────
 // Same Subscriptions-API mechanics as the ₹49/month full-access plan
 // above, but its own Plan, its own price, and its own access dimension —
 // a user can hold neither, either, or both. See lib/data/subscriptions.ts
 // (hasActiveSubscription is parameterized by product) and
 // app/internal-openings/page.tsx.
-export const INTERNAL_PRICE_INR = 79;
+export const INTERNAL_PRICE_INR = 149;
 export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
 
 export function getInternalPlanId(): string {

@@ -5,7 +5,7 @@ import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
 import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing, hasEverPaid } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
-import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR } from "@/lib/payments/razorpay";
+import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
@@ -348,7 +348,7 @@ export default async function DashboardPage({
                   <p className="unlock-item-meta">
                     {internalActive && isManualInternal && (
                       <>
-                        ₹79 one-time payment
+                        ₹{((internalSubscription?.amount_paise ?? INTERNAL_PRICE_INR * 100) / 100).toFixed(0)} one-time payment
                         {internalSubscription?.current_period_end && (
                           <> · valid until {formatFutureDate(internalSubscription.current_period_end)}<span data-app-hide>, pay again anytime to keep it going</span></>
                         )}
@@ -387,7 +387,7 @@ export default async function DashboardPage({
             <div className="empty-state">
               <h3>Internal HR Openings not unlocked yet</h3>
               <p data-app-hide>
-                A ₹79 one-time payment unlocks internal, HR-shared roles with significantly lower competition —
+                A ₹{INTERNAL_PRICE_INR} one-time payment unlocks internal, HR-shared roles with significantly lower competition —
                 openings that may never be widely posted elsewhere — for 30 days. No auto-renewal; pay again
                 whenever you want to keep it going.
               </p>

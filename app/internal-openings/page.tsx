@@ -19,7 +19,7 @@ import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 export const metadata: Metadata = {
   title: "Internal HR Openings — Exclusive Roles",
   description:
-    "Exclusive openings shared directly by HRs and recruiters, with significantly lower competition than public listings. ₹79/month.",
+    `Exclusive openings shared directly by HRs and recruiters, with significantly lower competition than public listings. ₹${INTERNAL_PRICE_INR}/month.`,
   alternates: { canonical: `${getSiteUrl()}/internal-openings` },
   robots: { index: false, follow: true },
 };

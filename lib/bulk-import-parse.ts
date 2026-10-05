@@ -26,7 +26,7 @@ export type BulkDraftOpportunity = {
   howToApply: string;
   deadline: string; // yyyy-mm-dd or ""
   sourceText: string; // the raw pasted block — captured automatically, never edited
-  // Marks this as part of the ₹79/month "Internal HR Openings" product —
+  // Marks this as part of the ₹149/month "Internal HR Openings" product —
   // never set by parsing (regex or AI), only by the admin ticking the
   // per-item checkbox, or the "Mark all as Internal" batch action, in
   // BulkImportClient.tsx. Defaults to false so a normal paste never

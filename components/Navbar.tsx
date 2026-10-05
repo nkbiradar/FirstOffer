@@ -12,7 +12,7 @@ const LINKS = [
   { href: "/opportunities", label: "All Openings" },
   { href: "/companies", label: "Companies" },
   // Deliberately styled differently below (nav-link-hot) — this is the
-  // entry point to the ₹79/month Internal HR Openings product and is meant
+  // entry point to the ₹149/month Internal HR Openings product and is meant
   // to stand out from the plain listing links next to it.
   { href: "/internal-openings", label: "Internal HR", hot: true },
 ];

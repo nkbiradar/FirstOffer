@@ -258,7 +258,7 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
             style={{ width: "auto" }}
           />
           <span>
-            This is an internal, HR-direct opening for the ₹79/month Internal HR Openings product{" "}
+            This is an internal, HR-direct opening for the ₹149/month Internal HR Openings product{" "}
             <span className="hint">
               (hidden from all regular listings — only visible on /internal-openings to subscribers)
             </span>
