@@ -159,7 +159,7 @@ export default async function HomePage() {
               <span className="milestone-value milestone-value-accent">
                 <CountUp value={stats.totalSubscribers} />
               </span>
-              <span className="milestone-label">Subscribers</span>
+              <span className="milestone-label">Users joined</span>
             </div>
             <span className="milestone-divider" aria-hidden="true" />
             <div className="milestone">
