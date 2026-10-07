@@ -27,6 +27,7 @@ const FREE_POINTS = [
   "Simple single-column layout that ATS software reads correctly",
   "Sections in the order recruiters actually scan",
   "Ready-made bullet points — just swap in your own details",
+  "Same format used by freshers placed at Deloitte, IBM, Accenture, MathCo & top startups",
 ];
 
 const MAKEOVER_POINTS = [
