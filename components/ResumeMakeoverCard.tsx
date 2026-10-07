@@ -42,6 +42,9 @@ export default function ResumeMakeoverCard({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
+  // Where the finished resume should be emailed — defaults to the sign-in
+  // email but can be changed (e.g. college email → personal Gmail).
+  const [deliveryEmail, setDeliveryEmail] = useState(userEmail ?? "");
 
   function pickFile(f: File | null) {
     setError(null);
@@ -97,6 +100,7 @@ export default function ResumeMakeoverCard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullName: fd.get("fullName"),
+          email: fd.get("email"),
           phone: fd.get("phone"),
           targetRole: fd.get("targetRole"),
           experienceLevel: fd.get("experienceLevel"),
@@ -116,7 +120,7 @@ export default function ResumeMakeoverCard({
         order_id: data.orderId,
         name: "FirstOffer",
         description: "Resume Makeover",
-        prefill: { email: userEmail ?? undefined, contact: String(fd.get("phone") ?? "") || undefined },
+        prefill: { email: String(fd.get("email") ?? "") || userEmail || undefined, contact: String(fd.get("phone") ?? "") || undefined },
         method: { upi: true, card: true, netbanking: false, wallet: false, paylater: false, emi: false },
         handler: async (response: RazorpaySuccessResponse) => {
           const verify = await fetch("/api/resume-review/verify", {
@@ -153,7 +157,7 @@ export default function ResumeMakeoverCard({
         <span className="resume-done-icon" aria-hidden="true">✓</span>
         <h3>Got it! Your resume is with our team.</h3>
         <p>
-          We&apos;ll send your rebuilt, ATS-ready resume to <strong>{userEmail}</strong>. Keep an eye on your inbox
+          We&apos;ll send your rebuilt, ATS-ready resume to <strong>{deliveryEmail || userEmail}</strong>. Keep an eye on your inbox
           (and spam folder) — we may email you if we need any details.
         </p>
         <Link href="/opportunities" className="btn btn-secondary btn-sm">
@@ -211,6 +215,19 @@ export default function ResumeMakeoverCard({
           <input name="fullName" required maxLength={80} autoComplete="name" />
         </label>
         <label>
+          Email to receive your new resume *
+          <input
+            name="email"
+            type="email"
+            required
+            maxLength={160}
+            autoComplete="email"
+            value={deliveryEmail}
+            onChange={(e) => setDeliveryEmail(e.target.value)}
+            placeholder="you@gmail.com"
+          />
+        </label>
+        <label>
           WhatsApp / phone
           <input name="phone" maxLength={20} inputMode="tel" autoComplete="tel" placeholder="+91 98xxx xxxxx" />
         </label>
@@ -241,7 +258,7 @@ export default function ResumeMakeoverCard({
         {busy ? "Opening payment..." : `Pay ₹${price} & send my resume`}
       </button>
       <p className="resume-form-note">
-        One-time payment via UPI or card. No subscription. Signed in as <strong>{userEmail}</strong>.
+        One-time payment via UPI or card. No subscription.
       </p>
     </form>
   );

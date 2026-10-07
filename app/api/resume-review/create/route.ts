@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
   }
 
   const fullName = clip(body.fullName, MAX.name);
+  // Delivery email typed by the student; falls back to the sign-in email.
+  const email = clip(body.email, 160).toLowerCase() || (user.email ?? "").slice(0, 160);
   const phone = clip(body.phone, MAX.phone);
   const targetRole = clip(body.targetRole, MAX.role);
   const experienceLevel = clip(body.experienceLevel, MAX.level);
@@ -42,6 +44,9 @@ export async function POST(request: NextRequest) {
 
   if (!fullName || !targetRole) {
     return NextResponse.json({ error: "Please fill in your name and the role you're targeting." }, { status: 400 });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    return NextResponse.json({ error: "Please enter a valid email to receive your resume." }, { status: 400 });
   }
   if (phone && !/^[+\d][\d\s-]{7,19}$/.test(phone)) {
     return NextResponse.json({ error: "Please enter a valid phone number (or leave it empty)." }, { status: 400 });
@@ -65,7 +70,7 @@ export async function POST(request: NextRequest) {
     amount_paise: RESUME_REVIEW_PRICE_PAISE,
     status: "created",
     full_name: fullName,
-    email: (user.email ?? "").slice(0, 160),
+    email,
     phone: phone || null,
     target_role: targetRole,
     experience_level: experienceLevel || null,

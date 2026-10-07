@@ -77,7 +77,8 @@ export async function POST(request: NextRequest) {
     `📄 New Resume Makeover: ${order.full_name} — ${order.target_role}`,
     [
       ["Name", order.full_name],
-      ["Email", order.email],
+      ["Send resume to", order.email],
+      ["Account email", user.email ?? ""],
       ["Phone", order.phone ?? ""],
       ["Target role", order.target_role],
       ["Experience", order.experience_level ?? ""],
