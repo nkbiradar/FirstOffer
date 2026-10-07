@@ -18,7 +18,19 @@ function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
-export async function notifyAdmins(subject: string, rows: [string, string][], ctaPath: string, ctaLabel: string) {
+export type AdminAttachment = { filename: string; content: Buffer };
+
+// Returns true once a provider accepted the email. Existing callers ignore
+// the result; app/api/resume-review/upload relies on it, because there the
+// email (with the resume attached) IS the delivery.
+export async function notifyAdmins(
+  subject: string,
+  rows: [string, string][],
+  ctaPath: string,
+  ctaLabel: string,
+  attachments: AdminAttachment[] = [],
+  replyTo?: string,
+): Promise<boolean> {
   const tableRows = rows
     .filter(([, value]) => value)
     .map(
@@ -49,11 +61,12 @@ export async function notifyAdmins(subject: string, rows: [string, string][], ct
         secure: port === 465,
         auth: { user: smtpUser, pass: smtpPass },
       });
-      await transport.sendMail({ from: `FirstOffer <${smtpUser}>`, to, subject, html });
+      await transport.sendMail({ from: `FirstOffer <${smtpUser}>`, to, subject, html, attachments, replyTo });
+      return true;
     } catch (err) {
       console.error("Admin notification (SMTP) failed:", err);
+      return false;
     }
-    return;
   }
 
   // 2) Fallback: Resend.
@@ -64,12 +77,17 @@ export async function notifyAdmins(subject: string, rows: [string, string][], ct
     console.error(
       "Admin notification skipped — set SMTP_HOST/SMTP_USER/SMTP_PASS (Hostinger) or RESEND_API_KEY/RESEND_FROM_EMAIL.",
     );
-    return;
+    return false;
   }
   try {
-    const { error } = await new Resend(apiKey).emails.send({ from, to, subject, html });
-    if (error) console.error("Admin notification failed:", error.message);
+    const { error } = await new Resend(apiKey).emails.send({ from, to, subject, html, attachments, replyTo });
+    if (error) {
+      console.error("Admin notification failed:", error.message);
+      return false;
+    }
+    return true;
   } catch (err) {
     console.error("Admin notification threw:", err);
+    return false;
   }
 }

@@ -88,6 +88,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
+    // Resume Makeover (app/api/resume-review/create). Only moves a
+    // 'created' row to 'paid' — never touches a row that's already further
+    // along. The student then uploads their resume from /resume.
+    if (product === "resume_review") {
+      const { error } = await admin
+        .from("resume_orders")
+        .update({ status: "paid", razorpay_payment_id: paymentId, paid_at: new Date().toISOString() })
+        .eq("user_id", userId)
+        .eq("razorpay_order_id", orderId)
+        .eq("status", "created");
+      if (error) {
+        console.error("Webhook: could not mark resume_orders paid (payment.captured):", error.message);
+      }
+      return NextResponse.json({ ok: true });
+    }
+
     // Legacy one-time full-access unlock. New purchases no longer go
     // through this path (see app/api/payments/create-order/route.ts is
     // no longer linked from the UI), but existing customers' historical

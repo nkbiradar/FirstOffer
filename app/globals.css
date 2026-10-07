@@ -6050,3 +6050,221 @@ html.fo-app [data-app-hide] {
 .outcome-share-story:hover {
   text-decoration: underline;
 }
+
+/* ── Resume Help (app/resume, homepage .resume-promo) ─────────────────── */
+.resume-promo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(120deg, var(--color-brand-soft), var(--color-accent-soft));
+  border: 1px solid var(--color-brand-soft-border);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.resume-promo:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.resume-promo-icon { font-size: 30px; line-height: 1; }
+.resume-promo-text { display: grid; gap: 4px; flex: 1; }
+.resume-promo-text > strong { font-family: var(--font-display); font-size: 17px; }
+.resume-promo-text > span strong { color: var(--color-text); }
+.resume-promo-text > span { color: var(--color-text-secondary); font-size: 14px; }
+.resume-promo-cta { flex-shrink: 0; }
+@media (max-width: 640px) {
+  .resume-promo { flex-direction: column; align-items: flex-start; }
+}
+
+.resume-hero { max-width: 760px; margin: 12px 0 28px; display: grid; gap: 12px; justify-items: start; }
+.resume-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 44px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.resume-hero-mark { color: var(--color-brand); }
+.resume-hero p { margin: 0; color: var(--color-text-secondary); font-size: 16px; line-height: 1.6; }
+.resume-hero .resume-hero-sub { color: var(--color-text); font-weight: 600; }
+
+.resume-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.resume-options-single { grid-template-columns: minmax(0, 640px); }
+@media (max-width: 860px) {
+  .resume-options { grid-template-columns: minmax(0, 1fr); }
+}
+
+.resume-option {
+  display: grid;
+  gap: 14px;
+  padding: clamp(20px, 4vw, 30px);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+.resume-option h2 { font-family: var(--font-display); font-size: 22px; line-height: 1.25; margin: 0; }
+.resume-option-paid { border: 2px solid var(--color-brand); }
+.resume-option-lead { margin: 0; color: var(--color-text-secondary); line-height: 1.55; }
+.resume-option-foot { margin: 0; font-size: 14px; color: var(--color-text-secondary); }
+.resume-option-foot a { color: var(--color-brand); font-weight: 600; }
+
+.resume-badge {
+  justify-self: start;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.resume-badge-free { background: var(--color-success-soft); color: var(--color-success); border: 1px solid var(--color-success-border); }
+.resume-badge-paid { background: var(--color-brand); color: var(--color-text-inverse); }
+
+.resume-price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.resume-price strong { font-family: var(--font-display); font-size: 40px; color: var(--color-text); line-height: 1; }
+/* Original price with a slanted red cut mark, like a sale tag. */
+.resume-price-old {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  line-height: 1;
+}
+.resume-price-old::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 50%;
+  height: 2.5px;
+  border-radius: 2px;
+  background: #e11d48;
+  transform: rotate(-12deg);
+}
+.resume-off-badge {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: #e11d48;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  transform: rotate(-3deg);
+  box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3);
+}
+.resume-price-note { flex-basis: 100%; font-size: 13px; font-weight: 600; color: #e11d48; }
+.resume-promo-old { color: var(--color-text-tertiary); text-decoration-color: #e11d48; text-decoration-thickness: 2px; }
+
+.resume-checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.resume-checklist li { position: relative; padding-left: 26px; line-height: 1.45; font-size: 15px; }
+.resume-checklist li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.resume-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.resume-form { display: grid; gap: 12px; padding-top: 6px; border-top: 1px dashed var(--color-border); }
+.resume-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) {
+  .resume-form-grid { grid-template-columns: minmax(0, 1fr); }
+}
+.resume-form label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--color-text); }
+.resume-form input:not([type="file"]),
+.resume-form select,
+.resume-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+  font-size: 15px;
+}
+.resume-form textarea { resize: vertical; }
+.resume-optional { font-weight: 400; color: var(--color-text-tertiary); }
+.resume-file {
+  position: relative;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1.5px dashed var(--color-brand-soft-border);
+  background: var(--color-brand-soft);
+  cursor: pointer;
+  text-align: center;
+}
+.resume-file span { color: var(--color-brand); font-weight: 600; overflow-wrap: anywhere; }
+.resume-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.resume-form-note { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
+.resume-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger-border);
+}
+
+.resume-done {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--color-success-soft);
+  border: 1px solid var(--color-success-border);
+}
+.resume-done h3 { margin: 0; font-size: 18px; }
+.resume-done p { margin: 0; color: var(--color-text-secondary); line-height: 1.55; }
+.resume-done-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--color-success);
+  color: var(--color-text-inverse);
+  font-weight: 800;
+}
+
+.resume-steps { margin: 40px 0 20px; }
+.resume-steps h2 { font-family: var(--font-display); font-size: 24px; margin: 0 0 16px; }
+.resume-steps ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) {
+  .resume-steps ol { grid-template-columns: minmax(0, 1fr); }
+}
+.resume-steps li {
+  display: flex;
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.resume-steps h3 { margin: 0 0 4px; font-size: 16px; }
+.resume-steps p { margin: 0; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.resume-step-num {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+}

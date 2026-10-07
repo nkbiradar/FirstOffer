@@ -14,7 +14,7 @@ import { getNonce } from "@/lib/security/csp";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
-import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
+import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR, RESUME_REVIEW_PRICE_INR, RESUME_REVIEW_MRP_INR } from "@/lib/payments/razorpay";
 
 export const metadata = {
   title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
@@ -368,6 +368,28 @@ export default async function HomePage() {
                 <p>Free tool — see how your resume matches any job&apos;s required keywords before you apply.</p>
               </Link>
             </div>
+          </section>
+        </Reveal>
+
+        {/* Resume Help entry point (app/resume). The ₹ price line carries
+            data-app-hide so the Android app shows only the free template. */}
+        <Reveal>
+          <section className="section" style={{ paddingTop: 8 }}>
+            <Link href="/resume" className="resume-promo">
+              <span className="resume-promo-icon" aria-hidden="true">📄</span>
+              <span className="resume-promo-text">
+                <strong>Getting no interview calls? Your resume might be the problem.</strong>
+                <span>
+                  Grab our free ATS-friendly resume template
+                  <span data-app-hide>
+                    {" "}— or let us rebuild it professionally for just{" "}
+                    <s className="resume-promo-old">₹{RESUME_REVIEW_MRP_INR}</s> <strong>₹{RESUME_REVIEW_PRICE_INR}</strong>
+                  </span>
+                  .
+                </span>
+              </span>
+              <span className="btn btn-primary btn-sm resume-promo-cta">Fix my resume →</span>
+            </Link>
           </section>
         </Reveal>
 

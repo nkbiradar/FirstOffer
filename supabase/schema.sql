@@ -915,3 +915,38 @@ alter table public.testimonials
   add column if not exists submitter_email text,
   add column if not exists linkedin_url text,
   add column if not exists consent_given_at timestamptz;
+
+-- ── Resume Makeover orders (one-time paid service, /resume) ─────────────
+-- One row per checkout. Lifecycle: 'created' (Razorpay order made) →
+-- 'paid' (signature verified by app/api/resume-review/verify, or the
+-- payment.captured webhook as backstop) → 'submitted' (resume file
+-- received and emailed to the admin by app/api/resume-review/upload) →
+-- 'delivered' (set by hand once the rewritten resume is sent back).
+-- The resume file itself is NOT stored here — it goes to the admin mailbox
+-- as an attachment.
+--
+-- NOTE: additive and safe to run on its own against the live database.
+create table if not exists public.resume_orders (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  razorpay_order_id text not null unique,
+  razorpay_payment_id text,
+  amount_paise integer not null,
+  status text not null default 'created' check (status in ('created', 'paid', 'submitted', 'delivered', 'failed')),
+  full_name text not null,
+  email text not null,
+  phone text,
+  target_role text not null,
+  experience_level text,
+  notes text,
+  resume_file_name text,
+  created_at timestamptz not null default now(),
+  paid_at timestamptz,
+  submitted_at timestamptz
+);
+
+create index if not exists resume_orders_user_id_idx on public.resume_orders (user_id);
+
+alter table public.resume_orders enable row level security;
+-- No policies: read and written only through the service-role client in
+-- app/api/resume-review/* and app/resume/page.tsx.
