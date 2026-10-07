@@ -6268,3 +6268,13 @@ html.fo-app [data-app-hide] {
   background: var(--color-brand-soft);
   color: var(--color-brand);
 }
+
+/* Paid makeover card: bold, highlighted bullet points. */
+.resume-option-paid .resume-checklist li {
+  font-weight: 700;
+  color: var(--color-text);
+}
+.resume-option-paid .resume-checklist li::before {
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+}
