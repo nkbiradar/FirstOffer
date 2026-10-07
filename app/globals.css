@@ -6417,3 +6417,38 @@ html.fo-app [data-app-hide] {
   font-weight: 800;
   box-shadow: 0 8px 22px color-mix(in srgb, var(--sc-accent) 35%, transparent);
 }
+
+/* ── Navbar fit fix ───────────────────────────────────────────────────────
+   With "Resume Help" added, the signed-in admin row (brand + 7 links +
+   Dashboard + email chip + Sign out + Admin) measured ~1330px but the
+   shared 1180px container only gives it ~1130px, so Sign out / Admin were
+   pushed off-screen. The navbar gets its own wider container, the email
+   text only appears where there's room for it, links are a touch tighter,
+   and the hamburger takes over a little earlier. */
+.navbar .container {
+  max-width: 1440px;
+}
+.nav-links a {
+  padding: 9px 12px;
+}
+@media (min-width: 1340px) and (max-width: 1479px) {
+  .nav-user-email {
+    display: none;
+  }
+  .nav-user-chip {
+    padding: 4px;
+  }
+}
+@media (max-width: 1260px) {
+  .nav-links {
+    display: none;
+  }
+  .navbar-actions {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
+  .nav-toggle {
+    display: inline-flex;
+  }
+}
