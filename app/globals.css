@@ -6052,29 +6052,6 @@ html.fo-app [data-app-hide] {
 }
 
 /* ── Resume Help (app/resume, homepage .resume-promo) ─────────────────── */
-.resume-promo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 22px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(120deg, var(--color-brand-soft), var(--color-accent-soft));
-  border: 1px solid var(--color-brand-soft-border);
-  color: var(--color-text);
-  text-decoration: none;
-  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
-}
-.resume-promo:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.resume-promo-icon { font-size: 30px; line-height: 1; }
-.resume-promo-text { display: grid; gap: 4px; flex: 1; }
-.resume-promo-text > strong { font-family: var(--font-display); font-size: 17px; }
-.resume-promo-text > span strong { color: var(--color-text); }
-.resume-promo-text > span { color: var(--color-text-secondary); font-size: 14px; }
-.resume-promo-cta { flex-shrink: 0; }
-@media (max-width: 640px) {
-  .resume-promo { flex-direction: column; align-items: flex-start; }
-}
-
 .resume-hero { max-width: 760px; margin: 12px 0 28px; display: grid; gap: 12px; justify-items: start; }
 .resume-hero h1 {
   font-family: var(--font-display);
@@ -6154,7 +6131,6 @@ html.fo-app [data-app-hide] {
   box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3);
 }
 .resume-price-note { flex-basis: 100%; font-size: 13px; font-weight: 600; color: #e11d48; }
-.resume-promo-old { color: var(--color-text-tertiary); text-decoration-color: #e11d48; text-decoration-thickness: 2px; }
 
 .resume-checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .resume-checklist li { position: relative; padding-left: 26px; line-height: 1.45; font-size: 15px; }
@@ -6277,4 +6253,167 @@ html.fo-app [data-app-hide] {
 .resume-option-paid .resume-checklist li::before {
   background: var(--color-brand);
   color: var(--color-text-inverse);
+}
+
+/* ── Homepage showcase cards (Resume Help + Full Access) ───────────────────
+   Same family as .internal-hr-promo: dark, glowing, bold — each with its own
+   colour so the three promos read as distinct products. Fixed colours (not
+   theme tokens) because these are dark cards in both light and dark mode. */
+.showcase-promo {
+  --sc-bg-1: #1e1446;
+  --sc-bg-2: #3b1d6e;
+  --sc-accent: #f472b6;
+  --sc-accent-2: #fb923c;
+  --sc-text: #ffffff;
+  --sc-text-2: rgba(255, 255, 255, 0.78);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  padding: 32px clamp(20px, 5vw, 44px);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 88% 0%, color-mix(in srgb, var(--sc-accent) 32%, transparent), transparent 55%),
+    radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--sc-accent-2) 18%, transparent), transparent 50%),
+    linear-gradient(135deg, var(--sc-bg-1), var(--sc-bg-2));
+  border: 1px solid color-mix(in srgb, var(--sc-accent) 35%, transparent);
+  color: var(--sc-text);
+  text-decoration: none;
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--sc-bg-2) 35%, transparent), var(--shadow-lg);
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.showcase-promo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 46px color-mix(in srgb, var(--sc-accent) 22%, transparent), var(--shadow-lg);
+}
+.showcase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 10px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--sc-accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sc-accent) 60%, transparent);
+  color: var(--sc-accent);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.showcase-heading {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 800;
+  color: var(--sc-text);
+}
+.showcase-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 800;
+  line-height: 1.15;
+  text-wrap: balance;
+  background: linear-gradient(90deg, var(--sc-accent), var(--sc-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.showcase-sub {
+  margin: 0;
+  max-width: 600px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--sc-text-2);
+}
+.showcase-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin: 6px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+.showcase-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--sc-text);
+}
+.showcase-checklist li::before {
+  content: "\2713";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sc-accent) 25%, transparent);
+  color: var(--sc-accent);
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.showcase-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 13px 24px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--sc-accent), var(--sc-accent-2));
+  color: #1a0b2e;
+  font-weight: 800;
+  font-size: 15px;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--sc-accent) 40%, transparent);
+}
+.showcase-cta-old {
+  opacity: 0.6;
+  text-decoration-color: #7f1d1d;
+  text-decoration-thickness: 2px;
+}
+
+/* Full Access card: same showcase look in deep teal + mint, applied on top of
+   the existing .pricing-promo markup (no JSX restructuring needed). */
+.pricing-promo.showcase-access {
+  --sc-bg-1: #03201f;
+  --sc-bg-2: #0b4a45;
+  --sc-accent: #5eead4;
+  --sc-accent-2: #a3e635;
+  padding: 32px clamp(20px, 5vw, 44px);
+  background:
+    radial-gradient(circle at 88% 0%, color-mix(in srgb, var(--sc-accent) 26%, transparent), transparent 55%),
+    radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--sc-accent-2) 14%, transparent), transparent 50%),
+    linear-gradient(135deg, var(--sc-bg-1), var(--sc-bg-2));
+  border: 1px solid color-mix(in srgb, var(--sc-accent) 35%, transparent);
+  box-shadow: 0 18px 40px rgba(3, 32, 31, 0.35), var(--shadow-lg);
+}
+.showcase-access .pricing-promo-badge {
+  background: color-mix(in srgb, var(--sc-accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--sc-accent) 60%, transparent);
+  color: var(--sc-accent);
+}
+.showcase-access .pricing-promo-title {
+  background: linear-gradient(90deg, var(--sc-accent), var(--sc-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(24px, 4vw, 34px);
+}
+.showcase-access .pricing-promo-sub { color: rgba(255, 255, 255, 0.78); }
+.showcase-access .pricing-promo-checklist li { color: #ffffff; font-weight: 700; }
+.showcase-access .pricing-promo-checklist li::before {
+  background: color-mix(in srgb, var(--sc-accent) 25%, transparent);
+  color: var(--sc-accent);
+}
+.showcase-access .pricing-promo-cta.btn {
+  background: linear-gradient(90deg, var(--sc-accent), var(--sc-accent-2));
+  color: #03201f;
+  border: none;
+  font-weight: 800;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--sc-accent) 35%, transparent);
 }

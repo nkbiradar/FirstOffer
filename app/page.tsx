@@ -371,24 +371,41 @@ export default async function HomePage() {
           </section>
         </Reveal>
 
-        {/* Resume Help entry point (app/resume). The ₹ price line carries
-            data-app-hide so the Android app shows only the free template. */}
+        {/* Resume Help entry point (app/resume) — dark violet showcase card,
+            same family as the Internal HR promo below but its own colour.
+            Price bits carry data-app-hide so the Android app shows only the
+            free template pitch. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
-            <Link href="/resume" className="resume-promo">
-              <span className="resume-promo-icon" aria-hidden="true">📄</span>
-              <span className="resume-promo-text">
-                <strong>Getting no interview calls? Your resume might be the problem.</strong>
-                <span>
-                  Grab our free ATS-friendly resume template
-                  <span data-app-hide>
-                    {" "}— or let us rebuild it professionally for just{" "}
-                    <s className="resume-promo-old">₹{RESUME_REVIEW_MRP_INR}</s> <strong>₹{RESUME_REVIEW_PRICE_INR}</strong>
-                  </span>
-                  .
-                </span>
+            <Link href="/resume" className="showcase-promo showcase-resume">
+              <span className="showcase-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" strokeLinejoin="round" />
+                  <path d="M14 2v6h6M9 15l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Resume Help
               </span>
-              <span className="btn btn-primary btn-sm resume-promo-cta">Fix my resume →</span>
+              <h2 className="showcase-heading">Getting no interview calls?</h2>
+              <p className="showcase-title">Your Resume Might Be the Problem</p>
+              <p className="showcase-sub">
+                Most companies filter resumes with ATS software before a recruiter ever reads them. Fix yours today
+                — free template, or let our team rebuild it for you.
+              </p>
+              <ul className="showcase-checklist">
+                <li>Free ATS-friendly template</li>
+                <li>Rebuilt for your target role</li>
+                <li>Right keywords &amp; strong bullets</li>
+                <li>Reviewed by HR professionals</li>
+              </ul>
+              <span className="showcase-cta">
+                Fix my resume
+                <span data-app-hide>
+                  {" "}— <s className="showcase-cta-old">₹{RESUME_REVIEW_MRP_INR}</s> ₹{RESUME_REVIEW_PRICE_INR}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
             </Link>
           </section>
         </Reveal>
@@ -404,7 +421,7 @@ export default async function HomePage() {
             new price is already in effect for anyone without that history. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }} data-app-hide>
-            <div className="pricing-promo">
+            <div className="pricing-promo showcase-access">
               <span className="pricing-promo-badge">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                   <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round" />
