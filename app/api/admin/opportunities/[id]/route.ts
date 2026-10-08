@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/lib/data/admin-opportunities";
 import { parseOpportunityFormData, str, VALID_STATUSES } from "@/lib/data/opportunity-form-data";
 import { sendPushToAllSubscribers } from "@/lib/push/web-push-client";
+import { notifyGoogleJobs } from "@/lib/seo/google-indexing";
 import type { OpportunityStatus } from "@/types/supabase";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -38,6 +39,9 @@ async function handleUpdate(request: NextRequest, context: RouteContext) {
         url: `/opportunities/${opportunity.id}`,
       });
     }
+    // Any edit to a public listing (published, expired or unpublished)
+    // changes what Google should see — ask it to recrawl the page.
+    if (!opportunity.is_internal) after(() => notifyGoogleJobs([opportunity.id]));
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update opportunity.";
     return NextResponse.redirect(
@@ -74,6 +78,7 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
   try {
     await deleteOpportunity(id);
+    if (!existing.is_internal) after(() => notifyGoogleJobs([id], "URL_DELETED"));
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete opportunity.";
     return NextResponse.json({ error: message }, { status: 500 });

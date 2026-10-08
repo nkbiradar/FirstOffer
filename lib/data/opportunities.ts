@@ -24,6 +24,8 @@ export type ListOpportunitiesOptions = {
   workMode?: WorkMode;
   batch?: string;
   location?: string;
+  /** Match ANY of these location terms (city pages: "Bangalore" + "Bengaluru"). */
+  locations?: string[];
 };
 
 export type ListOpportunitiesResult = {
@@ -420,6 +422,13 @@ export async function getPublishedOpportunities(
     const locationTerm = sanitizeSearchTerm(options.location);
     if (locationTerm) {
       builder = builder.ilike("location", `%${locationTerm}%`);
+    }
+  }
+
+  if (options.locations && options.locations.length > 0) {
+    const terms = options.locations.map(sanitizeSearchTerm).filter(Boolean);
+    if (terms.length > 0) {
+      builder = builder.or(terms.map((t) => `location.ilike.%${t}%`).join(","));
     }
   }
 

@@ -1,9 +1,10 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
 import { parseOpportunityFormData } from "@/lib/data/opportunity-form-data";
 import { notifySingleOpportunity } from "@/lib/notify/new-opportunity-alerts";
+import { notifyGoogleJobs } from "@/lib/seo/google-indexing";
 import type { OpportunityStatus } from "@/types/supabase";
 
 // Not covered by middleware.ts (its matcher is only /admin/:path*), so every
@@ -25,6 +26,8 @@ export async function POST(request: NextRequest) {
     const opportunity = await createOpportunity(input);
     if (opportunity.status === "published") {
       notifySingleOpportunity(opportunity);
+      // Ask Google to crawl the new job page now (public listings only).
+      if (!opportunity.is_internal) after(() => notifyGoogleJobs([opportunity.id]));
     }
     revalidatePath("/admin");
     revalidatePath("/admin/opportunities");

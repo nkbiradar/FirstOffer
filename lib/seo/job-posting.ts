@@ -98,6 +98,30 @@ function buildHtmlDescription(opportunity: OpportunityWithCompany, companyName: 
   return parts.join("\n");
 }
 
+// Google Jobs recommends addressRegion; derive it from the city name for
+// the common Indian tech hubs (left out when unknown rather than guessed).
+const CITY_REGION: [RegExp, string][] = [
+  [/bengaluru|bangalore/i, "Karnataka"],
+  [/hyderabad|secunderabad/i, "Telangana"],
+  [/pune|mumbai|navi mumbai|thane|nagpur/i, "Maharashtra"],
+  [/chennai|coimbatore/i, "Tamil Nadu"],
+  [/gurgaon|gurugram/i, "Haryana"],
+  [/noida|greater noida|lucknow/i, "Uttar Pradesh"],
+  [/new delhi|\bdelhi\b/i, "Delhi"],
+  [/kolkata/i, "West Bengal"],
+  [/ahmedabad|gandhinagar/i, "Gujarat"],
+  [/kochi|trivandrum|thiruvananthapuram/i, "Kerala"],
+  [/jaipur/i, "Rajasthan"],
+  [/chandigarh|mohali/i, "Punjab"],
+  [/bhubaneswar/i, "Odisha"],
+  [/indore|bhopal/i, "Madhya Pradesh"],
+];
+
+function regionForLocation(location: string | null): string | undefined {
+  if (!location) return undefined;
+  return CITY_REGION.find(([re]) => re.test(location))?.[1];
+}
+
 function toIsoValidThrough(deadline: string | null, expiresAt: string | null): string | undefined {
   if (deadline) {
     // deadline is yyyy-mm-dd
@@ -145,7 +169,10 @@ export function buildJobPostingJsonLd(opportunity: OpportunityWithCompany): Reco
       "@type": "OccupationalExperienceRequirements",
       monthsOfExperience: 0,
     },
-    directApply: Boolean(opportunity.application_url),
+    // false: apply details sit behind the membership, so applying is not a
+    // one-click action on this page — claiming directApply would mislead
+    // Google Jobs (and risks a structured-data manual action).
+    directApply: false,
     url,
   };
 
@@ -168,6 +195,7 @@ export function buildJobPostingJsonLd(opportunity: OpportunityWithCompany): Reco
       address: {
         "@type": "PostalAddress",
         addressLocality: opportunity.location || "India",
+        addressRegion: regionForLocation(opportunity.location),
         addressCountry: "IN",
       },
     };

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllPublishedOpportunityIds } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
+import { CITY_PAGES } from "@/lib/seo/cities";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -95,5 +96,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...opportunityRoutes];
+  const cityRoutes: MetadataRoute.Sitemap = CITY_PAGES.map((city) => ({
+    url: `${siteUrl}/fresher-jobs/${city.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "daily",
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...cityRoutes, ...opportunityRoutes];
 }

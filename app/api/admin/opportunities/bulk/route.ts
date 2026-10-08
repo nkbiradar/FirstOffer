@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
+import { notifyGoogleJobs } from "@/lib/seo/google-indexing";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
   const results: BulkResult[] = [];
   let publishedPublicCount = 0;
   let publishedInternalCount = 0;
+  const publishedPublicIds: string[] = [];
 
   // Sequential, not parallel: company find-or-create races (two brand-new
   // opportunities for the same new company, submitted in the same batch)
@@ -53,7 +55,10 @@ export async function POST(request: NextRequest) {
       results.push({ index, success: true, id: opportunity.id });
       if (opportunity.status === "published") {
         if (opportunity.is_internal) publishedInternalCount += 1;
-        else publishedPublicCount += 1;
+        else {
+          publishedPublicCount += 1;
+          publishedPublicIds.push(opportunity.id);
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create opportunity.";
@@ -70,6 +75,8 @@ export async function POST(request: NextRequest) {
   // response's critical path: delivery is fire-and-forget from the
   // admin's point of view.
   notifyBulkOpportunities({ public: publishedPublicCount, internal: publishedInternalCount });
+  // Ask Google to crawl every newly published public job page right away.
+  after(() => notifyGoogleJobs(publishedPublicIds));
 
   // BulkImportClient only calls router.refresh() on its own page — that
   // does not clear the client-side Router Cache for OTHER already-visited

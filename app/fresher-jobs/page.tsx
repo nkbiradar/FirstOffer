@@ -7,6 +7,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import { getNonce } from "@/lib/security/csp";
 import { todayShortLabel } from "@/lib/ui-format";
+import { CITY_PAGES } from "@/lib/seo/cities";
 
 export const metadata: Metadata = {
   title: "Fresher Jobs & Openings in India (2026 Batch)",
@@ -119,6 +120,15 @@ export default async function FresherJobsLandingPage() {
             </Link>
           </div>
         </section>
+
+        <nav className="type-filters" aria-label="Fresher jobs by city" style={{ marginBottom: 24 }}>
+          <span className="result-count" style={{ margin: 0, alignSelf: "center" }}>By city:</span>
+          {CITY_PAGES.map((c) => (
+            <Link key={c.slug} className="filter-pill" href={`/fresher-jobs/${c.slug}`}>
+              {c.remote ? "Remote" : `Jobs in ${c.name}`}
+            </Link>
+          ))}
+        </nav>
 
         <div className="seo-categories-grid" style={{ marginBottom: 32 }}>
           <Link href="/tech-jobs" className="seo-category-card">
