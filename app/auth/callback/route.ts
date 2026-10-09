@@ -32,7 +32,9 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") || "/";
+  const rawNext = searchParams.get("next") || "/";
+  // Only ever redirect within this site (blocks "//evil.com" style values).
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
   const loginPath = next.startsWith("/admin") ? "/admin/login" : "/login";
 
   if (code) {
@@ -42,7 +44,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}${next}`);
     }
 
-    console.error("Google OAuth callback: exchangeCodeForSession failed:", error.message);
+    console.error(
+      "Google OAuth callback: exchangeCodeForSession failed:",
+      error.message,
+      "| host:",
+      request.headers.get("host"),
+      "| has verifier cookie:",
+      request.cookies.getAll().some((c) => c.name.includes("code-verifier")),
+    );
+
+    // The same callback URL is often hit twice (mobile browsers re-load or
+    // prefetch it, or the user taps back). The first hit already signed the
+    // visitor in and used up the code, so the second fails with "code
+    // verifier not found" — but they ARE signed in. Don't show an error in
+    // that case; just carry on to where they were going.
+    const {
+      data: { user: alreadySignedIn },
+    } = await supabase.auth.getUser();
+    if (alreadySignedIn) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
 
     const isMissingVerifier = /code verifier/i.test(error.message);
     // Previously stated the in-app-browser cause as if certain ("this
