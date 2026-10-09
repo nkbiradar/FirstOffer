@@ -20,8 +20,6 @@ import {
 } from "@/lib/seo/job-posting";
 import ApplyTracker from "@/components/ApplyTracker";
 import UnlockContactCard from "@/components/UnlockContactCard";
-import FreeUnlockCard from "@/components/FreeUnlockCard";
-import { getFreeUnlockStatus } from "@/lib/data/free-unlocks";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import { isAppRequest } from "@/lib/nativeAppServer";
 import OpportunityCard from "@/components/OpportunityCard";
@@ -201,23 +199,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.premium_group_hint ||
       opportunity.additional_details,
   );
-  const paidUnlocked =
+  const applyUnlocked =
     user && hasApplyContent
       ? opportunity.is_internal
         ? await hasInternalAccess(user.id)
         : await hasFullAccess(user.id)
       : false;
-  // One free unlock per account (lib/data/free-unlocks.ts) — only looked up
-  // for a public listing the visitor hasn't already paid to see.
-  const freeUnlock =
-    user && hasApplyContent && !paidUnlocked && !opportunity.is_internal
-      ? await getFreeUnlockStatus(user.id)
-      : { used: false, opportunityId: null };
-  const unlockedByFree = freeUnlock.opportunityId === id;
-  const applyUnlocked = paidUnlocked || unlockedByFree;
-  // Offer the free unlock to signed-out visitors and to accounts that
-  // haven't spent it yet.
-  const offerFreeUnlock = !opportunity.is_internal && hasApplyContent && !applyUnlocked && (!user || !freeUnlock.used);
   const canShowApply = !isExpired && (!hasApplyContent || applyUnlocked);
   // Android app: no prices or purchase buttons (Google Play policy).
   const inApp = await isAppRequest();
@@ -386,14 +373,6 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
           {!isExpired && (
             <>
-              {canShowApply && unlockedByFree && (
-                <p className="free-unlock-used-note">
-                  🎁 Unlocked with your free unlock.{" "}
-                  <span data-app-hide>
-                    Want every job like this? <Link href="/opportunities">Unlock all jobs for ₹{fullAccessPrice}/month</Link>
-                  </span>
-                </p>
-              )}
               {canShowApply && applyAction && (
                 <div className="apply-inline">
                   <ApplyButton action={applyAction} />
@@ -404,9 +383,6 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                 <div className="apply-inline">
                   <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
                 </div>
-              )}
-              {!canShowApply && offerFreeUnlock && (
-                <FreeUnlockCard opportunityId={id} isSignedIn={Boolean(user)} />
               )}
               {!canShowApply && (
                 <div className="apply-inline">
