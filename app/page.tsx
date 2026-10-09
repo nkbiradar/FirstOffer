@@ -5,6 +5,7 @@ import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import SuccessStories from "@/components/SuccessStories";
 import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
+import { getFreeUnlockStatus } from "@/lib/data/free-unlocks";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { getActiveAnnouncement } from "@/lib/data/site-announcement";
@@ -81,6 +82,11 @@ export default async function HomePage() {
   // 2026") above is already computed for the "Today's Opportunities"
   // heading further down, but that's too long for a one-line pill.
   const heroDateLabel = todayShortLabel();
+
+  // "Your first unlock is free" banner: shown to signed-out visitors and to
+  // signed-in accounts without full access that haven't spent it yet.
+  const freeUnlock = user && !alreadyHasFullAccess ? await getFreeUnlockStatus(user.id) : null;
+  const showFreeUnlockBanner = !alreadyHasFullAccess && (!user || (freeUnlock !== null && !freeUnlock.used));
 
   const topCompanies = companies
     .filter((company) => company.publishedOpportunityCount > 0)
@@ -214,6 +220,24 @@ export default async function HomePage() {
                 Browse Tech Jobs
               </Link>
             </div>
+
+            {showFreeUnlockBanner && (
+              <Link
+                href={user ? "/opportunities" : "/login?next=%2Fopportunities"}
+                className="free-unlock-banner"
+              >
+                <span className="free-unlock-banner-gift" aria-hidden="true">🎁</span>
+                <span className="free-unlock-banner-text">
+                  <strong>{user ? "You have 1 free unlock waiting" : "New here? Your first job unlock is FREE"}</strong>
+                  <span>
+                    {user
+                      ? "Pick any job and see its real Google Form, HR email or apply link — no payment."
+                      : "Sign in with Google and see the real Google Form or HR email of any 1 job — no payment."}
+                  </span>
+                </span>
+                <span className="free-unlock-banner-cta">{user ? "Pick a job →" : "Claim it →"}</span>
+              </Link>
+            )}
           </div>
 
           <div className="trust-bar">
