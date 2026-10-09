@@ -1,8 +1,9 @@
 // Refer & Earn — see the "Refer & Earn" block in supabase/schema.sql.
 //
-// Rule: REFERRAL_SIGNUPS_REQUIRED friends sign up through your link AND at
-// least REFERRAL_PAID_REQUIRED of them buy Full Access → 1 free month.
-// Every further block earns another month.
+// Rule: a referral only counts once the friend (who signed up through
+// your link) BUYS Full Access. Every REFERRAL_PAID_REQUIRED buyers → 1 free
+// month. Sign-ups are still recorded (to know who referred whom) and shown,
+// but don't count toward the reward on their own.
 //
 // The free month is a normal `subscriptions` row (product full_access,
 // status active, amount 0, no payment id), so every existing access check
@@ -12,8 +13,7 @@
 import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const REFERRAL_SIGNUPS_REQUIRED = 20;
-export const REFERRAL_PAID_REQUIRED = 10;
+export const REFERRAL_PAID_REQUIRED = 5;
 export const REFERRAL_REWARD_DAYS = 30;
 export const REFERRAL_COOKIE = "fo_ref";
 
@@ -113,10 +113,7 @@ export async function syncReferralRewards(userId: string): Promise<ReferralStats
   const referredIds = (refs ?? []).map((r) => r.referred_id as string);
   const signups = referredIds.length;
   const paid = await countPaid(referredIds);
-  const earned = Math.min(
-    Math.floor(signups / REFERRAL_SIGNUPS_REQUIRED),
-    Math.floor(paid / REFERRAL_PAID_REQUIRED),
-  );
+  const earned = Math.floor(paid / REFERRAL_PAID_REQUIRED);
   const granted = new Set((rewards ?? []).map((r) => r.reward_number as number));
 
   for (let n = 1; n <= earned; n++) {

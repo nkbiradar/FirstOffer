@@ -7,21 +7,18 @@ export default function ReferralCard({
   link,
   signups,
   paid,
-  signupsRequired,
   paidRequired,
   rewardsEarned,
 }: {
   link: string;
   signups: number;
   paid: number;
-  signupsRequired: number;
   paidRequired: number;
   rewardsEarned: number;
 }) {
   const [copied, setCopied] = useState(false);
 
   // Progress toward the NEXT free month.
-  const signupsShown = Math.max(0, Math.min(signups - rewardsEarned * signupsRequired, signupsRequired));
   const paidShown = Math.max(0, Math.min(paid - rewardsEarned * paidRequired, paidRequired));
 
   const shareText =
@@ -40,8 +37,8 @@ export default function ReferralCard({
 
   const steps = [
     { title: "Share your link", desc: "Send it to friends who are looking for jobs." },
-    { title: `${signupsRequired} friends sign up`, desc: "They create a free account with Google." },
-    { title: `${paidRequired} of them get Full Access`, desc: "Your free month is added automatically." },
+    { title: "Friend buys Full Access", desc: "A referral counts only when your friend buys." },
+    { title: `${paidRequired} friends buy = 1 month free`, desc: "Your free month is added automatically." },
   ];
 
   return (
@@ -105,19 +102,7 @@ export default function ReferralCard({
       <div className="referral-progress">
         <div className="referral-metric">
           <div className="referral-metric-row">
-            <span>Friends signed up</span>
-            <span className="referral-metric-value">
-              {signupsShown}
-              <span> / {signupsRequired}</span>
-            </span>
-          </div>
-          <div aria-hidden="true" className="referral-bar">
-            <span style={{ width: `${(signupsShown / signupsRequired) * 100}%` }} />
-          </div>
-        </div>
-        <div className="referral-metric">
-          <div className="referral-metric-row">
-            <span>Friends with Full Access</span>
+            <span>Friends who bought Full Access</span>
             <span className="referral-metric-value">
               {paidShown}
               <span> / {paidRequired}</span>
@@ -126,11 +111,15 @@ export default function ReferralCard({
           <div aria-hidden="true" className="referral-bar">
             <span style={{ width: `${(paidShown / paidRequired) * 100}%` }} />
           </div>
+          <p className="referral-joined">
+            {signups} friend{signups === 1 ? "" : "s"} joined with your link
+            {signups > paid ? ` · ${signups - paid} yet to buy` : ""}
+          </p>
         </div>
       </div>
 
       <p className="referral-fine">
-        Only new accounts created through your link count. Self-referrals and duplicate accounts are not counted.
+        A friend counts only after they sign up with your link and buy Full Access. Self-referrals and duplicate accounts are not counted.
       </p>
     </section>
   );

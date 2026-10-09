@@ -6686,3 +6686,5 @@ html.fo-app [data-app-hide] {
 .referral-bar { height: 8px; border-radius: 999px; background: var(--color-surface-muted); border: 1px solid var(--color-border); overflow: hidden; }
 .referral-bar span { display: block; height: 100%; background: var(--color-brand); border-radius: inherit; transition: width 0.4s ease; }
 .referral .referral-fine { margin: 0; font-size: 12px; color: var(--color-text-tertiary); }
+.referral .referral-joined { margin: 8px 0 0; font-size: 13px; color: var(--color-text-tertiary); }
+.referral-progress:has(> :only-child) { grid-template-columns: 1fr; }

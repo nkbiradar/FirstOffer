@@ -10,7 +10,7 @@ import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
 import ReferralCard from "@/components/ReferralCard";
-import { syncReferralRewards, REFERRAL_PAID_REQUIRED, REFERRAL_SIGNUPS_REQUIRED } from "@/lib/data/referrals";
+import { syncReferralRewards, REFERRAL_PAID_REQUIRED } from "@/lib/data/referrals";
 import { getSiteUrl } from "@/lib/site-url";
 import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
 import { formatRelativeTime } from "@/lib/ui-format";
@@ -166,7 +166,6 @@ export default async function DashboardPage({
               paidRequired={REFERRAL_PAID_REQUIRED}
               rewardsEarned={referral.rewardsEarned}
               signups={referral.signups}
-              signupsRequired={REFERRAL_SIGNUPS_REQUIRED}
             />
           </div>
         )}

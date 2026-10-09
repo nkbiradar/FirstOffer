@@ -967,9 +967,8 @@ create index if not exists opportunities_is_free_pick_idx
   on public.opportunities (is_free_pick) where is_free_pick;
 
 -- ── Refer & Earn ─────────────────────────────────────────────────────────
--- Rule: refer 20 friends (they sign up with Google through your link) AND
--- at least 10 of them buy Full Access → you get 1 month of Full Access
--- free. Repeats: every further 20 sign-ups + 10 buyers earns another month.
+-- Rule: a referral counts only when the friend who signed up through your
+-- link BUYS Full Access. Every 5 such buyers → 1 month of Full Access free.
 -- Thresholds live in lib/data/referrals.ts. All reads/writes go through the
 -- service-role client, so RLS is on with no public policies.
 --
