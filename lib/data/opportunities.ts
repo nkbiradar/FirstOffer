@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Opportunity, OpportunityType, WorkMode } from "@/types/supabase";
+import { categorizeRole, ROLE_CATEGORIES } from "@/lib/roles";
 
 export type OpportunityCompanySummary = {
   id: string;
@@ -26,6 +27,8 @@ export type ListOpportunitiesOptions = {
   location?: string;
   /** Match ANY of these location terms (city pages: "Bangalore" + "Bengaluru"). */
   locations?: string[];
+  /** Role category slug from lib/roles.ts (e.g. "software", "data"). */
+  roleCategory?: string;
 };
 
 export type ListOpportunitiesResult = {
@@ -411,6 +414,34 @@ export async function getSiteStats(): Promise<SiteStats> {
   };
 }
 
+export type LiveRoleRow = { id: string; role: string; company_id: string | null; categories: string[] };
+
+/** Every live public opportunity's id, title, company and role categories. */
+export async function getLiveRoleIndex(): Promise<LiveRoleRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await applyPublishedFilter(
+    supabase.from("opportunities").select("id, role, company_id"),
+  ).limit(2000);
+  if (error) {
+    console.error("getLiveRoleIndex failed:", error.message);
+    return [];
+  }
+  return ((data ?? []) as { id: string; role: string; company_id: string | null }[]).map((row) => ({
+    ...row,
+    categories: categorizeRole(row.role),
+  }));
+}
+
+/** Live opportunity count per role category (only categories with jobs). */
+export async function getRoleCategoryCounts(): Promise<{ slug: string; label: string; count: number }[]> {
+  const index = await getLiveRoleIndex();
+  return ROLE_CATEGORIES.map((c) => ({
+    slug: c.slug,
+    label: c.label,
+    count: index.filter((row) => row.categories.includes(c.slug)).length,
+  })).filter((c) => c.count > 0);
+}
+
 /**
  * Published, non-expired opportunities with optional search/type filters
  * and simple offset pagination — used on the /opportunities listing page.
@@ -454,6 +485,16 @@ export async function getPublishedOpportunities(
     if (terms.length > 0) {
       builder = builder.or(terms.map((t) => `location.ilike.%${t}%`).join(","));
     }
+  }
+
+  if (options.roleCategory) {
+    // Categories come from the job title (lib/roles.ts), so resolve the
+    // matching ids first — a few hundred live rows at most.
+    const ids = (await getLiveRoleIndex())
+      .filter((row) => row.categories.includes(options.roleCategory as string))
+      .map((row) => row.id);
+    if (ids.length === 0) return { opportunities: [], total: 0, page, pageSize };
+    builder = builder.in("id", ids);
   }
 
   if (options.query) {

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import { getUser } from "@/lib/supabase/auth";
-import { getPublishedOpportunities } from "@/lib/data/opportunities";
+import { getPublishedOpportunities, getRoleCategoryCounts } from "@/lib/data/opportunities";
+import { isRoleSlug } from "@/lib/roles";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import type { OpportunityType, WorkMode } from "@/types/supabase";
@@ -74,6 +75,8 @@ export default async function OpportunitiesPage({
   const workMode = VALID_MODES.includes(modeParam as WorkMode) ? (modeParam as WorkMode) : undefined;
   const batch = firstValue(params.batch)?.trim() || "";
   const location = firstValue(params.location)?.trim() || "";
+  const roleParam = firstValue(params.role);
+  const roleCategory = isRoleSlug(roleParam) ? roleParam : undefined;
   const page = Math.max(1, Number(firstValue(params.page)) || 1);
 
   // The filtered listing, plus two cheap unfiltered count-only queries
@@ -81,32 +84,37 @@ export default async function OpportunitiesPage({
   // internshipTotals + fullTimeTotals should equal siteTotals, but full-time
   // is derived by subtraction rather than a 4th query, so it stays correct
   // even if some published row somehow has no opportunity_type set.
-  const [{ opportunities, total, pageSize }, siteTotals, internshipTotals] = await Promise.all([
+  const [{ opportunities, total, pageSize }, siteTotals, internshipTotals, roleCounts] = await Promise.all([
     getPublishedOpportunities({
       query,
       type,
       workMode,
       batch: batch || undefined,
       location: location || undefined,
+      roleCategory,
       page,
     }),
     getPublishedOpportunities({ pageSize: 1 }),
     getPublishedOpportunities({ type: "internship", pageSize: 1 }),
+    getRoleCategoryCounts(),
   ]);
   const liveTotal = siteTotals.total;
   const internshipTotal = internshipTotals.total;
   const fullTimeTotal = Math.max(0, liveTotal - internshipTotal);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const hasFilters = Boolean(query || type || workMode || batch || location);
+  const hasFilters = Boolean(query || type || workMode || batch || location || roleCategory);
 
   // Builds an /opportunities URL carrying every currently-active filter,
   // with the given overrides applied (a key set to undefined clears that
   // filter). Keeps every filter link/pagination link in sync with q, type,
   // mode, batch, and location at once instead of dropping the others.
-  function buildHref(overrides: { type?: string; mode?: string; page?: number } = {}) {
+  function buildHref(overrides: { type?: string; mode?: string; role?: string; page?: number } = {}) {
     const next = new URLSearchParams();
     if (query) next.set("q", query);
+
+    const nextRole = "role" in overrides ? overrides.role : roleCategory;
+    if (nextRole) next.set("role", nextRole);
 
     const nextType = "type" in overrides ? overrides.type : type;
     if (nextType) next.set("type", nextType);
@@ -117,7 +125,8 @@ export default async function OpportunitiesPage({
     if (batch) next.set("batch", batch);
     if (location) next.set("location", location);
 
-    const nextPage = overrides.page ?? page;
+    // Changing any filter starts again from page 1.
+    const nextPage = overrides.page ?? (Object.keys(overrides).length > 0 ? 1 : page);
     if (nextPage > 1) next.set("page", String(nextPage));
 
     const qs = next.toString();
@@ -179,6 +188,7 @@ export default async function OpportunitiesPage({
               {workMode && <input name="mode" type="hidden" value={workMode} />}
               {batch && <input name="batch" type="hidden" value={batch} />}
               {location && <input name="location" type="hidden" value={location} />}
+              {roleCategory && <input name="role" type="hidden" value={roleCategory} />}
               <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="11" cy="11" r="7" />
                 <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
@@ -212,6 +222,26 @@ export default async function OpportunitiesPage({
             </div>
           </div>
 
+          {roleCounts.length > 0 && (
+            <div className="role-filters" role="group" aria-label="Filter by role">
+              <span className="role-filters-label">Role</span>
+              <div className="role-filters-scroll">
+                <Link className={`filter-pill ${!roleCategory ? "active" : ""}`} href={buildHref({ role: undefined })}>
+                  All roles
+                </Link>
+                {roleCounts.map((c) => (
+                  <Link
+                    className={`filter-pill ${roleCategory === c.slug ? "active" : ""}`}
+                    href={buildHref({ role: c.slug })}
+                    key={c.slug}
+                  >
+                    {c.label} <span className="role-filter-count">{c.count}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="toolbar filter-bar-row-secondary">
             <div className="type-filters">
               <Link className={`filter-pill ${!workMode ? "active" : ""}`} href={buildHref({ mode: undefined })}>
@@ -232,6 +262,7 @@ export default async function OpportunitiesPage({
               {query && <input name="q" type="hidden" value={query} />}
               {type && <input name="type" type="hidden" value={type} />}
               {workMode && <input name="mode" type="hidden" value={workMode} />}
+              {roleCategory && <input name="role" type="hidden" value={roleCategory} />}
               <input className="filter-input" name="batch" defaultValue={batch} placeholder="Batch (e.g. 2026)" type="text" />
               <input className="filter-input" name="location" defaultValue={location} placeholder="Location" type="text" />
               <button className="btn btn-secondary btn-sm" type="submit">

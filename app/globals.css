@@ -6761,3 +6761,30 @@ html.fo-app [data-app-hide] {
 .featured-intern .featured-intern-college { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
 .referral-actions-stack { display: grid; gap: 4px; justify-items: start; }
 .referral-form select { width: 100%; padding: 9px 12px; border: 1px solid var(--color-border-strong); border-radius: 10px; font: inherit; font-size: 14px; background: var(--color-surface); }
+
+/* Role filters (/opportunities, /companies) */
+.role-filters { display: flex; align-items: center; gap: 10px; margin: 14px 0 6px; min-width: 0; }
+.role-filters-label { flex: 0 0 auto; font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
+.role-filters-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; min-width: 0; }
+.role-filters-scroll .filter-pill { white-space: nowrap; flex: 0 0 auto; }
+.role-filter-count {
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+}
+.filter-pill.active .role-filter-count { background: rgba(255, 255, 255, 0.2); color: inherit; }
+.company-role-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 4px 0 8px; }
+.company-role-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-brand);
+  background: var(--color-brand-soft);
+  border: 1px solid var(--color-brand-soft-border);
+}
+.companies-page .role-filters { margin: 4px 0 20px; }
