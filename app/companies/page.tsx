@@ -3,7 +3,11 @@ import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { avatarGradient, initials } from "@/lib/ui-format";
 
 export default async function CompaniesPage() {
-  const companies = await getCompaniesWithPublishedCounts();
+  // Only companies with at least one live opportunity right now, busiest
+  // first — a company with nothing open is a dead end for a job seeker.
+  const companies = (await getCompaniesWithPublishedCounts())
+    .filter((company) => company.publishedOpportunityCount > 0)
+    .sort((x, y) => y.publishedOpportunityCount - x.publishedOpportunityCount || x.name.localeCompare(y.name));
 
   return (
     <main className="page page-wide companies-page">
@@ -11,10 +15,10 @@ export default async function CompaniesPage() {
         <div className="page-header">
           <span className="eyebrow">
             <span className="eyebrow-dot" />
-            {companies.length} companies
+            {companies.length} {companies.length === 1 ? "company" : "companies"} hiring now
           </span>
           <h1>Companies</h1>
-          <p>Every company with opportunities currently listed on FirstOffer.</p>
+          <p>Companies with open opportunities on FirstOffer right now. Updated as new roles go live.</p>
         </div>
 
         {companies.length === 0 ? (
@@ -24,8 +28,8 @@ export default async function CompaniesPage() {
                 <path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
-            <h3>No companies yet</h3>
-            <p>Companies show up here as soon as opportunities are published.</p>
+            <h3>No companies hiring right now</h3>
+            <p>Companies show up here as soon as new opportunities are published — check back soon.</p>
           </div>
         ) : (
           <div className="company-grid">
@@ -50,14 +54,12 @@ export default async function CompaniesPage() {
                     {company.publishedOpportunityCount}{" "}
                     {company.publishedOpportunityCount === 1 ? "opportunity" : "opportunities"}
                   </p>
-                  {company.publishedOpportunityCount > 0 && (
-                    <Link
-                      className="company-card-link"
-                      href={`/opportunities?q=${encodeURIComponent(company.name)}`}
-                    >
-                      View Opportunities &rarr;
-                    </Link>
-                  )}
+                  <Link
+                    className="company-card-link"
+                    href={`/opportunities?q=${encodeURIComponent(company.name)}`}
+                  >
+                    View Opportunities &rarr;
+                  </Link>
                 </div>
               );
             })}
