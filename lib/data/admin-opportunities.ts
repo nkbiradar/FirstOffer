@@ -187,7 +187,12 @@ export async function setFreePick(id: string): Promise<void> {
   const existing = await getOpportunityByIdForAdmin(id);
   if (!existing) throw new Error("Opportunity not found.");
   if (existing.is_internal) throw new Error("Internal HR openings can't be the free opportunity.");
-  const { error } = await createAdminClient().from("opportunities").update({ is_free_pick: true }).eq("id", id);
+  // The free pick stays up for 2 days from the moment it's picked, then
+  // expires like any other listing (expires_at drives every public read).
+  const { error } = await createAdminClient()
+    .from("opportunities")
+    .update({ is_free_pick: true, expires_at: new Date(Date.now() + LISTING_VISIBILITY_MS).toISOString() })
+    .eq("id", id);
   if (error) throw new Error(`Could not set free opportunity: ${error.message}`);
   await clearOtherFreePicks(id);
 }
@@ -349,6 +354,9 @@ export async function updateOpportunity(
     const publishedAt = new Date();
     payload.published_at = publishedAt.toISOString();
     payload.expires_at = new Date(publishedAt.getTime() + LISTING_VISIBILITY_MS).toISOString();
+  } else if (payload.is_free_pick && !existing.is_free_pick && input.status === "published") {
+    // Newly made today's free pick: show it for 2 days from now, then expire.
+    payload.expires_at = new Date(Date.now() + LISTING_VISIBILITY_MS).toISOString();
   }
 
   const { data, error } = await admin

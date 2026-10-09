@@ -278,7 +278,7 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
           <span>
             Show this opportunity&apos;s Google Form / HR email / contact to <strong>everyone for free</strong>{" "}
             <span className="hint">
-              (featured at the top of the homepage — only one at a time; ticking this un-ticks the previous one.
+              (featured on the homepage for 2 days from when you tick it, then it expires — only one at a time; ticking this un-ticks the previous one.
               Not for Internal HR openings.)
             </span>
           </span>
