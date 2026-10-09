@@ -219,17 +219,6 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Today's FREE opportunity — picked by the admin (see the
-              is_free_pick column). Shown to every visitor, signed in or
-              not, with its real apply details, right under the headline. */}
-          {freePick && (
-            <FreePickCard
-              opportunity={freePick}
-              moreCount={Math.max(stats.totalOpportunities - 1, 0)}
-              price={isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR}
-              hasAccess={alreadyHasFullAccess}
-            />
-          )}
 
           <div className="trust-bar">
             <div className="trust-item">
@@ -292,6 +281,18 @@ export default async function HomePage() {
               <span className="stat-label">Live opportunities</span>
             </div>
           </div>
+
+          {/* Today's FREE opportunity — picked by the admin (see the
+              is_free_pick column). Shown to every visitor, signed in or
+              not, with its real apply details, right after the stats tiles. */}
+          {freePick && (
+            <FreePickCard
+              opportunity={freePick}
+              moreCount={Math.max(stats.totalOpportunities - 1, 0)}
+              price={isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR}
+              hasAccess={alreadyHasFullAccess}
+            />
+          )}
         </div>
       </section>
 
