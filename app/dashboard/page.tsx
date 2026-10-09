@@ -10,14 +10,12 @@ import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
 import ReferralCard from "@/components/ReferralCard";
-import { syncReferralRewards, REFERRAL_PAID_REQUIRED } from "@/lib/data/referrals";
+import { syncReferralRewards, REFERRAL_SIGNUPS_PER_MONTH } from "@/lib/data/referrals";
 import {
-  AMBASSADOR_PAID_REQUIRED,
-  INTERNSHIP_PAID_REQUIRED,
+  INTERNSHIP_SIGNUPS_REQUIRED,
   INTERNSHIP_STIPEND_INR,
   displayName,
   getInternshipApplication,
-  getUserCertificate,
 } from "@/lib/data/referral-rewards";
 import { getSiteUrl } from "@/lib/site-url";
 import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
@@ -92,11 +90,7 @@ export default async function DashboardPage({
     console.error("syncReferralRewards threw:", e);
     return null;
   });
-  const [ambassadorCert, internshipCert, internshipApp] = await Promise.all([
-    getUserCertificate(user.id, "ambassador"),
-    getUserCertificate(user.id, "internship"),
-    getInternshipApplication(user.id),
-  ]);
+  const internshipApp = await getInternshipApplication(user.id);
 
   const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
     await Promise.all([
@@ -174,15 +168,11 @@ export default async function DashboardPage({
         {referral?.code && (
           <div data-app-hide>
             <ReferralCard
-              ambassadorAt={AMBASSADOR_PAID_REQUIRED}
-              ambassadorCertId={ambassadorCert?.id ?? null}
               defaultName={displayName(user)}
-              freeMonthEvery={REFERRAL_PAID_REQUIRED}
-              internshipAt={INTERNSHIP_PAID_REQUIRED}
-              internshipCertId={internshipCert?.id ?? null}
+              freeMonthEvery={REFERRAL_SIGNUPS_PER_MONTH}
+              internshipAt={INTERNSHIP_SIGNUPS_REQUIRED}
               internshipStatus={internshipApp?.status ?? null}
               link={`${getSiteUrl()}/?ref=${referral.code}`}
-              paid={referral.paid}
               rewardsEarned={referral.rewardsEarned}
               signups={referral.signups}
               stipendInr={INTERNSHIP_STIPEND_INR}

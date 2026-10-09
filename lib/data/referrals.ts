@@ -1,9 +1,9 @@
 // Refer & Earn — see the "Refer & Earn" block in supabase/schema.sql.
 //
-// Rule: a referral only counts once the friend (who signed up through
-// your link) BUYS Full Access. Every REFERRAL_PAID_REQUIRED buyers → 1 free
-// month. Sign-ups are still recorded (to know who referred whom) and shown,
-// but don't count toward the reward on their own.
+// Rule (reach-focused): every NEW account that signs up with Google through
+// your link counts — buying is not required. Every REFERRAL_SIGNUPS_PER_MONTH
+// sign-ups → 1 free month of Full Access. (Buyer counts are still computed
+// for reference.)
 //
 // The free month is a normal `subscriptions` row (product full_access,
 // status active, amount 0, no payment id), so every existing access check
@@ -12,9 +12,8 @@
 // founding-member pricing, or as a paid referral for someone else).
 import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AMBASSADOR_PAID_REQUIRED, issueCertificate } from "@/lib/data/referral-rewards";
 
-export const REFERRAL_PAID_REQUIRED = 5;
+export const REFERRAL_SIGNUPS_PER_MONTH = 10;
 export const REFERRAL_REWARD_DAYS = 30;
 export const REFERRAL_COOKIE = "fo_ref";
 
@@ -117,7 +116,7 @@ export async function syncReferralRewards(
   const referredIds = (refs ?? []).map((r) => r.referred_id as string);
   const signups = referredIds.length;
   const paid = await countPaid(referredIds);
-  const earned = Math.floor(paid / REFERRAL_PAID_REQUIRED);
+  const earned = Math.floor(signups / REFERRAL_SIGNUPS_PER_MONTH);
   const granted = new Set((rewards ?? []).map((r) => r.reward_number as number));
 
   for (let n = 1; n <= earned; n++) {
@@ -163,10 +162,6 @@ export async function syncReferralRewards(
     await admin.from("referral_rewards").update({ subscription_id: sub.id }).eq("id", reward.id);
   }
 
-  // 15 paying referrals → Campus Ambassador certificate (issued once).
-  if (fullName && paid >= AMBASSADOR_PAID_REQUIRED) {
-    await issueCertificate(userId, "ambassador", fullName, paid);
-  }
-
+  void fullName; // certificates paused for now (see referral-rewards.ts)
   return { code, signups, paid, rewardsEarned: earned };
 }

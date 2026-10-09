@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 type Tier = { at: number; title: string; desc: string };
 
@@ -9,27 +8,19 @@ type Tier = { at: number; title: string; desc: string };
 export default function ReferralCard({
   link,
   signups,
-  paid,
   freeMonthEvery,
-  ambassadorAt,
   internshipAt,
   stipendInr,
   rewardsEarned,
-  ambassadorCertId,
-  internshipCertId,
   internshipStatus,
   defaultName,
 }: {
   link: string;
   signups: number;
-  paid: number;
   freeMonthEvery: number;
-  ambassadorAt: number;
   internshipAt: number;
   stipendInr: number;
   rewardsEarned: number;
-  ambassadorCertId: string | null;
-  internshipCertId: string | null;
   internshipStatus: string | null;
   defaultName: string;
 }) {
@@ -41,13 +32,12 @@ export default function ReferralCard({
 
   const stipend = `₹${stipendInr.toLocaleString("en-IN")}/month`;
   const tiers: Tier[] = [
-    { at: freeMonthEvery, title: "1 month Full Access free", desc: `Repeats every ${freeMonthEvery} buyers.` },
-    { at: ambassadorAt, title: "Campus Ambassador certificate", desc: "Verifiable ID — add it to your resume & LinkedIn." },
+    { at: freeMonthEvery, title: "1 month Full Access free", desc: `Repeats every ${freeMonthEvery} friends.` },
     { at: internshipAt, title: "Growth Internship interview", desc: `1 month, remote · ${stipend} stipend if selected.` },
   ];
-  const next = tiers.find((t) => paid < t.at) ?? null;
+  const next = tiers.find((t) => signups < t.at) ?? null;
   const progressTarget = next?.at ?? internshipAt;
-  const progressPct = Math.min(100, (paid / progressTarget) * 100);
+  const progressPct = Math.min(100, (signups / progressTarget) * 100);
 
   const shareText =
     `I'm using FirstOffer to find fresher jobs — new internships and off-campus openings every day, ` +
@@ -97,9 +87,9 @@ export default function ReferralCard({
         <div>
           <p className="referral-eyebrow">Refer &amp; Earn</p>
           <h2 className="referral-title" id="referral-title">
-            Invite friends — earn free access, a certificate and an internship chance
+            Invite friends — earn free access and an internship chance
           </h2>
-          <p className="referral-sub">A friend counts once they sign up with your link and buy Full Access.</p>
+          <p className="referral-sub">A friend counts as soon as they sign up with Google through your link — no purchase needed.</p>
         </div>
         {rewardsEarned > 0 && (
           <span className="referral-earned-pill">
@@ -134,39 +124,29 @@ export default function ReferralCard({
       <div className="referral-progress">
         <div className="referral-metric">
           <div className="referral-metric-row">
-            <span>{next ? `Friends who bought · next: ${next.title}` : "Friends who bought Full Access"}</span>
+            <span>{next ? `Friends joined · next: ${next.title}` : "Friends joined with your link"}</span>
             <span className="referral-metric-value">
-              {paid}
+              {signups}
               <span> / {progressTarget}</span>
             </span>
           </div>
           <div aria-hidden="true" className="referral-bar">
             <span style={{ width: `${progressPct}%` }} />
           </div>
-          <p className="referral-joined">
-            {signups} friend{signups === 1 ? "" : "s"} joined with your link
-            {signups > paid ? ` · ${signups - paid} yet to buy` : ""}
-          </p>
         </div>
       </div>
 
       <ol className="referral-tiers">
         {tiers.map((tier) => {
-          const done = paid >= tier.at;
+          const done = signups >= tier.at;
           return (
             <li className={done ? "is-done" : ""} key={tier.at}>
               <span className="referral-tier-at">{done ? "✓" : tier.at}</span>
               <div className="referral-tier-body">
                 <p className="referral-step-title">
-                  {tier.at} friends buy → {tier.title}
+                  {tier.at} friends join → {tier.title}
                 </p>
                 <p className="referral-step-desc">{tier.desc}</p>
-
-                {tier.at === ambassadorAt && ambassadorCertId && (
-                  <Link className="referral-inline-link" href={`/certificate/${ambassadorCertId}`}>
-                    View &amp; download certificate →
-                  </Link>
-                )}
 
                 {tier.at === internshipAt && done && !applied && !showForm && (
                   <button className="referral-btn referral-btn-primary referral-tier-cta" onClick={() => setShowForm(true)} type="button">
@@ -176,12 +156,6 @@ export default function ReferralCard({
                 {tier.at === internshipAt && applied && (
                   <p className="referral-status">{statusText[internshipStatus ?? "applied"] ?? statusText.applied}</p>
                 )}
-                {tier.at === internshipAt && internshipCertId && (
-                  <Link className="referral-inline-link" href={`/certificate/${internshipCertId}`}>
-                    View internship certificate →
-                  </Link>
-                )}
-
                 {tier.at === internshipAt && showForm && (
                   <form className="referral-form" onSubmit={apply}>
                     <input defaultValue={defaultName} name="fullName" placeholder="Full name" required />
@@ -204,12 +178,12 @@ export default function ReferralCard({
             </li>
           );
         })}
-        <li className={internshipCertId ? "is-done" : ""}>
-          <span className="referral-tier-at">{internshipCertId ? "✓" : "★"}</span>
+        <li className={internshipStatus === "completed" ? "is-done" : ""}>
+          <span className="referral-tier-at">{internshipStatus === "completed" ? "✓" : "★"}</span>
           <div className="referral-tier-body">
             <p className="referral-step-title">After the internship</p>
             <p className="referral-step-desc">
-              Internship certificate + LinkedIn recommendation from the founder + featured on FirstOffer.
+              LinkedIn recommendation from the founder + featured on FirstOffer.
             </p>
           </div>
         </li>

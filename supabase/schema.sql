@@ -967,8 +967,8 @@ create index if not exists opportunities_is_free_pick_idx
   on public.opportunities (is_free_pick) where is_free_pick;
 
 -- ── Refer & Earn ─────────────────────────────────────────────────────────
--- Rule: a referral counts only when the friend who signed up through your
--- link BUYS Full Access. Every 5 such buyers → 1 month of Full Access free.
+-- Rule (reach-focused): every new account signing up through your link counts;
+-- every 10 → 1 free month, 25 → Growth Internship interview (certificates paused).
 -- Thresholds live in lib/data/referrals.ts. All reads/writes go through the
 -- service-role client, so RLS is on with no public policies.
 --

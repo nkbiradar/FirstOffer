@@ -16,9 +16,8 @@ export default async function AdminReferralsPage({ searchParams }: { searchParam
           <h1>Growth Internship Applications</h1>
         </div>
         <p className="hint">
-          From Refer &amp; Earn (25+ friends bought Full Access). Set <strong>Completed</strong> once the internship
-          is done — that issues their verifiable internship certificate. Tick <strong>Featured</strong> to show them
-          on the homepage.
+          From Refer &amp; Earn (25+ friends signed up with their link). Tick <strong>Featured</strong> on a
+          <strong>Completed</strong> intern to show them on the homepage.
         </p>
         {error && <p className="admin-login-error">{error}</p>}
 
@@ -32,7 +31,7 @@ export default async function AdminReferralsPage({ searchParams }: { searchParam
                   <th>Name</th>
                   <th>Contact</th>
                   <th>College</th>
-                  <th>Paying referrals</th>
+                  <th>Friends referred</th>
                   <th>Why</th>
                   <th>Applied</th>
                   <th>Status</th>

@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { getUser } from "@/lib/supabase/auth";
 import { syncReferralRewards } from "@/lib/data/referrals";
 import {
-  INTERNSHIP_PAID_REQUIRED,
+  INTERNSHIP_SIGNUPS_REQUIRED,
   INTERNSHIP_STIPEND_INR,
   displayName,
   getInternshipApplication,
@@ -15,16 +15,16 @@ function clean(value: unknown, max: number): string {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
-// Apply for the FirstOffer Growth Internship interview — only after 25
-// friends who signed up through your link have bought Full Access.
+// Apply for the FirstOffer Growth Internship interview — after 25 new
+// friends have signed up through your link (buying not required).
 export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
 
   const stats = await syncReferralRewards(user.id, displayName(user));
-  if (stats.paid < INTERNSHIP_PAID_REQUIRED) {
+  if (stats.signups < INTERNSHIP_SIGNUPS_REQUIRED) {
     return NextResponse.json(
-      { error: `You need ${INTERNSHIP_PAID_REQUIRED} friends who bought Full Access to apply (you have ${stats.paid}).` },
+      { error: `You need ${INTERNSHIP_SIGNUPS_REQUIRED} friends to sign up with your link to apply (you have ${stats.signups}).` },
       { status: 403 },
     );
   }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     college,
     linkedin_url: linkedin || null,
     why: why || null,
-    paid_referrals: stats.paid,
+    paid_referrals: stats.signups,
   });
   if (error) {
     console.error("internship application insert failed:", error.message);
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
   }
 
   void notifyAdmins(
-    `🎓 Growth Internship application: ${fullName} (${stats.paid} paying referrals)`,
+    `🎓 Growth Internship application: ${fullName} (${stats.signups} sign-ups referred)`,
     [
       ["Name", fullName],
       ["Email", user.email ?? ""],
@@ -69,7 +69,8 @@ export async function POST(request: NextRequest) {
       ["College", college],
       ["LinkedIn", linkedin],
       ["Why", why],
-      ["Paying referrals", String(stats.paid)],
+      ["Friends signed up", String(stats.signups)],
+      ["Of them bought", String(stats.paid)],
       ["Stipend offered", `₹${INTERNSHIP_STIPEND_INR.toLocaleString("en-IN")}/month`],
     ],
     "/admin/referrals",

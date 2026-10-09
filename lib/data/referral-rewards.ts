@@ -5,8 +5,8 @@
 import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const AMBASSADOR_PAID_REQUIRED = 15;
-export const INTERNSHIP_PAID_REQUIRED = 25;
+// Certificates are paused for now (tables/pages kept for later).
+export const INTERNSHIP_SIGNUPS_REQUIRED = 25;
 export const INTERNSHIP_STIPEND_INR = 15000;
 
 export type CertificateKind = "ambassador" | "internship";
@@ -141,7 +141,5 @@ export async function updateInternshipApplication(
     .single();
   if (error) throw new Error(error.message);
   const app = data as InternshipApplication;
-  if (status === "completed") {
-    await issueCertificate(app.user_id, "internship", app.full_name, app.paid_referrals);
-  }
+  void app; // internship certificate paused for now
 }
