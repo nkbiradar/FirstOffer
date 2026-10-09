@@ -12,9 +12,12 @@ import CountUp from "@/components/CountUp";
 import ReferralCard from "@/components/ReferralCard";
 import { syncReferralRewards, REFERRAL_SIGNUPS_PER_MONTH } from "@/lib/data/referrals";
 import {
+  GOODIES_SIGNUPS_REQUIRED,
   INTERNSHIP_SIGNUPS_REQUIRED,
+  PROFILE_PUSH_SIGNUPS_REQUIRED,
   displayName,
   getInternshipApplication,
+  getUserClaims,
 } from "@/lib/data/referral-rewards";
 import { getSiteUrl } from "@/lib/site-url";
 import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
@@ -89,7 +92,10 @@ export default async function DashboardPage({
     console.error("syncReferralRewards threw:", e);
     return null;
   });
-  const internshipApp = await getInternshipApplication(user.id);
+  const [internshipApp, referralClaims] = await Promise.all([
+    getInternshipApplication(user.id),
+    getUserClaims(user.id),
+  ]);
 
   const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
     await Promise.all([
@@ -167,9 +173,15 @@ export default async function DashboardPage({
         {referral?.code && (
           <div data-app-hide>
             <ReferralCard
+              claims={{
+                ...(referralClaims.profile_push ? { profile_push: referralClaims.profile_push.status } : {}),
+                ...(referralClaims.goodies ? { goodies: referralClaims.goodies.status } : {}),
+              }}
               defaultName={displayName(user)}
               freeMonthEvery={REFERRAL_SIGNUPS_PER_MONTH}
+              goodiesAt={GOODIES_SIGNUPS_REQUIRED}
               internshipAt={INTERNSHIP_SIGNUPS_REQUIRED}
+              profilePushAt={PROFILE_PUSH_SIGNUPS_REQUIRED}
               internshipStatus={internshipApp?.status ?? null}
               link={`${getSiteUrl()}/?ref=${referral.code}`}
               rewardsEarned={referral.rewardsEarned}

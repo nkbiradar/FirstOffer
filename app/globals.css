@@ -6759,3 +6759,5 @@ html.fo-app [data-app-hide] {
 .featured-intern-avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--color-brand); background: var(--color-brand-soft); }
 .featured-intern .featured-intern-name { margin: 0; font-weight: 700; }
 .featured-intern .featured-intern-college { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
+.referral-actions-stack { display: grid; gap: 4px; justify-items: start; }
+.referral-form select { width: 100%; padding: 9px 12px; border: 1px solid var(--color-border-strong); border-radius: 10px; font: inherit; font-size: 14px; background: var(--color-surface); }

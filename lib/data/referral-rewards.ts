@@ -6,7 +6,52 @@ import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // Certificates are paused for now (tables/pages kept for later).
+export const PROFILE_PUSH_SIGNUPS_REQUIRED = 15;
 export const INTERNSHIP_SIGNUPS_REQUIRED = 25;
+export const GOODIES_SIGNUPS_REQUIRED = 25;
+
+export type ClaimKind = "profile_push" | "goodies";
+export const CLAIM_REQUIREMENTS: Record<ClaimKind, number> = {
+  profile_push: PROFILE_PUSH_SIGNUPS_REQUIRED,
+  goodies: GOODIES_SIGNUPS_REQUIRED,
+};
+export type ReferralClaim = {
+  id: string;
+  user_id: string;
+  kind: ClaimKind;
+  details: Record<string, string>;
+  signups_at_claim: number;
+  status: "pending" | "done";
+  created_at: string;
+};
+
+export async function getUserClaims(userId: string): Promise<Partial<Record<ClaimKind, ReferralClaim>>> {
+  const { data, error } = await createAdminClient().from("referral_claims").select("*").eq("user_id", userId);
+  if (error) return {};
+  const out: Partial<Record<ClaimKind, ReferralClaim>> = {};
+  for (const row of (data ?? []) as ReferralClaim[]) out[row.kind] = row;
+  return out;
+}
+
+export async function getAllClaims(): Promise<ReferralClaim[]> {
+  const { data, error } = await createAdminClient()
+    .from("referral_claims")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error("getAllClaims failed:", error.message);
+    return [];
+  }
+  return (data ?? []) as ReferralClaim[];
+}
+
+export async function setClaimStatus(id: string, status: "pending" | "done"): Promise<void> {
+  const { error } = await createAdminClient()
+    .from("referral_claims")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
 
 export type CertificateKind = "ambassador" | "internship";
 export type Certificate = {

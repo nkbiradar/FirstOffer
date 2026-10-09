@@ -1040,3 +1040,21 @@ create table if not exists public.internship_applications (
 
 alter table public.certificates enable row level security;
 alter table public.internship_applications enable row level security;
+
+-- ── Refer & Earn: claimable rewards ──────────────────────────────────────
+-- 15 sign-ups → profile shared with 5 hiring companies (internal push).
+-- 25 sign-ups → FirstOffer goodies (plus the Growth Internship interview,
+-- which lives in internship_applications). One claim per user per kind.
+-- NOTE: additive and safe to run on its own against the live database.
+create table if not exists public.referral_claims (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  kind text not null check (kind in ('profile_push', 'goodies')),
+  details jsonb not null default '{}'::jsonb,
+  signups_at_claim integer not null default 0,
+  status text not null default 'pending' check (status in ('pending', 'done')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, kind)
+);
+alter table public.referral_claims enable row level security;

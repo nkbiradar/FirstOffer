@@ -140,7 +140,7 @@ export default async function AdminDashboardPage({
             View Subscriptions
           </Link>
           <Link className="btn btn-secondary" href="/admin/referrals">
-            Internship Applications
+            Referral Rewards
           </Link>
         </div>
 
