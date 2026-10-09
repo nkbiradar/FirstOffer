@@ -291,6 +291,7 @@ export default async function HomePage() {
               moreCount={Math.max(stats.totalOpportunities - 1, 0)}
               price={isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR}
               hasAccess={alreadyHasFullAccess}
+              isSignedIn={Boolean(user)}
             />
           )}
         </div>

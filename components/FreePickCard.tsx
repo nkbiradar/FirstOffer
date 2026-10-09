@@ -24,12 +24,15 @@ export default function FreePickCard({
   moreCount,
   price,
   hasAccess,
+  isSignedIn,
 }: {
   opportunity: OpportunityWithCompany;
   /** How many OTHER live opportunities are locked behind membership. */
   moreCount: number;
   price: number;
   hasAccess: boolean;
+  /** Signed-out visitors must sign in with Google before the apply details open. */
+  isSignedIn: boolean;
 }) {
   const { company, role, opportunity_type, location, batch, stipend, salary } = opportunity;
   const companyName = company?.name ?? "";
@@ -37,6 +40,7 @@ export default function FreePickCard({
   const formUrl = opportunity.google_form_url || (isGoogleForm(opportunity.application_url) ? opportunity.application_url : null);
   const applyUrl = !formUrl ? opportunity.application_url : null;
   const pay = stipend || salary;
+  const loginHref = `/login?next=${encodeURIComponent(`/opportunities/${opportunity.id}`)}`;
 
   return (
     <section className="free-pick" aria-labelledby="free-pick-title">
@@ -74,6 +78,16 @@ export default function FreePickCard({
 
         <div className="free-pick-apply">
           <p className="free-pick-apply-label">How to apply</p>
+          {!isSignedIn ? (
+            <div className="free-pick-apply-row">
+              <Link className="btn free-pick-btn" href={loginHref}>
+                {formUrl ? "📝 Apply on Google Form" : "🚀 Apply Now"}
+              </Link>
+              {opportunity.hr_email && <span className="free-pick-contact free-pick-locked">✉️ HR email</span>}
+              {opportunity.hr_contact && <span className="free-pick-contact free-pick-locked">📞 HR contact</span>}
+              <span className="free-pick-signin-note">Free — just sign in with Google to open it</span>
+            </div>
+          ) : (
           <div className="free-pick-apply-row">
             {formUrl && (
               <a className="btn free-pick-btn" href={formUrl} rel="noopener noreferrer" target="_blank">
@@ -92,6 +106,7 @@ export default function FreePickCard({
             )}
             {opportunity.hr_contact && <span className="free-pick-contact">📞 {opportunity.hr_contact}</span>}
           </div>
+          )}
           <Link className="free-pick-details" href={`/opportunities/${opportunity.id}`}>
             View full job details &rarr;
           </Link>

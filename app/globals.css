@@ -6581,3 +6581,6 @@ html.fo-app [data-app-hide] {
   font-weight: 800;
 }
 .free-pick-admin-card { border: 2px dashed #facc15; }
+.free-pick .free-pick-locked { opacity: 0.75; font-weight: 600; }
+.free-pick .free-pick-locked::after { content: " 🔒"; }
+.free-pick .free-pick-signin-note { width: 100%; color: #fde68a; font-size: 13px; font-weight: 600; }

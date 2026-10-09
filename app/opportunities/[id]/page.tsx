@@ -200,10 +200,10 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.additional_details,
   );
   // Today's FREE opportunity (admin-picked, see is_free_pick): apply
-  // details are open to every visitor, signed in or not.
+  // details open free to anyone who signs in with Google (no payment).
   const isFreePick = Boolean(opportunity.is_free_pick) && !opportunity.is_internal;
   const applyUnlocked = isFreePick
-    ? true
+    ? Boolean(user)
     : user && hasApplyContent
       ? opportunity.is_internal
         ? await hasInternalAccess(user.id)
@@ -377,7 +377,8 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
           {isFreePick && !isExpired && (
             <div className="free-pick-detail-note">
-              🎁 <strong>Today&apos;s FREE opportunity</strong> — apply details are unlocked for everyone.{" "}
+              🎁 <strong>Today&apos;s FREE opportunity</strong> —{" "}
+              {user ? "apply details are unlocked for you, free." : "sign in with Google to see the apply details, free."}{" "}
               <Link href="/opportunities">Want every opportunity like this? Unlock all &rarr;</Link>
             </div>
           )}
@@ -397,7 +398,14 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               )}
               {!canShowApply && (
                 <div className="apply-inline">
-                  {inApp ? (
+                  {isFreePick && !user ? (
+                    <Link
+                      className="btn btn-primary apply-now"
+                      href={`/login?next=${encodeURIComponent(`/opportunities/${id}`)}`}
+                    >
+                      🎁 Sign in with Google to apply free
+                    </Link>
+                  ) : inApp ? (
                     <AppMembersOnlyNote isSignedIn={Boolean(user)} next={`/opportunities/${id}`} />
                   ) : opportunity.is_internal ? (
                     <UnlockContactCard
