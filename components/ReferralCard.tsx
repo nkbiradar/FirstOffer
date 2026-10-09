@@ -10,7 +10,6 @@ export default function ReferralCard({
   signups,
   freeMonthEvery,
   internshipAt,
-  stipendInr,
   rewardsEarned,
   internshipStatus,
   defaultName,
@@ -19,7 +18,6 @@ export default function ReferralCard({
   signups: number;
   freeMonthEvery: number;
   internshipAt: number;
-  stipendInr: number;
   rewardsEarned: number;
   internshipStatus: string | null;
   defaultName: string;
@@ -30,10 +28,9 @@ export default function ReferralCard({
   const [formError, setFormError] = useState<string | null>(null);
   const [applied, setApplied] = useState(Boolean(internshipStatus));
 
-  const stipend = `₹${stipendInr.toLocaleString("en-IN")}/month`;
   const tiers: Tier[] = [
     { at: freeMonthEvery, title: "1 month Full Access free", desc: `Repeats every ${freeMonthEvery} friends.` },
-    { at: internshipAt, title: "Growth Internship interview", desc: `1 month, remote · ${stipend} stipend if selected.` },
+    { at: internshipAt, title: "Growth Internship interview", desc: "1 month, remote — work with the FirstOffer team." },
   ];
   const next = tiers.find((t) => signups < t.at) ?? null;
   const progressTarget = next?.at ?? internshipAt;

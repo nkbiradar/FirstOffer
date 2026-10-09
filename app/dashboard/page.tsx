@@ -13,7 +13,6 @@ import ReferralCard from "@/components/ReferralCard";
 import { syncReferralRewards, REFERRAL_SIGNUPS_PER_MONTH } from "@/lib/data/referrals";
 import {
   INTERNSHIP_SIGNUPS_REQUIRED,
-  INTERNSHIP_STIPEND_INR,
   displayName,
   getInternshipApplication,
 } from "@/lib/data/referral-rewards";
@@ -175,7 +174,6 @@ export default async function DashboardPage({
               link={`${getSiteUrl()}/?ref=${referral.code}`}
               rewardsEarned={referral.rewardsEarned}
               signups={referral.signups}
-              stipendInr={INTERNSHIP_STIPEND_INR}
             />
           </div>
         )}

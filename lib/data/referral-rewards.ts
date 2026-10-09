@@ -7,7 +7,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 // Certificates are paused for now (tables/pages kept for later).
 export const INTERNSHIP_SIGNUPS_REQUIRED = 25;
-export const INTERNSHIP_STIPEND_INR = 15000;
 
 export type CertificateKind = "ambassador" | "internship";
 export type Certificate = {

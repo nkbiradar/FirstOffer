@@ -4,7 +4,6 @@ import { getUser } from "@/lib/supabase/auth";
 import { syncReferralRewards } from "@/lib/data/referrals";
 import {
   INTERNSHIP_SIGNUPS_REQUIRED,
-  INTERNSHIP_STIPEND_INR,
   displayName,
   getInternshipApplication,
 } from "@/lib/data/referral-rewards";
@@ -71,7 +70,6 @@ export async function POST(request: NextRequest) {
       ["Why", why],
       ["Friends signed up", String(stats.signups)],
       ["Of them bought", String(stats.paid)],
-      ["Stipend offered", `₹${INTERNSHIP_STIPEND_INR.toLocaleString("en-IN")}/month`],
     ],
     "/admin/referrals",
     "Review applications",

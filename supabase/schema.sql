@@ -1006,7 +1006,7 @@ alter table public.referral_rewards enable row level security;
 -- ── Refer & Earn: certificates + Growth Internship ───────────────────────
 -- Reward ladder (paying referrals): 5 → free month · 15 → Campus Ambassador
 -- certificate · 25 → interview for the FirstOffer Growth Internship
--- (₹15,000/month, 1 month, remote) · completed internship → internship
+-- (1 month, remote) · completed internship → internship
 -- certificate + LinkedIn recommendation + featured on the site.
 -- Certificates are public and verifiable at /certificate/<id>.
 --
