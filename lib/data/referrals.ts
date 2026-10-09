@@ -12,6 +12,7 @@
 // founding-member pricing, or as a paid referral for someone else).
 import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { AMBASSADOR_PAID_REQUIRED, issueCertificate } from "@/lib/data/referral-rewards";
 
 export const REFERRAL_PAID_REQUIRED = 5;
 export const REFERRAL_REWARD_DAYS = 30;
@@ -97,7 +98,10 @@ async function countPaid(referredIds: string[]): Promise<number> {
  * reward row is inserted first with a unique (referrer_id, reward_number),
  * so two simultaneous loads can't double-grant.
  */
-export async function syncReferralRewards(userId: string): Promise<ReferralStats> {
+export async function syncReferralRewards(
+  userId: string,
+  fullName?: string,
+): Promise<ReferralStats> {
   const admin = createAdminClient();
   const [code, { data: refs, error: refsError }, { data: rewards }] = await Promise.all([
     getOrCreateReferralCode(userId),
@@ -157,6 +161,11 @@ export async function syncReferralRewards(userId: string): Promise<ReferralStats
       continue;
     }
     await admin.from("referral_rewards").update({ subscription_id: sub.id }).eq("id", reward.id);
+  }
+
+  // 15 paying referrals → Campus Ambassador certificate (issued once).
+  if (fullName && paid >= AMBASSADOR_PAID_REQUIRED) {
+    await issueCertificate(userId, "ambassador", fullName, paid);
   }
 
   return { code, signups, paid, rewardsEarned: earned };

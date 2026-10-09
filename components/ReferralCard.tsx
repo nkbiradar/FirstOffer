@@ -1,25 +1,53 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
-/** Dashboard "Refer & Earn" card: link, copy/share, how it works, progress. */
+type Tier = { at: number; title: string; desc: string };
+
+/** Dashboard "Refer & Earn": link, share, reward ladder, internship application. */
 export default function ReferralCard({
   link,
   signups,
   paid,
-  paidRequired,
+  freeMonthEvery,
+  ambassadorAt,
+  internshipAt,
+  stipendInr,
   rewardsEarned,
+  ambassadorCertId,
+  internshipCertId,
+  internshipStatus,
+  defaultName,
 }: {
   link: string;
   signups: number;
   paid: number;
-  paidRequired: number;
+  freeMonthEvery: number;
+  ambassadorAt: number;
+  internshipAt: number;
+  stipendInr: number;
   rewardsEarned: number;
+  ambassadorCertId: string | null;
+  internshipCertId: string | null;
+  internshipStatus: string | null;
+  defaultName: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [applied, setApplied] = useState(Boolean(internshipStatus));
 
-  // Progress toward the NEXT free month.
-  const paidShown = Math.max(0, Math.min(paid - rewardsEarned * paidRequired, paidRequired));
+  const stipend = `₹${stipendInr.toLocaleString("en-IN")}/month`;
+  const tiers: Tier[] = [
+    { at: freeMonthEvery, title: "1 month Full Access free", desc: `Repeats every ${freeMonthEvery} buyers.` },
+    { at: ambassadorAt, title: "Campus Ambassador certificate", desc: "Verifiable ID — add it to your resume & LinkedIn." },
+    { at: internshipAt, title: "Growth Internship interview", desc: `1 month, remote · ${stipend} stipend if selected.` },
+  ];
+  const next = tiers.find((t) => paid < t.at) ?? null;
+  const progressTarget = next?.at ?? internshipAt;
+  const progressPct = Math.min(100, (paid / progressTarget) * 100);
 
   const shareText =
     `I'm using FirstOffer to find fresher jobs — new internships and off-campus openings every day, ` +
@@ -35,11 +63,33 @@ export default function ReferralCard({
     }
   }
 
-  const steps = [
-    { title: "Share your link", desc: "Send it to friends who are looking for jobs." },
-    { title: "Friend buys Full Access", desc: "A referral counts only when your friend buys." },
-    { title: `${paidRequired} friends buy = 1 month free`, desc: "Your free month is added automatically." },
-  ];
+  async function apply(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitting(true);
+    setFormError(null);
+    const form = new FormData(event.currentTarget);
+    const response = await fetch("/api/referrals/internship", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(form.entries())),
+    });
+    const body = await response.json().catch(() => ({}));
+    setSubmitting(false);
+    if (!response.ok) {
+      setFormError(body.error ?? "Could not submit — please try again.");
+      return;
+    }
+    setApplied(true);
+    setShowForm(false);
+  }
+
+  const statusText: Record<string, string> = {
+    applied: "Application received — we'll contact you for the interview.",
+    interview: "Interview stage — check your email/phone.",
+    selected: "Selected 🎉 — welcome to the team!",
+    rejected: "Not selected this time — thank you for applying.",
+    completed: "Internship completed.",
+  };
 
   return (
     <section className="referral" aria-labelledby="referral-title">
@@ -47,9 +97,9 @@ export default function ReferralCard({
         <div>
           <p className="referral-eyebrow">Refer &amp; Earn</p>
           <h2 className="referral-title" id="referral-title">
-            Invite friends, get 1 month of Full Access free
+            Invite friends — earn free access, a certificate and an internship chance
           </h2>
-          <p className="referral-sub">Earn another free month every time you complete the goal again.</p>
+          <p className="referral-sub">A friend counts once they sign up with your link and buy Full Access.</p>
         </div>
         {rewardsEarned > 0 && (
           <span className="referral-earned-pill">
@@ -63,13 +113,7 @@ export default function ReferralCard({
           Your referral link
         </label>
         <div className="referral-link-row">
-          <input
-            className="referral-link"
-            id="referral-link"
-            onFocus={(e) => e.target.select()}
-            readOnly
-            value={link}
-          />
+          <input className="referral-link" id="referral-link" onFocus={(e) => e.target.select()} readOnly value={link} />
           <button className="referral-btn referral-btn-primary" onClick={copy} type="button">
             {copied ? "Copied" : "Copy"}
           </button>
@@ -87,29 +131,17 @@ export default function ReferralCard({
         </div>
       </div>
 
-      <ol className="referral-steps">
-        {steps.map((step, i) => (
-          <li key={step.title}>
-            <span className="referral-step-num">{i + 1}</span>
-            <div>
-              <p className="referral-step-title">{step.title}</p>
-              <p className="referral-step-desc">{step.desc}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-
       <div className="referral-progress">
         <div className="referral-metric">
           <div className="referral-metric-row">
-            <span>Friends who bought Full Access</span>
+            <span>{next ? `Friends who bought · next: ${next.title}` : "Friends who bought Full Access"}</span>
             <span className="referral-metric-value">
-              {paidShown}
-              <span> / {paidRequired}</span>
+              {paid}
+              <span> / {progressTarget}</span>
             </span>
           </div>
           <div aria-hidden="true" className="referral-bar">
-            <span style={{ width: `${(paidShown / paidRequired) * 100}%` }} />
+            <span style={{ width: `${progressPct}%` }} />
           </div>
           <p className="referral-joined">
             {signups} friend{signups === 1 ? "" : "s"} joined with your link
@@ -118,8 +150,74 @@ export default function ReferralCard({
         </div>
       </div>
 
+      <ol className="referral-tiers">
+        {tiers.map((tier) => {
+          const done = paid >= tier.at;
+          return (
+            <li className={done ? "is-done" : ""} key={tier.at}>
+              <span className="referral-tier-at">{done ? "✓" : tier.at}</span>
+              <div className="referral-tier-body">
+                <p className="referral-step-title">
+                  {tier.at} friends buy → {tier.title}
+                </p>
+                <p className="referral-step-desc">{tier.desc}</p>
+
+                {tier.at === ambassadorAt && ambassadorCertId && (
+                  <Link className="referral-inline-link" href={`/certificate/${ambassadorCertId}`}>
+                    View &amp; download certificate →
+                  </Link>
+                )}
+
+                {tier.at === internshipAt && done && !applied && !showForm && (
+                  <button className="referral-btn referral-btn-primary referral-tier-cta" onClick={() => setShowForm(true)} type="button">
+                    Apply for the interview
+                  </button>
+                )}
+                {tier.at === internshipAt && applied && (
+                  <p className="referral-status">{statusText[internshipStatus ?? "applied"] ?? statusText.applied}</p>
+                )}
+                {tier.at === internshipAt && internshipCertId && (
+                  <Link className="referral-inline-link" href={`/certificate/${internshipCertId}`}>
+                    View internship certificate →
+                  </Link>
+                )}
+
+                {tier.at === internshipAt && showForm && (
+                  <form className="referral-form" onSubmit={apply}>
+                    <input defaultValue={defaultName} name="fullName" placeholder="Full name" required />
+                    <input inputMode="tel" name="phone" placeholder="Phone (WhatsApp)" required />
+                    <input name="college" placeholder="College" required />
+                    <input name="linkedin" placeholder="LinkedIn profile link (optional)" type="url" />
+                    <textarea name="why" placeholder="Why do you want to join FirstOffer? (optional)" rows={3} />
+                    {formError && <p className="referral-form-error">{formError}</p>}
+                    <div className="referral-form-actions">
+                      <button className="referral-btn referral-btn-primary" disabled={submitting} type="submit">
+                        {submitting ? "Submitting…" : "Submit application"}
+                      </button>
+                      <button className="referral-btn referral-btn-outline" onClick={() => setShowForm(false)} type="button">
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </li>
+          );
+        })}
+        <li className={internshipCertId ? "is-done" : ""}>
+          <span className="referral-tier-at">{internshipCertId ? "✓" : "★"}</span>
+          <div className="referral-tier-body">
+            <p className="referral-step-title">After the internship</p>
+            <p className="referral-step-desc">
+              Internship certificate + LinkedIn recommendation from the founder + featured on FirstOffer.
+            </p>
+          </div>
+        </li>
+      </ol>
+
       <p className="referral-fine">
-        A friend counts only after they sign up with your link and buy Full Access. Self-referrals and duplicate accounts are not counted.
+        Self-referrals and duplicate accounts are not counted. Reaching {internshipAt} gets you an interview — selection
+        isn&apos;t guaranteed.
       </p>
     </section>
   );

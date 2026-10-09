@@ -6688,3 +6688,88 @@ html.fo-app [data-app-hide] {
 .referral .referral-fine { margin: 0; font-size: 12px; color: var(--color-text-tertiary); }
 .referral .referral-joined { margin: 8px 0 0; font-size: 13px; color: var(--color-text-tertiary); }
 .referral-progress:has(> :only-child) { grid-template-columns: 1fr; }
+
+/* Refer & Earn — reward ladder, internship form */
+.referral-tiers { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.referral-tiers li { display: flex; gap: 12px; align-items: flex-start; }
+.referral-tier-at {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-strong);
+}
+.referral-tiers li.is-done .referral-tier-at { color: #fff; background: var(--color-success); border-color: var(--color-success); }
+.referral-tier-body { flex: 1; min-width: 0; }
+.referral .referral-inline-link { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--color-brand); }
+.referral .referral-status { margin: 6px 0 0; font-size: 13px; font-weight: 600; color: var(--color-success); }
+.referral-tier-cta { margin-top: 8px; height: 36px; }
+.referral-form { margin-top: 10px; display: grid; gap: 8px; max-width: 520px; }
+.referral-form input,
+.referral-form textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  background: var(--color-surface);
+}
+.referral-form-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.referral .referral-form-error { margin: 0; font-size: 13px; color: var(--color-danger); }
+
+/* Certificate verify page (/certificate/[id]) */
+.cert-page .container { max-width: 960px; }
+.cert-verified {
+  margin: 0 auto 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--color-success-soft);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: 14px;
+}
+.cert {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 14px;
+  box-shadow: var(--shadow-lg);
+}
+.cert-inner {
+  border: 2px solid var(--color-brand);
+  outline: 1px solid var(--color-brand-soft-border);
+  outline-offset: -8px;
+  padding: clamp(24px, 6vw, 56px);
+  text-align: center;
+  color: var(--color-text);
+}
+.cert .cert-brand { margin: 0; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-brand); font-size: 14px; }
+.cert .cert-title { margin: 14px 0 22px; font-size: clamp(24px, 4.5vw, 38px); }
+.cert .cert-presented { margin: 0; color: var(--color-text-secondary); font-size: 15px; }
+.cert .cert-name { margin: 8px 0 4px; font-size: clamp(26px, 5vw, 42px); font-weight: 700; font-family: Georgia, "Times New Roman", serif; }
+.cert .cert-role { margin: 0 0 16px; font-weight: 700; color: var(--color-brand); letter-spacing: 0.04em; }
+.cert .cert-body { margin: 0 auto; max-width: 600px; color: var(--color-text-secondary); line-height: 1.6; }
+.cert-footer { margin-top: 36px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; text-align: left; }
+.cert .cert-sign { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 20px; border-bottom: 1px solid var(--color-border-strong); padding-bottom: 4px; }
+.cert .cert-meta { margin: 4px 0 0; font-size: 12px; color: var(--color-text-tertiary); }
+.cert-right { text-align: right; }
+.cert-actions { margin: 20px 0 40px; text-align: center; }
+.cert-verify-missing { padding: 60px 0; text-align: center; display: grid; gap: 12px; justify-items: center; }
+@media print {
+  .navbar, footer, .cert-actions, .cert-verified, .success-popup { display: none !important; }
+  .cert { box-shadow: none; border: none; }
+  .cert-page { padding: 0 !important; }
+}
+.featured-interns-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.featured-intern { display: flex; gap: 12px; align-items: center; padding: 14px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-surface); }
+.featured-intern-avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--color-brand); background: var(--color-brand-soft); }
+.featured-intern .featured-intern-name { margin: 0; font-weight: 700; }
+.featured-intern .featured-intern-college { margin: 0; font-size: 13px; color: var(--color-text-secondary); }

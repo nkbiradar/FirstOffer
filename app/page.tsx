@@ -6,6 +6,7 @@ import CountUp from "@/components/CountUp";
 import SuccessStories from "@/components/SuccessStories";
 import { getFreePickOpportunity, getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import FreePickCard from "@/components/FreePickCard";
+import { getFeaturedInterns } from "@/lib/data/referral-rewards";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { getActiveAnnouncement } from "@/lib/data/site-announcement";
@@ -69,6 +70,7 @@ export default async function HomePage() {
     alreadyHasFullAccess,
     isLegacyFullAccessUser,
     freePick,
+    featuredInterns,
   ] = await Promise.all([
     getHomepageOpportunities(),
     getSiteStats(),
@@ -78,6 +80,7 @@ export default async function HomePage() {
     user ? hasFullAccess(user.id) : Promise.resolve(false),
     user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
     getFreePickOpportunity(),
+    getFeaturedInterns(),
   ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
@@ -715,6 +718,33 @@ export default async function HomePage() {
               <SuccessStories testimonials={testimonials} />
             </section>
           </Reveal>
+        )}
+
+        {/* Refer & Earn → Growth Internship graduates, ticked "Featured" by
+            the admin at /admin/referrals. Hidden until there's at least one. */}
+        {featuredInterns.length > 0 && (
+          <section className="section featured-interns">
+            <div className="section-header">
+              <div>
+                <span className="eyebrow">
+                  <span className="eyebrow-dot" />
+                  FirstOffer Growth Interns
+                </span>
+                <h2 style={{ marginTop: 10 }}>Students who built FirstOffer with us</h2>
+              </div>
+            </div>
+            <div className="featured-interns-row">
+              {featuredInterns.map((intern) => (
+                <div className="featured-intern" key={`${intern.full_name}-${intern.college}`}>
+                  <span className="featured-intern-avatar">{initials(intern.full_name)}</span>
+                  <div>
+                    <p className="featured-intern-name">{intern.full_name}</p>
+                    <p className="featured-intern-college">{intern.college}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         <Reveal>

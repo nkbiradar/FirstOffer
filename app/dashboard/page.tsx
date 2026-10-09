@@ -11,6 +11,14 @@ import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
 import ReferralCard from "@/components/ReferralCard";
 import { syncReferralRewards, REFERRAL_PAID_REQUIRED } from "@/lib/data/referrals";
+import {
+  AMBASSADOR_PAID_REQUIRED,
+  INTERNSHIP_PAID_REQUIRED,
+  INTERNSHIP_STIPEND_INR,
+  displayName,
+  getInternshipApplication,
+  getUserCertificate,
+} from "@/lib/data/referral-rewards";
 import { getSiteUrl } from "@/lib/site-url";
 import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
 import { formatRelativeTime } from "@/lib/ui-format";
@@ -80,10 +88,15 @@ export default async function DashboardPage({
 
   // Runs first so a free month earned since the last visit is granted
   // before the subscription is read below.
-  const referral = await syncReferralRewards(user.id).catch((e) => {
+  const referral = await syncReferralRewards(user.id, displayName(user)).catch((e) => {
     console.error("syncReferralRewards threw:", e);
     return null;
   });
+  const [ambassadorCert, internshipCert, internshipApp] = await Promise.all([
+    getUserCertificate(user.id, "ambassador"),
+    getUserCertificate(user.id, "internship"),
+    getInternshipApplication(user.id),
+  ]);
 
   const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
     await Promise.all([
@@ -161,11 +174,18 @@ export default async function DashboardPage({
         {referral?.code && (
           <div data-app-hide>
             <ReferralCard
+              ambassadorAt={AMBASSADOR_PAID_REQUIRED}
+              ambassadorCertId={ambassadorCert?.id ?? null}
+              defaultName={displayName(user)}
+              freeMonthEvery={REFERRAL_PAID_REQUIRED}
+              internshipAt={INTERNSHIP_PAID_REQUIRED}
+              internshipCertId={internshipCert?.id ?? null}
+              internshipStatus={internshipApp?.status ?? null}
               link={`${getSiteUrl()}/?ref=${referral.code}`}
               paid={referral.paid}
-              paidRequired={REFERRAL_PAID_REQUIRED}
               rewardsEarned={referral.rewardsEarned}
               signups={referral.signups}
+              stipendInr={INTERNSHIP_STIPEND_INR}
             />
           </div>
         )}

@@ -139,6 +139,9 @@ export default async function AdminDashboardPage({
           <Link className="btn btn-secondary" href="/admin/subscriptions">
             View Subscriptions
           </Link>
+          <Link className="btn btn-secondary" href="/admin/referrals">
+            Internship Applications
+          </Link>
         </div>
 
         <section className="card announcement-card">

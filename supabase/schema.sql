@@ -1002,3 +1002,41 @@ create table if not exists public.referral_rewards (
 alter table public.referral_codes enable row level security;
 alter table public.referrals enable row level security;
 alter table public.referral_rewards enable row level security;
+
+-- ── Refer & Earn: certificates + Growth Internship ───────────────────────
+-- Reward ladder (paying referrals): 5 → free month · 15 → Campus Ambassador
+-- certificate · 25 → interview for the FirstOffer Growth Internship
+-- (₹15,000/month, 1 month, remote) · completed internship → internship
+-- certificate + LinkedIn recommendation + featured on the site.
+-- Certificates are public and verifiable at /certificate/<id>.
+--
+-- NOTE: additive and safe to run on its own against the live database.
+create table if not exists public.certificates (
+  id text primary key,                       -- short public verify ID
+  user_id uuid not null references auth.users(id) on delete cascade,
+  kind text not null check (kind in ('ambassador', 'internship')),
+  full_name text not null,
+  paid_referrals integer not null default 0,
+  issued_at timestamptz not null default now(),
+  unique (user_id, kind)
+);
+
+create table if not exists public.internship_applications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null unique references auth.users(id) on delete cascade,
+  full_name text not null,
+  email text not null,
+  phone text not null,
+  college text not null,
+  linkedin_url text,
+  why text,
+  paid_referrals integer not null default 0,
+  status text not null default 'applied'
+    check (status in ('applied', 'interview', 'selected', 'rejected', 'completed')),
+  featured boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.certificates enable row level security;
+alter table public.internship_applications enable row level security;
