@@ -377,7 +377,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
           {isFreePick && !isExpired && (
             <div className="free-pick-detail-note">
-              🎁 <strong>Today&apos;s FREE opportunity</strong> —{" "}
+              <strong>Free today</strong> —{" "}
               {user ? "apply details are unlocked for you, free." : "sign in with Google to see the apply details, free."}{" "}
               <Link href="/opportunities">Want every opportunity like this? Unlock all &rarr;</Link>
             </div>
@@ -403,7 +403,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       className="btn btn-primary apply-now"
                       href={`/login?next=${encodeURIComponent(`/opportunities/${id}`)}`}
                     >
-                      🎁 Sign in with Google to apply free
+                      Sign in with Google to apply — free
                     </Link>
                   ) : inApp ? (
                     <AppMembersOnlyNote isSignedIn={Boolean(user)} next={`/opportunities/${id}`} />
