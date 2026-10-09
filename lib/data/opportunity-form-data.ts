@@ -54,6 +54,9 @@ export type OpportunityFormInput = {
   // instead of a regular listing — see supabase/schema.sql's note on
   // opportunities.is_internal.
   isInternal: boolean;
+  // Today's FREE opportunity (apply details shown to everyone). Optional so
+  // bulk import / AI extraction leave the flag untouched (defaults false).
+  isFreePick?: boolean;
 };
 
 export function str(formData: FormData, key: string): string {
@@ -123,6 +126,7 @@ export function parseOpportunityFormData(
     sourceText: str(formData, "source_text"),
     status,
     isInternal: formData.get("is_internal") === "on",
+    isFreePick: formData.get("is_free_pick") === "on",
   };
 }
 

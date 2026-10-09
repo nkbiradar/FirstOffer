@@ -139,6 +139,10 @@ export interface Opportunity {
   // getInternalOpportunities.
   is_internal: boolean;
 
+  // Today's FREE opportunity — apply details visible to every visitor.
+  // Only one row is true at a time (see supabase/schema.sql).
+  is_free_pick: boolean;
+
   imported_at: string;
   published_at: string | null;
   expires_at: string | null;
@@ -189,6 +193,8 @@ export interface OpportunityInsert {
   status?: OpportunityStatus;
 
   is_internal?: boolean;
+
+  is_free_pick?: boolean;
 
   imported_at?: string;
   published_at?: string | null;

@@ -132,6 +132,7 @@ type OpportunityDbFields = Pick<
   | "deadline"
   | "source_text"
   | "is_internal"
+  | "is_free_pick"
 >;
 
 function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
@@ -159,7 +160,42 @@ function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
     deadline: input.deadline || null,
     source_text: input.sourceText.trim(),
     is_internal: input.isInternal,
+    // Only sent when the single-opportunity form says so; bulk import
+    // leaves it undefined, i.e. the column's default (false).
+    ...(input.isFreePick === undefined ? {} : { is_free_pick: input.isFreePick && !input.isInternal }),
   };
+}
+
+/**
+ * Keeps "Today's FREE opportunity" to exactly one row: clears the flag on
+ * every opportunity except `keepId`.
+ */
+async function clearOtherFreePicks(keepId: string): Promise<void> {
+  const { error } = await createAdminClient()
+    .from("opportunities")
+    .update({ is_free_pick: false })
+    .eq("is_free_pick", true)
+    .neq("id", keepId);
+  if (error) console.error("clearOtherFreePicks failed:", error.message);
+}
+
+/**
+ * Makes one public opportunity today's FREE pick (admin list's quick
+ * action). Internal HR openings can't be the free pick.
+ */
+export async function setFreePick(id: string): Promise<void> {
+  const existing = await getOpportunityByIdForAdmin(id);
+  if (!existing) throw new Error("Opportunity not found.");
+  if (existing.is_internal) throw new Error("Internal HR openings can't be the free opportunity.");
+  const { error } = await createAdminClient().from("opportunities").update({ is_free_pick: true }).eq("id", id);
+  if (error) throw new Error(`Could not set free opportunity: ${error.message}`);
+  await clearOtherFreePicks(id);
+}
+
+/** Removes the free-pick flag from one opportunity. */
+export async function clearFreePick(id: string): Promise<void> {
+  const { error } = await createAdminClient().from("opportunities").update({ is_free_pick: false }).eq("id", id);
+  if (error) throw new Error(`Could not clear free opportunity: ${error.message}`);
 }
 
 // ── Auto-expiry ──────────────────────────────────────────────────────────
@@ -277,6 +313,7 @@ export async function createOpportunity(input: OpportunityFormInput): Promise<Op
 
   const { data, error } = await admin.from("opportunities").insert(payload).select("*").single();
   if (error) throw new Error(`Create failed: ${error.message}`);
+  if ((data as Opportunity).is_free_pick) await clearOtherFreePicks((data as Opportunity).id);
   return data as Opportunity;
 }
 
@@ -322,6 +359,7 @@ export async function updateOpportunity(
     .single();
 
   if (error) throw new Error(`Update failed: ${error.message}`);
+  if ((data as Opportunity).is_free_pick) await clearOtherFreePicks(id);
   return { opportunity: data as Opportunity, publishingNow };
 }
 

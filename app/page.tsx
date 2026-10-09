@@ -4,7 +4,8 @@ import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import SuccessStories from "@/components/SuccessStories";
-import { getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
+import { getFreePickOpportunity, getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
+import FreePickCard from "@/components/FreePickCard";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { getActiveAnnouncement } from "@/lib/data/site-announcement";
@@ -67,6 +68,7 @@ export default async function HomePage() {
     announcement,
     alreadyHasFullAccess,
     isLegacyFullAccessUser,
+    freePick,
   ] = await Promise.all([
     getHomepageOpportunities(),
     getSiteStats(),
@@ -75,6 +77,7 @@ export default async function HomePage() {
     getActiveAnnouncement(),
     user ? hasFullAccess(user.id) : Promise.resolve(false),
     user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
+    getFreePickOpportunity(),
   ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
@@ -215,6 +218,18 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
+
+          {/* Today's FREE opportunity — picked by the admin (see the
+              is_free_pick column). Shown to every visitor, signed in or
+              not, with its real apply details, right under the headline. */}
+          {freePick && (
+            <FreePickCard
+              opportunity={freePick}
+              moreCount={Math.max(stats.totalOpportunities - 1, 0)}
+              price={isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR}
+              hasAccess={alreadyHasFullAccess}
+            />
+          )}
 
           <div className="trust-bar">
             <div className="trust-item">

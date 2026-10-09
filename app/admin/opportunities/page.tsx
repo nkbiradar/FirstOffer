@@ -73,7 +73,12 @@ export default async function AdminOpportunitiesPage({
                 {opportunities.map((opportunity) => (
                   <tr key={opportunity.id}>
                     <td>{opportunity.company?.name ?? "—"}</td>
-                    <td>{opportunity.role}</td>
+                    <td>
+                      {opportunity.is_free_pick ? (
+                        <span className="free-pick-badge" title="Today's FREE opportunity">🎁 FREE today</span>
+                      ) : null}{" "}
+                      {opportunity.role}
+                    </td>
                     <td>{opportunity.opportunity_type ?? "—"}</td>
                     <td>
                       <span className={`status-badge status-${opportunity.status}`}>
@@ -83,6 +88,22 @@ export default async function AdminOpportunitiesPage({
                     <td>{new Date(opportunity.created_at).toLocaleDateString("en-IN")}</td>
                     <td className="admin-table-actions">
                       <Link href={`/admin/opportunities/${opportunity.id}/edit`}>Edit</Link>
+                      {!opportunity.is_internal && opportunity.status === "published" ? (
+                        <form
+                          action={`/api/admin/opportunities/${opportunity.id}/free-pick`}
+                          method="post"
+                          style={{ display: "inline" }}
+                        >
+                          <input
+                            name="action"
+                            type="hidden"
+                            value={opportunity.is_free_pick ? "clear" : "set"}
+                          />
+                          <button className="btn btn-secondary btn-sm" type="submit">
+                            {opportunity.is_free_pick ? "Remove free" : "🎁 Make free today"}
+                          </button>
+                        </form>
+                      ) : null}
                       <DeleteOpportunityButton id={opportunity.id} role={opportunity.role} />
                     </td>
                   </tr>

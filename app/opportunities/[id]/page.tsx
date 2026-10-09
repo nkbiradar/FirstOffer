@@ -199,8 +199,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       opportunity.premium_group_hint ||
       opportunity.additional_details,
   );
-  const applyUnlocked =
-    user && hasApplyContent
+  // Today's FREE opportunity (admin-picked, see is_free_pick): apply
+  // details are open to every visitor, signed in or not.
+  const isFreePick = Boolean(opportunity.is_free_pick) && !opportunity.is_internal;
+  const applyUnlocked = isFreePick
+    ? true
+    : user && hasApplyContent
       ? opportunity.is_internal
         ? await hasInternalAccess(user.id)
         : await hasFullAccess(user.id)
@@ -370,6 +374,13 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </div>
 
           {compensation.length > 0 && <p className="opportunity-comp">{compensation.join(" · ")}</p>}
+
+          {isFreePick && !isExpired && (
+            <div className="free-pick-detail-note">
+              🎁 <strong>Today&apos;s FREE opportunity</strong> — apply details are unlocked for everyone.{" "}
+              <Link href="/opportunities">Want every opportunity like this? Unlock all &rarr;</Link>
+            </div>
+          )}
 
           {!isExpired && (
             <>

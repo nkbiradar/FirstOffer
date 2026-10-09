@@ -950,3 +950,18 @@ create index if not exists resume_orders_user_id_idx on public.resume_orders (us
 alter table public.resume_orders enable row level security;
 -- No policies: read and written only through the service-role client in
 -- app/api/resume-review/* and app/resume/page.tsx.
+
+-- ── Today's FREE opportunity (one at a time) ─────────────────────────────
+-- The admin marks one public opportunity per day as the "free pick": its
+-- apply details (Google Form / HR email / contact / link) are shown to
+-- every visitor, signed in or not, on the homepage and its own page — so
+-- a first-time visitor can apply once and see the value before paying.
+-- Only one row is ever true: lib/data/admin-opportunities.ts clears the
+-- flag on every other row whenever one is set.
+--
+-- NOTE: additive and safe to run on its own against the live database.
+alter table public.opportunities
+  add column if not exists is_free_pick boolean not null default false;
+
+create index if not exists opportunities_is_free_pick_idx
+  on public.opportunities (is_free_pick) where is_free_pick;

@@ -175,6 +175,30 @@ export async function getLatestOpportunities(limit = 6): Promise<OpportunityWith
   return (data ?? []) as OpportunityWithCompany[];
 }
 
+/**
+ * Today's FREE opportunity — the one public, live opportunity the admin
+ * has flagged `is_free_pick`. Its apply details are shown to every visitor
+ * (signed in or not) so a first-timer can apply once and see the value
+ * before paying. Null when none is set or the flagged one has expired.
+ */
+export async function getFreePickOpportunity(): Promise<OpportunityWithCompany | null> {
+  const supabase = await createClient();
+  const { data, error } = await applyPublishedFilter(
+    supabase.from("opportunities").select(OPPORTUNITY_SELECT),
+  )
+    .eq("is_free_pick", true)
+    .order("published_at", { ascending: false })
+    .limit(1);
+
+  if (error) {
+    // Most likely the is_free_pick migration hasn't been run yet — the
+    // homepage just renders without the free card.
+    console.error("getFreePickOpportunity failed:", error.message);
+    return null;
+  }
+  return ((data ?? [])[0] as OpportunityWithCompany | undefined) ?? null;
+}
+
 /** yyyy-mm-dd in IST — the site is India-focused (₹, Bengaluru, etc.), so "today" is judged in IST rather than the server's UTC clock. */
 function istDateKey(iso: string) {
   return new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });

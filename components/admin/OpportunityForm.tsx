@@ -266,6 +266,25 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
         </label>
       </section>
 
+      <section className="card free-pick-admin-card">
+        <h2>🎁 Today&apos;s FREE Opportunity</h2>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: "row" }}>
+          <input
+            name="is_free_pick"
+            type="checkbox"
+            defaultChecked={o?.is_free_pick ?? false}
+            style={{ width: "auto" }}
+          />
+          <span>
+            Show this opportunity&apos;s Google Form / HR email / contact to <strong>everyone for free</strong>{" "}
+            <span className="hint">
+              (featured at the top of the homepage — only one at a time; ticking this un-ticks the previous one.
+              Not for Internal HR openings.)
+            </span>
+          </span>
+        </label>
+      </section>
+
       <section className="card">
         <h2>Original Telegram Message</h2>
         <label>
