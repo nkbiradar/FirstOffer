@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { recordReferral, REFERRAL_COOKIE } from "@/lib/data/referrals";
 
 // Supabase redirects here after Google finishes its side of the OAuth flow
 // (configured as the app's redirectTo in GoogleSignInButton). Exchanges the
@@ -39,9 +40,20 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: exchanged, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      // Refer & Earn: credit whoever's link brought this new user here.
+      const refCode = request.cookies.get(REFERRAL_COOKIE)?.value;
+      if (refCode && exchanged?.user) {
+        try {
+          await recordReferral(exchanged.user, refCode);
+        } catch (e) {
+          console.error("recordReferral threw:", e);
+        }
+      }
+      const response = NextResponse.redirect(`${origin}${next}`);
+      if (refCode) response.cookies.delete(REFERRAL_COOKIE);
+      return response;
     }
 
     console.error(

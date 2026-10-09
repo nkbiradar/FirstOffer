@@ -94,6 +94,20 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: requestHeaders } });
   const pathname = request.nextUrl.pathname;
 
+  // Refer & Earn: remember ?ref=CODE for 30 days so the referral is
+  // credited when this visitor signs up (app/auth/callback/route.ts).
+  // First link wins — an existing cookie is never overwritten.
+  const ref = request.nextUrl.searchParams.get("ref")?.toUpperCase();
+  if (ref && /^[A-HJ-NP-Z2-9]{7}$/.test(ref) && !request.cookies.get("fo_ref")) {
+    response.cookies.set("fo_ref", ref, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+      sameSite: "lax",
+      secure: request.nextUrl.protocol === "https:",
+      httpOnly: true,
+    });
+  }
+
   // The FirstOffer Android app (user agent contains "FirstOfferApp") must not
   // start purchases: Google Play requires Play Billing for in-app digital
   // sales. The app's UI hides every price/purchase CTA (data-app-hide,

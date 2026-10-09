@@ -9,6 +9,9 @@ import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from 
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
+import ReferralCard from "@/components/ReferralCard";
+import { syncReferralRewards, REFERRAL_PAID_REQUIRED, REFERRAL_SIGNUPS_REQUIRED } from "@/lib/data/referrals";
+import { getSiteUrl } from "@/lib/site-url";
 import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
 import { formatRelativeTime } from "@/lib/ui-format";
 import type { ApplicationOutcome } from "@/types/supabase";
@@ -74,6 +77,13 @@ export default async function DashboardPage({
   const status: StatusFilter = VALID_FILTERS.includes(statusParam as StatusFilter)
     ? (statusParam as StatusFilter)
     : "all";
+
+  // Runs first so a free month earned since the last visit is granted
+  // before the subscription is read below.
+  const referral = await syncReferralRewards(user.id).catch((e) => {
+    console.error("syncReferralRewards threw:", e);
+    return null;
+  });
 
   const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
     await Promise.all([
@@ -146,6 +156,19 @@ export default async function DashboardPage({
             </span>
             <span className="share-story-banner-cta" aria-hidden="true">Share →</span>
           </Link>
+        )}
+
+        {referral?.code && (
+          <div data-app-hide>
+            <ReferralCard
+              link={`${getSiteUrl()}/?ref=${referral.code}`}
+              paid={referral.paid}
+              paidRequired={REFERRAL_PAID_REQUIRED}
+              rewardsEarned={referral.rewardsEarned}
+              signups={referral.signups}
+              signupsRequired={REFERRAL_SIGNUPS_REQUIRED}
+            />
+          </div>
         )}
 
         <div className="dashboard-stats">

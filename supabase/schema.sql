@@ -965,3 +965,41 @@ alter table public.opportunities
 
 create index if not exists opportunities_is_free_pick_idx
   on public.opportunities (is_free_pick) where is_free_pick;
+
+-- ── Refer & Earn ─────────────────────────────────────────────────────────
+-- Rule: refer 20 friends (they sign up with Google through your link) AND
+-- at least 10 of them buy Full Access → you get 1 month of Full Access
+-- free. Repeats: every further 20 sign-ups + 10 buyers earns another month.
+-- Thresholds live in lib/data/referrals.ts. All reads/writes go through the
+-- service-role client, so RLS is on with no public policies.
+--
+-- NOTE: additive and safe to run on its own against the live database.
+create table if not exists public.referral_codes (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  code text not null unique,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.referrals (
+  id uuid primary key default gen_random_uuid(),
+  referrer_id uuid not null references auth.users(id) on delete cascade,
+  -- A person can only ever be referred once.
+  referred_id uuid not null unique references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  check (referrer_id <> referred_id)
+);
+create index if not exists referrals_referrer_id_idx on public.referrals (referrer_id);
+
+create table if not exists public.referral_rewards (
+  id uuid primary key default gen_random_uuid(),
+  referrer_id uuid not null references auth.users(id) on delete cascade,
+  -- 1st, 2nd, 3rd... free month. Unique so a reward can never be granted twice.
+  reward_number integer not null,
+  subscription_id uuid references public.subscriptions(id) on delete set null,
+  created_at timestamptz not null default now(),
+  unique (referrer_id, reward_number)
+);
+
+alter table public.referral_codes enable row level security;
+alter table public.referrals enable row level security;
+alter table public.referral_rewards enable row level security;
