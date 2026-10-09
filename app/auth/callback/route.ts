@@ -65,6 +65,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}${next}`);
     }
 
+    // Verifier went missing: quietly restart sign-in ONCE instead of
+    // showing an error (Google remembers the account, so this is usually
+    // just a quick bounce). Only show the error if the retry fails too.
+    if (/code verifier/i.test(error.message) && searchParams.get("retry") !== "1") {
+      return NextResponse.redirect(`${origin}/auth/google?next=${encodeURIComponent(next)}&retry=1`);
+    }
+
     const isMissingVerifier = /code verifier/i.test(error.message);
     // Previously stated the in-app-browser cause as if certain ("this
     // usually happens when..."), which reads as flatly wrong to anyone who

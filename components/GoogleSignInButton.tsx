@@ -34,6 +34,14 @@ export default function GoogleSignInButton({
     setIsLoading(true);
     setError(null);
 
+    // Website: start sign-in on the server (app/auth/google/route.ts) so
+    // the PKCE verifier cookie is set reliably. The Android app keeps the
+    // in-WebView flow below because it returns through a deep link.
+    if (!isFirstOfferApp()) {
+      window.location.assign(`/auth/google?next=${encodeURIComponent(next)}`);
+      return;
+    }
+
     const supabase = createClient();
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
