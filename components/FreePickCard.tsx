@@ -124,8 +124,8 @@ export default function FreePickCard({
           <p className="free-pick-footer-text">
             {moreCount > 0 ? (
               <>
-                <strong>{moreCount} more live opportunities</strong> — Full Access unlocks HR emails, Google Forms and
-                apply links for all of them.
+                <strong>More live opportunities</strong> — Full Access unlocks HR emails, Google Forms and apply links
+                for all of them.
               </>
             ) : (
               <>Full Access unlocks HR emails, Google Forms and apply links for every opportunity.</>
