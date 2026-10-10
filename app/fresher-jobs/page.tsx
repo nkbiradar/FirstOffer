@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import { getUser } from "@/lib/supabase/auth";
-import { getPublishedOpportunities } from "@/lib/data/opportunities";
+import { getPublishedOpportunities, getRoleCategoryCounts } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 import { getNonce } from "@/lib/security/csp";
@@ -47,6 +47,7 @@ const FAQS = [
 export default async function FresherJobsLandingPage() {
   const nonce = await getNonce();
   const user = await getUser();
+  const roleCounts = await getRoleCategoryCounts();
   const { opportunities, total } = await getPublishedOpportunities({
     pageSize: 24,
   });
@@ -120,6 +121,17 @@ export default async function FresherJobsLandingPage() {
             </Link>
           </div>
         </section>
+
+        {roleCounts.length > 0 && (
+          <nav className="type-filters" aria-label="Fresher jobs by role" style={{ marginBottom: 12 }}>
+            <span className="result-count" style={{ margin: 0, alignSelf: "center" }}>By role:</span>
+            {roleCounts.map((c) => (
+              <Link key={c.slug} className="filter-pill" href={`/opportunities?role=${c.slug}`}>
+                {c.label} <span className="role-filter-count">{c.count}</span>
+              </Link>
+            ))}
+          </nav>
+        )}
 
         <nav className="type-filters" aria-label="Fresher jobs by city" style={{ marginBottom: 24 }}>
           <span className="result-count" style={{ margin: 0, alignSelf: "center" }}>By city:</span>
