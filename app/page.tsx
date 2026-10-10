@@ -6,6 +6,7 @@ import CountUp from "@/components/CountUp";
 import SuccessStories from "@/components/SuccessStories";
 import { getFreePickOpportunity, getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import FreePickCard from "@/components/FreePickCard";
+import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { getFeaturedInterns } from "@/lib/data/referral-rewards";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
@@ -58,7 +59,12 @@ const HOW_IT_WORKS = [
   },
 ];
 
-export default async function HomePage() {
+type HomeSearchParams = { [key: string]: string | string[] | undefined };
+
+export default async function HomePage({ searchParams }: { searchParams: Promise<HomeSearchParams> }) {
+  const homeParams = await searchParams;
+  const roleParam = Array.isArray(homeParams.role) ? homeParams.role[0] : homeParams.role;
+  const selectedRole = isRoleSlug(roleParam) ? roleParam : undefined;
   const nonce = await getNonce();
   const user = await getUser();
   const [
@@ -87,6 +93,18 @@ export default async function HomePage() {
   // 2026") above is already computed for the "Today's Opportunities"
   // heading further down, but that's too long for a one-line pill.
   const heroDateLabel = todayShortLabel();
+
+  // Role filter for Today's / Earlier Opportunities (?role=software etc.),
+  // categories from the job title — see lib/roles.ts.
+  const liveForRoles = [...today, ...earlier];
+  const homeRoleOptions = ROLE_CATEGORIES.map((c) => ({
+    slug: c.slug,
+    label: c.label,
+    count: liveForRoles.filter((o) => categorizeRole(o.role).includes(c.slug)).length,
+  })).filter((c) => c.count > 0);
+  const matchesRole = (o: { role: string }) => !selectedRole || categorizeRole(o.role).includes(selectedRole);
+  const todayShown = today.filter(matchesRole);
+  const earlierShown = earlier.filter(matchesRole);
 
   const topCompanies = companies
     .filter((company) => company.publishedOpportunityCount > 0)
@@ -536,13 +554,38 @@ export default async function HomePage() {
         </Reveal>
 
         <Reveal>
-          <section className="section" style={{ paddingTop: 8 }}>
+          <section className="section home-opps-section" id="todays-opportunities" style={{ paddingTop: 8 }}>
             <div className="section-header">
               <div>
                 <h2>Today&apos;s Opportunities</h2>
                 <p className="section-sub">{todayDateLabel}</p>
               </div>
             </div>
+
+            {homeRoleOptions.length > 0 && (
+              <div className="role-filters home-role-filters" role="group" aria-label="Filter by role">
+                <span className="role-filters-label">Role</span>
+                <div className="role-filters-scroll">
+                  <Link
+                    className={`filter-pill ${!selectedRole ? "active" : ""}`}
+                    href="/#todays-opportunities"
+                    scroll={false}
+                  >
+                    All roles
+                  </Link>
+                  {homeRoleOptions.map((c) => (
+                    <Link
+                      className={`filter-pill ${selectedRole === c.slug ? "active" : ""}`}
+                      href={`/?role=${c.slug}#todays-opportunities`}
+                      key={c.slug}
+                      scroll={false}
+                    >
+                      {c.label} <span className="role-filter-count">{c.count}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {announcement && (
               <div className="homepage-announcement-banner">
@@ -559,7 +602,15 @@ export default async function HomePage() {
               </div>
             )}
 
-            {today.length === 0 ? (
+            {todayShown.length === 0 && selectedRole ? (
+              <div className="empty-state">
+                <h3>No new {ROLE_CATEGORIES.find((c) => c.slug === selectedRole)?.label} roles today</h3>
+                <p>{earlierShown.length > 0 ? "See the earlier ones below, or browse all live roles." : "Browse all live roles for this category."}</p>
+                <Link className="btn btn-secondary btn-sm" href={`/opportunities?role=${selectedRole}`}>
+                  View all {ROLE_CATEGORIES.find((c) => c.slug === selectedRole)?.label} jobs
+                </Link>
+              </div>
+            ) : today.length === 0 ? (
               <div className="empty-state">
                 <span className="empty-state-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -574,7 +625,7 @@ export default async function HomePage() {
               </div>
             ) : (
               <div className="opportunity-grid">
-                {today.map((opportunity) => (
+                {todayShown.map((opportunity) => (
                   <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
                 ))}
               </div>
@@ -582,14 +633,14 @@ export default async function HomePage() {
           </section>
         </Reveal>
 
-        {earlier.length > 0 && (
+        {earlierShown.length > 0 && (
           <Reveal>
             <section className="section" style={{ paddingTop: 0 }}>
               <div className="section-header">
                 <h2>Earlier Opportunities</h2>
               </div>
               <div className="opportunity-grid">
-                {earlier.map((opportunity) => (
+                {earlierShown.map((opportunity) => (
                   <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
                 ))}
               </div>

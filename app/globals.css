@@ -6788,3 +6788,5 @@ html.fo-app [data-app-hide] {
   border: 1px solid var(--color-brand-soft-border);
 }
 .companies-page .role-filters { margin: 4px 0 20px; }
+.home-opps-section { scroll-margin-top: 96px; }
+.home-role-filters { margin: 0 0 20px; }
