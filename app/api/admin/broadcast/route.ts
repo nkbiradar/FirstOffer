@@ -49,5 +49,12 @@ export async function POST(request: NextRequest) {
   );
 
   if (!result.configured) return back({ error: "Email isn't configured (RESEND_API_KEY / RESEND_FROM_EMAIL)." });
+  if (result.failed) {
+    return back({
+      error: `Resend rejected ${result.failed} email(s): ${result.error ?? "unknown error"}`,
+      sent: String(result.sent),
+      mode: mode === "all" ? "all" : "test",
+    });
+  }
   return back({ sent: String(result.sent), mode: mode === "all" ? "all" : "test" });
 }

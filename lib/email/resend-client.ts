@@ -112,9 +112,9 @@ async function sendBatchWithRetry(
   resend: Resend,
   chunkPayload: CreateBatchOptions,
   attempt = 0,
-): Promise<void> {
+): Promise<string | null> {
   const { error, headers } = await resend.batch.send(chunkPayload);
-  if (!error) return;
+  if (!error) return null;
 
   if (error.statusCode === 429 && attempt < MAX_RETRY_ATTEMPTS) {
     const retryAfterSeconds = Number(headers?.["retry-after"]);
@@ -124,6 +124,7 @@ async function sendBatchWithRetry(
   }
 
   console.error(`Email batch send failed (status ${error.statusCode ?? "unknown"}, ${error.name}):`, error.message);
+  return `${error.name}: ${error.message}`;
 }
 
 /**
@@ -136,7 +137,7 @@ async function sendBatchWithRetry(
 export async function sendEmailToAllUsers(
   payload: EmailPayload,
   options: { onlyEmails?: string[]; replyTo?: string } = {},
-): Promise<{ sent: number; configured: boolean }> {
+): Promise<{ sent: number; configured: boolean; failed?: number; error?: string }> {
   const resend = getClient();
   const from = process.env.RESEND_FROM_EMAIL;
   if (!resend || !from) {
@@ -168,6 +169,8 @@ export async function sendEmailToAllUsers(
 
   if (recipients.length === 0) return { sent: 0, configured: true };
 
+  let failed = 0;
+  let lastError: string | undefined;
   for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
     const chunk = recipients.slice(i, i + BATCH_SIZE);
     const chunkPayload: CreateBatchOptions = chunk.map((recipient) => {
@@ -198,13 +201,19 @@ export async function sendEmailToAllUsers(
     });
 
     try {
-      await sendBatchWithRetry(resend, chunkPayload);
+      const batchError = await sendBatchWithRetry(resend, chunkPayload);
+      if (batchError) {
+        failed += chunk.length;
+        lastError = batchError;
+      }
     } catch (err) {
+      failed += chunk.length;
+      lastError = err instanceof Error ? err.message : String(err);
       // Defense in depth only — sendBatchWithRetry resolves rather than
       // throws for every case the Resend SDK itself can produce (see its
       // comment above); this is here for a genuinely unexpected exception.
       console.error("Email batch send failed:", err instanceof Error ? err.message : err);
     }
   }
-  return { sent: recipients.length, configured: true };
+  return { sent: recipients.length - failed, configured: true, failed, error: lastError };
 }
