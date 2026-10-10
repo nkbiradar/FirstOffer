@@ -21,7 +21,7 @@ export type EmailPayload = {
   heading: string;
   body: string;
   ctaLabel: string;
-  /** Relative path, e.g. "/opportunities/<id>" or "/internal-openings". */
+  /** Relative path ("/opportunities/<id>") or a full https:// URL (e.g. a Google Form). */
   url: string;
   /** Gold "premium" accent for Internal HR alerts; teal (default) otherwise. */
   accent?: "teal" | "gold";
@@ -50,7 +50,7 @@ function getClient(): Resend | null {
 
 function renderHtml(payload: EmailPayload, unsubscribeUrl: string): string {
   const accentColor = payload.accent === "gold" ? "#b9790a" : "#0d9488";
-  const ctaUrl = `${getSiteUrl()}${payload.url}`;
+  const ctaUrl = /^https?:\/\//i.test(payload.url) ? payload.url : `${getSiteUrl()}${payload.url}`;
 
   return `<!doctype html>
 <html>
@@ -133,13 +133,17 @@ async function sendBatchWithRetry(
  * (rate limit) is retried with backoff instead of being dropped — see
  * sendBatchWithRetry() above for why that didn't already happen.
  */
-export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> {
+export async function sendEmailToAllUsers(
+  payload: EmailPayload,
+  options: { onlyEmails?: string[]; replyTo?: string } = {},
+): Promise<{ sent: number; configured: boolean }> {
   const resend = getClient();
   const from = process.env.RESEND_FROM_EMAIL;
   if (!resend || !from) {
     console.error("Email alerts aren't configured — set RESEND_API_KEY and RESEND_FROM_EMAIL.");
-    return;
+    return { sent: 0, configured: false };
   }
+  const only = options.onlyEmails?.map((e) => e.toLowerCase());
 
   const admin = createAdminClient();
   const optedOut = await getOptedOutUserIds(admin);
@@ -154,7 +158,7 @@ export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> 
       break;
     }
     for (const user of data.users) {
-      if (user.email && !optedOut.has(user.id)) {
+      if (user.email && !optedOut.has(user.id) && (!only || only.includes(user.email.toLowerCase()))) {
         recipients.push({ userId: user.id, email: user.email });
       }
     }
@@ -162,7 +166,7 @@ export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> 
     page += 1;
   }
 
-  if (recipients.length === 0) return;
+  if (recipients.length === 0) return { sent: 0, configured: true };
 
   for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
     const chunk = recipients.slice(i, i + BATCH_SIZE);
@@ -171,6 +175,7 @@ export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> 
       return {
         from,
         to: recipient.email,
+        ...(options.replyTo ? { replyTo: options.replyTo } : {}),
         subject: payload.subject,
         html: renderHtml(payload, unsubscribeUrl),
         // The footer link above is for a human reading the email; these
@@ -201,4 +206,5 @@ export async function sendEmailToAllUsers(payload: EmailPayload): Promise<void> 
       console.error("Email batch send failed:", err instanceof Error ? err.message : err);
     }
   }
+  return { sent: recipients.length, configured: true };
 }
