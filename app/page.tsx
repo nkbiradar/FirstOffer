@@ -7,7 +7,6 @@ import SuccessStories from "@/components/SuccessStories";
 import { getFreePickOpportunity, getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
-import TelegramLink from "@/components/TelegramLink";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { getFeaturedInterns } from "@/lib/data/referral-rewards";
 import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
@@ -241,8 +240,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 Browse Tech Jobs
               </Link>
             </div>
-
-            <TelegramLink alreadyPaid={alreadyHasFullAccess} />
           </div>
 
 
