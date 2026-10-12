@@ -9,12 +9,23 @@ import { createPortal } from "react-dom";
 // request on Telegram. Configured with two Vercel env vars:
 //   NEXT_PUBLIC_TELEGRAM_URL     — the channel's invite link (required;
 //                                  the pill is hidden while it's empty)
-//   NEXT_PUBLIC_TELEGRAM_UPI_ID  — UPI ID students pay to (optional; step 1
-//                                  asks them to email for it while empty)
+//   NEXT_PUBLIC_TELEGRAM_UPI_ID  — UPI ID behind the "Pay with UPI app"
+//                                  button (hidden while empty)
+//   QR image                     — public/images/telegram-upi-qr.png
 const TELEGRAM_URL = process.env.NEXT_PUBLIC_TELEGRAM_URL || "";
 const UPI_ID = process.env.NEXT_PUBLIC_TELEGRAM_UPI_ID || "";
 const SUPPORT_EMAIL = "support@firstoffer.online";
 const PRICE = "₹99";
+
+// upi://pay deep link: on a phone it opens the student's UPI app
+// (PhonePe, GPay, Paytm…) with the payee and ₹99 pre-filled. Only built
+// when a UPI ID is configured; the ID itself isn't shown on the page.
+const UPI_LINK = UPI_ID
+  ? `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent("FirstOffer")}&am=99&cu=INR&tn=${encodeURIComponent("Telegram Premium Alerts")}`
+  : "";
+// Payment QR image. Put the QR screenshot at public/images/telegram-upi-qr.png
+// (or set NEXT_PUBLIC_TELEGRAM_QR_URL); a dashed placeholder shows until then.
+const QR_SRC = process.env.NEXT_PUBLIC_TELEGRAM_QR_URL || "/images/telegram-upi-qr.png";
 
 const MAIL_SUBJECT = "Telegram Premium Alerts – Payment Screenshot";
 const MAIL_BODY = [
@@ -57,6 +68,29 @@ function CopyButton({ value, label }: { value: string; label: string }) {
     >
       {copied ? "Copied" : "Copy"}
     </button>
+  );
+}
+
+function QrBox() {
+  const [failed, setFailed] = useState(false);
+  return (
+    <div className="tgm-qr">
+      {failed ? (
+        <div className="tgm-qr-empty">
+          <svg aria-hidden="true" fill="none" height="28" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" width="28">
+            <rect height="6" rx="1" width="6" x="3" y="3" />
+            <rect height="6" rx="1" width="6" x="15" y="3" />
+            <rect height="6" rx="1" width="6" x="3" y="15" />
+            <path d="M15 15h2v2h-2zM19 15h2M15 19h2M19 19h2v2" strokeLinecap="round" />
+          </svg>
+          <span>QR code coming soon</span>
+        </div>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img alt={`UPI QR code to pay ${PRICE}`} height={180} onError={() => setFailed(true)} src={QR_SRC} width={180} />
+      )}
+      <span className="tgm-qr-caption">Scan with any UPI app</span>
+    </div>
   );
 }
 
@@ -137,20 +171,17 @@ export default function TelegramLink() {
                 <span className="tgm-num">1</span>
                 <div className="tgm-step-body">
                   <h3>Pay {PRICE} via UPI</h3>
-                  {UPI_ID ? (
-                    <>
-                      <p>Use any UPI app — Google Pay, PhonePe, Paytm or your bank app.</p>
-                      <div className="tgm-field">
-                        <span className="tgm-field-label">UPI ID</span>
-                        <code className="tgm-field-value">{UPI_ID}</code>
-                        <CopyButton label="UPI ID" value={UPI_ID} />
-                      </div>
-                    </>
-                  ) : (
-                    <p>
-                      Email us at <strong>{SUPPORT_EMAIL}</strong> and we&apos;ll share the UPI details for payment.
-                    </p>
+                  <p>Tap the button to pay in PhonePe, Google Pay or Paytm — or scan the QR code.</p>
+                  {UPI_LINK && (
+                    <a className="tgm-btn tgm-btn-pay" href={UPI_LINK}>
+                      <svg aria-hidden="true" fill="none" height="16" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" width="16">
+                        <rect height="18" rx="2.5" width="12" x="6" y="3" />
+                        <path d="M10.5 18h3" strokeLinecap="round" />
+                      </svg>
+                      Pay {PRICE} with UPI app
+                    </a>
                   )}
+                  <QrBox />
                 </div>
               </li>
 
