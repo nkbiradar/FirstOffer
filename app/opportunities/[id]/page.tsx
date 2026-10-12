@@ -13,7 +13,13 @@ import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
-import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
+import {
+  MONTHLY_PRICE_INR,
+  INTERNAL_PRICE_INR,
+  DASARA_SALE_END_LABEL,
+  getFullAccessPriceInr,
+  isDasaraSaleActive,
+} from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
   buildJobBreadcrumbsJsonLd,
@@ -222,9 +228,10 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     user && hasApplyContent && !applyUnlocked && !opportunity.is_internal
       ? await hasLegacyFullAccessPricing(user.id)
       : false;
-  const fullAccessPrice = isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR;
-  const fullAccessPriceNote = isLegacyFullAccessUser
-    ? "🔒 Your founding-member price — locked in for as long as you stay subscribed."
+  void isLegacyFullAccessUser;
+  const fullAccessPrice = getFullAccessPriceInr();
+  const fullAccessPriceNote = isDasaraSaleActive()
+    ? `🪔 Dasara Offer — ₹${MONTHLY_PRICE_INR} → ₹${fullAccessPrice} for 3 months, till ${DASARA_SALE_END_LABEL}.`
     : "Just ₹33/month — one payment covers 3 months.";
 
   const {

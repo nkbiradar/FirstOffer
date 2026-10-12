@@ -20,7 +20,14 @@ import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import PlanTags from "@/components/PlanTags";
-import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
+import {
+  MONTHLY_PRICE_INR,
+  LEGACY_MONTHLY_PRICE_INR,
+  INTERNAL_PRICE_INR,
+  DASARA_SALE_END_LABEL,
+  getFullAccessPriceInr,
+  isDasaraSaleActive,
+} from "@/lib/payments/razorpay";
 
 export const metadata = {
   title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
@@ -315,7 +322,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <FreePickCard
               opportunity={freePick}
               moreCount={Math.max(stats.totalOpportunities - 1, 0)}
-              price={isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR}
+              price={getFullAccessPriceInr()}
               hasAccess={alreadyHasFullAccess}
               isSignedIn={Boolean(user)}
             />
@@ -443,11 +450,18 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 </>
               ) : (
                 <>
+                  {isDasaraSaleActive() && (
+                    <div className="sale-banner">
+                      <span aria-hidden="true">🪔</span>
+                      <strong>Dasara Offer</strong>
+                      <span>· Half price till {DASARA_SALE_END_LABEL}</span>
+                    </div>
+                  )}
                   <PlanTags />
                   <h2 className="pricing-promo-title">
-                    {isLegacyFullAccessUser
-                      ? `Your founding-member price: ₹${LEGACY_MONTHLY_PRICE_INR}/month`
-                      : `Full access: ₹${MONTHLY_PRICE_INR} for 3 months`}
+                    Full access:{" "}
+                    {isDasaraSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}{" "}
+                    ₹{getFullAccessPriceInr()} for 3 months
                   </h2>
                   <p className="pricing-promo-sub">
                     {isLegacyFullAccessUser
@@ -461,11 +475,11 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                       <li>New roles added regularly, included automatically</li>
                       <li>Resume Keyword Matcher — check your fit before you apply</li>
                       <li>Every listing auto-expires in 48h — never a dead lead</li>
-                      <li>Pay via UPI — no auto-debit, cancel anytime</li>
+                      <li>One-time UPI payment — no auto-debit</li>
                     </ul>
                   )}
                   <Link href="/opportunities" className="btn btn-primary pricing-promo-cta">
-                    {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${MONTHLY_PRICE_INR} for 3 months`}
+                    {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${getFullAccessPriceInr()} for 3 months`}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

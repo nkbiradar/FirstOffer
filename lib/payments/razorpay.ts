@@ -37,6 +37,21 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 export const MONTHLY_PRICE_INR = 99;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
+// ── Dasara offer (Oct 2026): full access ₹49 instead of ₹99, same 3 months.
+// Switches itself off at DASARA_SALE_ENDS_AT — no redeploy needed.
+export const DASARA_SALE_PRICE_INR = 49;
+export const DASARA_SALE_ENDS_AT = "2026-10-20T23:59:59+05:30";
+export const DASARA_SALE_END_LABEL = "20 Oct";
+
+export function isDasaraSaleActive(now: number = Date.now()): boolean {
+  return now < Date.parse(DASARA_SALE_ENDS_AT);
+}
+
+/** The full-access price to show and charge right now (₹49 during the sale, else ₹99). */
+export function getFullAccessPriceInr(now: number = Date.now()): number {
+  return isDasaraSaleActive(now) ? DASARA_SALE_PRICE_INR : MONTHLY_PRICE_INR;
+}
+
 // The founding-member rate: anyone who completed at least one full_access
 // payment at this price before the ₹49→₹99 update keeps paying this price
 // on every future renewal, for as long as they keep resubscribing — see
@@ -157,10 +172,11 @@ export function getProductPricing(
   // the switch to ₹99 for 3 months (₹33/month) everyone pays the same,
   // which is already below their old rate. The flag is kept for callers.
   void isLegacyFullAccess;
+  const priceInr = getFullAccessPriceInr();
   return {
-    priceInr: MONTHLY_PRICE_INR,
-    pricePaise: MONTHLY_PRICE_PAISE,
-    description: "Full access — 3 months",
+    priceInr,
+    pricePaise: priceInr * 100,
+    description: isDasaraSaleActive() ? "Full access — 3 months (Dasara offer)" : "Full access — 3 months",
   };
 }
 

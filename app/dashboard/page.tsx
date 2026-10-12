@@ -5,7 +5,7 @@ import { getUserApplications } from "@/lib/data/user-applications";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
 import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing, hasEverPaid } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
-import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
+import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR, getFullAccessPriceInr } from "@/lib/payments/razorpay";
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
@@ -351,7 +351,7 @@ export default async function DashboardPage({
             <div className="empty-state">
               <h3>Full access not unlocked yet</h3>
               <p data-app-hide>
-                A ₹{isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR} one-time payment unlocks
+                A ₹{getFullAccessPriceInr()} one-time payment unlocks
                 the application link, Google Form, and HR email/contact on <strong>every</strong> opportunity on
                 FirstOffer — including new ones as they go live — for 3 months. No auto-renewal; pay again whenever
                 you want to keep it going.

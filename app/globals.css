@@ -7421,3 +7421,28 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .wa-link .tg-link-text strong { color: #128c4b; }
 .wa-link .tg-link-arrow { color: #1faa55; }
 .wa-link:hover { border-color: rgba(37, 211, 102, 0.6); box-shadow: 0 8px 22px rgba(37, 211, 102, 0.22); }
+
+/* ── Dasara offer (homepage pricing card) ── */
+.sale-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+.sale-banner strong { font-weight: 800; }
+.price-was {
+  font-weight: 600;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.6);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.6);
+  text-decoration: line-through;
+  text-decoration-color: #f87171;
+  text-decoration-thickness: 3px;
+}
