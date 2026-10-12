@@ -353,7 +353,7 @@ export default async function DashboardPage({
               <p data-app-hide>
                 A ₹{isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR} one-time payment unlocks
                 the application link, Google Form, and HR email/contact on <strong>every</strong> opportunity on
-                FirstOffer — including new ones as they go live — for 30 days. No auto-renewal; pay again whenever
+                FirstOffer — including new ones as they go live — for 3 months. No auto-renewal; pay again whenever
                 you want to keep it going.
               </p>
               {isLegacyFullAccessUser && (

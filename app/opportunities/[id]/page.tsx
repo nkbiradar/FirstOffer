@@ -225,7 +225,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   const fullAccessPrice = isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR;
   const fullAccessPriceNote = isLegacyFullAccessUser
     ? "🔒 Your founding-member price — locked in for as long as you stay subscribed."
-    : "Regular membership price.";
+    : "Just ₹33/month — one payment covers 3 months.";
 
   const {
     role,

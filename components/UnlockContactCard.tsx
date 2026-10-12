@@ -43,14 +43,14 @@ const PRODUCT_COPY: Record<
   full_access: {
     eyebrow: "Full Access Membership",
     title: "How to apply is locked",
-    priceLine: "One-time payment — unlocks 30 days of access.",
+    priceLine: "One-time payment — unlocks 3 months of access.",
     description:
       "Most freshers waste weeks applying through crowded portals and hoping someone notices. For less than the price of an auto ride, unlock the direct HR email, official Google Form, or application link on this opportunity — and every opportunity on FirstOffer, including new ones added regularly.",
     highlightTitle: "One membership, every opportunity, unlocked",
     highlightBody:
       "direct HR emails, official Google Forms, and application links, updated as new roles go live. Skip straight to applying instead of guessing.",
-    checkoutDescription: "Monthly membership — full site access",
-    unlockLabel: (price) => `Unlock everything for ₹${price}/month`,
+    checkoutDescription: "3-month membership — full site access",
+    unlockLabel: (price) => `Unlock everything — ₹${price} for 3 months`,
     fallbackRedirect: (opportunityId) => (opportunityId ? `/opportunities/${opportunityId}` : "/opportunities"),
   },
   internal_hr: {
@@ -104,6 +104,7 @@ export default function UnlockContactCard({
 }) {
   const router = useRouter();
   const copy = PRODUCT_COPY[product];
+  const periodSuffix = product === "full_access" ? " for 3 months" : "/month";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
@@ -271,11 +272,11 @@ export default function UnlockContactCard({
         {couponApplied ? (
           <>
             <span style={{ textDecoration: "line-through", opacity: 0.55, marginRight: 6 }}>₹{price}</span>
-            ₹{couponApplied.discountedInr}/month. {copy.priceLine}
+            ₹{couponApplied.discountedInr}{periodSuffix}. {copy.priceLine}
           </>
         ) : (
           <>
-            ₹{price}/month. {copy.priceLine}
+            ₹{price}{periodSuffix}. {copy.priceLine}
           </>
         )}
       </p>
@@ -340,7 +341,7 @@ export default function UnlockContactCard({
             {isLoading ? "Opening payment..." : copy.unlockLabel(couponApplied?.discountedInr ?? price)}
           </button>
           <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
-            Access unlocks instantly after payment and lasts 30 days. No auto-renewal, no mandate saved — just come
+            Access unlocks instantly after payment and lasts {product === "full_access" ? "3 months" : "30 days"}. No auto-renewal, no mandate saved — just come
             back and pay ₹{price} again whenever you want to keep going.
           </p>
         </>

@@ -33,6 +33,7 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // is the display/checkout price for anyone with no prior full_access
 // payment on record. Existing early subscribers do NOT pay this — see
 // LEGACY_MONTHLY_PRICE_INR and getFullAccessPricing() below.
+// Since Oct 2026 this ₹99 buys 3 months (FULL_ACCESS_PERIOD_MS), not one.
 export const MONTHLY_PRICE_INR = 99;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
@@ -152,17 +153,14 @@ export function getProductPricing(
       description: "Internal HR Openings — 30 days access",
     };
   }
-  if (isLegacyFullAccess) {
-    return {
-      priceInr: LEGACY_MONTHLY_PRICE_INR,
-      pricePaise: LEGACY_MONTHLY_PRICE_PAISE,
-      description: "Full access — 30 days (founding-member price)",
-    };
-  }
+  // Founding members (isLegacyFullAccess) used to keep ₹49/month; since
+  // the switch to ₹99 for 3 months (₹33/month) everyone pays the same,
+  // which is already below their old rate. The flag is kept for callers.
+  void isLegacyFullAccess;
   return {
     priceInr: MONTHLY_PRICE_INR,
     pricePaise: MONTHLY_PRICE_PAISE,
-    description: "Full access — 30 days",
+    description: "Full access — 3 months",
   };
 }
 
@@ -170,8 +168,16 @@ export function getProductPricing(
  * real Razorpay Plan id, since there is no plan behind a one-time Order. */
 export const MANUAL_PLAN_MARKER = "manual";
 
-/** Access period bought by a single manual monthly payment. */
+/** Access period bought by a single Internal HR payment (30 days). */
 export const MANUAL_ACCESS_PERIOD_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** Access period bought by a single full-access payment (3 months). */
+export const FULL_ACCESS_PERIOD_MS = 90 * 24 * 60 * 60 * 1000;
+
+/** How long one payment for `product` unlocks access. */
+export function getAccessPeriodMs(product: string | null | undefined): number {
+  return product === "full_access" ? FULL_ACCESS_PERIOD_MS : MANUAL_ACCESS_PERIOD_MS;
+}
 
 // ── Resume Makeover (one-time ₹199 service, see app/resume) ─────────────
 // A one-off human service, not a subscription: the student pays once,

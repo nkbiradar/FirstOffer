@@ -133,7 +133,7 @@ export default function FreePickCard({
           </p>
           <div className="free-pick-footer-actions">
             <Link className="free-pick-btn free-pick-btn-dark" data-app-hide href="/opportunities">
-              Get Full Access · ₹{price}/month
+              Get Full Access · ₹{price} for 3 months
             </Link>
             <Link className="free-pick-details" href="/opportunities">
               Browse all

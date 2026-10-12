@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // passes; this just tells the customer that plainly instead of the
     // route silently no-op'ing.
     return NextResponse.json(
-      { error: "This is a one-time monthly payment, not an auto-renewing subscription — it already stops on its own after your paid period ends. Just don't pay again next month to let it lapse." },
+      { error: "This is a one-time monthly payment, not an auto-renewing subscription — it already stops on its own after your paid period ends. Just don't pay again to let it lapse." },
       { status: 400 },
     );
   }

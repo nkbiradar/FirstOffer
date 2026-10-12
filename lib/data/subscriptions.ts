@@ -119,6 +119,15 @@ export async function hasInternalAccess(userId: string): Promise<boolean> {
  * honor here beyond "did they ever pay ₹49 for this product."
  */
 export async function hasLegacyFullAccessPricing(userId: string): Promise<boolean> {
+  // Retired Oct 2026: full access is now ₹99 for 3 months for everyone
+  // (₹33/month, below the old ₹49 founding rate), so no one gets a
+  // separate price any more. Kept as a function so callers stay simple.
+  void userId;
+  return false;
+}
+
+// Previous implementation, kept for reference:
+export async function _legacyFoundingMemberCheck(userId: string): Promise<boolean> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("subscriptions")

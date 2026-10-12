@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyRazorpaySignature } from "@/lib/payments/verify-signature";
-import { MANUAL_ACCESS_PERIOD_MS } from "@/lib/payments/razorpay";
+import { getAccessPeriodMs } from "@/lib/payments/razorpay";
 import { recordCouponRedemption } from "@/lib/payments/coupons";
 
 // Fast path, called by the browser right after Razorpay Checkout's success
@@ -54,10 +54,18 @@ export async function POST(request: NextRequest) {
   }
 
   const admin = createAdminClient();
-  // A verified payment buys exactly 30 days of access from right now — see
+  // A verified payment buys access from right now (see getAccessPeriodMs) — see
   // app/api/subscriptions/create/route.ts's comment for why this is a
   // plain one-time payment rather than a recurring Autopay mandate.
-  const currentPeriodEnd = new Date(Date.now() + MANUAL_ACCESS_PERIOD_MS).toISOString();
+  // Full access buys 3 months, Internal HR 30 days — look up which
+  // product this order was for.
+  const { data: orderRow } = await admin
+    .from("subscriptions")
+    .select("product")
+    .eq("user_id", user.id)
+    .eq("razorpay_subscription_id", razorpay_order_id)
+    .maybeSingle();
+  const currentPeriodEnd = new Date(Date.now() + getAccessPeriodMs(orderRow?.product)).toISOString();
 
   const { data: updatedRow, error } = await admin
     .from("subscriptions")

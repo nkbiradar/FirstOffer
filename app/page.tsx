@@ -400,7 +400,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </section>
         </Reveal>
 
-        {/* Full-access membership pricing announcement — ₹99/month is the
+        {/* Full-access membership pricing announcement — ₹99 for 3 months is the
             regular price; anyone with a completed payment on record at the
             old ₹49 rate (see hasLegacyFullAccessPricing() in
             lib/data/subscriptions.ts) keeps ₹49 on every future renewal,
@@ -442,7 +442,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   <h2 className="pricing-promo-title">
                     {isLegacyFullAccessUser
                       ? `Your founding-member price: ₹${LEGACY_MONTHLY_PRICE_INR}/month`
-                      : `Full access is ₹${MONTHLY_PRICE_INR}/month`}
+                      : `Full access: ₹${MONTHLY_PRICE_INR} for 3 months`}
                   </h2>
                   <p className="pricing-promo-sub">
                     {isLegacyFullAccessUser
@@ -460,7 +460,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                     </ul>
                   )}
                   <Link href="/opportunities" className="btn btn-primary pricing-promo-cta">
-                    {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${MONTHLY_PRICE_INR}/month`}
+                    {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${MONTHLY_PRICE_INR} for 3 months`}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

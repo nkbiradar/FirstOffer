@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getAccessPeriodMs } from "@/lib/payments/razorpay";
 
 // Reliability backstop for BOTH payment flows — independent of the
 // client-side calls in app/api/payments/verify and
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     // right after paying and app/api/subscriptions/verify/route.ts's
     // client-side call never fired, this is what still grants access.
     if (product === "full_access" || product === "internal_hr") {
-      const currentPeriodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      const currentPeriodEnd = new Date(Date.now() + getAccessPeriodMs(product)).toISOString();
       const { error } = await admin
         .from("subscriptions")
         .update({
