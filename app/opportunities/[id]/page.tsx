@@ -12,7 +12,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { getPaidMemberLabel, hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
@@ -222,6 +222,8 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
     user && hasApplyContent && !applyUnlocked && !opportunity.is_internal
       ? await hasLegacyFullAccessPricing(user.id)
       : false;
+  const paidMemberLabel =
+    hasApplyContent && !applyUnlocked && !opportunity.is_internal ? await getPaidMemberLabel() : null;
   const fullAccessPrice = isLegacyFullAccessUser ? LEGACY_MONTHLY_PRICE_INR : MONTHLY_PRICE_INR;
   const fullAccessPriceNote = isLegacyFullAccessUser
     ? "🔒 Your founding-member price — locked in for as long as you stay subscribed."
@@ -420,6 +422,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       isSignedIn={Boolean(user)}
                       price={fullAccessPrice}
                       priceNote={fullAccessPriceNote}
+                      memberLabel={paidMemberLabel}
                     />
                   )}
                 </div>

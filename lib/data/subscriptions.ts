@@ -268,3 +268,28 @@ export async function hasEverPaid(userId: string): Promise<boolean> {
   if (unlocks.error) console.error("hasEverPaid (unlocks) failed:", unlocks.error.message);
   return (subs.data ?? []).length > 0 || (unlocks.data ?? []).length > 0;
 }
+
+/**
+ * Social proof for the ₹99 plan: how many distinct people have ever paid
+ * for full access, rounded DOWN to a round number ("40+"). Returns null
+ * below 10 so the site never shows a tiny or made-up-looking figure.
+ * Real data only — counted from completed payments.
+ */
+export async function getPaidMemberLabel(): Promise<string | null> {
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from("subscriptions")
+      .select("user_id")
+      .eq("product", "full_access")
+      .not("razorpay_payment_id", "is", null)
+      .limit(10000);
+    if (error) return null;
+    const count = new Set((data ?? []).map((r) => r.user_id)).size;
+    if (count < 10) return null;
+    const step = count < 100 ? 10 : count < 1000 ? 50 : 100;
+    return `${Math.floor(count / step) * step}+`;
+  } catch {
+    return null;
+  }
+}

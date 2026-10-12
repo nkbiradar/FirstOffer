@@ -7075,3 +7075,32 @@ html.fo-app [data-app-hide] {
   .dflow-glow, .dflow-live i { animation: none; }
 }
 .dflow-wrap { padding-top: 8px; padding-bottom: 24px; }
+
+/* ── Trust tags on the ₹99 plan (components/PlanTags.tsx) ── */
+.plan-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+.plan-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.plan-tag-popular {
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.28);
+}
+.plan-tag-members {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}

@@ -17,7 +17,8 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { getPaidMemberLabel, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import PlanTags from "@/components/PlanTags";
 import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
 
 export const metadata = {
@@ -78,6 +79,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     isLegacyFullAccessUser,
     freePick,
     featuredInterns,
+    paidMemberLabel,
   ] = await Promise.all([
     getHomepageOpportunities(),
     getSiteStats(),
@@ -88,6 +90,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
     getFreePickOpportunity(),
     getFeaturedInterns(),
+    getPaidMemberLabel(),
   ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
@@ -439,6 +442,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 </>
               ) : (
                 <>
+                  <PlanTags memberLabel={paidMemberLabel} />
                   <h2 className="pricing-promo-title">
                     {isLegacyFullAccessUser
                       ? `Your founding-member price: ₹${LEGACY_MONTHLY_PRICE_INR}/month`

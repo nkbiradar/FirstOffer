@@ -1,5 +1,6 @@
 "use client";
 
+import PlanTags from "@/components/PlanTags";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
@@ -90,6 +91,7 @@ export default function UnlockContactCard({
   price,
   product = "full_access",
   priceNote,
+  memberLabel,
 }: {
   opportunityId?: string;
   isSignedIn: boolean;
@@ -101,6 +103,8 @@ export default function UnlockContactCard({
    * callers that don't need it (internal_hr, today) render exactly as
    * before. */
   priceNote?: string;
+  /** "40+"-style count of paid members (getPaidMemberLabel); full_access only. */
+  memberLabel?: string | null;
 }) {
   const router = useRouter();
   const copy = PRODUCT_COPY[product];
@@ -267,6 +271,7 @@ export default function UnlockContactCard({
         </svg>
         {copy.eyebrow}
       </span>
+      {product === "full_access" && <PlanTags memberLabel={memberLabel} />}
       <p className="unlock-contact-title">{copy.title}</p>
       <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
         {couponApplied ? (
