@@ -500,7 +500,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 <li>Roles that may not be widely posted</li>
               </ul>
               <span className="btn btn-primary internal-hr-promo-cta">
-                Unlock Internal Openings — ₹{INTERNAL_PRICE_INR}/month
+                Unlock Internal Openings — ₹{INTERNAL_PRICE_INR} for 3 months
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

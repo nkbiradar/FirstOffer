@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
       <p style={{ marginTop: 12 }}>
         If you subscribe to full access or Internal HR Openings, we store the Razorpay order ID,
         payment ID, amount, status, which access period it covers, and which discount code (if
-        any) you used. Each membership period is a single payment that covers 3 months (full access) or 30 days (Internal HR Openings) — it is not
+        any) you used. Each membership period is a single payment that covers 3 months — it is not
         an auto-renewing or auto-debited subscription, so continuing after a period ends is your
         choice, made the same way as your first payment. We do not receive or store your card
         number, UPI ID, or any other payment credential — that exchange happens directly between

@@ -430,7 +430,7 @@ export default async function DashboardPage({
               <h3>Internal HR Openings not unlocked yet</h3>
               <p data-app-hide>
                 A ₹{INTERNAL_PRICE_INR} one-time payment unlocks internal, HR-shared roles with significantly lower competition —
-                openings that may never be widely posted elsewhere — for 30 days. No auto-renewal; pay again
+                openings that may never be widely posted elsewhere — for 3 months. No auto-renewal; pay again
                 whenever you want to keep it going.
               </p>
               <Link className="btn btn-secondary btn-sm" href="/internal-openings">

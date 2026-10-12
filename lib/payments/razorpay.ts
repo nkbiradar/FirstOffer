@@ -150,7 +150,7 @@ export function getProductPricing(
     return {
       priceInr: INTERNAL_PRICE_INR,
       pricePaise: INTERNAL_PRICE_PAISE,
-      description: "Internal HR Openings — 30 days access",
+      description: "Internal HR Openings — 3 months access",
     };
   }
   // Founding members (isLegacyFullAccess) used to keep ₹49/month; since
@@ -168,15 +168,17 @@ export function getProductPricing(
  * real Razorpay Plan id, since there is no plan behind a one-time Order. */
 export const MANUAL_PLAN_MARKER = "manual";
 
-/** Access period bought by a single Internal HR payment (30 days). */
+/** Old 30-day access period (no longer used for new payments). */
 export const MANUAL_ACCESS_PERIOD_MS = 30 * 24 * 60 * 60 * 1000;
 
 /** Access period bought by a single full-access payment (3 months). */
 export const FULL_ACCESS_PERIOD_MS = 90 * 24 * 60 * 60 * 1000;
 
-/** How long one payment for `product` unlocks access. */
+/** How long one payment for `product` unlocks access. Since Oct 2026
+ * both products (full access ₹99, Internal HR ₹149) buy 3 months. */
 export function getAccessPeriodMs(product: string | null | undefined): number {
-  return product === "full_access" ? FULL_ACCESS_PERIOD_MS : MANUAL_ACCESS_PERIOD_MS;
+  void product;
+  return FULL_ACCESS_PERIOD_MS;
 }
 
 // ── Resume Makeover (one-time ₹199 service, see app/resume) ─────────────

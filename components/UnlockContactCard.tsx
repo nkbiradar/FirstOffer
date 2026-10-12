@@ -56,14 +56,14 @@ const PRODUCT_COPY: Record<
   internal_hr: {
     eyebrow: "Internal HR Openings",
     title: "This is an internal, HR-shared opening",
-    priceLine: "One-time payment — unlocks 30 days of access.",
+    priceLine: "One-time payment — unlocks 3 months of access.",
     description:
       "This role was shared directly by an HR or recruiter — it isn't posted on the regular job portals, so competition is far lower than a public listing. Unlock it (and every other internal opening as it comes in) for less than the price of an auto ride.",
     highlightTitle: "Direct HR access, before everyone else",
     highlightBody:
       "internal, HR-shared roles with significantly lower competition — early access to openings that may never be widely posted elsewhere.",
     checkoutDescription: "Internal HR Openings membership",
-    unlockLabel: (price) => `Unlock Internal Openings — ₹${price}/month`,
+    unlockLabel: (price) => `Unlock Internal Openings — ₹${price} for 3 months`,
     fallbackRedirect: () => "/internal-openings",
   },
 };
@@ -104,7 +104,7 @@ export default function UnlockContactCard({
 }) {
   const router = useRouter();
   const copy = PRODUCT_COPY[product];
-  const periodSuffix = product === "full_access" ? " for 3 months" : "/month";
+  const periodSuffix = " for 3 months";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
@@ -341,7 +341,7 @@ export default function UnlockContactCard({
             {isLoading ? "Opening payment..." : copy.unlockLabel(couponApplied?.discountedInr ?? price)}
           </button>
           <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
-            Access unlocks instantly after payment and lasts {product === "full_access" ? "3 months" : "30 days"}. No auto-renewal, no mandate saved — just come
+            Access unlocks instantly after payment and lasts 3 months. No auto-renewal, no mandate saved — just come
             back and pay ₹{price} again whenever you want to keep going.
           </p>
         </>
