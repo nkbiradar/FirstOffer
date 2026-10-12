@@ -7,7 +7,7 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import { getInternalOpportunities } from "@/lib/data/opportunities";
 import { getUser } from "@/lib/supabase/auth";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
-import { INTERNAL_PRICE_INR } from "@/lib/payments/razorpay";
+import { DASARA_SALE_END_LABEL, INTERNAL_PRICE_INR, getInternalPriceInr, isDasaraSaleActive } from "@/lib/payments/razorpay";
 import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
@@ -128,7 +128,16 @@ export default async function InternalOpeningsPage() {
                   what="Internal HR Openings are available to FirstOffer Internal HR members."
                 />
               ) : (
-                <UnlockContactCard isSignedIn={Boolean(user)} price={INTERNAL_PRICE_INR} product="internal_hr" />
+                <UnlockContactCard
+                  isSignedIn={Boolean(user)}
+                  price={getInternalPriceInr()}
+                  priceNote={
+                    isDasaraSaleActive()
+                      ? `🪔 Dasara Offer — ₹${INTERNAL_PRICE_INR} → ₹${getInternalPriceInr()} for 3 months, till ${DASARA_SALE_END_LABEL}.`
+                      : undefined
+                  }
+                  product="internal_hr"
+                />
               )}
             </div>
           )}

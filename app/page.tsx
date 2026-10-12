@@ -26,6 +26,7 @@ import {
   INTERNAL_PRICE_INR,
   DASARA_SALE_END_LABEL,
   getFullAccessPriceInr,
+  getInternalPriceInr,
   isDasaraSaleActive,
 } from "@/lib/payments/razorpay";
 
@@ -519,7 +520,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 <li>Roles that may not be widely posted</li>
               </ul>
               <span className="btn btn-primary internal-hr-promo-cta">
-                Unlock Internal Openings — ₹{INTERNAL_PRICE_INR} for 3 months
+                Unlock Internal Openings —{" "}
+                {isDasaraSaleActive() && <s className="price-was price-was-plain">₹{INTERNAL_PRICE_INR}</s>}{" "}
+                ₹{getInternalPriceInr()} for 3 months
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

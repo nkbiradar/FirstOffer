@@ -18,6 +18,7 @@ import {
   INTERNAL_PRICE_INR,
   DASARA_SALE_END_LABEL,
   getFullAccessPriceInr,
+  getInternalPriceInr,
   isDasaraSaleActive,
 } from "@/lib/payments/razorpay";
 import {
@@ -418,7 +419,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                     <UnlockContactCard
                       opportunityId={id}
                       isSignedIn={Boolean(user)}
-                      price={INTERNAL_PRICE_INR}
+                      price={getInternalPriceInr()}
+                      priceNote={
+                        isDasaraSaleActive()
+                          ? `🪔 Dasara Offer — ₹${INTERNAL_PRICE_INR} → ₹${getInternalPriceInr()} for 3 months, till ${DASARA_SALE_END_LABEL}.`
+                          : undefined
+                      }
                       product="internal_hr"
                     />
                   ) : (

@@ -7446,3 +7446,4 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   text-decoration-color: #f87171;
   text-decoration-thickness: 3px;
 }
+.price-was-plain { font-size: 0.95em; color: inherit; -webkit-text-fill-color: currentColor; opacity: 0.6; }

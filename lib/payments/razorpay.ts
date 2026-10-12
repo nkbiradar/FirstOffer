@@ -94,6 +94,14 @@ export function getMonthlyPlanId(): string {
 export const INTERNAL_PRICE_INR = 149;
 export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
 
+// Dasara offer for Internal HR: ₹99 instead of ₹149 (same window as full access).
+export const DASARA_INTERNAL_SALE_PRICE_INR = 99;
+
+/** The Internal HR price to show and charge right now (₹99 during the sale, else ₹149). */
+export function getInternalPriceInr(now: number = Date.now()): number {
+  return isDasaraSaleActive(now) ? DASARA_INTERNAL_SALE_PRICE_INR : INTERNAL_PRICE_INR;
+}
+
 export function getInternalPlanId(): string {
   const planId = process.env.RAZORPAY_INTERNAL_PLAN_ID;
   if (!planId) {
@@ -162,10 +170,13 @@ export function getProductPricing(
   description: string;
 } {
   if (product === "internal_hr") {
+    const internalPriceInr = getInternalPriceInr();
     return {
-      priceInr: INTERNAL_PRICE_INR,
-      pricePaise: INTERNAL_PRICE_PAISE,
-      description: "Internal HR Openings — 3 months access",
+      priceInr: internalPriceInr,
+      pricePaise: internalPriceInr * 100,
+      description: isDasaraSaleActive()
+        ? "Internal HR Openings — 3 months access (Dasara offer)"
+        : "Internal HR Openings — 3 months access",
     };
   }
   // Founding members (isLegacyFullAccess) used to keep ₹49/month; since
