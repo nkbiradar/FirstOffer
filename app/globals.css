@@ -7414,3 +7414,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   line-height: 1.5;
 }
 .tgm-paid-note svg { flex: 0 0 auto; margin-top: 1px; color: var(--color-success); }
+
+/* ── Hero WhatsApp Channel pill (components/WhatsAppChannelLink.tsx) — reuses .tg-link ── */
+.wa-link { border-color: rgba(37, 211, 102, 0.3); box-shadow: 0 4px 14px rgba(37, 211, 102, 0.12); }
+.wa-link-icon { background: #25d366; }
+.wa-link .tg-link-text strong { color: #128c4b; }
+.wa-link .tg-link-arrow { color: #1faa55; }
+.wa-link:hover { border-color: rgba(37, 211, 102, 0.6); box-shadow: 0 8px 22px rgba(37, 211, 102, 0.22); }
