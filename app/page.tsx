@@ -242,7 +242,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </Link>
             </div>
 
-            <TelegramLink />
+            <TelegramLink alreadyPaid={alreadyHasFullAccess} />
           </div>
 
 

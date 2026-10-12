@@ -41,6 +41,32 @@ const MAIL_BODY = [
 ].join("\n");
 const MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(MAIL_SUBJECT)}&body=${encodeURIComponent(MAIL_BODY)}`;
 
+// For students who already paid FirstOffer earlier: no new payment, just
+// proof of the old one so the join request can be matched and approved.
+const PAID_SUBJECT = "Telegram Premium Alerts – Already Paid (Join Request)";
+const PAID_BODY = [
+  "Hi FirstOffer team,",
+  "",
+  "I have already paid FirstOffer earlier. Proof of my payment is attached, and I've sent a request to join the Telegram channel.",
+  "",
+  "Name:",
+  "Email used on FirstOffer:",
+  "Telegram username:",
+  "Date of earlier payment:",
+  "",
+  "Thank you.",
+].join("\n");
+const PAID_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(PAID_SUBJECT)}&body=${encodeURIComponent(PAID_BODY)}`;
+
+function MailIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" height="16" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" width="16">
+      <rect height="14" rx="2" width="18" x="3" y="5" />
+      <path d="m4 7 8 6 8-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function TelegramGlyph({ size = 14 }: { size?: number }) {
   return (
     <svg aria-hidden="true" fill="currentColor" height={size} viewBox="0 0 24 24" width={size}>
@@ -94,8 +120,10 @@ function QrBox() {
   );
 }
 
-export default function TelegramLink() {
+export default function TelegramLink({ alreadyPaid = false }: { alreadyPaid?: boolean }) {
   const [open, setOpen] = useState(false);
+  // Which flow the popup shows; members with active access start on "paid".
+  const [tab, setTab] = useState<"new" | "paid">(alreadyPaid ? "paid" : "new");
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -160,6 +188,17 @@ export default function TelegramLink() {
               before everyone else.
             </p>
 
+            <div aria-label="Choose your option" className="tgm-tabs" role="tablist">
+              <button aria-selected={tab === "new"} className="tgm-tab" onClick={() => setTab("new")} role="tab" type="button">
+                New member
+              </button>
+              <button aria-selected={tab === "paid"} className="tgm-tab" onClick={() => setTab("paid")} role="tab" type="button">
+                Already paid
+              </button>
+            </div>
+
+            {tab === "new" ? (
+            <>
             <div className="tgm-price">
               <span className="tgm-price-amount">{PRICE}</span>
               <span className="tgm-price-period">/ month</span>
@@ -171,7 +210,7 @@ export default function TelegramLink() {
                 <span className="tgm-num">1</span>
                 <div className="tgm-step-body">
                   <h3>Pay {PRICE} via UPI</h3>
-                  <p>Tap the button to pay in PhonePe, Google Pay or Paytm — or scan the QR code.</p>
+                  <p>Pay with PhonePe, Google Pay, Paytm or any UPI app.</p>
                   {UPI_LINK && (
                     <a className="tgm-btn tgm-btn-pay" href={UPI_LINK}>
                       <svg aria-hidden="true" fill="none" height="16" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" width="16">
@@ -217,14 +256,64 @@ export default function TelegramLink() {
                 </div>
               </li>
             </ol>
+            </>
+            ) : (
+            <>
+            <div className="tgm-paid-note">
+              <svg aria-hidden="true" fill="none" height="18" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" width="18">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8 12 3 3 5-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span>
+                <strong>No need to pay again.</strong> If you&apos;ve already paid FirstOffer, just share proof of
+                your earlier payment and request to join.
+              </span>
+            </div>
+
+            <ol className="tgm-steps">
+              <li className="tgm-step">
+                <span className="tgm-num">1</span>
+                <div className="tgm-step-body">
+                  <h3>Share proof of your earlier payment</h3>
+                  <p>
+                    Email a screenshot of your earlier payment (or its confirmation) with your name, the email you
+                    use on FirstOffer and your Telegram username.
+                  </p>
+                  <div className="tgm-field">
+                    <span className="tgm-field-label">Email</span>
+                    <code className="tgm-field-value">{SUPPORT_EMAIL}</code>
+                    <CopyButton label="email address" value={SUPPORT_EMAIL} />
+                  </div>
+                  <a className="tgm-btn tgm-btn-ghost" href={PAID_MAILTO}>
+                    <MailIcon />
+                    Compose email
+                  </a>
+                </div>
+              </li>
+
+              <li className="tgm-step">
+                <span className="tgm-num">2</span>
+                <div className="tgm-step-body">
+                  <h3>Send a request to join</h3>
+                  <p>Open the channel on Telegram and tap &ldquo;Request to Join&rdquo;.</p>
+                  <a className="tgm-btn tgm-btn-primary" href={TELEGRAM_URL} rel="noopener noreferrer" target="_blank">
+                    <TelegramGlyph size={16} />
+                    Request to join on Telegram
+                  </a>
+                </div>
+              </li>
+            </ol>
+            </>
+            )}
 
             <p className="tgm-foot">
               <svg aria-hidden="true" fill="none" height="15" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" width="15">
                 <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6L12 3Z" strokeLinejoin="round" />
                 <path d="m9 12 2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Requests are approved within 24 hours once your payment is verified. Telegram alerts are separate from
-              FirstOffer website membership.
+              {tab === "new"
+                ? "Requests are approved within 24 hours once your payment is verified."
+                : "We approve your request once your earlier payment is matched — usually within 24 hours."}
             </p>
           </div>
         </div>,
