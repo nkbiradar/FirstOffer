@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-// Free, public "What Worked For Me" page. Every story is submitted by a
-// real student at /what-worked/share and published by the admin.
+// Free, read-only "What Worked For Me" page. Stories are added by the admin
+// at /admin/what-worked; visitors can only read them.
 export default async function WhatWorkedPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
   const rawTag = Array.isArray(params.tag) ? params.tag[0] : params.tag;
@@ -40,9 +40,6 @@ export default async function WhatWorkedPage({ searchParams }: { searchParams: P
             Real freshers who were stuck with zero interview calls share exactly what they changed — and what happened
             next. No theory, just what actually worked for them.
           </p>
-          <Link className="btn btn-primary" href="/what-worked/share">
-            Share what worked for you
-          </Link>
         </section>
 
         <div aria-label="Filter by what they changed" className="ww-filters">
@@ -59,12 +56,7 @@ export default async function WhatWorkedPage({ searchParams }: { searchParams: P
         {stories.length === 0 ? (
           <div className="empty-state ww-empty">
             <h3>{tag ? "No stories for this one yet" : "Stories are on their way"}</h3>
-            <p>
-              Went from no calls to interview calls? Your story could be the one that helps another fresher keep going.
-            </p>
-            <Link className="btn btn-primary" href="/what-worked/share">
-              Share your story
-            </Link>
+            <p>New stories are added regularly — check back soon.</p>
           </div>
         ) : (
           <div className="ww-grid">
@@ -75,8 +67,8 @@ export default async function WhatWorkedPage({ searchParams }: { searchParams: P
         )}
 
         <p className="ww-disclaimer">
-          Stories are written by the students themselves and reviewed by FirstOffer before publishing. What worked for one
-          person may not work the same way for everyone.
+          Stories are shared with FirstOffer by students and published with their permission. What worked for one person
+          may not work the same way for everyone.
         </p>
       </div>
     </main>

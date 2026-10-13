@@ -1,9 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // "What Worked For Me" — real students who were applying with no interview
-// calls, describing what they changed. Free, public page at /what-worked.
-// Submitted by signed-in users at /what-worked/share, saved as drafts, and
-// only shown after the admin publishes them at /admin/what-worked.
+// calls, describing what they changed. Free, read-only public page at
+// /what-worked. Stories are added and edited by the admin only, at
+// /admin/what-worked.
 // Table: public.what_worked_stories (see supabase/schema.sql).
 
 export type WhatWorkedStory = {
@@ -86,4 +86,27 @@ export function storyByline(s: Pick<WhatWorkedStory, "display_name" | "is_anonym
     return ["Anonymous", s.graduation_batch ? `${s.graduation_batch} batch` : null].filter(Boolean).join(" · ");
   }
   return [s.display_name, s.college, s.graduation_batch].filter(Boolean).join(" · ");
+}
+
+/**
+ * Reads the admin "Add / edit story" form (/admin/what-worked). Stories are
+ * entered by the admin only — visitors can just read them on /what-worked.
+ */
+export function parseWhatWorkedForm(formData: FormData) {
+  const text = (key: string, max: number) => String(formData.get(key) ?? "").trim().slice(0, max);
+  const apps = text("applications_before", 20);
+  const valid = new Set<string>(WHAT_WORKED_TAGS.map((t) => t.slug));
+  return {
+    display_name: text("display_name", 80),
+    is_anonymous: formData.get("is_anonymous") === "on",
+    college: text("college", 120) || null,
+    graduation_batch: text("graduation_batch", 10) || null,
+    target_role: text("target_role", 100) || null,
+    applications_before: (APPLICATION_RANGES as readonly string[]).includes(apps) ? apps : null,
+    what_wasnt_working: text("what_wasnt_working", 600) || null,
+    what_changed: text("what_changed", 1200),
+    result: text("result", 300),
+    tags: [...new Set(formData.getAll("tags").map(String).filter((t) => valid.has(t)))],
+    is_published: formData.get("is_published") === "on",
+  };
 }
