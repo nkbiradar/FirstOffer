@@ -1,4 +1,4 @@
-import { storyByline, tagLabel, type WhatWorkedStory } from "@/lib/data/what-worked";
+import { storyByline, type WhatWorkedStory } from "@/lib/data/what-worked";
 
 // One "What Worked For Me" story: before → what changed → result.
 export default function WhatWorkedCard({ story, compact = false }: { story: WhatWorkedStory; compact?: boolean }) {
@@ -50,15 +50,6 @@ export default function WhatWorkedCard({ story, compact = false }: { story: What
         <p>{story.result}</p>
       </div>
 
-      {!compact && story.tags.length > 0 && (
-        <div className="ww-tags">
-          {story.tags.map((t) => (
-            <span className="ww-tag" key={t}>
-              {tagLabel(t)}
-            </span>
-          ))}
-        </div>
-      )}
     </article>
   );
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import WhatWorkedCard from "@/components/WhatWorkedCard";
-import { WHAT_WORKED_TAGS, getPublishedWhatWorked } from "@/lib/data/what-worked";
+import { getPublishedWhatWorked } from "@/lib/data/what-worked";
 import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
@@ -11,15 +11,10 @@ export const metadata: Metadata = {
   alternates: { canonical: `${getSiteUrl()}/what-worked` },
 };
 
-type SearchParams = { [key: string]: string | string[] | undefined };
-
 // Free, read-only "What Worked For Me" page. Stories are added by the admin
 // at /admin/what-worked; visitors can only read them.
-export default async function WhatWorkedPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const params = await searchParams;
-  const rawTag = Array.isArray(params.tag) ? params.tag[0] : params.tag;
-  const tag = WHAT_WORKED_TAGS.some((t) => t.slug === rawTag) ? rawTag : undefined;
-  const stories = await getPublishedWhatWorked(100, tag);
+export default async function WhatWorkedPage() {
+  const stories = await getPublishedWhatWorked(100);
 
   return (
     <main className="page page-wide">
@@ -42,20 +37,9 @@ export default async function WhatWorkedPage({ searchParams }: { searchParams: P
           </p>
         </section>
 
-        <div aria-label="Filter by what they changed" className="ww-filters">
-          <Link className={`ww-chip ${!tag ? "is-active" : ""}`} href="/what-worked">
-            All
-          </Link>
-          {WHAT_WORKED_TAGS.map((t) => (
-            <Link className={`ww-chip ${tag === t.slug ? "is-active" : ""}`} href={`/what-worked?tag=${t.slug}`} key={t.slug}>
-              {t.label}
-            </Link>
-          ))}
-        </div>
-
         {stories.length === 0 ? (
           <div className="empty-state ww-empty">
-            <h3>{tag ? "No stories for this one yet" : "Stories are on their way"}</h3>
+            <h3>Stories are on their way</h3>
             <p>New stories are added regularly — check back soon.</p>
           </div>
         ) : (

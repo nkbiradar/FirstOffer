@@ -1,4 +1,4 @@
-import { APPLICATION_RANGES, WHAT_WORKED_TAGS, type WhatWorkedStory } from "@/lib/data/what-worked";
+import { APPLICATION_RANGES, type WhatWorkedStory } from "@/lib/data/what-worked";
 
 // Admin-only add / edit form for "What Worked For Me" stories.
 // New story → POST /api/admin/what-worked; edit → POST /api/admin/what-worked/[id] (action=update).
@@ -49,19 +49,6 @@ export default function WhatWorkedForm({ story }: { story?: WhatWorkedStory }) {
         Result *
         <input defaultValue={s?.result ?? ""} maxLength={300} name="result" placeholder="e.g. Got 3 interview calls in 2 weeks" required />
       </label>
-      <fieldset style={{ border: 0, padding: 0, margin: "8px 0" }}>
-        <legend className="hint" style={{ marginBottom: 6 }}>
-          What helped (filter tags)
-        </legend>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px" }}>
-          {WHAT_WORKED_TAGS.map((t) => (
-            <label key={t.slug} style={{ display: "flex", alignItems: "center", gap: 6, flexDirection: "row" }}>
-              <input defaultChecked={s?.tags.includes(t.slug) ?? false} name="tags" style={{ width: "auto" }} type="checkbox" value={t.slug} />
-              {t.label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px", margin: "8px 0 14px" }}>
         <label style={{ display: "flex", alignItems: "center", gap: 6, flexDirection: "row" }}>
           <input defaultChecked={s?.is_anonymous ?? false} name="is_anonymous" style={{ width: "auto" }} type="checkbox" />
