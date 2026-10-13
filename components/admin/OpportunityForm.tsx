@@ -266,6 +266,22 @@ export default function OpportunityForm({ mode, opportunity, companies, errorMes
         </label>
       </section>
 
+      <section className="card">
+        <h2>⚡ Immediate Hiring</h2>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: "row" }}>
+          <input
+            name="is_immediate_hiring"
+            type="checkbox"
+            defaultChecked={o?.is_immediate_hiring ?? false}
+            style={{ width: "auto" }}
+          />
+          <span>
+            Show an &ldquo;Immediate Hiring&rdquo; badge on this opportunity{" "}
+            <span className="hint">(for roles where the company wants joiners right away)</span>
+          </span>
+        </label>
+      </section>
+
       <section className="card free-pick-admin-card">
         <h2>🎁 Today&apos;s FREE Opportunity</h2>
         <label style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: "row" }}>

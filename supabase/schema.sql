@@ -1058,3 +1058,7 @@ create table if not exists public.referral_claims (
   unique (user_id, kind)
 );
 alter table public.referral_claims enable row level security;
+
+-- "Immediate Hiring" badge, toggled per opportunity in the admin form.
+alter table public.opportunities
+  add column if not exists is_immediate_hiring boolean not null default false;

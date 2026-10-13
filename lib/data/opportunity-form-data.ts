@@ -57,6 +57,8 @@ export type OpportunityFormInput = {
   // Today's FREE opportunity (apply details shown to everyone). Optional so
   // bulk import / AI extraction leave the flag untouched (defaults false).
   isFreePick?: boolean;
+  // "Immediate Hiring" badge. Optional so bulk import leaves it untouched.
+  isImmediateHiring?: boolean;
 };
 
 export function str(formData: FormData, key: string): string {
@@ -127,6 +129,7 @@ export function parseOpportunityFormData(
     status,
     isInternal: formData.get("is_internal") === "on",
     isFreePick: formData.get("is_free_pick") === "on",
+    isImmediateHiring: formData.get("is_immediate_hiring") === "on",
   };
 }
 

@@ -143,6 +143,10 @@ export interface Opportunity {
   // Only one row is true at a time (see supabase/schema.sql).
   is_free_pick: boolean;
 
+  // "Immediate Hiring" tag set by the admin — shown as a badge on the card
+  // and the opportunity page (see supabase/schema.sql).
+  is_immediate_hiring: boolean;
+
   imported_at: string;
   published_at: string | null;
   expires_at: string | null;
@@ -195,6 +199,8 @@ export interface OpportunityInsert {
   is_internal?: boolean;
 
   is_free_pick?: boolean;
+
+  is_immediate_hiring?: boolean;
 
   imported_at?: string;
   published_at?: string | null;

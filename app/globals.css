@@ -7447,3 +7447,12 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   text-decoration-thickness: 3px;
 }
 .price-was-plain { font-size: 0.95em; color: inherit; -webkit-text-fill-color: currentColor; opacity: 0.6; }
+
+/* ── "Immediate Hiring" badge (opportunities.is_immediate_hiring) ── */
+.badge.badge-immediate {
+  background: linear-gradient(90deg, #dc2626, #f97316);
+  color: #ffffff;
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.25);
+}

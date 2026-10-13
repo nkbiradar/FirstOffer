@@ -374,6 +374,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           <h1>{role}</h1>
 
           <div className="detail-meta-row">
+            {opportunity.is_immediate_hiring && <span className="badge badge-immediate">⚡ Immediate Hiring</span>}
             {opportunity_type && <span className={`badge badge-${opportunity_type}`}>{TYPE_LABELS[opportunity_type]}</span>}
             {location && <span className="badge badge-neutral">{location}</span>}
             {workModeLabel && <span className="badge badge-neutral">{workModeLabel}</span>}

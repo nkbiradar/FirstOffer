@@ -42,6 +42,7 @@ export default function OpportunityCard({
     published_at,
     deadline,
     company,
+    is_immediate_hiring,
   } = opportunity;
 
   const compensation = stipend || salary;
@@ -85,8 +86,9 @@ export default function OpportunityCard({
 
       <h3 className="opportunity-role">{role}</h3>
 
-      {(opportunity_type || batch.length > 0 || urgency) && (
+      {(is_immediate_hiring || opportunity_type || batch.length > 0 || urgency) && (
         <div className="badge-row">
+          {is_immediate_hiring && <span className="badge badge-immediate">⚡ Immediate Hiring</span>}
           {opportunity_type && (
             <span className={`badge badge-${opportunity_type}`}>{TYPE_LABELS[opportunity_type]}</span>
           )}

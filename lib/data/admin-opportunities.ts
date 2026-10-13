@@ -133,6 +133,7 @@ type OpportunityDbFields = Pick<
   | "source_text"
   | "is_internal"
   | "is_free_pick"
+  | "is_immediate_hiring"
 >;
 
 function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
@@ -163,6 +164,7 @@ function toDbFields(input: OpportunityFormInput): OpportunityDbFields {
     // Only sent when the single-opportunity form says so; bulk import
     // leaves it undefined, i.e. the column's default (false).
     ...(input.isFreePick === undefined ? {} : { is_free_pick: input.isFreePick && !input.isInternal }),
+    ...(input.isImmediateHiring === undefined ? {} : { is_immediate_hiring: input.isImmediateHiring }),
   };
 }
 
