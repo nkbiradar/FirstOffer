@@ -110,6 +110,12 @@ export default async function InternalOpeningsPage() {
               </svg>
               Roles that may not be widely posted
             </li>
+            <li>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Bonus: Interview Questions Kit (PDF)
+            </li>
           </ul>
 
           {isUnlocked ? (
@@ -140,6 +146,34 @@ export default async function InternalOpeningsPage() {
                 />
               )}
             </div>
+          )}
+        </section>
+
+        {/* Members-only perk: the Coding Interview Kit PDF (served by
+            app/api/internal/interview-kit, which re-checks access). */}
+        <section className={`interview-kit ${isUnlocked ? "is-unlocked" : "is-locked"}`}>
+          <span aria-hidden="true" className="interview-kit-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+              <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z" strokeLinejoin="round" />
+              <path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5A2.5 2.5 0 0 1 4 20.5ZM9 8h7M9 11.5h5" strokeLinecap="round" />
+            </svg>
+          </span>
+          <div className="interview-kit-body">
+            <span className="interview-kit-eyebrow">Internal Interview Questions · Members only</span>
+            <h2>Coding Interview Kit — 30 questions companies keep asking</h2>
+            <p>
+              24 must-practice problems plus 6 bonus fresher favourites — each with a simple explanation, tested Python
+              solution, complexity, edge cases and the follow-up the interviewer may ask next.
+            </p>
+          </div>
+          {isUnlocked ? (
+            <a className="btn btn-primary interview-kit-cta" href="/api/internal/interview-kit">
+              Download PDF
+            </a>
+          ) : (
+            <a className="btn btn-secondary interview-kit-cta" href="#unlock-internal-hr">
+              🔒 Unlock to download
+            </a>
           )}
         </section>
 

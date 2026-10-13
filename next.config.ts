@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  // Members-only files served by API routes (kept out of /public).
+  outputFileTracingIncludes: {
+    "/api/internal/interview-kit": ["./private/**/*"],
+  },
 };
 
 export default nextConfig;
