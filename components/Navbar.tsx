@@ -12,6 +12,8 @@ const LINKS = [
   { href: "/opportunities", label: "All Openings" },
   { href: "/companies", label: "Companies" },
   { href: "/resume", label: "Resume Help" },
+  // Free "What Worked For Me" stories — its own section, not part of Internal HR.
+  { href: "/what-worked", label: "What Worked" },
   // Deliberately styled differently below (nav-link-hot) — this is the
   // entry point to the ₹149/month Internal HR Openings product and is meant
   // to stand out from the plain listing links next to it.
