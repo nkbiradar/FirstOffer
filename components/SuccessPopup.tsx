@@ -39,7 +39,7 @@ export default function SuccessPopup({ testimonials }: { testimonials: Testimoni
 
   // Also hidden on /share-your-story: the popup would cover the form fields
   // on phones while someone is filling in their own story.
-  const isAdminRoute = pathname?.startsWith("/admin") || pathname === "/share-your-story";
+  const isAdminRoute = pathname?.startsWith("/admin") || pathname === "/share-your-story" || pathname?.startsWith("/what-worked/share");
   const hasTestimonials = testimonials.length > 0;
 
   useEffect(() => {

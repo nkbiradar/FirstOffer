@@ -7,6 +7,8 @@ import SuccessStories from "@/components/SuccessStories";
 import { getFreePickOpportunity, getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
+import WhatWorkedCard from "@/components/WhatWorkedCard";
+import { getPublishedWhatWorked } from "@/lib/data/what-worked";
 import WhatsAppChannelLink from "@/components/WhatsAppChannelLink";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { getFeaturedInterns } from "@/lib/data/referral-rewards";
@@ -88,6 +90,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     isLegacyFullAccessUser,
     freePick,
     featuredInterns,
+    whatWorked,
   ] = await Promise.all([
     getHomepageOpportunities(),
     getSiteStats(),
@@ -98,6 +101,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
     getFreePickOpportunity(),
     getFeaturedInterns(),
+    getPublishedWhatWorked(3),
   ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
@@ -761,6 +765,54 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 ))}
               </div>
             </div>
+          </section>
+        </Reveal>
+
+        {/* "What Worked For Me" — free advice from students who went from
+            no calls to interview calls (/what-worked). Shows the latest 3
+            published stories, or an invitation to share one. */}
+        <Reveal>
+          <section className="section">
+            <div className="section-header">
+              <div>
+                <span className="eyebrow">
+                  <span className="eyebrow-dot" />
+                  What worked for me · Free
+                </span>
+                <h2 style={{ marginTop: 10 }}>Not getting interview calls? Here&apos;s what changed it for them</h2>
+                <p className="section-sub">
+                  Freshers who were stuck at zero calls share exactly what they changed — in their own words.
+                </p>
+              </div>
+            </div>
+            {whatWorked.length > 0 ? (
+              <>
+                <div className="ww-grid">
+                  {whatWorked.map((s) => (
+                    <WhatWorkedCard compact key={s.id} story={s} />
+                  ))}
+                </div>
+                <div className="ww-home-actions">
+                  <Link className="btn btn-primary" href="/what-worked">
+                    Read all stories
+                  </Link>
+                  <Link className="btn btn-secondary" href="/what-worked/share">
+                    Share what worked for you
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="ww-home-cta">
+                <p>
+                  <strong>Went from no calls to interview calls?</strong>
+                  Share what you changed — resume, referrals, HR emails, projects. Your 2 minutes could help another
+                  fresher who&apos;s stuck where you were.
+                </p>
+                <Link className="btn btn-primary" href="/what-worked/share">
+                  Share your story
+                </Link>
+              </div>
+            )}
           </section>
         </Reveal>
 

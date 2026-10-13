@@ -1062,3 +1062,32 @@ alter table public.referral_claims enable row level security;
 -- "Immediate Hiring" badge, toggled per opportunity in the admin form.
 alter table public.opportunities
   add column if not exists is_immediate_hiring boolean not null default false;
+
+-- "What Worked For Me" stories (/what-worked). Submitted by signed-in users
+-- at /what-worked/share as drafts; published by the admin.
+create table if not exists public.what_worked_stories (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users (id) on delete set null,
+  display_name text not null,
+  is_anonymous boolean not null default false,
+  college text,
+  graduation_batch text,
+  target_role text,
+  applications_before text,
+  what_wasnt_working text,
+  what_changed text not null,
+  result text not null,
+  tags text[] not null default '{}',
+  is_published boolean not null default false,
+  submitter_email text,
+  consent_given_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists what_worked_published_created_idx
+  on public.what_worked_stories (is_published, created_at desc);
+
+-- RLS on with NO policies: only the server (service role) can read/write.
+-- The public page reads published rows server-side with a safe column list,
+-- so submitter emails and anonymous posters' names are never exposed.
+alter table public.what_worked_stories enable row level security;

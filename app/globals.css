@@ -7495,3 +7495,106 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .interview-kit { flex-direction: column; align-items: flex-start; }
   .interview-kit-cta { width: 100%; text-align: center; justify-content: center; }
 }
+
+/* ── "What Worked For Me" (/what-worked, components/WhatWorkedCard.tsx) ── */
+.ww-hero {
+  margin: 12px 0 22px;
+  padding: 34px 30px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #eef1ff 0%, #f0fdfa 100%);
+  border: 1px solid var(--color-border);
+}
+.ww-hero h1 {
+  margin: 12px 0 10px;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+.ww-hero p { margin: 0 0 18px; max-width: 680px; font-size: 16px; line-height: 1.6; color: var(--color-text-secondary); }
+.ww-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.ww-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.ww-chip:hover { border-color: var(--color-brand); color: var(--color-brand); }
+.ww-chip.is-active { background: var(--color-text); border-color: var(--color-text); color: #ffffff; }
+.ww-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+.ww-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(20, 22, 26, 0.04);
+}
+.ww-card-head { display: flex; align-items: center; gap: 12px; }
+.ww-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-weight: 800;
+  font-size: 15px;
+}
+.ww-name { margin: 0; font-weight: 700; color: var(--color-text); font-size: 15px; }
+.ww-role { margin: 2px 0 0; font-size: 13px; color: var(--color-text-secondary); }
+.ww-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.ww-label-before { background: #fee2e2; color: #991b1b; }
+.ww-label-changed { background: var(--color-brand-soft); color: var(--color-brand); }
+.ww-label-result { background: #dcfce7; color: #166534; }
+.ww-before p, .ww-result p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--color-text-secondary); }
+.ww-before strong { color: var(--color-text); }
+.ww-changed ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; }
+.ww-changed li { font-size: 14.5px; line-height: 1.5; color: var(--color-text); }
+.ww-result { padding: 12px 14px; border-radius: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; }
+.ww-result p { color: #14532d; font-weight: 600; }
+.ww-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ww-tag { padding: 3px 10px; border-radius: 999px; background: var(--color-surface-muted); color: var(--color-text-secondary); font-size: 12px; font-weight: 600; }
+.ww-empty { margin-top: 10px; }
+.ww-disclaimer { margin: 28px 0 10px; font-size: 13px; color: var(--color-text-secondary); text-align: center; }
+.ww-form textarea { width: 100%; }
+.ww-tag-picks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ww-tag-picks legend { grid-column: 1 / -1; }
+.ww-home-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.ww-home-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px dashed var(--color-brand);
+  background: var(--color-brand-soft);
+}
+.ww-home-cta p { margin: 0; max-width: 560px; color: var(--color-text-secondary); font-size: 15px; line-height: 1.55; }
+.ww-home-cta strong { display: block; color: var(--color-text); font-size: 17px; margin-bottom: 4px; }
+@media (max-width: 560px) {
+  .ww-hero { padding: 24px 18px; }
+  .ww-grid { grid-template-columns: 1fr; }
+  .ww-tag-picks { grid-template-columns: 1fr; }
+}
