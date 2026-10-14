@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -44,7 +44,27 @@ function isActive(href: string, pathname: string, search: string) {
 // admin themselves gets it back via the `isAdmin` prop below (see Navbar) —
 // otherwise the only way back into /admin is remembering the URL, which
 // turned out to be worse than the info-leak this was guarding against.
-function AuthActions({ user }: { user: NavUser }) {
+function AuthActions({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close the account menu on an outside click or Escape.
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   if (!user) {
     return (
       <Link className="nav-admin-link" href="/login">
@@ -53,28 +73,48 @@ function AuthActions({ user }: { user: NavUser }) {
     );
   }
 
-  // A single "who's signed in" chip (initial-letter avatar + email) instead
-  // of a bare email string floating between the Dashboard and Sign out
-  // buttons — same information, but it reads as one grouped identity
-  // element rather than three loose, competing pieces of text.
+  // Signed in: one compact account button (avatar + "Account") that opens a
+  // small menu with Dashboard, Admin (admins only) and Sign out. This used
+  // to be four separate pills in the top bar, which overflowed the screen
+  // once the nav had 8 links (Admin was pushed off-screen).
   const initial = user.email ? user.email.charAt(0).toUpperCase() : "?";
 
   return (
-    <div className="nav-user">
-      <Link className="nav-admin-link" href="/dashboard">
-        Dashboard
-      </Link>
-      {user.email && (
-        <span className="nav-user-chip" title={user.email}>
-          <span className="nav-user-avatar" aria-hidden="true">
-            {initial}
-          </span>
-          <span className="nav-user-email">{user.email}</span>
+    <div className="nav-account" ref={ref}>
+      <button
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className="nav-account-btn"
+        onClick={() => setOpen((v) => !v)}
+        title={user.email ?? undefined}
+        type="button"
+      >
+        <span className="nav-user-avatar" aria-hidden="true">
+          {initial}
         </span>
+        <span className="nav-account-label">Account</span>
+        <svg aria-hidden="true" fill="none" height="14" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24" width="14">
+          <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div className="nav-account-menu" role="menu">
+          {user.email && <p className="nav-account-email">{user.email}</p>}
+          <Link href="/dashboard" onClick={() => setOpen(false)} role="menuitem">
+            Dashboard
+          </Link>
+          {isAdmin && (
+            <Link href="/admin" onClick={() => setOpen(false)} role="menuitem">
+              Admin
+            </Link>
+          )}
+          <form action="/api/auth/signout" method="post">
+            <button role="menuitem" type="submit">
+              Sign out
+            </button>
+          </form>
+        </div>
       )}
-      <form action="/api/auth/signout" method="post" className="nav-signout-form">
-        <button type="submit">Sign out</button>
-      </form>
     </div>
   );
 }
@@ -129,12 +169,7 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
           </nav>
 
           <div className="navbar-actions">
-            <AuthActions user={user} />
-            {isAdmin && (
-              <Link className="nav-admin-link" href="/admin">
-                Admin
-              </Link>
-            )}
+            <AuthActions user={user} isAdmin={isAdmin} />
             <button
               type="button"
               className="nav-toggle"
@@ -229,12 +264,7 @@ function NavbarFallback({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) 
             ))}
           </nav>
           <div className="navbar-actions">
-            <AuthActions user={user} />
-            {isAdmin && (
-              <Link className="nav-admin-link" href="/admin">
-                Admin
-              </Link>
-            )}
+            <AuthActions user={user} isAdmin={isAdmin} />
           </div>
         </div>
       </div>

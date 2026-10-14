@@ -7598,3 +7598,105 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .ww-grid { grid-template-columns: 1fr; }
   .ww-tag-picks { grid-template-columns: 1fr; }
 }
+
+/* ── Navbar account menu (components/Navbar.tsx AuthActions) ──────────────
+   Signed-in users get one avatar button instead of Dashboard + email +
+   Sign out + Admin pills, so the 8-link nav fits without overflowing. */
+.nav-account { position: relative; }
+.nav-account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-account-btn:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+.nav-account-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 60;
+  min-width: 220px;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 12px 32px rgba(20, 22, 26, 0.14);
+  display: flex;
+  flex-direction: column;
+}
+.nav-account-email {
+  margin: 4px 8px 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 12.5px;
+  color: var(--color-text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+}
+.nav-account-menu a,
+.nav-account-menu button {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 9px;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.nav-account-menu a:hover,
+.nav-account-menu button:hover { background: var(--color-surface-muted); color: var(--color-text); }
+@media (max-width: 640px) {
+  .navbar-actions > .nav-account { display: none; }
+}
+
+/* ── Phone fixes (Oct 2026) ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Stats row: a clean 2 × 2 grid instead of wrapping with stray dividers. */
+  .milestone-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 12px;
+    width: 100%;
+    max-width: 360px;
+  }
+  .milestone-divider { display: none; }
+  .milestone { min-width: 0; }
+
+  /* Job cards: company name gets its own full line; "Posted today" +
+     "Apply fast" sit on the line below instead of squeezing the name to "EdTe…". */
+  .opportunity-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .opportunity-company-row { width: 100%; }
+  .opportunity-company { white-space: normal; }
+
+  /* Success popup: smaller and lower so it doesn't cover the page. */
+  .success-popup {
+    left: 12px;
+    right: auto;
+    bottom: 88px;
+    max-width: 260px;
+    padding: 10px 28px 10px 12px;
+  }
+  .success-popup-quote { display: none; }
+  .success-popup-headline { font-size: 13px; }
+  .success-popup-detail { font-size: 11.5px; }
+}
