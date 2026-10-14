@@ -7704,7 +7704,7 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 /* Data Analytics & AI interview kits list (Internal HR, Oct 2026) */
 .kit-list { margin-top: 16px; padding: 20px 22px; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface, #fff); }
 .kit-list-head h2 { margin: 4px 0 4px; font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--color-text); }
-.kit-list-head p { margin: 0 0 14px; font-size: 14px; color: var(--color-text-secondary); }
+.kit-list-head p { margin: 0 0 10px; font-size: 14px; color: var(--color-text-secondary); }
 .kit-list-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
 .kit-list-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 14px; }
 .kit-list-emoji { flex: 0 0 auto; width: 38px; height: 38px; display: grid; place-items: center; font-size: 20px; border-radius: 10px; background: rgba(67, 56, 202, 0.08); }
@@ -7720,3 +7720,6 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .kit-list-text { flex: 1 1 calc(100% - 50px); }
   .kit-list-item .btn { width: 100%; justify-content: center; text-align: center; }
 }
+.kit-list-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.kit-list-chips span { font-size: 12.5px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: rgba(67, 56, 202, 0.08); color: #4338ca; }
+.kit-list-chips span:first-child { background: linear-gradient(90deg, #4338ca, #0d9488); color: #fff; }

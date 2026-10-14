@@ -189,8 +189,16 @@ export default async function InternalOpeningsPage() {
         <section className={`kit-list ${isUnlocked ? "is-unlocked" : "is-locked"}`}>
           <div className="kit-list-head">
             <span className="interview-kit-eyebrow">Data Analytics &amp; AI · Members only</span>
-            <h2>5 more interview kits — 20 questions each</h2>
-            <p>Written from the interviewer&apos;s side, easy to medium, with tested queries and code.</p>
+            <h2>🔥 Most-asked Data &amp; AI interview questions</h2>
+            <p>
+              The questions that come up again and again in Data Analyst, Data Science and AI/LLM interviews — with
+              model answers and the follow-ups interviewers ask next.
+            </p>
+            <div className="kit-list-chips">
+              <span>100 questions</span>
+              <span>5 PDF kits</span>
+              <span>Tested code &amp; queries</span>
+            </div>
           </div>
           <ul className="kit-list-grid">
             {DATA_AI_KITS.map((k) => (
