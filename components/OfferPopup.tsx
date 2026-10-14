@@ -20,7 +20,6 @@ type Props = {
   saleActive: boolean;
   saleEndsAt: string; // ISO date
   saleEndLabel: string;
-  studentCount: string;
 };
 
 function timeLeft(endsAt: string) {
@@ -35,7 +34,7 @@ function timeLeft(endsAt: string) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export default function OfferPopup({ price, regularPrice, saleActive, saleEndsAt, saleEndLabel, studentCount }: Props) {
+export default function OfferPopup({ price, regularPrice, saleActive, saleEndsAt, saleEndLabel }: Props) {
   const pathname = usePathname() ?? "/";
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(() => (saleActive ? timeLeft(saleEndsAt) : null));
@@ -146,7 +145,6 @@ export default function OfferPopup({ price, regularPrice, saleActive, saleEndsAt
             · till {saleEndLabel}
           </p>
         ) : null}
-        <p className="offer-pop-trust">Trusted by {studentCount} students</p>
         <button className="offer-pop-later" onClick={() => setOpen(false)} type="button">
           Maybe later
         </button>

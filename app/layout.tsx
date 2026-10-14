@@ -8,7 +8,6 @@ import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
 import OfferPopup from "@/components/OfferPopup";
-import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
 import {
   DASARA_SALE_END_LABEL,
@@ -106,7 +105,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             saleActive={isDasaraSaleActive()}
             saleEndLabel={DASARA_SALE_END_LABEL}
             saleEndsAt={DASARA_SALE_ENDS_AT}
-            studentCount={STUDENT_COUNT_LABEL}
           />
         )}
       </body>
