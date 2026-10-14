@@ -7723,3 +7723,76 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .kit-list-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
 .kit-list-chips span { font-size: 12.5px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: rgba(67, 56, 202, 0.08); color: #4338ca; }
 .kit-list-chips span:first-child { background: linear-gradient(90deg, #4338ca, #0d9488); color: #fff; }
+
+/* Internal HR offer popup (components/OfferPopup.tsx, Oct 2026) */
+.offer-pop-backdrop {
+  position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px;
+  background: rgba(8, 8, 14, 0.62); backdrop-filter: blur(3px);
+  animation: offer-fade 0.25s ease-out;
+}
+.offer-pop {
+  position: relative; width: 100%; max-width: 460px; max-height: calc(100vh - 32px); overflow-y: auto;
+  padding: 44px 34px 26px; border-radius: 22px; text-align: center; color: #f4f1ea;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(212, 167, 74, 0.18) 0%, transparent 60%),
+    linear-gradient(180deg, #17151f 0%, #0b0a10 100%);
+  border: 1px solid rgba(212, 167, 74, 0.28);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  animation: offer-rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  outline: none;
+}
+.offer-pop-close {
+  position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: transparent; color: #d8d3c7; cursor: pointer;
+}
+.offer-pop-close:hover, .offer-pop-close:focus-visible { background: rgba(255, 255, 255, 0.08); color: #fff; outline: none; }
+.offer-pop-eyebrow {
+  margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #e0a849;
+}
+.offer-pop h2 {
+  margin: 0; font-family: var(--font-display, inherit); font-size: 30px; line-height: 1.15; font-weight: 800;
+  letter-spacing: -0.02em; color: #fff;
+}
+.offer-pop-sub { margin: 10px auto 0; max-width: 360px; font-size: 14.5px; line-height: 1.55; color: #b9b4a8; }
+.offer-pop-rule {
+  height: 1px; margin: 20px auto; width: 72%;
+  background: linear-gradient(90deg, transparent, rgba(212, 167, 74, 0.55), transparent);
+}
+.offer-pop-price { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 4px 12px; }
+.offer-pop-was { font-size: 20px; font-weight: 600; color: #8f897c; text-decoration: line-through; text-decoration-color: #e0603a; text-decoration-thickness: 2px; }
+.offer-pop-now {
+  font-family: var(--font-display, inherit); font-size: 52px; line-height: 1; font-weight: 800; letter-spacing: -0.03em;
+  background: linear-gradient(180deg, #ffe7a8 0%, #e0a849 100%); -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+.offer-pop-period { flex-basis: 100%; font-size: 13.5px; color: #b9b4a8; }
+.offer-pop-perks { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.offer-pop-perks li {
+  padding: 12px 6px; border-radius: 12px; font-size: 12.5px; line-height: 1.35; color: #cfc9bc;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.offer-pop-perks b { display: block; margin-bottom: 2px; font-size: 15px; color: #fff; }
+.offer-pop-cta {
+  display: block; width: 100%; max-width: 280px; margin: 0 auto; padding: 14px 20px; border-radius: 999px;
+  background: #fff; color: #111; font-weight: 800; font-size: 16px; text-decoration: none;
+  box-shadow: 0 8px 24px rgba(224, 168, 73, 0.25); transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.offer-pop-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(224, 168, 73, 0.35); color: #111; }
+.offer-pop-timer { margin: 14px 0 0; font-size: 13px; color: #b9b4a8; }
+.offer-pop-timer b { color: #ffd88a; font-variant-numeric: tabular-nums; }
+.offer-pop-trust { margin: 6px 0 0; font-size: 12.5px; color: #8f897c; }
+.offer-pop-later {
+  margin-top: 10px; border: 0; background: none; color: #8f897c; font-size: 13px; cursor: pointer; text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.offer-pop-later:hover { color: #d8d3c7; }
+@keyframes offer-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes offer-rise { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+@media (max-width: 480px) {
+  .offer-pop { padding: 40px 20px 22px; border-radius: 18px; }
+  .offer-pop h2 { font-size: 25px; }
+  .offer-pop-now { font-size: 44px; }
+  .offer-pop-perks { gap: 6px; }
+  .offer-pop-perks li { font-size: 11.5px; padding: 10px 4px; }
+}
+@media (prefers-reduced-motion: reduce) { .offer-pop, .offer-pop-backdrop { animation: none; } }

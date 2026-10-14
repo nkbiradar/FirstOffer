@@ -7,6 +7,16 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
+import OfferPopup from "@/components/OfferPopup";
+import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
+import { hasInternalAccess } from "@/lib/data/subscriptions";
+import {
+  DASARA_SALE_END_LABEL,
+  DASARA_SALE_ENDS_AT,
+  INTERNAL_PRICE_INR,
+  getInternalPriceInr,
+  isDasaraSaleActive,
+} from "@/lib/payments/razorpay";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { getSiteUrl } from "@/lib/site-url";
@@ -74,6 +84,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // Inside the Android app: hide every price / purchase CTA (data-app-hide,
   // see globals.css and lib/nativeAppServer.ts).
   const isApp = await isAppRequest();
+  // Internal HR offer popup: everyone except members, admins and the app.
+  const showOfferPopup = !isApp && !isAdmin && !(user && (await hasInternalAccess(user.id)));
 
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}${isApp ? " fo-app" : ""}`}>
@@ -87,6 +99,16 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <PushNotificationPrompt />
         <SuccessPopup testimonials={testimonials} />
         <VisitTracker isAdmin={isAdmin} />
+        {showOfferPopup && (
+          <OfferPopup
+            price={getInternalPriceInr()}
+            regularPrice={INTERNAL_PRICE_INR}
+            saleActive={isDasaraSaleActive()}
+            saleEndLabel={DASARA_SALE_END_LABEL}
+            saleEndsAt={DASARA_SALE_ENDS_AT}
+            studentCount={STUDENT_COUNT_LABEL}
+          />
+        )}
       </body>
     </html>
   );
