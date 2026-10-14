@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 // Shown once per browser session, a few seconds after the page loads.
 
 const SEEN_KEY = "fo-offer-popup-seen";
-const OPEN_DELAY_MS = 3500;
+const OPEN_DELAY_MS = 1200;
 // Pages where the popup would be in the way or redundant.
 const HIDDEN_PREFIXES = ["/internal-openings", "/admin", "/login", "/signup", "/auth", "/payment", "/checkout"];
 
