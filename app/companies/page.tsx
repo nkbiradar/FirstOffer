@@ -107,7 +107,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                     {company.publishedOpportunityCount === 1 ? "opportunity" : "opportunities"}
                   </p>
                   {(() => {
-                    const tags = ROLE_CATEGORIES.filter((c) => rolesByCompany.get(company.id)?.has(c.slug)).map(
+                    const tags = ROLE_CATEGORIES.filter((c) => c.slug !== "other" && rolesByCompany.get(company.id)?.has(c.slug)).map(
                       (c) => c.label,
                     );
                     return tags.length > 0 ? (

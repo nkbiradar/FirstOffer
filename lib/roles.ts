@@ -51,6 +51,10 @@ export const ROLE_CATEGORIES: RoleCategory[] = [
     label: "HR / Operations",
     re: /\b(hr|human resources|recruit\w*|talent acquisition|operations|ops)\b/i,
   },
+  // Catch-all so every live job is counted somewhere: titles that match none
+  // of the categories above land here (see categorizeRole). The regex never
+  // matches on its own.
+  { slug: "other", label: "Other roles", re: /(?!)/ },
 ];
 
 export const ROLE_LABELS: Record<string, string> = Object.fromEntries(ROLE_CATEGORIES.map((c) => [c.slug, c.label]));
@@ -67,5 +71,5 @@ export function categorizeRole(title: string | null | undefined): string[] {
   if (slugs.includes("qa") && /\btester\b|\btesting\b|\bqa\b/i.test(title) && !/\bdevelop/i.test(title)) {
     slugs = slugs.filter((s) => s !== "software");
   }
-  return slugs;
+  return slugs.length > 0 ? slugs : ["other"];
 }

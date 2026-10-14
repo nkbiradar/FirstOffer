@@ -92,7 +92,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     featuredInterns,
     whatWorked,
   ] = await Promise.all([
-    getHomepageOpportunities(),
+    // Every live opportunity (they expire after 48h, so this stays small) —
+    // the role counts and filters must cover all of them, not just the newest 30.
+    getHomepageOpportunities(500),
     getSiteStats(),
     getCompaniesWithPublishedCounts(),
     getPublishedTestimonials(),
@@ -119,7 +121,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   })).filter((c) => c.count > 0);
   const matchesRole = (o: { role: string }) => !selectedRole || categorizeRole(o.role).includes(selectedRole);
   const todayShown = today.filter(matchesRole);
-  const earlierShown = earlier.filter(matchesRole);
+  const earlierMatching = earlier.filter(matchesRole);
+  // Without a role filter, keep the homepage a sensible length: show the
+  // first 24 earlier openings and link to the full list for the rest.
+  const EARLIER_CAP = 24;
+  const earlierShown = selectedRole ? earlierMatching : earlierMatching.slice(0, EARLIER_CAP);
+  const earlierHidden = earlierMatching.length - earlierShown.length;
 
   const topCompanies = companies
     .filter((company) => company.publishedOpportunityCount > 0)
@@ -589,7 +596,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                     href="/#todays-opportunities"
                     scroll={false}
                   >
-                    All roles
+                    All roles <span className="role-filter-count">{liveForRoles.length}</span>
                   </Link>
                   {homeRoleOptions.map((c) => (
                     <Link
@@ -662,6 +669,13 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   <OpportunityCard key={opportunity.id} opportunity={opportunity} isSignedIn={Boolean(user)} />
                 ))}
               </div>
+              {earlierHidden > 0 && (
+                <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+                  <Link className="btn btn-secondary" href="/opportunities">
+                    View all {liveForRoles.length} live openings
+                  </Link>
+                </div>
+              )}
             </section>
           </Reveal>
         )}
