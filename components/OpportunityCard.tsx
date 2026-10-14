@@ -13,6 +13,20 @@ const WORK_MODE_LABELS: Record<string, string> = {
   onsite: "On-site",
 };
 
+// Every listing is live for 2 days (expires_at = published_at + 2 days, see
+// lib/data/admin-opportunities.ts). This tag shows the real time left.
+const LISTING_MS = 2 * 24 * 60 * 60 * 1000;
+function liveTag(expiresAt: string | null, publishedAt: string | null): { text: string; last: boolean } | null {
+  const end = expiresAt ? Date.parse(expiresAt) : publishedAt ? Date.parse(publishedAt) + LISTING_MS : NaN;
+  if (Number.isNaN(end)) return null;
+  const ms = end - Date.now();
+  if (ms <= 0) return null;
+  const h = Math.floor(ms / 3_600_000);
+  if (h < 1) return { text: "🔥 Closing soon", last: true };
+  if (h < 24) return { text: `🔥 Last day · ${h}h left`, last: true };
+  return { text: `⏳ Live 2 days only · ${Math.floor(h / 24)}d ${h % 24}h left`, last: false };
+}
+
 // Links by id (schema has no opportunity slug, only companies do).
 //
 // Signed-out visitors get sent to sign in first: the card links to
@@ -43,7 +57,9 @@ export default function OpportunityCard({
     deadline,
     company,
     is_immediate_hiring,
+    expires_at,
   } = opportunity;
+  const live = liveTag(expires_at, published_at);
 
   const compensation = stipend || salary;
   const postedLabel = formatRelativeTime(published_at);
@@ -86,9 +102,10 @@ export default function OpportunityCard({
 
       <h3 className="opportunity-role">{role}</h3>
 
-      {(is_immediate_hiring || opportunity_type || batch.length > 0 || urgency) && (
+      {(is_immediate_hiring || live || opportunity_type || batch.length > 0 || urgency) && (
         <div className="badge-row">
           {is_immediate_hiring && <span className="badge badge-immediate">⚡ Immediate Hiring</span>}
+          {live && <span className={`badge badge-live${live.last ? " is-last" : ""}`}>{live.text}</span>}
           {opportunity_type && (
             <span className={`badge badge-${opportunity_type}`}>{TYPE_LABELS[opportunity_type]}</span>
           )}

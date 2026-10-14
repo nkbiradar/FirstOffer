@@ -7806,3 +7806,7 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .internal-hr-hero #unlock-internal-hr .unlock-contact-card { width: 100%; }
   .unlock-contact-card .btn-primary { width: 100%; justify-content: center; padding-top: 12px; padding-bottom: 12px; }
 }
+
+/* "Live 2 days only" countdown tag on opportunity cards (Oct 2026) */
+.badge.badge-live { background: #fff7ed; color: #c2410c; border-color: #fed7aa; font-weight: 700; }
+.badge.badge-live.is-last { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
