@@ -529,7 +529,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 <li>Low-competition opportunities</li>
                 <li>Early access to fresh roles</li>
                 <li>Roles that may not be widely posted</li>
-                <li>Bonus: Interview Questions Kit (PDF)</li>
+                <li>Bonus: 6 Interview Question Kits (PDF)</li>
               </ul>
               <span className="btn btn-primary internal-hr-promo-cta">
                 Unlock Internal Openings —{" "}

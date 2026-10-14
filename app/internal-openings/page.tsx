@@ -12,6 +12,14 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 
+const DATA_AI_KITS = [
+  { slug: "sql", emoji: "🗄️", title: "SQL for Data Analysts", topics: "Joins · ranking · window functions · duplicates" },
+  { slug: "python", emoji: "🐼", title: "Python & Pandas", topics: "Cleaning · groupby · merge · dates · outliers" },
+  { slug: "excel", emoji: "📊", title: "Excel, Statistics & Power BI", topics: "Lookups · pivots · p-values · A/B tests · DAX" },
+  { slug: "ml", emoji: "🤖", title: "Machine Learning Basics", topics: "Overfitting · metrics · trees · scaling · K-means" },
+  { slug: "genai", emoji: "✨", title: "Generative AI & LLMs", topics: "Prompting · embeddings · RAG · evaluation · safety" },
+];
+
 // Deliberately excluded from Google's index (see the noindex comment in
 // generateMetadata below) — this product is meant to be discovered by
 // visitors of the site itself, not search engines, since the entire pitch
@@ -114,7 +122,7 @@ export default async function InternalOpeningsPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Bonus: Interview Questions Kit (PDF)
+              Bonus: 6 Interview Question Kits (PDF)
             </li>
           </ul>
 
@@ -175,6 +183,37 @@ export default async function InternalOpeningsPage() {
               🔒 Unlock to download
             </a>
           )}
+        </section>
+
+        {/* Data Analytics & AI kits — same members-only route (?kit=…). */}
+        <section className={`kit-list ${isUnlocked ? "is-unlocked" : "is-locked"}`}>
+          <div className="kit-list-head">
+            <span className="interview-kit-eyebrow">Data Analytics &amp; AI · Members only</span>
+            <h2>5 more interview kits — 20 questions each</h2>
+            <p>Written from the interviewer&apos;s side, easy to medium, with tested queries and code.</p>
+          </div>
+          <ul className="kit-list-grid">
+            {DATA_AI_KITS.map((k) => (
+              <li className="kit-list-item" key={k.slug}>
+                <span aria-hidden="true" className="kit-list-emoji">
+                  {k.emoji}
+                </span>
+                <div className="kit-list-text">
+                  <strong>{k.title}</strong>
+                  <span>{k.topics}</span>
+                </div>
+                {isUnlocked ? (
+                  <a className="btn btn-sm btn-primary" href={`/api/internal/interview-kit?kit=${k.slug}`}>
+                    Download
+                  </a>
+                ) : (
+                  <a className="btn btn-sm btn-secondary" href="#unlock-internal-hr">
+                    🔒 Unlock
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
         </section>
 
         <div className="dashboard-section-header" style={{ marginTop: 40 }}>

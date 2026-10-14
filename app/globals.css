@@ -7700,3 +7700,23 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .success-popup-headline { font-size: 13px; }
   .success-popup-detail { font-size: 11.5px; }
 }
+
+/* Data Analytics & AI interview kits list (Internal HR, Oct 2026) */
+.kit-list { margin-top: 16px; padding: 20px 22px; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface, #fff); }
+.kit-list-head h2 { margin: 4px 0 4px; font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--color-text); }
+.kit-list-head p { margin: 0 0 14px; font-size: 14px; color: var(--color-text-secondary); }
+.kit-list-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.kit-list-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 14px; }
+.kit-list-emoji { flex: 0 0 auto; width: 38px; height: 38px; display: grid; place-items: center; font-size: 20px; border-radius: 10px; background: rgba(67, 56, 202, 0.08); }
+.kit-list-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.kit-list-text strong { font-size: 14.5px; color: var(--color-text); }
+.kit-list-text span { font-size: 12.5px; color: var(--color-text-secondary); line-height: 1.4; }
+.kit-list-item .btn { flex: 0 0 auto; white-space: nowrap; }
+.kit-list.is-locked .kit-list-emoji { filter: grayscale(1); opacity: 0.7; }
+@media (max-width: 480px) {
+  .kit-list { padding: 16px; }
+  .kit-list-grid { grid-template-columns: 1fr; }
+  .kit-list-item { flex-wrap: wrap; }
+  .kit-list-text { flex: 1 1 calc(100% - 50px); }
+  .kit-list-item .btn { width: 100%; justify-content: center; text-align: center; }
+}
