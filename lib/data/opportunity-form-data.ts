@@ -167,6 +167,7 @@ export type BulkOpportunityItem = {
   // Optional so older/unrelated callers of this type still compile —
   // parseOpportunityBulkItem below treats a missing value as false.
   isInternal?: boolean;
+  isImmediateHiring?: boolean;
   // Optional — the bulk-import UI doesn't currently expose this field, so
   // it's always blank for bulk-imported opportunities today; add it via
   // the single-opportunity edit form afterwards if a bulk-imported listing
@@ -206,5 +207,6 @@ export function parseOpportunityBulkItem(item: BulkOpportunityItem): Opportunity
     // BulkImportClient.tsx — defaults to false so a normal paste never
     // accidentally becomes an Internal HR Opening.
     isInternal: Boolean(item.isInternal),
+    isImmediateHiring: Boolean(item.isImmediateHiring),
   };
 }

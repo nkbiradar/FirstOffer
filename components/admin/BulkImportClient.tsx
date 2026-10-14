@@ -295,6 +295,10 @@ export default function BulkImportClient() {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, isInternal } : item)));
   }
 
+  function updateIsImmediate(id: string, isImmediateHiring: boolean) {
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, isImmediateHiring } : item)));
+  }
+
   // Quick action for the common case of a whole batch coming from the same
   // HR/recruiter source — ticks every currently-parsed item at once instead
   // of clicking each one individually. Still fully overridable per item
@@ -515,6 +519,7 @@ export default function BulkImportClient() {
                           🔥 Internal HR
                         </span>
                       )}
+                      {item.isImmediateHiring && <span className="badge badge-immediate">⚡ Immediate Hiring</span>}
                     </div>
                     <button className="btn-danger" type="button" onClick={() => removeItem(item.id)}>
                       Remove
@@ -531,6 +536,18 @@ export default function BulkImportClient() {
                     <span style={{ fontSize: 13.5 }}>
                       Internal HR Opening — part of the ₹149 (3-month) Internal HR Openings product{" "}
                       <span className="hint">(hidden from all regular listings — only visible on /internal-openings)</span>
+                    </span>
+                  </label>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, margin: "-4px 0 12px" }}>
+                    <input
+                      type="checkbox"
+                      style={{ width: "auto" }}
+                      checked={Boolean(item.isImmediateHiring)}
+                      onChange={(e) => updateIsImmediate(item.id, e.target.checked)}
+                    />
+                    <span style={{ fontSize: 13.5 }}>
+                      ⚡ Immediate Hiring <span className="hint">(shows an &ldquo;Immediate Hiring&rdquo; badge on this job)</span>
                     </span>
                   </label>
 

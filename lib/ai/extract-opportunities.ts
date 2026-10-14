@@ -106,6 +106,7 @@ function normalizeAiItem(raw: Record<string, unknown>, fallbackSourceText: strin
     // text, only something the admin marks explicitly, per-item or via
     // "Mark all as Internal" in BulkImportClient.tsx after reviewing.
     isInternal: false,
+    isImmediateHiring: false,
   };
 }
 

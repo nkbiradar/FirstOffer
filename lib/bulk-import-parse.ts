@@ -32,9 +32,11 @@ export type BulkDraftOpportunity = {
   // BulkImportClient.tsx. Defaults to false so a normal paste never
   // accidentally hides itself from regular listings.
   isInternal: boolean;
+  // Shows the "⚡ Immediate Hiring" badge — set only by the per-item checkbox.
+  isImmediateHiring: boolean;
 };
 
-type FieldKey = Exclude<keyof BulkDraftOpportunity, "sourceText" | "isInternal">;
+type FieldKey = Exclude<keyof BulkDraftOpportunity, "sourceText" | "isInternal" | "isImmediateHiring">;
 
 // Recognized "Label:" lines, case-insensitive. Several aliases per field
 // since the exact wording out of ChatGPT will vary paste to paste.
@@ -135,6 +137,7 @@ function emptyDraft(sourceText: string): BulkDraftOpportunity {
     deadline: "",
     sourceText,
     isInternal: false,
+    isImmediateHiring: false,
   };
 }
 
@@ -168,7 +171,7 @@ function extractBlocks(raw: string): string[] {
   return blocks;
 }
 
-type StringFieldKey = Exclude<keyof BulkDraftOpportunity, "isInternal">;
+type StringFieldKey = Exclude<keyof BulkDraftOpportunity, "isInternal" | "isImmediateHiring">;
 
 function finalizeDraft(draft: BulkDraftOpportunity): BulkDraftOpportunity {
   const trimmed = { ...draft };
@@ -176,7 +179,7 @@ function finalizeDraft(draft: BulkDraftOpportunity): BulkDraftOpportunity {
   // string-typed, so it's filtered out (at runtime, not just the type
   // cast) before the generic trim loop below.
   const stringKeys = (Object.keys(trimmed) as (keyof BulkDraftOpportunity)[]).filter(
-    (key): key is StringFieldKey => key !== "isInternal",
+    (key): key is StringFieldKey => key !== "isInternal" && key !== "isImmediateHiring",
   );
   for (const key of stringKeys) {
     trimmed[key] = trimmed[key].trim();
