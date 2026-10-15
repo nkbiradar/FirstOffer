@@ -220,6 +220,11 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
               <Link href="/dashboard" onClick={() => setOpen(false)}>
                 Dashboard
               </Link>
+              {isAdmin && (
+                <Link href="/admin" onClick={() => setOpen(false)}>
+                  Admin
+                </Link>
+              )}
               <form action="/api/auth/signout" method="post">
                 <button type="submit" className="mobile-menu-signout">
                   Sign out
@@ -229,11 +234,6 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
           ) : (
             <Link href="/login" onClick={() => setOpen(false)}>
               Sign in
-            </Link>
-          )}
-          {isAdmin && (
-            <Link href="/admin" onClick={() => setOpen(false)}>
-              Admin
             </Link>
           )}
         </nav>
