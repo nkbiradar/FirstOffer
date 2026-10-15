@@ -208,12 +208,12 @@ export function getAccessPeriodMs(product: string | null | undefined): number {
   return FULL_ACCESS_PERIOD_MS;
 }
 
-// ── Resume Makeover (one-time ₹199 service, see app/resume) ─────────────
+// ── Resume Makeover (one-time ₹99 service, see app/resume) ─────────────
 // A one-off human service, not a subscription: the student pays once,
 // uploads their current resume, and the team rewrites it. Lives in its own
 // `resume_orders` table (supabase/schema.sql) — never touches
 // `subscriptions`, so it can't accidentally grant site access.
-export const RESUME_REVIEW_PRICE_INR = 199;
+export const RESUME_REVIEW_PRICE_INR = 99;
 // Shown struck-through next to the price as the "original" price (offer badge).
-export const RESUME_REVIEW_MRP_INR = 399;
+export const RESUME_REVIEW_MRP_INR = 199;
 export const RESUME_REVIEW_PRICE_PAISE = RESUME_REVIEW_PRICE_INR * 100;
