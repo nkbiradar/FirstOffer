@@ -280,6 +280,8 @@ export type SiteStats = {
   totalInterviews: number;
   totalOffers: number;
   totalStartups: number;
+  /** Every opportunity ever posted (live + expired, drafts excluded) — the homepage "Opportunities Posted" stat. */
+  totalPostedEver: number;
 };
 
 /**
@@ -361,7 +363,7 @@ export async function getSiteStats(): Promise<SiteStats> {
   const supabase = await createClient();
   const admin = createAdminClient();
 
-  const [totalResult, companyRowsResult, usersResult, interviewsResult, offersResult, totalStartups] =
+  const [totalResult, companyRowsResult, usersResult, interviewsResult, offersResult, totalStartups, postedEverResult] =
     await Promise.all([
       applyPublishedFilter(
         supabase.from("opportunities").select("id", { count: "exact", head: true }),
@@ -377,6 +379,7 @@ export async function getSiteStats(): Promise<SiteStats> {
         .eq("is_published", true)
         .eq("outcome", "selected"),
       countLifetimeHiringCompanies(),
+      admin.from("opportunities").select("id", { count: "exact", head: true }).neq("status", "draft"),
     ]);
 
   if (totalResult.error) {
@@ -411,6 +414,7 @@ export async function getSiteStats(): Promise<SiteStats> {
     totalInterviews: interviewsResult.count ?? 0,
     totalOffers: offersResult.count ?? 0,
     totalStartups,
+    totalPostedEver: postedEverResult.count ?? 0,
   };
 }
 

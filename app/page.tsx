@@ -194,6 +194,13 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <section className="subscriber-strip">
         <div className="container">
           <div className="milestone-row">
+            <div className="milestone milestone-posted">
+              <span className="milestone-value milestone-value-accent">
+                <CountUp value={stats.totalPostedEver} />+
+              </span>
+              <span className="milestone-label">Opportunities Posted</span>
+            </div>
+            <span className="milestone-divider" aria-hidden="true" />
             <div className="milestone">
               <span className="milestone-value milestone-value-brand">
                 <CountUp value={stats.totalStartups} />+

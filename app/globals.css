@@ -7810,3 +7810,6 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 /* "Live 2 days only" countdown tag on opportunity cards (Oct 2026) */
 .badge.badge-live { background: #fff7ed; color: #c2410c; border-color: #fed7aa; font-weight: 700; }
 .badge.badge-live.is-last { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
+/* Homepage stats: 5th stat "Opportunities Posted" spans the full row on phones */
+@media (max-width: 640px) { .milestone-row .milestone-posted { grid-column: 1 / -1; } }
