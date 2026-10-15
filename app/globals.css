@@ -7816,3 +7816,9 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 
 /* Homepage stats: 5th stat "Opportunities Posted" spans the full row on phones */
 @media (max-width: 640px) { .milestone-row .milestone-posted { grid-column: 1 / -1; } }
+
+/* Footer: "Popular searches" SEO links (Oct 2026) */
+.footer-popular { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 18px 0; margin-bottom: 4px; border-bottom: 1px solid var(--color-border); font-size: 13px; }
+.footer-popular-title { flex-basis: 100%; font-weight: 800; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.footer-popular a { color: var(--color-text-secondary); }
+.footer-popular a:hover { color: var(--color-brand); }

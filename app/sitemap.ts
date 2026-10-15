@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllPublishedOpportunityIds } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { CITY_PAGES } from "@/lib/seo/cities";
+import { KEYWORD_PAGES } from "@/lib/seo/keyword-pages";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -103,5 +104,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...cityRoutes, ...opportunityRoutes];
+  const keywordRoutes: MetadataRoute.Sitemap = KEYWORD_PAGES.map((page) => ({
+    url: `${siteUrl}/jobs/${page.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "daily",
+    priority: 0.85,
+  }));
+
+  return [...staticRoutes, ...keywordRoutes, ...cityRoutes, ...opportunityRoutes];
 }

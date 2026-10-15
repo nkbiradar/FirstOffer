@@ -29,6 +29,8 @@ export type ListOpportunitiesOptions = {
   locations?: string[];
   /** Role category slug from lib/roles.ts (e.g. "software", "data"). */
   roleCategory?: string;
+  /** Match ANY of these role categories (keyword landing pages, e.g. "IT jobs"). */
+  roleCategories?: string[];
 };
 
 export type ListOpportunitiesResult = {
@@ -496,6 +498,15 @@ export async function getPublishedOpportunities(
     // matching ids first — a few hundred live rows at most.
     const ids = (await getLiveRoleIndex())
       .filter((row) => row.categories.includes(options.roleCategory as string))
+      .map((row) => row.id);
+    if (ids.length === 0) return { opportunities: [], total: 0, page, pageSize };
+    builder = builder.in("id", ids);
+  }
+
+  if (options.roleCategories && options.roleCategories.length > 0) {
+    const wanted = options.roleCategories;
+    const ids = (await getLiveRoleIndex())
+      .filter((row) => row.categories.some((c) => wanted.includes(c)))
       .map((row) => row.id);
     if (ids.length === 0) return { opportunities: [], total: 0, page, pageSize };
     builder = builder.in("id", ids);
