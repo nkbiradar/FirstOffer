@@ -34,7 +34,8 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // payment on record. Existing early subscribers do NOT pay this — see
 // LEGACY_MONTHLY_PRICE_INR and getFullAccessPricing() below.
 // Since Oct 2026 this ₹99 buys 3 months (FULL_ACCESS_PERIOD_MS), not one.
-export const MONTHLY_PRICE_INR = 99;
+// 16 Oct 2026: raised to ₹199 for 3 months.
+export const MONTHLY_PRICE_INR = 199;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
 // ── Dasara offer (Oct 2026): full access ₹49 instead of ₹99, same 3 months.
@@ -47,9 +48,15 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(DASARA_SALE_ENDS_AT);
 }
 
-/** The full-access price to show and charge right now (₹49 during the sale, else ₹99). */
+/** The Dasara offer for FULL ACCESS ended early (16 Oct 2026) when the price
+ * moved to ₹199. Internal HR keeps its offer until DASARA_SALE_ENDS_AT. */
+export function isFullAccessSaleActive(_now: number = Date.now()): boolean {
+  return false;
+}
+
+/** The full-access price to show and charge right now. */
 export function getFullAccessPriceInr(now: number = Date.now()): number {
-  return isDasaraSaleActive(now) ? DASARA_SALE_PRICE_INR : MONTHLY_PRICE_INR;
+  return isFullAccessSaleActive(now) ? DASARA_SALE_PRICE_INR : MONTHLY_PRICE_INR;
 }
 
 // The founding-member rate: anyone who completed at least one full_access
@@ -187,7 +194,7 @@ export function getProductPricing(
   return {
     priceInr,
     pricePaise: priceInr * 100,
-    description: isDasaraSaleActive() ? "Full access — 3 months (Dasara offer)" : "Full access — 3 months",
+    description: isFullAccessSaleActive() ? "Full access — 3 months (Dasara offer)" : "Full access — 3 months",
   };
 }
 

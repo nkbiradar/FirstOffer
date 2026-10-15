@@ -30,6 +30,7 @@ import {
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
+  isFullAccessSaleActive,
 } from "@/lib/payments/razorpay";
 
 export const metadata = {
@@ -469,7 +470,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 </>
               ) : (
                 <>
-                  {isDasaraSaleActive() && (
+                  {isFullAccessSaleActive() && (
                     <div className="sale-banner">
                       <span aria-hidden="true">🪔</span>
                       <strong>Dasara Offer</strong>
@@ -479,7 +480,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   <PlanTags />
                   <h2 className="pricing-promo-title">
                     Full access:{" "}
-                    {isDasaraSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}{" "}
+                    {isFullAccessSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}{" "}
                     ₹{getFullAccessPriceInr()} for 3 months
                   </h2>
                   <p className="pricing-promo-sub">

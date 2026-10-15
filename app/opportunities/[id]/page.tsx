@@ -20,6 +20,7 @@ import {
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
+  isFullAccessSaleActive,
 } from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
@@ -231,9 +232,9 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       : false;
   void isLegacyFullAccessUser;
   const fullAccessPrice = getFullAccessPriceInr();
-  const fullAccessPriceNote = isDasaraSaleActive()
+  const fullAccessPriceNote = isFullAccessSaleActive()
     ? `🪔 Dasara Offer — ₹${MONTHLY_PRICE_INR} → ₹${fullAccessPrice} for 3 months, till ${DASARA_SALE_END_LABEL}.`
-    : "Just ₹33/month — one payment covers 3 months.";
+    : `Just ₹${Math.round(fullAccessPrice / 3)}/month — one payment covers 3 months.`;
 
   const {
     role,
