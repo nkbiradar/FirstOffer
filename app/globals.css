@@ -7833,3 +7833,28 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .price-rise-note { margin: 2px 0 12px; display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #fde68a; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.35); }
 
 .offer-pop-off { align-self: center; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; color: #052e16; background: linear-gradient(90deg, #4ade80, #22d3ee); }
+
+/* Phone: promo-card buttons wrap and fill the card instead of running off-screen (Oct 2026) */
+@media (max-width: 640px) {
+  .internal-hr-promo-cta,
+  .pricing-promo-cta,
+  .resume-promo-cta,
+  .pricing-promo .btn,
+  .internal-hr-promo .btn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px 6px;
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    height: auto;
+    line-height: 1.35;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .internal-hr-promo, .pricing-promo { min-width: 0; max-width: 100%; }
+  .internal-hr-promo-cta svg, .pricing-promo-cta svg { display: none; }
+}
