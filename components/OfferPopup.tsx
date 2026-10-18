@@ -121,7 +121,6 @@ export default function OfferPopup({ price, nextPrice, risePending, riseAt, rise
           <span className="offer-pop-now">₹{price}</span>
           {counting && <span className="offer-pop-off">{Math.round((1 - price / nextPrice) * 100)}% OFF</span>}
           <span className="offer-pop-period">for 3 months · just ₹{perDay}/day</span>
-          {counting && <span className="offer-pop-next">Price becomes ₹{nextPrice} after {riseLabel}</span>}
         </div>
 
         <div className="offer-pop-rule" />
