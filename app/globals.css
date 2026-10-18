@@ -7822,3 +7822,12 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .footer-popular-title { flex-basis: 100%; font-weight: 800; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-tertiary); }
 .footer-popular a { color: var(--color-text-secondary); }
 .footer-popular a:hover { color: var(--color-brand); }
+
+/* Full Access offer popup: next-price pill + countdown boxes; homepage price-rise note (Oct 2026) */
+.offer-pop-next { margin-top: 8px; padding: 4px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #fcd34d; background: rgba(250, 204, 21, 0.1); border: 1px solid rgba(250, 204, 21, 0.3); }
+.offer-pop-countdown { margin-top: 16px; }
+.offer-pop-countdown-label { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #8f897c; margin-bottom: 8px; }
+.offer-pop-countdown-boxes { display: flex; justify-content: center; gap: 8px; }
+.offer-pop-countdown-boxes span { min-width: 58px; padding: 8px 6px; border-radius: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.09); font-size: 10.5px; color: #8f897c; text-transform: uppercase; letter-spacing: .06em; }
+.offer-pop-countdown-boxes b { display: block; font-size: 22px; font-weight: 800; color: #ffd88a; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.price-rise-note { margin: 2px 0 12px; display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #fde68a; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.35); }

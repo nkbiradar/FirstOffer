@@ -54,9 +54,22 @@ export function isFullAccessSaleActive(_now: number = Date.now()): boolean {
   return false;
 }
 
+// ── Announced price rise: full access ₹199 → ₹299 on 1 Nov 2026 (00:00 IST).
+// Switches automatically at FULL_ACCESS_PRICE_RISE_AT — no redeploy needed —
+// so the countdown shown in the offer popup and pricing card is real.
+export const FULL_ACCESS_NEXT_PRICE_INR = 299;
+export const FULL_ACCESS_PRICE_RISE_AT = "2026-11-01T00:00:00+05:30";
+export const FULL_ACCESS_PRICE_RISE_LABEL = "1 Nov";
+
+/** True until the announced ₹199 → ₹299 rise takes effect. */
+export function isFullAccessPriceRisePending(now: number = Date.now()): boolean {
+  return now < Date.parse(FULL_ACCESS_PRICE_RISE_AT);
+}
+
 /** The full-access price to show and charge right now. */
 export function getFullAccessPriceInr(now: number = Date.now()): number {
-  return isFullAccessSaleActive(now) ? DASARA_SALE_PRICE_INR : MONTHLY_PRICE_INR;
+  if (isFullAccessSaleActive(now)) return DASARA_SALE_PRICE_INR;
+  return isFullAccessPriceRisePending(now) ? MONTHLY_PRICE_INR : FULL_ACCESS_NEXT_PRICE_INR;
 }
 
 // The founding-member rate: anyone who completed at least one full_access

@@ -31,6 +31,9 @@ import {
   getInternalPriceInr,
   isDasaraSaleActive,
   isFullAccessSaleActive,
+  isFullAccessPriceRisePending,
+  FULL_ACCESS_NEXT_PRICE_INR,
+  FULL_ACCESS_PRICE_RISE_LABEL,
 } from "@/lib/payments/razorpay";
 
 export const metadata = {
@@ -483,6 +486,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                     {isFullAccessSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}{" "}
                     ₹{getFullAccessPriceInr()} for 3 months
                   </h2>
+                  {isFullAccessPriceRisePending() && (
+                    <p className="price-rise-note">
+                      ⏳ Price goes up to ₹{FULL_ACCESS_NEXT_PRICE_INR} on {FULL_ACCESS_PRICE_RISE_LABEL} — lock in ₹
+                      {getFullAccessPriceInr()} now.
+                    </p>
+                  )}
                   <p className="pricing-promo-sub">
                     {isLegacyFullAccessUser
                       ? `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer — at the rate you already locked in, for as long as you stay subscribed.`
@@ -498,7 +507,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                       <li>One-time UPI payment — no auto-debit</li>
                     </ul>
                   )}
-                  <Link href="/opportunities" className="btn btn-primary pricing-promo-cta">
+                  <Link href="/unlock" className="btn btn-primary pricing-promo-cta">
                     {isLegacyFullAccessUser ? "Continue at your price" : `Unlock full access — ₹${getFullAccessPriceInr()} for 3 months`}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />

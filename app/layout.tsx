@@ -8,13 +8,13 @@ import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
 import OfferPopup from "@/components/OfferPopup";
-import { hasInternalAccess } from "@/lib/data/subscriptions";
+import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import {
-  DASARA_SALE_END_LABEL,
-  DASARA_SALE_ENDS_AT,
-  INTERNAL_PRICE_INR,
-  getInternalPriceInr,
-  isDasaraSaleActive,
+  FULL_ACCESS_NEXT_PRICE_INR,
+  FULL_ACCESS_PRICE_RISE_AT,
+  FULL_ACCESS_PRICE_RISE_LABEL,
+  getFullAccessPriceInr,
+  isFullAccessPriceRisePending,
 } from "@/lib/payments/razorpay";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
@@ -83,8 +83,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // Inside the Android app: hide every price / purchase CTA (data-app-hide,
   // see globals.css and lib/nativeAppServer.ts).
   const isApp = await isAppRequest();
-  // Internal HR offer popup: everyone except members, admins and the app.
-  const showOfferPopup = !isApp && !isAdmin && !(user && (await hasInternalAccess(user.id)));
+  // Full Access offer popup: everyone except full-access members, admins and the app.
+  const showOfferPopup = !isApp && !isAdmin && !(user && (await hasFullAccess(user.id)));
 
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}${isApp ? " fo-app" : ""}`}>
@@ -100,11 +100,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <VisitTracker isAdmin={isAdmin} />
         {showOfferPopup && (
           <OfferPopup
-            price={getInternalPriceInr()}
-            regularPrice={INTERNAL_PRICE_INR}
-            saleActive={isDasaraSaleActive()}
-            saleEndLabel={DASARA_SALE_END_LABEL}
-            saleEndsAt={DASARA_SALE_ENDS_AT}
+            nextPrice={FULL_ACCESS_NEXT_PRICE_INR}
+            price={getFullAccessPriceInr()}
+            riseAt={FULL_ACCESS_PRICE_RISE_AT}
+            riseLabel={FULL_ACCESS_PRICE_RISE_LABEL}
+            risePending={isFullAccessPriceRisePending()}
           />
         )}
       </body>

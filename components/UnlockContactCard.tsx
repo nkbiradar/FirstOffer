@@ -92,8 +92,16 @@ export default function UnlockContactCard({
   product = "full_access",
   priceNote,
   memberLabel,
+  loginNext,
+  titleOverride,
+  descriptionOverride,
 }: {
+  /** Replace the default card headline / body (e.g. on the /unlock page). */
+  titleOverride?: string;
+  descriptionOverride?: string;
   opportunityId?: string;
+  /** Where to return after sign-in (defaults to the product's fallback page). */
+  loginNext?: string;
   isSignedIn: boolean;
   price: number;
   product?: Product;
@@ -173,7 +181,7 @@ export default function UnlockContactCard({
 
     if (!isSignedIn) {
       track("unlock_login_redirect", { opportunityId: opportunityId ?? "", product });
-      router.push(`/login?next=${encodeURIComponent(copy.fallbackRedirect(opportunityId))}`);
+      router.push(`/login?next=${encodeURIComponent(loginNext ?? copy.fallbackRedirect(opportunityId))}`);
       return;
     }
 
@@ -272,7 +280,7 @@ export default function UnlockContactCard({
         {copy.eyebrow}
       </span>
       {product === "full_access" && <PlanTags memberLabel={memberLabel} />}
-      <p className="unlock-contact-title">{copy.title}</p>
+      <p className="unlock-contact-title">{titleOverride ?? copy.title}</p>
       <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
         {couponApplied ? (
           <>
@@ -286,7 +294,7 @@ export default function UnlockContactCard({
         )}
       </p>
       {priceNote && <p className="unlock-contact-price-note">{priceNote}</p>}
-      <p className="unlock-contact-desc">{copy.description}</p>
+      <p className="unlock-contact-desc">{descriptionOverride ?? copy.description}</p>
       <p className="unlock-contact-highlight">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
           <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
