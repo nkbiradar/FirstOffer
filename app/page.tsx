@@ -33,7 +33,6 @@ import {
   isFullAccessSaleActive,
   isFullAccessPriceRisePending,
   FULL_ACCESS_NEXT_PRICE_INR,
-  FULL_ACCESS_PRICE_RISE_LABEL,
 } from "@/lib/payments/razorpay";
 
 export const metadata = {
@@ -487,11 +486,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                     {isFullAccessPriceRisePending() && <s className="price-was">₹{FULL_ACCESS_NEXT_PRICE_INR}</s>}{" "}
                     ₹{getFullAccessPriceInr()} for 3 months
                   </h2>
-                  {isFullAccessPriceRisePending() && (
-                    <p className="price-rise-note">
-                      🔥 2-day offer ends {FULL_ACCESS_PRICE_RISE_LABEL} — then ₹{FULL_ACCESS_NEXT_PRICE_INR} for 3 months.
-                    </p>
-                  )}
                   <p className="pricing-promo-sub">
                     {isLegacyFullAccessUser
                       ? `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer — at the rate you already locked in, for as long as you stay subscribed.`
