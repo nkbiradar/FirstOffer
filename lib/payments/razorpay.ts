@@ -54,12 +54,13 @@ export function isFullAccessSaleActive(_now: number = Date.now()): boolean {
   return false;
 }
 
-// ── Announced price rise: full access ₹199 → ₹299 on 1 Nov 2026 (00:00 IST).
-// Switches automatically at FULL_ACCESS_PRICE_RISE_AT — no redeploy needed —
-// so the countdown shown in the offer popup and pricing card is real.
-export const FULL_ACCESS_NEXT_PRICE_INR = 299;
-export const FULL_ACCESS_PRICE_RISE_AT = "2026-11-01T00:00:00+05:30";
-export const FULL_ACCESS_PRICE_RISE_LABEL = "1 Nov";
+// ── 2-day offer: full access ₹199 (regular ₹399) until 20 Oct 2026, 23:59 IST.
+// At FULL_ACCESS_PRICE_RISE_AT the price really becomes ₹399 automatically —
+// no redeploy needed — so the ₹399 strike-through and countdown are honest.
+export const FULL_ACCESS_NEXT_PRICE_INR = 399;
+export const FULL_ACCESS_PRICE_RISE_AT = "2026-10-21T00:00:00+05:30";
+/** Last day of the offer (shown as "ends 20 Oct"). */
+export const FULL_ACCESS_PRICE_RISE_LABEL = "20 Oct";
 
 /** True until the announced ₹199 → ₹299 rise takes effect. */
 export function isFullAccessPriceRisePending(now: number = Date.now()): boolean {

@@ -108,7 +108,7 @@ export default function OfferPopup({ price, nextPrice, risePending, riseAt, rise
           </svg>
         </button>
 
-        <p className="offer-pop-eyebrow">{counting ? `⏳ Price goes up on ${riseLabel}` : "FirstOffer Full Access"}</p>
+        <p className="offer-pop-eyebrow">{counting ? `🔥 Limited offer · ends ${riseLabel}` : "FirstOffer Full Access"}</p>
         <h2 id="offer-pop-title">Apply directly. Get hired faster.</h2>
         <p className="offer-pop-sub">
           HR emails, recruiter numbers, Google Forms &amp; official apply links — for every opportunity on FirstOffer.
@@ -117,9 +117,11 @@ export default function OfferPopup({ price, nextPrice, risePending, riseAt, rise
         <div className="offer-pop-rule" />
 
         <div className="offer-pop-price">
+          {counting && <span className="offer-pop-was">₹{nextPrice}</span>}
           <span className="offer-pop-now">₹{price}</span>
+          {counting && <span className="offer-pop-off">{Math.round((1 - price / nextPrice) * 100)}% OFF</span>}
           <span className="offer-pop-period">for 3 months · just ₹{perDay}/day</span>
-          {counting && <span className="offer-pop-next">Becomes ₹{nextPrice} on {riseLabel}</span>}
+          {counting && <span className="offer-pop-next">Price becomes ₹{nextPrice} after {riseLabel}</span>}
         </div>
 
         <div className="offer-pop-rule" />
@@ -137,12 +139,12 @@ export default function OfferPopup({ price, nextPrice, risePending, riseAt, rise
         </ul>
 
         <a className="offer-pop-cta" href="/unlock" onClick={() => setOpen(false)}>
-          {counting ? `Lock in ₹${price} now` : `Unlock for ₹${price}`}
+          {counting ? `Grab it for ₹${price}` : `Unlock for ₹${price}`}
         </a>
 
         {counting && left ? (
           <div className="offer-pop-countdown" aria-live="off">
-            <span className="offer-pop-countdown-label">Price rises in</span>
+            <span className="offer-pop-countdown-label">Offer ends in</span>
             <div className="offer-pop-countdown-boxes">
               {[
                 [left.d, "days"],

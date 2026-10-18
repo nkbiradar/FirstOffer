@@ -41,7 +41,7 @@ export default async function UnlockPage() {
             <>
               {" "}
               <strong>
-                ₹{price} now · goes up to ₹{FULL_ACCESS_NEXT_PRICE_INR} on {FULL_ACCESS_PRICE_RISE_LABEL}.
+                Offer: ₹{price} instead of ₹{FULL_ACCESS_NEXT_PRICE_INR} — ends {FULL_ACCESS_PRICE_RISE_LABEL}.
               </strong>
             </>
           )}
@@ -66,7 +66,7 @@ export default async function UnlockPage() {
             price={price}
             priceNote={
               risePending
-                ? `Price goes up to ₹${FULL_ACCESS_NEXT_PRICE_INR} on ${FULL_ACCESS_PRICE_RISE_LABEL} — lock in ₹${price} now.`
+                ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${price} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
                 : `Just ₹${Math.round(price / 3)}/month — one payment covers 3 months.`
             }
             product="full_access"

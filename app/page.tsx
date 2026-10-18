@@ -483,13 +483,13 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   <PlanTags />
                   <h2 className="pricing-promo-title">
                     Full access:{" "}
-                    {isFullAccessSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}{" "}
+                    {isFullAccessSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}
+                    {isFullAccessPriceRisePending() && <s className="price-was">₹{FULL_ACCESS_NEXT_PRICE_INR}</s>}{" "}
                     ₹{getFullAccessPriceInr()} for 3 months
                   </h2>
                   {isFullAccessPriceRisePending() && (
                     <p className="price-rise-note">
-                      ⏳ Price goes up to ₹{FULL_ACCESS_NEXT_PRICE_INR} on {FULL_ACCESS_PRICE_RISE_LABEL} — lock in ₹
-                      {getFullAccessPriceInr()} now.
+                      🔥 2-day offer ends {FULL_ACCESS_PRICE_RISE_LABEL} — then ₹{FULL_ACCESS_NEXT_PRICE_INR} for 3 months.
                     </p>
                   )}
                   <p className="pricing-promo-sub">

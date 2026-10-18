@@ -7831,3 +7831,5 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .offer-pop-countdown-boxes span { min-width: 58px; padding: 8px 6px; border-radius: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.09); font-size: 10.5px; color: #8f897c; text-transform: uppercase; letter-spacing: .06em; }
 .offer-pop-countdown-boxes b { display: block; font-size: 22px; font-weight: 800; color: #ffd88a; font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .price-rise-note { margin: 2px 0 12px; display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #fde68a; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.35); }
+
+.offer-pop-off { align-self: center; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; color: #052e16; background: linear-gradient(90deg, #4ade80, #22d3ee); }

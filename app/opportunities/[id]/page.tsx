@@ -238,7 +238,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   const fullAccessPriceNote = isFullAccessSaleActive()
     ? `🪔 Dasara Offer — ₹${MONTHLY_PRICE_INR} → ₹${fullAccessPrice} for 3 months, till ${DASARA_SALE_END_LABEL}.`
     : isFullAccessPriceRisePending()
-      ? `Price goes up to ₹${FULL_ACCESS_NEXT_PRICE_INR} on ${FULL_ACCESS_PRICE_RISE_LABEL} — lock in ₹${fullAccessPrice} now.`
+      ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${fullAccessPrice} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
       : `Just ₹${Math.round(fullAccessPrice / 3)}/month — one payment covers 3 months.`;
 
   const {
