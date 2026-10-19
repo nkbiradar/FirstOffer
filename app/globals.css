@@ -7858,3 +7858,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .internal-hr-promo, .pricing-promo { min-width: 0; max-width: 100%; }
   .internal-hr-promo-cta svg, .pricing-promo-cta svg { display: none; }
 }
+
+/* "You could be #N" line under the stats + "Try your luck" hero button (Oct 2026) */
+.milestone-next { margin: 18px auto 0; text-align: center; font-size: 15px; color: var(--color-text-secondary); max-width: 640px; line-height: 1.5; }
+.milestone-next strong { color: var(--color-brand); font-weight: 800; }
+.btn-lucky { background: linear-gradient(100deg, #f59e0b, #f97316); color: #fff; border: none; box-shadow: 0 6px 18px rgba(249, 115, 22, 0.3); }
+.btn-lucky:hover { color: #fff; filter: brightness(1.05); transform: translateY(-1px); }
+@media (max-width: 640px) { .milestone-next { font-size: 13.5px; padding: 0 8px; } }

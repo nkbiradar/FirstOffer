@@ -232,6 +232,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <span className="milestone-label">Offers Received</span>
             </div>
           </div>
+          {stats.totalInterviews > 0 && (
+            <p className="milestone-next">
+              🎯 {stats.totalInterviews} students have landed interview calls through FirstOffer.{" "}
+              <strong>Your first call could be #{stats.totalInterviews + 1}.</strong>
+            </p>
+          )}
         </div>
       </section>
 
@@ -268,6 +274,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </Link>
               <Link className="btn btn-secondary" href="/tech-jobs">
                 Browse Tech Jobs
+              </Link>
+              <Link className="btn btn-lucky" href="/lucky" prefetch={false}>
+                🎲 Try your luck
               </Link>
             </div>
 
