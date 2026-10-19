@@ -275,9 +275,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <Link className="btn btn-secondary" href="/tech-jobs">
                 Browse Tech Jobs
               </Link>
-              <Link className="btn btn-lucky" href="/lucky" prefetch={false}>
-                🎲 Try your luck
-              </Link>
             </div>
 
             <WhatsAppChannelLink />
