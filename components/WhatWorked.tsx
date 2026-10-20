@@ -24,7 +24,7 @@ export default function WhatWorked({ limit = 3 }: { limit?: number }) {
                 {t.result === "selected" ? "🏆 Selected" : "🎤 Interview call"}
               </span>
             </div>
-            <blockquote>“{t.quote}”</blockquote>
+            <blockquote>{t.quote}</blockquote>
             <figcaption>
               {t.role} @ <b>{t.company}</b>
               {t.timeTaken && <> · ⚡ in {t.timeTaken}</>}
