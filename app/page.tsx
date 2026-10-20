@@ -510,6 +510,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                       <li>One-time UPI payment — no auto-debit</li>
                     </ul>
                   )}
+                  {!isLegacyFullAccessUser && (
+                    <Link href="/refund-policy#interview-guarantee" className="call-guarantee">
+                      <span aria-hidden="true">🛡️</span>
+                      <span>
+                        <strong>Interview Call Guarantee</strong> — no interview call in your first month? Get a
+                        full refund.
+                      </span>
+                    </Link>
+                  )}
                   <Link href="/unlock" className="btn btn-primary pricing-promo-cta">
                     {isLegacyFullAccessUser ? (
                       "Continue at your price"

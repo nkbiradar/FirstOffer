@@ -7889,3 +7889,9 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .hr-truth { margin: 14px auto 0; width: fit-content; max-width: calc(100% - 32px); padding: 10px 20px; border-radius: 999px; text-align: center; font-size: 15.5px; font-weight: 700; color: var(--color-text); background: var(--color-brand-soft); border: 1px solid var(--color-brand-soft-border); line-height: 1.45; }
 .hr-truth span { color: var(--color-brand); }
 @media (max-width: 640px) { .hr-truth { font-size: 13.5px; border-radius: 16px; padding: 10px 14px; } }
+
+/* Interview Call Guarantee strip (homepage pricing card, /unlock) */
+.call-guarantee { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; text-align: left; text-decoration: none; color: var(--color-text); background: var(--color-mint, #e7f8f1); border: 1px dashed var(--color-mint-strong, #34d399); }
+.call-guarantee:hover { color: var(--color-text); filter: brightness(0.98); }
+.call-guarantee strong { color: var(--color-text); }
+.call-guarantee > span:first-child { font-size: 18px; line-height: 1.2; }

@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
       </span>
       <h1 style={{ marginTop: 14 }}>Refund Policy</h1>
       <p style={{ marginTop: 6, fontSize: 13.5 }}>
-        Last updated: August 31, 2026
+        Last updated: October 21, 2026
       </p>
 
       <p style={{ marginTop: 20 }}>
@@ -36,7 +36,7 @@ export default function RefundPolicyPage() {
 
       <h2 style={{ marginTop: 32 }}>When you are eligible for a refund</h2>
       <p style={{ marginTop: 12 }}>
-        We&apos;ll refund you if either of these happens:
+        Apart from the Interview Call Guarantee above, we&apos;ll also refund you if either of these happens:
       </p>
       <p style={{ marginTop: 12 }}>
         <strong>Payment succeeded but the unlock failed.</strong> If Razorpay charged you but the
@@ -49,6 +49,27 @@ export default function RefundPolicyPage() {
         duplicate.</strong> If the opportunity you were viewing when you paid is later confirmed to
         be fake, a scam, or a duplicate of another listing already on the site, you&apos;re entitled
         to a full refund even after the unlock.
+      </p>
+
+      <h2 id="interview-guarantee" style={{ marginTop: 32, scrollMarginTop: 90 }}>
+        🛡️ Interview Call Guarantee (Full Access plan)
+      </h2>
+      <p style={{ marginTop: 12 }}>
+        If you buy the Full Access plan and don&apos;t get a single interview call in your first month
+        (30 days from your payment date), we&apos;ll give you a <strong>full refund</strong>.
+      </p>
+      <p style={{ marginTop: 12 }}>
+        <strong>How to claim:</strong> once your first month is over, email{" "}
+        <a href="mailto:support@firstoffer.online">support@firstoffer.online</a> from the email address you
+        signed up with, within 7 days of the month ending. Include:
+      </p>
+      <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 1.7 }}>
+        <li>A screenshot of your payment showing the purchase date (UPI app, bank SMS or Razorpay receipt)</li>
+        <li>Your Razorpay payment ID, if you have it</li>
+        <li>A line confirming you didn&apos;t receive any interview call during that month</li>
+      </ul>
+      <p style={{ marginTop: 12 }}>
+        One refund per person. Your Full Access ends once the refund is processed.
       </p>
 
       <h2 style={{ marginTop: 32 }}>How to request a refund</h2>

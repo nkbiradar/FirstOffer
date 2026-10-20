@@ -74,6 +74,16 @@ export default async function UnlockPage() {
           />
         )}
 
+        {!unlocked && !inApp && (
+          <Link href="/refund-policy#interview-guarantee" className="call-guarantee" style={{ marginTop: 16 }}>
+            <span aria-hidden="true">🛡️</span>
+            <span>
+              <strong>Interview Call Guarantee</strong> — no interview call in your first month? Get a full
+              refund. Just email support@firstoffer.online with your payment screenshot.
+            </span>
+          </Link>
+        )}
+
         {!unlocked && <WhatWorked />}
       </div>
     </main>
