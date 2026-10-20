@@ -55,8 +55,8 @@ export function isFullAccessSaleActive(_now: number = Date.now()): boolean {
 }
 
 // ── 2-day offer: full access ₹199 (regular ₹399) until 20 Oct 2026, 23:59 IST.
-// At FULL_ACCESS_PRICE_RISE_AT the price really becomes ₹399 automatically —
-// no redeploy needed — so the ₹399 strike-through and countdown are honest.
+// After FULL_ACCESS_PRICE_RISE_AT the strike-through and countdown are hidden
+// and the price stays ₹199.
 export const FULL_ACCESS_NEXT_PRICE_INR = 399;
 export const FULL_ACCESS_PRICE_RISE_AT = "2026-10-21T00:00:00+05:30";
 /** Last day of the offer (shown as "ends 20 Oct"). */
@@ -70,7 +70,9 @@ export function isFullAccessPriceRisePending(now: number = Date.now()): boolean 
 /** The full-access price to show and charge right now. */
 export function getFullAccessPriceInr(now: number = Date.now()): number {
   if (isFullAccessSaleActive(now)) return DASARA_SALE_PRICE_INR;
-  return isFullAccessPriceRisePending(now) ? MONTHLY_PRICE_INR : FULL_ACCESS_NEXT_PRICE_INR;
+  // Price stays ₹199 after the offer ends (Oct 2026 decision); the ₹399
+  // strike-through and countdown simply disappear once the offer is over.
+  return MONTHLY_PRICE_INR;
 }
 
 // The founding-member rate: anyone who completed at least one full_access
