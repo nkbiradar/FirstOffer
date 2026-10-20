@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
+import WhatWorked from "@/components/WhatWorked";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { isAppRequest } from "@/lib/nativeAppServer";
@@ -72,6 +73,8 @@ export default async function UnlockPage() {
             product="full_access"
           />
         )}
+
+        {!unlocked && <WhatWorked />}
       </div>
     </main>
   );

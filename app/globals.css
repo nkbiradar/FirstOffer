@@ -7863,3 +7863,24 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .milestone-next { margin: 18px auto 0; text-align: center; font-size: 15px; color: var(--color-text-secondary); max-width: 640px; line-height: 1.5; }
 .milestone-next strong { color: var(--color-brand); font-weight: 800; }
 @media (max-width: 640px) { .milestone-next { font-size: 13.5px; padding: 0 8px; } }
+
+/* "What worked for them" testimonials on /unlock (components/WhatWorked.tsx) */
+.what-worked { margin-top: 28px; }
+.what-worked h2 { font-size: 20px; margin: 0 0 12px; }
+.what-worked-list { display: grid; gap: 12px; }
+.what-worked-card { margin: 0; padding: 18px 18px 16px; border-radius: 16px; background: var(--color-surface, #fff); border: 1px solid var(--color-border); box-shadow: 0 4px 18px rgba(20, 22, 26, 0.05); }
+.what-worked-head { display: flex; align-items: center; gap: 12px; }
+.what-worked-head > div { flex: 1; min-width: 0; display: grid; }
+.what-worked-head strong { font-size: 15.5px; color: var(--color-text); }
+.what-worked-meta { font-size: 12.5px; color: var(--color-text-secondary); }
+.what-worked-avatar { flex: 0 0 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, #4f46e5, #06b6d4); }
+.what-worked-badge { flex: 0 0 auto; padding: 5px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--color-brand-soft); color: var(--color-brand-strong); border: 1px solid var(--color-brand-soft-border); }
+.what-worked-badge.is-selected { background: var(--color-gold-soft); color: var(--color-gold-strong); border-color: var(--color-gold-soft-border); }
+.what-worked-card blockquote { margin: 12px 0 10px; font-size: 14.5px; line-height: 1.6; color: var(--color-text); }
+.what-worked-card figcaption { font-size: 13px; color: var(--color-text-secondary); }
+.what-worked-card figcaption b { color: var(--color-text); }
+@media (max-width: 480px) {
+  .what-worked-head { flex-wrap: wrap; row-gap: 8px; }
+  .what-worked-head > div { flex: 1 1 calc(100% - 52px); }
+  .what-worked-badge { margin-left: 52px; }
+}
