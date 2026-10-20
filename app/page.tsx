@@ -238,6 +238,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <strong>Your first call could be #{stats.totalInterviews + 1}.</strong>
             </p>
           )}
+          <p className="hr-truth">
+            You don&apos;t need more skills. <span>You need your resume to reach a real HR.</span>
+          </p>
         </div>
       </section>
 
