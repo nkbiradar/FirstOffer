@@ -7899,3 +7899,20 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 /* Unlocked apply details: not selectable / no long-press copy menu (components/NoCopyGuard.tsx) */
 .no-copy, .no-copy * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 @media print { .no-copy { display: none !important; } }
+
+/* Pricing card: sharing-ban warning + safe-to-pay row (components/SafePay.tsx) */
+.share-ban { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 18px; padding: 12px 14px; max-width: 760px; border-radius: 14px; font-size: 14px; line-height: 1.5; text-align: left; color: #fde68a; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.45); }
+.share-ban strong { color: #fff; }
+.share-ban > span:first-child { font-size: 17px; line-height: 1.3; }
+.share-ban-light { margin: 16px 0 0; max-width: none; color: #92400e; background: #fffbeb; border-color: #fcd34d; }
+.share-ban-light strong { color: #78350f; }
+.safe-pay { margin-top: 16px; }
+.safe-pay-methods { display: flex; flex-wrap: wrap; gap: 8px; }
+.safe-pay-methods span { padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18); }
+.safe-pay p { margin: 10px 0 0; font-size: 13.5px; color: rgba(226, 232, 240, 0.85); }
+.safe-pay p strong { color: #fff; }
+.safe-pay-light { text-align: center; }
+.safe-pay-light .safe-pay-methods { justify-content: center; }
+.safe-pay-light .safe-pay-methods span { color: var(--color-text); background: var(--color-surface-muted); border-color: var(--color-border); }
+.safe-pay-light p { color: var(--color-text-secondary); }
+.safe-pay-light p strong { color: var(--color-text); }

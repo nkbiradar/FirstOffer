@@ -73,10 +73,10 @@ export default function TermsPage() {
         <strong>Your account is for personal use only. Sharing it can get it suspended without refund.</strong>
       </p>
       <p style={{ marginTop: 12 }}>
-        This means you must not share your login with anyone, and must not copy, screenshot, forward or
+        One account is for one user on one device. This means you must not share your login with anyone, and must not copy, screenshot, forward or
         repost the unlocked HR emails, recruiter numbers, Google Forms or apply links (for example in
         WhatsApp or Telegram groups). If we find an account being shared or its unlocked details being
-        redistributed, we may suspend it without a refund — including any claim under the Interview Call
+        redistributed, we may ban it without a refund — including any claim under the Interview Call
         Guarantee.
       </p>
 

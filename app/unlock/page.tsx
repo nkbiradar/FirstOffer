@@ -3,6 +3,7 @@ import Link from "next/link";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import WhatWorked from "@/components/WhatWorked";
+import SafePay from "@/components/SafePay";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { isAppRequest } from "@/lib/nativeAppServer";
@@ -84,10 +85,15 @@ export default async function UnlockPage() {
           </Link>
         )}
 
+        {!unlocked && !inApp && <SafePay light />}
+
         {!unlocked && !inApp && (
-          <p className="hint" style={{ marginTop: 12, fontSize: 13, textAlign: "center" }}>
-            🔒 Your account is for personal use only. Sharing it can get it suspended without refund.{" "}
-            <Link href="/terms#personal-use">Terms</Link>
+          <p className="share-ban share-ban-light">
+            <span aria-hidden="true">⚠️</span>
+            <span>
+              <strong>One account = one user, one device.</strong> Sharing your account or copying opportunities to
+              others will get it <strong>banned</strong> — no refund. <Link href="/terms#personal-use">Terms</Link>
+            </span>
           </p>
         )}
 

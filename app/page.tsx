@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SafePay from "@/components/SafePay";
 import Image from "next/image";
 import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
@@ -519,6 +520,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                       </span>
                     </Link>
                   )}
+                  {!isLegacyFullAccessUser && (
+                    <p className="share-ban">
+                      <span aria-hidden="true">⚠️</span>
+                      <span>
+                        <strong>One account = one user, one device.</strong> Sharing your account or copying
+                        opportunities to others will get it <strong>banned</strong> — no refund.
+                      </span>
+                    </p>
+                  )}
                   <Link href="/unlock" className="btn btn-primary pricing-promo-cta">
                     {isLegacyFullAccessUser ? (
                       "Continue at your price"
@@ -535,6 +545,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                       <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </Link>
+                  <SafePay />
                 </>
               )}
             </div>
