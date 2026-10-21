@@ -15,7 +15,7 @@ export default function TermsPage() {
       </span>
       <h1 style={{ marginTop: 14 }}>Terms of Service</h1>
       <p style={{ marginTop: 6, fontSize: 13.5 }}>
-        Last updated: August 31, 2026
+        Last updated: October 21, 2026
       </p>
 
       <p style={{ marginTop: 20 }}>
@@ -61,11 +61,23 @@ export default function TermsPage() {
       <p style={{ marginTop: 12 }}>
         Viewing the application link, form, HR contact, or apply instructions for opportunities
         that require it needs a single one-time payment. That one payment unlocks apply details on
-        every opportunity on FirstOffer for your account, not just one — you never pay again after
-        that. The price is shown before you pay and may change over time. Payments are processed
+        every opportunity on FirstOffer for your account, not just one, for the length of the plan
+        you bought (for example, 3 months for Full Access). There&apos;s no auto-debit. The price is shown before you pay and may change over time. Payments are processed
         by Razorpay; we never see or store your card or UPI details. See our{" "}
         <Link href="/refund-policy">Refund Policy</Link> for what happens if something goes wrong
         with a payment.
+      </p>
+
+      <h2 id="personal-use" style={{ marginTop: 32 }}>Personal use only</h2>
+      <p style={{ marginTop: 12 }}>
+        <strong>Your account is for personal use only. Sharing it can get it suspended without refund.</strong>
+      </p>
+      <p style={{ marginTop: 12 }}>
+        This means you must not share your login with anyone, and must not copy, screenshot, forward or
+        repost the unlocked HR emails, recruiter numbers, Google Forms or apply links (for example in
+        WhatsApp or Telegram groups). If we find an account being shared or its unlocked details being
+        redistributed, we may suspend it without a refund — including any claim under the Interview Call
+        Guarantee.
       </p>
 
       <h2 style={{ marginTop: 32 }}>Acceptable use</h2>

@@ -84,6 +84,13 @@ export default async function UnlockPage() {
           </Link>
         )}
 
+        {!unlocked && !inApp && (
+          <p className="hint" style={{ marginTop: 12, fontSize: 13, textAlign: "center" }}>
+            🔒 Your account is for personal use only. Sharing it can get it suspended without refund.{" "}
+            <Link href="/terms#personal-use">Terms</Link>
+          </p>
+        )}
+
         {!unlocked && <WhatWorked />}
       </div>
     </main>

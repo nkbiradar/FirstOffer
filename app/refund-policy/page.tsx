@@ -69,7 +69,8 @@ export default function RefundPolicyPage() {
         <li>A line confirming you didn&apos;t receive any interview call during that month</li>
       </ul>
       <p style={{ marginTop: 12 }}>
-        One refund per person. Your Full Access ends once the refund is processed.
+        One refund per person. Your Full Access ends once the refund is processed. Accounts suspended
+        for sharing (see <Link href="/terms#personal-use">Personal use only</Link>) aren&apos;t eligible.
       </p>
 
       <h2 style={{ marginTop: 32 }}>How to request a refund</h2>
