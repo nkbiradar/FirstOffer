@@ -1,4 +1,5 @@
 import { cache } from "react";
+import NoCopyGuard from "@/components/NoCopyGuard";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -169,7 +170,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 function ApplyButton({ action, className = "" }: { action: ApplyAction; className?: string }) {
   return (
     <a
-      className={`btn btn-primary apply-now ${className}`}
+      className={`btn btn-primary apply-now no-copy ${className}`}
+      draggable={false}
       href={action.href}
       rel="noopener noreferrer"
       target={action.href.startsWith("mailto:") ? undefined : "_blank"}
@@ -296,6 +298,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
   return (
     <main className="page opportunity-detail">
+      {canShowApply && <NoCopyGuard />}
       {/* BreadcrumbList schema */}
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
@@ -530,7 +533,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             ? Boolean(how_to_apply || hr_email || hr_contact || premiumGroupHint)
             : hasApplyContent) ||
             deadlineLabel) && (
-          <section className="card">
+          <section className={`card${canShowApply ? " no-copy" : ""}`}>
             <h2>Application Information</h2>
             {canShowApply && how_to_apply && <p className="preserve-whitespace">{how_to_apply}</p>}
             {canShowApply && hr_email && (

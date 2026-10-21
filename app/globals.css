@@ -7895,3 +7895,7 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .call-guarantee:hover { color: var(--color-text); filter: brightness(0.98); }
 .call-guarantee strong { color: var(--color-text); }
 .call-guarantee > span:first-child { font-size: 18px; line-height: 1.2; }
+
+/* Unlocked apply details: not selectable / no long-press copy menu (components/NoCopyGuard.tsx) */
+.no-copy, .no-copy * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+@media print { .no-copy { display: none !important; } }
