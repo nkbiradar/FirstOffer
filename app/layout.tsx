@@ -110,7 +110,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               riseAt={FULL_ACCESS_SALE_ENDS_AT}
               riseLabel={FULL_ACCESS_SALE_END_LABEL}
               risePending
-              eyebrow={`🎉 790+ students · thank-you offer till ${FULL_ACCESS_SALE_END_LABEL}`}
+              eyebrow={`🎉 800+ students · thank-you offer till ${FULL_ACCESS_SALE_END_LABEL}`}
             />
           ) : (
             <OfferPopup

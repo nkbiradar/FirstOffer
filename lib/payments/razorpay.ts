@@ -48,7 +48,7 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(DASARA_SALE_ENDS_AT);
 }
 
-// ── "Almost 800 students" thank-you offer (22–29 Oct 2026): full access
+// ── "800+ students" thank-you offer (22–29 Oct 2026): full access
 // ₹149 instead of ₹199, same 3 months. Switches itself off at
 // FULL_ACCESS_SALE_ENDS_AT (price goes back to ₹199) — no redeploy needed.
 export const FULL_ACCESS_SALE_PRICE_INR = 149;
@@ -57,7 +57,7 @@ export const FULL_ACCESS_SALE_ENDS_AT = "2026-10-29T23:59:59+05:30";
 export const FULL_ACCESS_SALE_END_LABEL = "29 Oct";
 /** First day back at the regular price. */
 export const FULL_ACCESS_SALE_BACK_LABEL = "30 Oct";
-export const FULL_ACCESS_SALE_TITLE = "Almost 800 students! 🎉";
+export const FULL_ACCESS_SALE_TITLE = "800+ students! 🎉";
 
 export function isFullAccessSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(FULL_ACCESS_SALE_ENDS_AT);

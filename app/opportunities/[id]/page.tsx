@@ -239,7 +239,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   void isLegacyFullAccessUser;
   const fullAccessPrice = getFullAccessPriceInr();
   const fullAccessPriceNote = isFullAccessSaleActive()
-    ? `🎉 790+ students thank-you offer — ₹${MONTHLY_PRICE_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+    ? `🎉 800+ students thank-you offer — ₹${MONTHLY_PRICE_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
     : isFullAccessPriceRisePending()
       ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${fullAccessPrice} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
       : `Just ₹${Math.round(fullAccessPrice / 3)}/month — one payment covers 3 months.`;

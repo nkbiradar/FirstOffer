@@ -490,7 +490,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   {isFullAccessSaleActive() && (
                     <div className="sale-banner">
                       <span aria-hidden="true">🎉</span>
-                      <strong>We crossed 790+ students!</strong>
+                      <strong>We crossed 800+ students!</strong>
                       <span>· Thank-you price ₹{FULL_ACCESS_SALE_PRICE_INR} till {FULL_ACCESS_SALE_END_LABEL}</span>
                     </div>
                   )}
