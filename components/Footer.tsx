@@ -7,6 +7,21 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="container">
         <div className="footer-trust" role="list" aria-label="Trust and security">
+          <span className="footer-trust-item" role="listitem" title="Registered with the Ministry of MSME, Govt. of India">
+            <svg
+              className="footer-trust-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" />
+            </svg>
+            Govt. Registered MSME (Udyam)
+          </span>
           <span className="footer-trust-item" role="listitem">
             <svg
               className="footer-trust-icon"
@@ -91,7 +106,10 @@ export default function Footer() {
           ))}
         </nav>
         <div className="footer-inner">
-          <span>&copy; {new Date().getFullYear()} FirstOffer &mdash; Fresher opportunities across India.</span>
+          <span>
+            &copy; {new Date().getFullYear()} FirstOffer &mdash; Fresher opportunities across India. · Udyam Reg. No.
+            UDYAM-KR-03-0776630
+          </span>
           <nav className="footer-links" aria-label="Footer">
             <Link href="/fresher-jobs">Fresher Jobs</Link>
             <Link href="/tech-jobs">Tech Jobs</Link>
