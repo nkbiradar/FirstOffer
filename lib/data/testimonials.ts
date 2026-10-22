@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Testimonial } from "@/types/supabase";
 
@@ -11,7 +11,7 @@ import type { Testimonial } from "@/types/supabase";
  * applied yet — same pattern as lib/data/opportunity-unlocks.ts.
  */
 export async function getPublishedTestimonials(): Promise<Testimonial[]> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
 
   const { data, error } = await supabase
     .from("testimonials")

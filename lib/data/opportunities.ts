@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createPublicClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Opportunity, OpportunityType, WorkMode } from "@/types/supabase";
 import { categorizeRole, ROLE_CATEGORIES } from "@/lib/roles";
@@ -187,7 +187,7 @@ export async function getLatestOpportunities(limit = 6): Promise<OpportunityWith
  * before paying. Null when none is set or the flagged one has expired.
  */
 export async function getFreePickOpportunity(): Promise<OpportunityWithCompany | null> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const { data, error } = await applyPublishedFilter(
     supabase.from("opportunities").select(OPPORTUNITY_SELECT),
   )
@@ -232,7 +232,7 @@ export type HomepageOpportunities = {
  * every opportunity comes straight from Supabase on every request.
  */
 export async function getHomepageOpportunities(limit = 30): Promise<HomepageOpportunities> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const builder = applyPublishedFilter(
     supabase.from("opportunities").select(OPPORTUNITY_SELECT),
   );
@@ -362,7 +362,7 @@ async function countLifetimeHiringCompanies(): Promise<number> {
  * `.select()` silently capped at Supabase's default 1000-row limit).
  */
 export async function getSiteStats(): Promise<SiteStats> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const admin = createAdminClient();
 
   const [totalResult, companyRowsResult, usersResult, interviewsResult, offersResult, totalStartups, postedEverResult] =

@@ -3,6 +3,7 @@
 // client, not the service-role admin client, and fails soft so a page
 // never crashes if the opportunity_unlocks table/migration hasn't been
 // applied yet. See supabase/schema.sql for the table and its RLS policy.
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
 import { hasActiveSubscription } from "@/lib/data/subscriptions";
@@ -38,7 +39,8 @@ export async function hasUnlockedContact(userId: string, opportunityId: string):
  *
  * A user only ever needs one of these to be true.
  */
-export async function hasFullAccess(userId: string): Promise<boolean> {
+// cache(): layout + page both check this on the same request.
+export const hasFullAccess = cache(async function hasFullAccess(userId: string): Promise<boolean> {
   const supabase = await createClient();
   const [{ data, error }, subscribed] = await Promise.all([
     supabase.from("opportunity_unlocks").select("id").eq("user_id", userId).eq("status", "paid").limit(1).maybeSingle(),
@@ -50,7 +52,7 @@ export async function hasFullAccess(userId: string): Promise<boolean> {
     return subscribed;
   }
   return Boolean(data) || subscribed;
-}
+});
 
 export type UserUnlock = {
   amount_paise: number;

@@ -5,17 +5,11 @@ import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import SuccessStories from "@/components/SuccessStories";
-import { getFreePickOpportunity, getHomepageOpportunities, getSiteStats } from "@/lib/data/opportunities";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
 import WhatWorkedCard from "@/components/WhatWorkedCard";
-import { getPublishedWhatWorked } from "@/lib/data/what-worked";
 import WhatsAppChannelLink from "@/components/WhatsAppChannelLink";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
-import { getFeaturedInterns } from "@/lib/data/referral-rewards";
-import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
-import { getPublishedTestimonials } from "@/lib/data/testimonials";
-import { getActiveAnnouncement } from "@/lib/data/site-announcement";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
@@ -23,6 +17,16 @@ import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import PlanTags from "@/components/PlanTags";
+import {
+  getActiveAnnouncementCached,
+  getCompaniesWithPublishedCountsCached,
+  getFeaturedInternsCached,
+  getFreePickOpportunityCached,
+  getHomepageOpportunitiesCached,
+  getPublishedTestimonialsCached,
+  getPublishedWhatWorkedCached,
+  getSiteStatsCached,
+} from "@/lib/data/cached";
 import {
   MONTHLY_PRICE_INR,
   LEGACY_MONTHLY_PRICE_INR,
@@ -99,16 +103,16 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   ] = await Promise.all([
     // Every live opportunity (they expire after 48h, so this stays small) —
     // the role counts and filters must cover all of them, not just the newest 30.
-    getHomepageOpportunities(500),
-    getSiteStats(),
-    getCompaniesWithPublishedCounts(),
-    getPublishedTestimonials(),
-    getActiveAnnouncement(),
+    getHomepageOpportunitiesCached(500),
+    getSiteStatsCached(),
+    getCompaniesWithPublishedCountsCached(),
+    getPublishedTestimonialsCached(),
+    getActiveAnnouncementCached(),
     user ? hasFullAccess(user.id) : Promise.resolve(false),
     user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
-    getFreePickOpportunity(),
-    getFeaturedInterns(),
-    getPublishedWhatWorked(3),
+    getFreePickOpportunityCached(),
+    getFeaturedInternsCached(),
+    getPublishedWhatWorkedCached(3),
   ]);
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September

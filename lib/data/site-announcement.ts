@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SiteAnnouncement } from "@/types/supabase";
 
@@ -13,7 +13,7 @@ const ANNOUNCEMENT_ID = "singleton";
  * every other public read in this codebase.
  */
 export async function getActiveAnnouncement(): Promise<string | null> {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const { data, error } = await supabase
     .from("site_announcement")
     .select("message")

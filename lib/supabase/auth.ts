@@ -2,6 +2,7 @@
  * Server-side Supabase auth utilities.
  * All functions run in Server Components / Route Handlers only.
  */
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import type { AuthUser, AuthSession } from "@/types/supabase";
@@ -15,13 +16,15 @@ import type { AuthUser, AuthSession } from "@/types/supabase";
  * Uses `getUser()` (validates JWT with Supabase) rather than
  * `getSession()` (reads from cookie only) for security.
  */
-export async function getUser(): Promise<AuthUser | null> {
+// Wrapped in React cache(): the layout, the page and its components all ask
+// for the user on the same request — this makes that ONE Supabase call.
+export const getUser = cache(async (): Promise<AuthUser | null> => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 // ── getSession ────────────────────────────────────────────────
 
