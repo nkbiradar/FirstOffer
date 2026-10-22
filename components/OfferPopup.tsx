@@ -23,6 +23,8 @@ type Props = {
   risePending: boolean;
   riseAt: string; // ISO date
   riseLabel: string;
+  /** Overrides the top line while the offer is running. */
+  eyebrow?: string;
 };
 
 function timeLeft(endsAt: string) {
@@ -38,7 +40,7 @@ function timeLeft(endsAt: string) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export default function OfferPopup({ price, nextPrice, risePending, riseAt, riseLabel }: Props) {
+export default function OfferPopup({ price, nextPrice, risePending, riseAt, riseLabel, eyebrow }: Props) {
   const pathname = usePathname() ?? "/";
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(() => (risePending ? timeLeft(riseAt) : null));
@@ -108,7 +110,7 @@ export default function OfferPopup({ price, nextPrice, risePending, riseAt, rise
           </svg>
         </button>
 
-        <p className="offer-pop-eyebrow">{counting ? `🔥 Limited offer · ends ${riseLabel}` : "FirstOffer Full Access"}</p>
+        <p className="offer-pop-eyebrow">{counting ? (eyebrow ?? `🔥 Limited offer · ends ${riseLabel}`) : "FirstOffer Full Access"}</p>
         <h2 id="offer-pop-title">Apply directly. Get hired faster.</h2>
         <p className="offer-pop-sub">
           HR emails, recruiter numbers, Google Forms &amp; official apply links — for every opportunity on FirstOffer.

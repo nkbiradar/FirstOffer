@@ -15,6 +15,10 @@ import {
   FULL_ACCESS_PRICE_RISE_LABEL,
   getFullAccessPriceInr,
   isFullAccessPriceRisePending,
+  isFullAccessSaleActive,
+  MONTHLY_PRICE_INR,
+  FULL_ACCESS_SALE_ENDS_AT,
+  FULL_ACCESS_SALE_END_LABEL,
 } from "@/lib/payments/razorpay";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
@@ -98,15 +102,25 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <PushNotificationPrompt />
         <SuccessPopup testimonials={testimonials} />
         <VisitTracker isAdmin={isAdmin} />
-        {showOfferPopup && (
-          <OfferPopup
-            nextPrice={FULL_ACCESS_NEXT_PRICE_INR}
-            price={getFullAccessPriceInr()}
-            riseAt={FULL_ACCESS_PRICE_RISE_AT}
-            riseLabel={FULL_ACCESS_PRICE_RISE_LABEL}
-            risePending={isFullAccessPriceRisePending()}
-          />
-        )}
+        {showOfferPopup &&
+          (isFullAccessSaleActive() ? (
+            <OfferPopup
+              nextPrice={MONTHLY_PRICE_INR}
+              price={getFullAccessPriceInr()}
+              riseAt={FULL_ACCESS_SALE_ENDS_AT}
+              riseLabel={FULL_ACCESS_SALE_END_LABEL}
+              risePending
+              eyebrow={`🎉 790+ students · thank-you offer till ${FULL_ACCESS_SALE_END_LABEL}`}
+            />
+          ) : (
+            <OfferPopup
+              nextPrice={FULL_ACCESS_NEXT_PRICE_INR}
+              price={getFullAccessPriceInr()}
+              riseAt={FULL_ACCESS_PRICE_RISE_AT}
+              riseLabel={FULL_ACCESS_PRICE_RISE_LABEL}
+              risePending={isFullAccessPriceRisePending()}
+            />
+          ))}
       </body>
     </html>
   );

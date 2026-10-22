@@ -48,10 +48,19 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(DASARA_SALE_ENDS_AT);
 }
 
-/** The Dasara offer for FULL ACCESS ended early (16 Oct 2026) when the price
- * moved to ₹199. Internal HR keeps its offer until DASARA_SALE_ENDS_AT. */
-export function isFullAccessSaleActive(_now: number = Date.now()): boolean {
-  return false;
+// ── "Almost 800 students" thank-you offer (22–29 Oct 2026): full access
+// ₹149 instead of ₹199, same 3 months. Switches itself off at
+// FULL_ACCESS_SALE_ENDS_AT (price goes back to ₹199) — no redeploy needed.
+export const FULL_ACCESS_SALE_PRICE_INR = 149;
+export const FULL_ACCESS_SALE_ENDS_AT = "2026-10-29T23:59:59+05:30";
+/** Last day of the offer ("till 29 Oct"). */
+export const FULL_ACCESS_SALE_END_LABEL = "29 Oct";
+/** First day back at the regular price. */
+export const FULL_ACCESS_SALE_BACK_LABEL = "30 Oct";
+export const FULL_ACCESS_SALE_TITLE = "Almost 800 students! 🎉";
+
+export function isFullAccessSaleActive(now: number = Date.now()): boolean {
+  return now < Date.parse(FULL_ACCESS_SALE_ENDS_AT);
 }
 
 // ── 2-day offer: full access ₹199 (regular ₹399) until 20 Oct 2026, 23:59 IST.
@@ -69,7 +78,7 @@ export function isFullAccessPriceRisePending(now: number = Date.now()): boolean 
 
 /** The full-access price to show and charge right now. */
 export function getFullAccessPriceInr(now: number = Date.now()): number {
-  if (isFullAccessSaleActive(now)) return DASARA_SALE_PRICE_INR;
+  if (isFullAccessSaleActive(now)) return FULL_ACCESS_SALE_PRICE_INR;
   // Price stays ₹199 after the offer ends (Oct 2026 decision); the ₹399
   // strike-through and countdown simply disappear once the offer is over.
   return MONTHLY_PRICE_INR;
@@ -210,7 +219,7 @@ export function getProductPricing(
   return {
     priceInr,
     pricePaise: priceInr * 100,
-    description: isFullAccessSaleActive() ? "Full access — 3 months (Dasara offer)" : "Full access — 3 months",
+    description: isFullAccessSaleActive() ? "Full access — 3 months (thank-you offer)" : "Full access — 3 months",
   };
 }
 

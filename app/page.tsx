@@ -27,7 +27,8 @@ import {
   MONTHLY_PRICE_INR,
   LEGACY_MONTHLY_PRICE_INR,
   INTERNAL_PRICE_INR,
-  DASARA_SALE_END_LABEL,
+  FULL_ACCESS_SALE_END_LABEL,
+  FULL_ACCESS_SALE_PRICE_INR,
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
@@ -484,9 +485,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 <>
                   {isFullAccessSaleActive() && (
                     <div className="sale-banner">
-                      <span aria-hidden="true">🪔</span>
-                      <strong>Dasara Offer</strong>
-                      <span>· Half price till {DASARA_SALE_END_LABEL}</span>
+                      <span aria-hidden="true">🎉</span>
+                      <strong>We crossed 790+ students!</strong>
+                      <span>· Thank-you price ₹{FULL_ACCESS_SALE_PRICE_INR} till {FULL_ACCESS_SALE_END_LABEL}</span>
                     </div>
                   )}
                   <PlanTags />
@@ -537,7 +538,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                         Unlock full access —{" "}
                         {isFullAccessPriceRisePending() && (
                           <s className="price-was price-was-plain">₹{FULL_ACCESS_NEXT_PRICE_INR}</s>
-                        )}{" "}
+                        )}
+                        {isFullAccessSaleActive() && <s className="price-was price-was-plain">₹{MONTHLY_PRICE_INR}</s>}{" "}
                         ₹{getFullAccessPriceInr()} for 3 months
                       </>
                     )}

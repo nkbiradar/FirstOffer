@@ -10,8 +10,11 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import {
   FULL_ACCESS_NEXT_PRICE_INR,
   FULL_ACCESS_PRICE_RISE_LABEL,
+  FULL_ACCESS_SALE_END_LABEL,
+  MONTHLY_PRICE_INR,
   getFullAccessPriceInr,
   isFullAccessPriceRisePending,
+  isFullAccessSaleActive,
 } from "@/lib/payments/razorpay";
 
 // Direct checkout page for Full Access — the target of the offer popup and
@@ -27,6 +30,7 @@ export default async function UnlockPage() {
   const unlocked = user ? await hasFullAccess(user.id) : false;
   const price = getFullAccessPriceInr();
   const risePending = isFullAccessPriceRisePending();
+  const saleActive = isFullAccessSaleActive();
 
   return (
     <main className="page">
@@ -67,7 +71,9 @@ export default async function UnlockPage() {
             titleOverride="Unlock every opportunity on FirstOffer"
             price={price}
             priceNote={
-              risePending
+              saleActive
+                ? `🎉 790+ students thank-you offer: ₹${MONTHLY_PRICE_INR} → ₹${price} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+                : risePending
                 ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${price} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
                 : `Just ₹${Math.round(price / 3)}/month — one payment covers 3 months.`
             }
