@@ -7923,3 +7923,8 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .wa-help a:hover { text-decoration: underline; }
 .wa-help strong { color: #0f7a40; }
 @media (max-width: 480px) { .wa-help { font-size: 13.5px; } .wa-help a { white-space: normal; } }
+
+/* Pricing card: "Peak hiring season" tag */
+.hiring-season-tag { display: flex; width: fit-content; max-width: 100%; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 0; padding: 6px 14px; border-radius: 999px; font-size: 13px; color: #fde68a; background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(251, 191, 36, 0.55); }
+.hiring-season-tag strong { color: #fff; }
+@media (max-width: 640px) { .hiring-season-tag { margin: 8px 0 0; border-radius: 14px; } }

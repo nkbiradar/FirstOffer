@@ -496,6 +496,11 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                       <span>· Thank-you price ₹{FULL_ACCESS_SALE_PRICE_INR} till {FULL_ACCESS_SALE_END_LABEL}</span>
                     </div>
                   )}
+                  <div className="hiring-season-tag">
+                    <span aria-hidden="true">🔥</span>
+                    <strong>Peak hiring season is starting</strong>
+                    <span>· Apply in bulk, apply early</span>
+                  </div>
                   <PlanTags />
                   <h2 className="pricing-promo-title">
                     Full access:{" "}
