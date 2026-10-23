@@ -9,6 +9,7 @@ import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
 import WhatWorkedCard from "@/components/WhatWorkedCard";
 import WhatsAppChannelLink from "@/components/WhatsAppChannelLink";
+import WhatsAppHelpLine from "@/components/WhatsAppHelpLine";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
@@ -287,6 +288,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             </div>
 
             <WhatsAppChannelLink />
+            <WhatsAppHelpLine />
           </div>
 
 

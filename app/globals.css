@@ -7916,3 +7916,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .safe-pay-light .safe-pay-methods span { color: var(--color-text); background: var(--color-surface-muted); border-color: var(--color-border); }
 .safe-pay-light p { color: var(--color-text-secondary); }
 .safe-pay-light p strong { color: var(--color-text); }
+
+/* Homepage hero: WhatsApp help line (components/WhatsAppHelpLine.tsx) */
+.wa-help { margin: 12px auto 0; max-width: calc(100% - 32px); text-align: center; font-size: 14.5px; line-height: 1.5; color: var(--color-text-secondary); }
+.wa-help a { color: #128c4b; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.wa-help a:hover { text-decoration: underline; }
+.wa-help strong { color: #0f7a40; }
+@media (max-width: 480px) { .wa-help { font-size: 13.5px; } .wa-help a { white-space: normal; } }
