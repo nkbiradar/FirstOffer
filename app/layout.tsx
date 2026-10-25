@@ -7,19 +7,6 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
-import OfferPopup from "@/components/OfferPopup";
-import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import {
-  FULL_ACCESS_NEXT_PRICE_INR,
-  FULL_ACCESS_PRICE_RISE_AT,
-  FULL_ACCESS_PRICE_RISE_LABEL,
-  getFullAccessPriceInr,
-  isFullAccessPriceRisePending,
-  isFullAccessSaleActive,
-  MONTHLY_PRICE_INR,
-  FULL_ACCESS_SALE_ENDS_AT,
-  FULL_ACCESS_SALE_END_LABEL,
-} from "@/lib/payments/razorpay";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getPublishedTestimonialsCached } from "@/lib/data/cached";
 import { getSiteUrl } from "@/lib/site-url";
@@ -87,8 +74,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // Inside the Android app: hide every price / purchase CTA (data-app-hide,
   // see globals.css and lib/nativeAppServer.ts).
   const isApp = await isAppRequest();
-  // Full Access offer popup: everyone except full-access members, admins and the app.
-  const showOfferPopup = !isApp && !isAdmin && !(user && (await hasFullAccess(user.id)));
 
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}${isApp ? " fo-app" : ""}`}>
@@ -102,25 +87,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <PushNotificationPrompt />
         <SuccessPopup testimonials={testimonials} />
         <VisitTracker isAdmin={isAdmin} />
-        {showOfferPopup &&
-          (isFullAccessSaleActive() ? (
-            <OfferPopup
-              nextPrice={MONTHLY_PRICE_INR}
-              price={getFullAccessPriceInr()}
-              riseAt={FULL_ACCESS_SALE_ENDS_AT}
-              riseLabel={FULL_ACCESS_SALE_END_LABEL}
-              risePending
-              eyebrow={`🎉 800+ students · thank-you offer till ${FULL_ACCESS_SALE_END_LABEL}`}
-            />
-          ) : (
-            <OfferPopup
-              nextPrice={FULL_ACCESS_NEXT_PRICE_INR}
-              price={getFullAccessPriceInr()}
-              riseAt={FULL_ACCESS_PRICE_RISE_AT}
-              riseLabel={FULL_ACCESS_PRICE_RISE_LABEL}
-              risePending={isFullAccessPriceRisePending()}
-            />
-          ))}
+        {/* Offer popup removed (Oct 2026) — components/OfferPopup.tsx kept for later use. */}
       </body>
     </html>
   );
