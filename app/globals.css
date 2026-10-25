@@ -8139,3 +8139,22 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .dh-points li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: #d4d4d8; }
 .dh-points li span { flex: 0 0 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: 13px; color: #93c5fd; background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); }
 .free-pick-section { padding: 40px 0 8px; }
+
+/* DirectFlow ("No middlemen") on the dark homepage band */
+.dh-band { position: relative; overflow: hidden; background: #09090b; padding: 0 0 40px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.dh-band::before { content: ""; position: absolute; left: 50%; top: 10%; width: 700px; height: 320px; transform: translateX(-50%); border-radius: 50%; background: rgba(59,130,246,0.12); filter: blur(90px); pointer-events: none; }
+.dh-band .dflow { color: #f5f5f7; }
+.dh-band .dflow-orb { background: #15171d; border-color: rgba(255,255,255,0.1); box-shadow: 0 0 0 6px rgba(59,130,246,0.10), 0 12px 28px rgba(0,0,0,0.5); color: #93c5fd; }
+.dh-band .dflow-orb-live { color: #4ade80; box-shadow: 0 0 0 6px rgba(74,222,128,0.10), 0 12px 28px rgba(0,0,0,0.5); }
+.dh-band .dflow-orb-hr { color: #fbbf24; box-shadow: 0 0 0 6px rgba(251,191,36,0.10), 0 12px 28px rgba(0,0,0,0.5); }
+.dh-band .dflow .dflow-label { color: #f5f5f7; }
+.dh-band .dflow .dflow-sub { color: #a1a1aa; }
+.dh-band .dflow-line { background: rgba(255,255,255,0.12); }
+.dh-band .dflow-fill { background: linear-gradient(90deg, #3b82f6, #34d399); box-shadow: 0 0 12px rgba(59,130,246,0.5); }
+.dh-band .dflow-dot { background: #09090b; border-color: #60a5fa; }
+.dh-band .dflow-chip { background: #15171d; border-color: rgba(255,255,255,0.1); color: #e4e4e7; box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+.dh-band .dflow-chip svg { color: #34d399; }
+.dh-band .dflow .dflow-tagline { color: #fff; }
+.dh-band .dflow-tagline span { background: linear-gradient(90deg, #60a5fa, #34d399); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.dh-band .dflow-wrap { padding-top: 0; }
+.dh-built { padding-bottom: 24px; }

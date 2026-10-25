@@ -159,6 +159,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         todayCount={todayCount}
       />
 
+      {/* "No middlemen" animation: student → live jobs → HR, on the same dark
+          background as the hero so the top of the page reads as one block. */}
+      <section className="dh-band">
+        <div className="container dflow-wrap">
+          <DirectFlow />
+        </div>
+      </section>
+
       {/* Today's FREE opportunity — picked by the admin (see the
           is_free_pick column). Shown to every visitor, signed in or not,
           with its real apply details, right after the dark hero. */}
@@ -176,10 +184,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </section>
       )}
 
-      {/* "No middlemen" animation: student → live jobs → HR, just below the hero. */}
-      <div className="container dflow-wrap">
-        <DirectFlow />
-      </div>
 
       <div className="container">
         {/* Explore by Category: SEO Internal Linking Hub */}
