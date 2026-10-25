@@ -123,13 +123,14 @@ export function getMonthlyPlanId(): string {
 // a user can hold neither, either, or both. See lib/data/subscriptions.ts
 // (hasActiveSubscription is parameterized by product) and
 // app/internal-openings/page.tsx.
-export const INTERNAL_PRICE_INR = 149;
+// 25 Oct 2026: raised from ₹149 to ₹299 for 3 months.
+export const INTERNAL_PRICE_INR = 299;
 export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
 
 // Dasara offer for Internal HR: ₹99 instead of ₹149 (same window as full access).
 export const DASARA_INTERNAL_SALE_PRICE_INR = 99;
 
-/** The Internal HR price to show and charge right now (₹99 during the sale, else ₹149). */
+/** The Internal HR price to show and charge right now (₹99 during the old sale, else INTERNAL_PRICE_INR). */
 export function getInternalPriceInr(now: number = Date.now()): number {
   return isDasaraSaleActive(now) ? DASARA_INTERNAL_SALE_PRICE_INR : INTERNAL_PRICE_INR;
 }
