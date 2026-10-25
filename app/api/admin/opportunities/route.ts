@@ -1,4 +1,5 @@
 import { NextResponse, after, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createOpportunity } from "@/lib/data/admin-opportunities";
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
       // Ask Google to crawl the new job page now (public listings only).
       if (!opportunity.is_internal) after(() => notifyGoogleJobs([opportunity.id]));
     }
+    refreshPublicData();
     revalidatePath("/admin");
     revalidatePath("/admin/opportunities");
     revalidatePath("/admin/companies");

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { clearFreePick, setFreePick } from "@/lib/data/admin-opportunities";
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   }
 
+  refreshPublicData();
   revalidatePath("/");
   revalidatePath("/admin/opportunities");
   revalidatePath(`/opportunities/${id}`);

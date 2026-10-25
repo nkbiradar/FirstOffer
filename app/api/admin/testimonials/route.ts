@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { TestimonialOutcome } from "@/types/supabase";
@@ -57,5 +58,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  refreshPublicData();
   return NextResponse.redirect(new URL("/admin/testimonials?added=1", request.url), 303);
 }

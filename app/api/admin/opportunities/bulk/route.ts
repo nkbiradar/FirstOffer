@@ -1,4 +1,5 @@
 import { NextResponse, after, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { notifyGoogleJobs } from "@/lib/seo/google-indexing";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
   // admin routes (Dashboard, Manage Opportunities), so without this,
   // navigating there via a <Link> click (not a hard reload) served stale
   // pre-import numbers. revalidatePath purges those cached entries too.
+  refreshPublicData();
   revalidatePath("/admin");
   revalidatePath("/admin/opportunities");
   revalidatePath("/admin/companies");

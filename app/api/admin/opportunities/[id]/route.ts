@@ -1,4 +1,5 @@
 import { NextResponse, after, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
 import {
@@ -50,6 +51,7 @@ async function handleUpdate(request: NextRequest, context: RouteContext) {
     );
   }
 
+  refreshPublicData();
   revalidatePath("/admin");
   revalidatePath("/admin/opportunities");
   revalidatePath("/admin/companies");
@@ -86,5 +88,6 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/opportunities");
+  refreshPublicData();
   return NextResponse.json({ ok: true });
 }

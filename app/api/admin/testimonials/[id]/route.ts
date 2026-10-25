@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   }
 
+  refreshPublicData();
   return NextResponse.redirect(new URL("/admin/testimonials?updated=1", request.url), 303);
 }
 
@@ -46,5 +48,6 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  refreshPublicData();
   return NextResponse.json({ ok: true });
 }

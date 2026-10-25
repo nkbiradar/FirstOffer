@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { refreshPublicData } from "@/lib/data/cached";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parseWhatWorkedForm } from "@/lib/data/what-worked";
@@ -31,5 +32,6 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   const target = error ? `/admin/what-worked?error=${encodeURIComponent(error.message)}` : "/admin/what-worked?updated=1";
+  refreshPublicData();
   return NextResponse.redirect(new URL(target, request.url), 303);
 }
