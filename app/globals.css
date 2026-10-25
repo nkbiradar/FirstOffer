@@ -8134,4 +8134,8 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .dh-in, .dh-list li, .dh-card, .dh-glow, .dh-live-dot { animation: none !important; }
   .dh-swoosh path { animation: none; stroke-dashoffset: 0; }
 }
-.dh + .hero { padding-top: 56px; }
+
+.dh-points { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 8px; }
+.dh-points li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: #d4d4d8; }
+.dh-points li span { flex: 0 0 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: 13px; color: #93c5fd; background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); }
+.free-pick-section { padding: 40px 0 8px; }

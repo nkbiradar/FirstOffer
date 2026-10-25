@@ -26,6 +26,8 @@ type Stats = {
   totalSubscribers: number;
   totalInterviews: number;
   totalOffers: number;
+  totalOpportunities: number;
+  totalCompanies: number;
 };
 
 type Props = {
@@ -117,7 +119,19 @@ export default function HomeDarkHero({ todayCount, dateLabel, stats, openings }:
               </Link>
             </div>
 
-            <div className="dh-links dh-in" style={{ animationDelay: "0.38s" }}>
+            <ul className="dh-points dh-in" style={{ animationDelay: "0.36s" }}>
+              <li>
+                <span aria-hidden="true">⏱</span> Live for 48 hours, then gone — no closed roles
+              </li>
+              <li>
+                <span aria-hidden="true">↗</span> Straight to the source — no middlemen
+              </li>
+              <li>
+                <span aria-hidden="true">👁</span> Browse free, forever — sign in with Google for full details
+              </li>
+            </ul>
+
+            <div className="dh-links dh-in" style={{ animationDelay: "0.42s" }}>
               <WhatsAppChannelLink />
               <WhatsAppHelpLine />
             </div>
@@ -128,7 +142,9 @@ export default function HomeDarkHero({ todayCount, dateLabel, stats, openings }:
               <div className="dh-card-top">
                 <div>
                   <p className="dh-card-title">Today&apos;s openings</p>
-                  <p className="dh-card-sub">Hand-checked. Live for 48 hours.</p>
+                  <p className="dh-card-sub">
+                    {stats.totalOpportunities} live · {stats.totalCompanies} companies hiring
+                  </p>
                 </div>
                 <span className="dh-card-count">
                   <span className="dh-live-dot" />

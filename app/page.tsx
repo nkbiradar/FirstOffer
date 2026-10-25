@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
-import CountUp from "@/components/CountUp";
 import SuccessStories from "@/components/SuccessStories";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
@@ -160,74 +159,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         todayCount={todayCount}
       />
 
-      <section className="hero">
-        <div className="container hero-content">
-          <div className="trust-bar">
-            <div className="trust-item">
-              <span className="trust-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M12 8v4l3 3M12 3a9 9 0 100 18 9 9 0 000-18z" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <p className="trust-item-title">Live for 48 hours, then gone</p>
-              <p className="trust-item-desc">
-                Every listing is pulled automatically two days after it goes up — nothing you see here has already
-                closed.
-              </p>
-            </div>
-            <div className="trust-item">
-              <span className="trust-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <p className="trust-item-title">Straight to the source</p>
-              <p className="trust-item-desc">
-                Apply directly through the company&apos;s own link, form, or email — no middlemen, no detours.
-              </p>
-            </div>
-            <div className="trust-item">
-              <span className="trust-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path
-                    d="M12 4.5c-4.5 0-8.3 3-9.5 7.5 1.2 4.5 5 7.5 9.5 7.5s8.3-3 9.5-7.5c-1.2-4.5-5-7.5-9.5-7.5z M12 15a3 3 0 100-6 3 3 0 000 6z"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-              <p className="trust-item-title">Browse free, forever</p>
-              <p className="trust-item-desc">
-                Search every listing with no account. Sign in free with Google to open a role&apos;s full details, or to track what you&apos;ve applied to.
-              </p>
-            </div>
-          </div>
-
-          <div className="hero-stats">
-            <div className="stat-tile">
-              <span className="stat-value">
-                <CountUp value={todayCount} />
-              </span>
-              <span className="stat-label">Opportunities today</span>
-            </div>
-            <div className="stat-tile">
-              <span className="stat-value">
-                <CountUp value={stats.totalCompanies} />
-              </span>
-              <span className="stat-label">Companies hiring</span>
-            </div>
-            <div className="stat-tile">
-              <span className="stat-value">
-                <CountUp value={stats.totalOpportunities} />
-              </span>
-              <span className="stat-label">Live opportunities</span>
-            </div>
-          </div>
-
-          {/* Today's FREE opportunity — picked by the admin (see the
-              is_free_pick column). Shown to every visitor, signed in or
-              not, with its real apply details, right after the stats tiles. */}
-          {freePick && (
+      {/* Today's FREE opportunity — picked by the admin (see the
+          is_free_pick column). Shown to every visitor, signed in or not,
+          with its real apply details, right after the dark hero. */}
+      {freePick && (
+        <section className="free-pick-section">
+          <div className="container">
             <FreePickCard
               opportunity={freePick}
               moreCount={Math.max(stats.totalOpportunities - 1, 0)}
@@ -235,9 +172,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               hasAccess={alreadyHasFullAccess}
               isSignedIn={Boolean(user)}
             />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* "No middlemen" animation: student → live jobs → HR, just below the hero. */}
       <div className="container dflow-wrap">
