@@ -5,7 +5,7 @@
 // Fixed figure set by the founder (Oct 2026) — counts students who have
 // signed up. Update it by hand; the automatic paid-member count
 // (getPaidMemberLabel) is no longer shown.
-export const STUDENT_COUNT_LABEL = "820+";
+export const STUDENT_COUNT_LABEL = "860+";
 
 export default function PlanTags(_props: { memberLabel?: string | null }) {
   const memberLabel = STUDENT_COUNT_LABEL;
