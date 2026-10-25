@@ -8158,3 +8158,101 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .dh-band .dflow-tagline span { background: linear-gradient(90deg, #60a5fa, #34d399); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .dh-band .dflow-wrap { padding-top: 0; }
 .dh-built { padding-bottom: 24px; }
+
+/* =========================================================================
+   Homepage in dark (TUF-style): reuse the site's own dark-theme tokens,
+   scoped to the homepage <main className="home-dark">, so every section,
+   card and button on the homepage switches together.
+   body:has(main.home-dark) also darkens the navbar + footer on the homepage
+   only; every other page keeps its normal theme.
+   ========================================================================= */
+.home-dark,
+body:has(main.home-dark) {
+    --color-bg: #09090b;
+    --color-surface: #141418;
+    --color-surface-muted: #1a1c22;
+    --color-surface-hover: #20222a;
+    --color-border: #24262e;
+    --color-border-strong: #2f313b;
+
+    --color-text: #f2f3f5;
+    --color-text-secondary: #b3b7c1;
+    --color-text-tertiary: #7d818c;
+    --color-text-inverse: #0b0c0f;
+
+    --color-brand: #818cf8;
+    --color-brand-strong: #a5b4fc;
+    --color-brand-light: #6366f1;
+    --color-brand-soft: #1c1d3a;
+    --color-brand-soft-border: #2c2d55;
+
+    --color-accent: #2dd4bf;
+    --color-accent-soft: #0f2622;
+    --color-accent-soft-border: #14413a;
+
+    --color-success: #4ade80;
+    --color-success-soft: #0f2418;
+    --color-success-border: #1f4a30;
+
+    --color-warning: #fbbf24;
+    --color-warning-soft: #2a2109;
+    --color-warning-border: #4a3a10;
+
+    --color-danger: #f87171;
+    --color-danger-soft: #2a1414;
+    --color-danger-border: #4a1f1f;
+
+    --color-violet: #a78bfa;
+    --color-violet-soft: #241b3d;
+    --color-violet-border: #3a2a5c;
+
+    --color-pink: #f472b6;
+    --color-pink-soft: #2e1526;
+    --color-pink-border: #4a1f3a;
+
+    --color-orange: #fb923c;
+    --color-orange-soft: #2a1a0a;
+    --color-orange-border: #4a2f14;
+
+    --color-sky: #38bdf8;
+    --color-sky-soft: #0a2233;
+    --color-sky-border: #123a52;
+
+    /* Dark-mode reads of the Round 5 color-block palette — the pastel
+       "soft" blocks become muted dark tints instead of pale washes so text
+       stays legible, while ink flips to a light neutral for CTA buttons. */
+    --color-ink: #f4f4f5;
+    --color-ink-soft: #1c1c1f;
+
+    --color-mint: #123527;
+    --color-mint-strong: #34d399;
+
+    --color-lavender: #241c3d;
+    --color-lavender-strong: #a78bfa;
+
+    --color-blush: #331824;
+    --color-blush-strong: #f472b6;
+
+    --color-peach: #2e1f0d;
+    --color-peach-strong: #fb923c;
+
+    /* Kept warm/near-black rather than flipping to a pale card — the
+       Internal HR Openings block is meant to read as a fixed, deliberately
+       premium surface in both themes, not one that inverts like the rest
+       of the site. Lightened slightly from the light-mode value so it
+       still stands apart from the page's own dark background. */
+    --color-gold: #d9b356;
+    --color-gold-strong: #e8c878;
+    --color-gold-soft: #2a2008;
+    --color-gold-soft-border: #4a3a10;
+    --color-premium-surface: #17130a;
+    --color-premium-surface-raised: #241d0e;
+    --color-premium-border: #4a3a10;
+    --color-premium-text: #f6efe0;
+    --color-premium-text-secondary: #c9bd9c;
+
+    --shadow-focus: 0 0 0 4px rgba(129, 140, 248, 0.28);
+    color-scheme: dark;
+  background: var(--color-bg);
+  color: var(--color-text);
+}

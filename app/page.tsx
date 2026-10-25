@@ -143,7 +143,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   };
 
   return (
-    <main>
+    <main className="home-dark">
       {/* WebSite Schema for SearchAction */}
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
