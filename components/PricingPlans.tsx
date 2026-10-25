@@ -90,7 +90,7 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
         { text: "Official Google Forms & apply links" },
         { text: "New fresher roles added daily" },
         { text: "Resume Keyword Matcher" },
-        { text: "Interview Call Guarantee — or full refund" },
+        { text: "Fresh listings only — every role live 48 hrs" },
       ],
     },
     {
@@ -176,9 +176,6 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       </div>
 
       <div className="fp-foot">
-        <Link className="fp-guarantee" href="/refund-policy#interview-guarantee">
-          🛡️ <strong>Interview Call Guarantee</strong> — no interview call in your first month on Full Access? Full refund.
-        </Link>
         <p className="fp-share">
           ⚠️ <strong>One account = one user, one device.</strong> Sharing your account or copying opportunities to others
           gets it <strong>banned</strong> — no refund.

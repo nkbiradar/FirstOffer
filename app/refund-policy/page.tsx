@@ -52,10 +52,11 @@ export default function RefundPolicyPage() {
       </p>
 
       <h2 id="interview-guarantee" style={{ marginTop: 32, scrollMarginTop: 90 }}>
-        🛡️ Interview Call Guarantee (Full Access plan)
+        🛡️ Interview Call Guarantee (Full Access purchases up to 25 Oct 2026)
       </h2>
       <p style={{ marginTop: 12 }}>
-        If you buy the Full Access plan and don&apos;t get a single interview call in your first month
+        This guarantee is no longer offered for new purchases. It still applies to everyone who bought
+        Full Access on or before 25 October 2026: if you bought the Full Access plan and don&apos;t get a single interview call in your first month
         (30 days from your payment date), we&apos;ll give you a <strong>full refund</strong>.
       </p>
       <p style={{ marginTop: 12 }}>
