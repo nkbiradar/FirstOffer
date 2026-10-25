@@ -7,8 +7,7 @@ import SuccessStories from "@/components/SuccessStories";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
 import WhatWorkedCard from "@/components/WhatWorkedCard";
-import WhatsAppChannelLink from "@/components/WhatsAppChannelLink";
-import WhatsAppHelpLine from "@/components/WhatsAppHelpLine";
+import HomeDarkHero from "@/components/HomeDarkHero";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
@@ -154,129 +153,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
-      <section className="credibility-strip">
-        <div className="container credibility-strip-inner">
-          <p className="credibility-strip-label">
-            Built by members from
-          </p>
-
-          <div className="credibility-strip-institutes">
-            <span className="institute-pill">
-              <span className="institute-pill-logo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="" src="/images/logos/iiit-dharwad.jpg" />
-              </span>
-              <span className="institute-pill-name">IIIT Dharwad</span>
-            </span>
-            <span className="institute-pill">
-              <span className="institute-pill-logo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="" src="/images/logos/iit-bombay.webp" />
-              </span>
-              <span className="institute-pill-name">IIT Bombay</span>
-            </span>
-            <span className="institute-pill">
-              <span className="institute-pill-logo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt="" src="/images/logos/iit-madras.jpg" />
-              </span>
-              <span className="institute-pill-name">IIT Madras</span>
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <section className="subscriber-strip">
-        <div className="container">
-          <div className="milestone-row">
-            <div className="milestone milestone-posted">
-              <span className="milestone-value milestone-value-accent">
-                <CountUp value={stats.totalPostedEver} />+
-              </span>
-              <span className="milestone-label">Opportunities Posted</span>
-            </div>
-            <span className="milestone-divider" aria-hidden="true" />
-            <div className="milestone">
-              <span className="milestone-value milestone-value-brand">
-                <CountUp value={stats.totalStartups} />+
-              </span>
-              <span className="milestone-label">Startups Hiring Freshers</span>
-            </div>
-            <span className="milestone-divider" aria-hidden="true" />
-            <div className="milestone">
-              <span className="milestone-value milestone-value-accent">
-                <CountUp value={stats.totalSubscribers} />
-              </span>
-              <span className="milestone-label">Users joined</span>
-            </div>
-            <span className="milestone-divider" aria-hidden="true" />
-            <div className="milestone">
-              <span className="milestone-value milestone-value-brand">
-                <CountUp value={stats.totalInterviews} />
-              </span>
-              <span className="milestone-label">Interviews Landed</span>
-            </div>
-            <span className="milestone-divider" aria-hidden="true" />
-            <div className="milestone">
-              <span className="milestone-value milestone-value-accent">
-                <CountUp value={stats.totalOffers} />
-              </span>
-              <span className="milestone-label">Offers Received</span>
-            </div>
-          </div>
-          {stats.totalInterviews > 0 && (
-            <p className="milestone-next">
-              🎯 {stats.totalInterviews} students have landed interview calls through FirstOffer.{" "}
-              <strong>Your first call could be #{stats.totalInterviews + 1}.</strong>
-            </p>
-          )}
-          <p className="hr-truth">
-            You don&apos;t need more skills. <span>You need your resume to reach a real HR.</span>
-          </p>
-        </div>
-      </section>
+      <HomeDarkHero
+        dateLabel={heroDateLabel}
+        openings={today.length > 0 ? today : earlier}
+        stats={stats}
+        todayCount={todayCount}
+      />
 
       <section className="hero">
         <div className="container hero-content">
-          <div className="hero-copy hero-copy-centered">
-            <span className="eyebrow">
-              <span className="eyebrow-dot" />
-              {todayCount > 0 ? `${todayCount} New Today` : "Live"} • Updated {heroDateLabel}
-            </span>
-
-            <h1>
-              Find Your First Offer
-              <br />
-              <span className="highlight-swoosh">
-                Faster.
-                <svg className="swoosh-svg" viewBox="0 0 320 24" fill="none" aria-hidden="true">
-                  <path d="M4 15c48-12 240-16 312 3" stroke="var(--color-accent)" strokeWidth="6" strokeLinecap="round" />
-                </svg>
-              </span>
-            </h1>
-
-            <p className="hero-sub" style={{ fontSize: 17, maxWidth: 640 }}>
-              Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.
-            </p>
-
-            <p className="hero-note">
-              Older opportunities expire within 2 days as companies close hiring — apply fast.
-            </p>
-
-            <div className="hero-actions">
-              <Link className="btn btn-primary" href="/fresher-jobs">
-                Find Fresher Jobs
-              </Link>
-              <Link className="btn btn-secondary" href="/tech-jobs">
-                Browse Tech Jobs
-              </Link>
-            </div>
-
-            <WhatsAppChannelLink />
-            <WhatsAppHelpLine />
-          </div>
-
-
           <div className="trust-bar">
             <div className="trust-item">
               <span className="trust-item-icon" aria-hidden="true">

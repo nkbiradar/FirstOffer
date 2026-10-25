@@ -8026,3 +8026,112 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   .fp-compare-card h3 { font-size: 22px; }
   .fp-perday-price { font-size: 26px; }
 }
+
+/* =========================================================================
+   Dark animated homepage top (components/HomeDarkHero.tsx) — TUF-style:
+   near-black, soft blue/green glows, staggered fade-up, live card.
+   ========================================================================= */
+.dh { --dh-bg: #09090b; --dh-card: #141418; --dh-card-2: #1b1b21; --dh-line: rgba(255,255,255,0.08); --dh-text: #f5f5f7; --dh-muted: #a1a1aa; --dh-dim: #71717a; --dh-blue: #3b82f6;
+  position: relative; overflow: hidden; background: var(--dh-bg); color: var(--dh-text); }
+.dh-glow { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; pointer-events: none; }
+.dh-glow-1 { width: 520px; height: 520px; top: -180px; left: -120px; background: rgba(59,130,246,0.35); animation: dhFloat 14s ease-in-out infinite; }
+.dh-glow-2 { width: 460px; height: 460px; top: 120px; right: -160px; background: rgba(52,211,153,0.22); animation: dhFloat 18s ease-in-out infinite reverse; }
+.dh-grid-bg { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(70% 60% at 50% 30%, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(70% 60% at 50% 30%, #000 20%, transparent 75%); }
+.dh > section { position: relative; z-index: 1; }
+
+.dh-in { animation: dhUp 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes dhUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes dhFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(40px, 30px); } }
+@keyframes dhCardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes dhPulse { 0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); } 100% { box-shadow: 0 0 0 10px rgba(74,222,128,0); } }
+@keyframes dhRow { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+@keyframes dhDraw { to { stroke-dashoffset: 0; } }
+
+.dh-hero { padding: 84px 0 56px; }
+.dh-hero-inner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 56px; align-items: center; }
+.dh-copy { display: grid; gap: 20px; justify-items: start; }
+.dh-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: var(--dh-text); background: #1e2230; border: 1px solid rgba(255,255,255,0.08); }
+.dh-live-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; animation: dhPulse 1.8s ease-out infinite; flex: 0 0 auto; }
+.dh h1 { margin: 0; font-family: var(--font-display, inherit); font-size: clamp(2.6rem, 1.6rem + 3.4vw, 4.4rem); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: #fff; text-wrap: balance; }
+.dh-swoosh { position: relative; display: inline-block; white-space: nowrap; }
+.dh-swoosh svg { position: absolute; left: 0; bottom: -0.16em; width: 100%; height: 0.32em; overflow: visible; }
+.dh-swoosh path { stroke-dasharray: 340; stroke-dashoffset: 340; animation: dhDraw 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s forwards; }
+.dh-sub { margin: 0; max-width: 560px; font-size: 17.5px; line-height: 1.6; color: #d4d4d8; }
+.dh-note { margin: -6px 0 0; font-size: 14.5px; color: #fbbf24; }
+.dh-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.dh-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 16px; text-decoration: none; transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease; }
+.dh-btn:hover { transform: translateY(-2px); }
+.dh-btn-dark { color: #fff; background: #1c1c22; border: 1px solid rgba(255,255,255,0.1); }
+.dh-btn-dark:hover { color: #fff; background: #26262e; }
+.dh-btn-blue { color: #fff; background: linear-gradient(180deg, #3b82f6, #2563eb); box-shadow: 0 10px 28px rgba(37,99,235,0.4); }
+.dh-btn-blue:hover { color: #fff; filter: brightness(1.08); }
+.dh-links { display: grid; gap: 4px; justify-items: start; }
+.dh .tg-link { background: #15171d; border-color: rgba(37,211,102,0.35); box-shadow: none; color: #e4e4e7; }
+.dh .tg-link .tg-link-text { color: #e4e4e7; }
+.dh .wa-link .tg-link-text strong { color: #4ade80; }
+.dh .wa-help { margin: 8px 0 0; text-align: left; max-width: none; color: var(--dh-muted); }
+.dh .wa-help a, .dh .wa-help strong { color: #4ade80; }
+
+.dh-card-wrap { animation-duration: 0.9s; }
+.dh-card { position: relative; padding: 26px 24px 20px; border-radius: 26px; background: linear-gradient(180deg, #17171c, #111115); border: 1px solid var(--dh-line); box-shadow: 0 40px 90px rgba(0,0,0,0.55), 0 0 0 1px rgba(59,130,246,0.06); animation: dhCardFloat 7s ease-in-out 1.2s infinite; }
+.dh-card::before { content: ""; position: absolute; inset: -1px; border-radius: 27px; padding: 1px; background: linear-gradient(140deg, rgba(59,130,246,0.55), transparent 40%, transparent 60%, rgba(52,211,153,0.45)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.dh-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dh-card-title { margin: 0; font-family: var(--font-display, inherit); font-size: 24px; font-weight: 800; color: #fff; }
+.dh-card-sub { margin: 4px 0 0; font-size: 14px; color: var(--dh-muted); }
+.dh-card-count { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; color: #bbf7d0; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); white-space: nowrap; }
+.dh-list { list-style: none; margin: 18px 0 0; padding: 6px; display: grid; gap: 4px; border-radius: 18px; background: #1d1f27; border: 1px solid var(--dh-line); }
+.dh-list li { animation: dhRow 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.dh-list a { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; text-decoration: none; color: inherit; transition: background 0.15s ease; }
+.dh-list a:hover { background: rgba(255,255,255,0.05); }
+.dh-avatar { flex: 0 0 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #fff; }
+.dh-row-main { flex: 1; min-width: 0; display: grid; }
+.dh-role { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 15px; font-weight: 700; color: #f4f4f5; }
+.dh-meta { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12.5px; color: var(--dh-dim); }
+.dh-row-side { flex: 0 0 auto; display: grid; justify-items: end; gap: 3px; }
+.dh-tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #93c5fd; background: rgba(59,130,246,0.14); }
+.dh-ago { font-size: 11.5px; color: var(--dh-dim); }
+.dh-empty { padding: 18px; font-size: 14px; color: var(--dh-muted); }
+.dh-card-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 14.5px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+.dh-card-more:hover { color: #93c5fd; }
+
+.dh-stats { padding: 8px 0 40px; }
+.dh-stats-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; padding: 26px 10px; border-radius: 22px; background: rgba(20,20,24,0.8); border: 1px solid var(--dh-line); backdrop-filter: blur(6px); }
+.dh-stat { display: grid; justify-items: center; gap: 6px; padding: 4px 8px; text-align: center; border-left: 1px solid var(--dh-line); }
+.dh-stat:first-child { border-left: 0; }
+.dh-stat-value { font-family: var(--font-display, inherit); font-size: clamp(1.7rem, 1.2rem + 1.4vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(180deg, #fff, #a5b4fc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.dh-stat-label { font-size: 13px; font-weight: 600; color: var(--dh-muted); }
+.dh-next { margin: 22px auto 0; text-align: center; font-size: 15.5px; color: #d4d4d8; }
+.dh-next strong { color: #60a5fa; }
+.dh-truth { margin: 14px auto 0; width: fit-content; max-width: 100%; padding: 11px 22px; border-radius: 999px; text-align: center; font-size: 15.5px; font-weight: 700; color: #fff; background: #15171d; border: 1px solid rgba(59,130,246,0.35); }
+.dh-truth span { color: #60a5fa; }
+
+.dh-built { padding: 6px 0 64px; text-align: center; }
+.dh-built-label { margin: 0 0 16px; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dh-dim); }
+.dh-built-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.dh-inst { display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: 999px; font-weight: 700; font-size: 15px; color: #e4e4e7; background: #15171d; border: 1px solid var(--dh-line); }
+.dh-inst-logo { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; background: #fff; display: grid; place-items: center; }
+.dh-inst-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+@media (max-width: 960px) {
+  .dh-hero { padding: 56px 0 40px; }
+  .dh-hero-inner { grid-template-columns: 1fr; gap: 36px; }
+  .dh-stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 22px; }
+  .dh-stat:nth-child(4) { border-left: 0; }
+}
+@media (max-width: 560px) {
+  .dh-hero { padding: 40px 0 32px; }
+  .dh-sub { font-size: 16px; }
+  .dh-btn { flex: 1 1 auto; justify-content: center; }
+  .dh-card { padding: 20px 14px 16px; border-radius: 20px; }
+  .dh-card-title { font-size: 20px; }
+  .dh-stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dh-stat { border-left: 0; }
+  .dh-stat:last-child { grid-column: 1 / -1; }
+  .dh-truth { border-radius: 16px; font-size: 14px; }
+  .dh-glow-1, .dh-glow-2 { width: 300px; height: 300px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dh-in, .dh-list li, .dh-card, .dh-glow, .dh-live-dot { animation: none !important; }
+  .dh-swoosh path { animation: none; stroke-dashoffset: 0; }
+}
+.dh + .hero { padding-top: 56px; }
