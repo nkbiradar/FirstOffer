@@ -63,8 +63,8 @@ const AVATAR_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#a855f7", "#ec4899", "#
 export default function HomeDarkHero({ todayCount, dateLabel, stats, openings }: Props) {
   const rows = openings.slice(0, 5);
   const milestones = [
-    { value: stats.totalPostedEver, plus: true, label: "Opportunities posted" },
-    { value: stats.totalStartups, plus: true, label: "Startups hiring freshers" },
+    { value: stats.totalPostedEver, plus: false, label: "Opportunities posted" },
+    { value: stats.totalStartups, plus: false, label: "Startups hiring freshers" },
     { value: stats.totalSubscribers, plus: false, label: "Students joined" },
     { value: stats.totalInterviews, plus: false, label: "Interview calls" },
     { value: stats.totalOffers, plus: false, label: "Offers received" },
@@ -81,7 +81,7 @@ export default function HomeDarkHero({ todayCount, dateLabel, stats, openings }:
           <div className="dh-copy">
             <span className="dh-badge dh-in" style={{ animationDelay: "0.05s" }}>
               <span className="dh-live-dot" />
-              {stats.totalSubscribers.toLocaleString("en-IN")}+ students · {todayCount > 0 ? `${todayCount} new today` : `updated ${dateLabel}`}
+              {stats.totalSubscribers.toLocaleString("en-IN")} students · {todayCount > 0 ? `${todayCount} new today` : `updated ${dateLabel}`}
             </span>
 
             <h1 className="dh-in" style={{ animationDelay: "0.12s" }}>
