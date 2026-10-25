@@ -3,6 +3,8 @@ import Link from "next/link";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import WhatWorked from "@/components/WhatWorked";
+import OffCampusCompare from "@/components/OffCampusCompare";
+import { getSiteStatsCached } from "@/lib/data/cached";
 import SafePay from "@/components/SafePay";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
@@ -26,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export default async function UnlockPage() {
-  const [user, inApp] = await Promise.all([getUser(), isAppRequest()]);
+  const [user, inApp, stats] = await Promise.all([getUser(), isAppRequest(), getSiteStatsCached()]);
   const unlocked = user ? await hasFullAccess(user.id) : false;
   const price = getFullAccessPriceInr();
   const risePending = isFullAccessPriceRisePending();
@@ -105,6 +107,11 @@ export default async function UnlockPage() {
 
         {!unlocked && <WhatWorked />}
       </div>
+      {!unlocked && !inApp && (
+        <div className="container" style={{ maxWidth: 1180, paddingBottom: 64 }}>
+          <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} />
+        </div>
+      )}
     </main>
   );
 }

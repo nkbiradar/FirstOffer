@@ -1,5 +1,4 @@
 import Link from "next/link";
-import SafePay from "@/components/SafePay";
 import Image from "next/image";
 import OpportunityCard from "@/components/OpportunityCard";
 import Reveal from "@/components/Reveal";
@@ -16,8 +15,8 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
-import PlanTags from "@/components/PlanTags";
+import PricingPlans from "@/components/PricingPlans";
+import OffCampusCompare from "@/components/OffCampusCompare";
 import {
   getActiveAnnouncementCached,
   getCompaniesWithPublishedCountsCached,
@@ -28,19 +27,7 @@ import {
   getPublishedWhatWorkedCached,
   getSiteStatsCached,
 } from "@/lib/data/cached";
-import {
-  MONTHLY_PRICE_INR,
-  LEGACY_MONTHLY_PRICE_INR,
-  INTERNAL_PRICE_INR,
-  FULL_ACCESS_SALE_END_LABEL,
-  FULL_ACCESS_SALE_PRICE_INR,
-  getFullAccessPriceInr,
-  getInternalPriceInr,
-  isDasaraSaleActive,
-  isFullAccessSaleActive,
-  isFullAccessPriceRisePending,
-  FULL_ACCESS_NEXT_PRICE_INR,
-} from "@/lib/payments/razorpay";
+import { getFullAccessPriceInr } from "@/lib/payments/razorpay";
 
 export const metadata = {
   title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
@@ -97,7 +84,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     testimonials,
     announcement,
     alreadyHasFullAccess,
-    isLegacyFullAccessUser,
     freePick,
     featuredInterns,
     whatWorked,
@@ -110,7 +96,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     getPublishedTestimonialsCached(),
     getActiveAnnouncementCached(),
     user ? hasFullAccess(user.id) : Promise.resolve(false),
-    user ? hasLegacyFullAccessPricing(user.id) : Promise.resolve(false),
     getFreePickOpportunityCached(),
     getFeaturedInternsCached(),
     getPublishedWhatWorkedCached(3),
@@ -450,194 +435,13 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </section>
         </Reveal>
 
-        {/* Full-access membership pricing announcement — ₹99 for 3 months is the
-            regular price; anyone with a completed payment on record at the
-            old ₹49 rate (see hasLegacyFullAccessPricing() in
-            lib/data/subscriptions.ts) keeps ₹49 on every future renewal,
-            forever. Personalized for a signed-in visitor who already
-            qualifies or already has access; a signed-out or brand-new
-            visitor sees the current regular price plus the honest reason it
-            moved — no countdown or "before it changes" framing, since the
-            new price is already in effect for anyone without that history. */}
-        <Reveal>
-          <section className="section" style={{ paddingTop: 8 }} data-app-hide>
-            <div className="pricing-promo showcase-access">
-              <span className="pricing-promo-badge">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Membership Pricing
-              </span>
-              {alreadyHasFullAccess ? (
-                <>
-                  <h2 className="pricing-promo-title">
-                    {isLegacyFullAccessUser
-                      ? `You're on founding-member pricing — ₹${LEGACY_MONTHLY_PRICE_INR}/month`
-                      : "Your full access is active"}
-                  </h2>
-                  <p className="pricing-promo-sub">
-                    Every direct HR email, recruiter number, Google Form, and application link on FirstOffer stays
-                    unlocked while your access is active.
-                    {isLegacyFullAccessUser && " Your rate is locked in for as long as you stay subscribed."}
-                  </p>
-                  <Link href="/dashboard" className="btn btn-primary pricing-promo-cta">
-                    View my membership
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                      <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  {isFullAccessSaleActive() && (
-                    <div className="sale-banner">
-                      <span aria-hidden="true">🎉</span>
-                      <strong>We crossed 800+ students!</strong>
-                      <span>· Thank-you price ₹{FULL_ACCESS_SALE_PRICE_INR} till {FULL_ACCESS_SALE_END_LABEL}</span>
-                    </div>
-                  )}
-                  <div className="hiring-season-tag">
-                    <span aria-hidden="true">🔥</span>
-                    <strong>Peak hiring season is starting</strong>
-                    <span>· Apply in bulk, apply early</span>
-                  </div>
-                  <PlanTags />
-                  <h2 className="pricing-promo-title">
-                    Full access:{" "}
-                    {isFullAccessSaleActive() && <s className="price-was">₹{MONTHLY_PRICE_INR}</s>}
-                    {isFullAccessPriceRisePending() && <s className="price-was">₹{FULL_ACCESS_NEXT_PRICE_INR}</s>}{" "}
-                    ₹{getFullAccessPriceInr()} for 3 months
-                  </h2>
-                  <p className="pricing-promo-sub">
-                    {isLegacyFullAccessUser
-                      ? `Unlocks every direct HR email, recruiter number, Google Form, and application link on FirstOffer — at the rate you already locked in, for as long as you stay subscribed.`
-                      : "Everything you need to go from browsing to actually applying — unlocked the moment you join."}
-                  </p>
-                  {!isLegacyFullAccessUser && (
-                    <ul className="pricing-promo-checklist">
-                      <li>Direct HR email, recruiter number &amp; apply link — every opportunity</li>
-                      <li>Direct Google Forms from companies — apply straight to the hiring team</li>
-                      <li>New roles added regularly, included automatically</li>
-                      <li>Resume Keyword Matcher — check your fit before you apply</li>
-                      <li>Every listing auto-expires in 48h — never a dead lead</li>
-                      <li>One-time UPI payment — no auto-debit</li>
-                    </ul>
-                  )}
-                  {!isLegacyFullAccessUser && (
-                    <Link href="/refund-policy#interview-guarantee" className="call-guarantee">
-                      <span aria-hidden="true">🛡️</span>
-                      <span>
-                        <strong>Interview Call Guarantee</strong> — no interview call in your first month? Get a
-                        full refund.
-                      </span>
-                    </Link>
-                  )}
-                  {!isLegacyFullAccessUser && (
-                    <p className="share-ban">
-                      <span aria-hidden="true">⚠️</span>
-                      <span>
-                        <strong>One account = one user, one device.</strong> Sharing your account or copying
-                        opportunities to others will get it <strong>banned</strong> — no refund.
-                      </span>
-                    </p>
-                  )}
-                  <Link href="/unlock" className="btn btn-primary pricing-promo-cta">
-                    {isLegacyFullAccessUser ? (
-                      "Continue at your price"
-                    ) : (
-                      <>
-                        Unlock full access —{" "}
-                        {isFullAccessPriceRisePending() && (
-                          <s className="price-was price-was-plain">₹{FULL_ACCESS_NEXT_PRICE_INR}</s>
-                        )}
-                        {isFullAccessSaleActive() && <s className="price-was price-was-plain">₹{MONTHLY_PRICE_INR}</s>}{" "}
-                        ₹{getFullAccessPriceInr()} for 3 months
-                      </>
-                    )}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                      <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </Link>
-                  <SafePay />
-                </>
-              )}
-            </div>
-          </section>
-        </Reveal>
-
-        {/* Internal HR Openings — a separately-sold, deliberately
-            higher-contrast promo distinct from the rest of the site's
-            indigo/teal branding, linking to /internal-openings. The copy
-            here mirrors PRODUCT_COPY.internal_hr in UnlockContactCard.tsx
-            and is only truthful because getInternalOpportunities() /
-            applyInternalFilter() (lib/data/opportunities.ts) structurally
-            keep these roles out of every other listing on the site. */}
-        <Reveal>
-          <section className="section" style={{ paddingTop: 8 }} data-app-hide>
-            <Link href="/internal-openings" className="internal-hr-promo">
-              <span className="internal-hr-promo-badge">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <rect x="5" y="11" width="14" height="9" rx="2" />
-                  <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Exclusive Access
-              </span>
-              <h2 className="internal-hr-promo-heading">Internal HR Openings</h2>
-              <p className="internal-hr-promo-title">Get Jobs Before Everyone Else</p>
-              <p className="internal-hr-promo-sub">
-                Exclusive openings shared directly by HRs &amp; recruiters — with significantly lower competition.
-              </p>
-              <ul className="internal-hr-promo-checklist">
-                <li>Direct HR-shared openings</li>
-                <li>Low-competition opportunities</li>
-                <li>Early access to fresh roles</li>
-                <li>Roles that may not be widely posted</li>
-                <li>Bonus: 6 Interview Question Kits (PDF)</li>
-              </ul>
-              <span className="btn btn-primary internal-hr-promo-cta">
-                Unlock Internal Openings —{" "}
-                {isDasaraSaleActive() && <s className="price-was price-was-plain">₹{INTERNAL_PRICE_INR}</s>}{" "}
-                ₹{getInternalPriceInr()} for 3 months
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </Link>
-          </section>
-        </Reveal>
-
-        {/* Resume Help entry point (app/resume) — dark violet showcase card,
-            same family as the Internal HR promo above but its own colour.
-            Placed after the two membership cards; no price on this card. */}
+        {/* Dark three-plan pricing (Full Access / Internal HR / Resume
+            Makeover) + "why off-campus" comparison. Prices and offers come
+            from lib/payments/razorpay.ts. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
-            <Link href="/resume" className="showcase-promo showcase-resume">
-              <span className="showcase-badge">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" strokeLinejoin="round" />
-                  <path d="M14 2v6h6M9 15l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Resume Help
-              </span>
-              <h2 className="showcase-heading">Getting no interview calls?</h2>
-              <p className="showcase-title">Your Resume Might Be the Problem</p>
-              <p className="showcase-sub">
-                Most companies filter resumes with ATS software before a recruiter ever reads them. Fix yours today
-                — free template, or let our team rebuild it for you.
-              </p>
-              <ul className="showcase-checklist">
-                <li>Free ATS-friendly template</li>
-                <li>Rebuilt for your target role</li>
-                <li>Right keywords &amp; strong bullets</li>
-                <li>Reviewed by HR professionals</li>
-              </ul>
-              <span className="showcase-cta">
-                Fix my resume
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </Link>
+            <PricingPlans hasFullAccess={alreadyHasFullAccess} />
+            <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} />
           </section>
         </Reveal>
 
