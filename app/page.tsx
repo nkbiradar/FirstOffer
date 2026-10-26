@@ -157,6 +157,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         openings={today.length > 0 ? today : earlier}
         stats={stats}
         todayCount={todayCount}
+        testimonials={testimonials}
+        companies={companies}
       />
 
       {/* "No middlemen" animation: student → live jobs → HR, on the same dark

@@ -2,6 +2,8 @@ import Link from "next/link";
 import CountUp from "@/components/CountUp";
 import WhatsAppChannelLink from "@/components/WhatsAppChannelLink";
 import WhatsAppHelpLine from "@/components/WhatsAppHelpLine";
+import HiredCompanies from "@/components/HiredCompanies";
+import type { Testimonial } from "@/types/supabase";
 
 // Dark, animated top of the homepage: hero copy + a live "Today's openings"
 // card (real newest listings), the milestone stats, and the "Built by
@@ -35,6 +37,8 @@ type Props = {
   dateLabel: string;
   stats: Stats;
   openings: Opening[];
+  testimonials?: Testimonial[];
+  companies?: { name: string; logo_url: string | null; website: string | null }[];
 };
 
 function companyOf(o: Opening) {
@@ -60,7 +64,7 @@ function tagOf(o: Opening) {
 
 const AVATAR_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#a855f7", "#ec4899", "#14b8a6"];
 
-export default function HomeDarkHero({ todayCount, dateLabel, stats, openings }: Props) {
+export default function HomeDarkHero({ todayCount, dateLabel, stats, openings, testimonials = [], companies = [] }: Props) {
   const rows = openings.slice(0, 5);
   const milestones = [
     { value: stats.totalPostedEver, plus: false, label: "Opportunities posted" },
@@ -211,6 +215,8 @@ export default function HomeDarkHero({ todayCount, dateLabel, stats, openings }:
           </p>
         </div>
       </section>
+
+      <HiredCompanies companies={companies} testimonials={testimonials} />
 
       <section className="dh-built">
         <div className="container">
