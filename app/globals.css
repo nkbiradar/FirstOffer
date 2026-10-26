@@ -8274,10 +8274,10 @@ body:has(main.home-dark) {
 .hc-sub { margin: 8px 0 22px; font-size: 14.5px; color: #a1a1aa; }
 .hc-sub strong { color: #60a5fa; }
 .hc-row { overflow: hidden; padding: 6px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.hc-track { display: flex; gap: 14px; width: max-content; animation: hcScroll var(--hc-duration, 60s) linear infinite; }
+.hc-track { --hc-gap: 32px; display: flex; gap: var(--hc-gap); width: max-content; animation: hcScroll var(--hc-duration, 60s) linear infinite; }
 .hc-reverse { animation-direction: reverse; }
 .hc-row:hover .hc-track { animation-play-state: paused; }
-@keyframes hcScroll { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 7px)); } }
+@keyframes hcScroll { from { transform: translateX(0); } to { transform: translateX(calc(-50% - var(--hc-gap) / 2)); } }
 .hc-chip { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px 9px 9px; border-radius: 14px; white-space: nowrap; background: #15171d; border: 1px solid rgba(255,255,255,0.08); color: #e4e4e7; font-size: 15px; font-weight: 700; }
 .hc-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #fff; padding: 3px; flex: 0 0 32px; }
 .hc-letter { display: grid; place-items: center; padding: 0; color: #fff; font-size: 15px; font-weight: 800; }
@@ -8290,3 +8290,6 @@ body:has(main.home-dark) {
 .hc-chip-logo .hc-badge { position: absolute; top: -8px; right: -6px; background: #3b2a06; }
 .hc-track { align-items: center; padding-top: 8px; }
 @media (max-width: 560px) { .hc-wordmark { height: 42px; max-width: 150px; } }
+
+.hc-row + .hc-row { margin-top: 14px; }
+@media (max-width: 560px) { .hc-track { --hc-gap: 22px; } }
