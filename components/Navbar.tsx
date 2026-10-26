@@ -8,9 +8,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 const LINKS = [
   { href: "/fresher-jobs", label: "Fresher Jobs" },
   { href: "/tech-jobs", label: "Tech Jobs" },
-  { href: "/off-campus-jobs", label: "Off-Campus" },
   { href: "/opportunities", label: "All Openings" },
-  { href: "/companies", label: "Companies" },
   { href: "/resume", label: "Resume Help" },
   // Free "What Worked For Me" stories — its own section, not part of Internal HR.
   { href: "/what-worked", label: "What Worked" },
