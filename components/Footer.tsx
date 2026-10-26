@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { KEYWORD_PAGES } from "@/lib/seo/keyword-pages";
-import { CITY_PAGES } from "@/lib/seo/cities";
 
 export default function Footer() {
   return (
@@ -91,20 +89,6 @@ export default function Footer() {
             Email Support
           </a>
         </div>
-        {/* Popular searches — internal links to the keyword + city landing pages (SEO). */}
-        <nav className="footer-popular" aria-label="Popular searches">
-          <span className="footer-popular-title">Popular searches</span>
-          {KEYWORD_PAGES.map((p) => (
-            <Link key={p.slug} href={`/jobs/${p.slug}`}>
-              {p.heading}
-            </Link>
-          ))}
-          {CITY_PAGES.map((c) => (
-            <Link key={c.slug} href={`/fresher-jobs/${c.slug}`}>
-              {c.remote ? "Work from Home Jobs for Freshers" : `Fresher Jobs in ${c.name}`}
-            </Link>
-          ))}
-        </nav>
         <div className="footer-inner">
           <span>
             &copy; {new Date().getFullYear()} FirstOffer &mdash; Fresher opportunities across India. · Udyam Reg. No.
