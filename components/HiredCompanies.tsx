@@ -20,11 +20,15 @@ function buildList(testimonials: Testimonial[]): Hired[] {
   for (const t of testimonials) {
     const raw = (t.company_name ?? "").trim();
     if (!raw) continue;
-    const key = norm(raw);
-    if (!key) continue;
+    const slug = norm(raw);
+    if (!slug) continue;
+    const logo = localLogoFor(slug);
+    // Group by logo file, so different spellings ("Delloite" / "Deloitte")
+    // show the company only once.
+    const key = logo ?? slug;
     let row = out.get(key);
     if (!row) {
-      row = { key, name: raw, logo: localLogoFor(key), interviews: 0, offers: 0 };
+      row = { key, name: raw, logo, interviews: 0, offers: 0 };
       out.set(key, row);
     }
     if (t.outcome === "selected") row.offers += 1;
