@@ -10,12 +10,12 @@ import { todayShortLabel } from "@/lib/ui-format";
 import { CITY_PAGES } from "@/lib/seo/cities";
 
 export const metadata: Metadata = {
-  title: "Fresher Jobs & Openings in India (2026 Batch)",
+  title: "Fresher Jobs & Internships in India 2026 — Apply Directly to HRs",
   description:
-    "Explore live fresher jobs, IT openings, internships, and off-campus opportunities from top companies hiring across India. Updated daily, direct applications only.",
+    "Fresher jobs and internships in India 2026 — paid, remote and off-campus roles from startups and MNCs hiring now. Hand-checked, updated daily, apply directly to the company's HR.",
   alternates: { canonical: `${getSiteUrl()}/fresher-jobs` },
   openGraph: {
-    title: "Fresher Jobs & Openings in India (2026 Batch) | FirstOffer",
+    title: "Fresher Jobs & Internships in India 2026 — Apply Directly to HRs | FirstOffer",
     description:
       "Find entry-level fresher jobs, software engineering roles, and internships updated daily. Apply directly to companies across India.",
     url: `${getSiteUrl()}/fresher-jobs`,
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fresher Jobs & Openings in India (2026 Batch) | FirstOffer",
+    title: "Fresher Jobs & Internships in India 2026 — Apply Directly to HRs | FirstOffer",
     description: "Verified fresher jobs and off-campus drives updated daily.",
   },
 };

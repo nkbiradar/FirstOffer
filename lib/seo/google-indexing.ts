@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { getSiteUrl } from "@/lib/site-url";
+import { notifyIndexNow } from "@/lib/seo/indexnow";
 
 // Google Indexing API — tells Google the moment a job page is published,
 // updated or taken down, instead of waiting days for a normal crawl. Google
@@ -95,10 +96,10 @@ export async function notifyGoogleIndexing(urls: string[], type: NotificationTyp
 }
 
 /** Convenience wrapper for opportunity ids → public detail-page URLs. */
-export function notifyGoogleJobs(ids: string[], type: NotificationType = "URL_UPDATED"): Promise<number> {
+export async function notifyGoogleJobs(ids: string[], type: NotificationType = "URL_UPDATED"): Promise<number> {
   const siteUrl = getSiteUrl();
-  return notifyGoogleIndexing(
-    ids.map((id) => `${siteUrl}/opportunities/${id}`),
-    type,
-  );
+  const urls = ids.map((id) => `${siteUrl}/opportunities/${id}`);
+  // Bing & co. via IndexNow (also nudge the listing pages that changed).
+  await notifyIndexNow(type === "URL_UPDATED" ? [...urls, `${siteUrl}/`, `${siteUrl}/opportunities`, `${siteUrl}/fresher-jobs`] : urls);
+  return notifyGoogleIndexing(urls, type);
 }
