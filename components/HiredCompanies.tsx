@@ -91,8 +91,6 @@ export default function HiredCompanies({
 }) {
   const list = buildList(testimonials, companies);
   if (list.length === 0) return null;
-  const interviews = testimonials.length;
-  const offers = testimonials.filter((t) => t.outcome === "selected").length;
   const twoRows = list.length >= 12;
   const rowA = twoRows ? list.filter((_, i) => i % 2 === 0) : list;
   const rowB = twoRows ? list.filter((_, i) => i % 2 === 1) : [];
@@ -101,10 +99,6 @@ export default function HiredCompanies({
     <section className="hc" aria-label="Companies where FirstOffer students got interview calls and offers">
       <div className="container">
         <p className="hc-title">Our students got interview calls &amp; offers at</p>
-        <p className="hc-sub">
-          <strong>{list.length}</strong> companies · <strong>{interviews}</strong> interview calls ·{" "}
-          <strong>{offers}</strong> offers
-        </p>
       </div>
       <Row items={rowA} offset={0} />
       {twoRows && <Row items={rowB} offset={3} reverse />}
