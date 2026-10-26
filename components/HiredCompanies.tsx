@@ -1,4 +1,5 @@
 import type { Testimonial } from "@/types/supabase";
+import { localLogoFor } from "@/lib/content/company-logos";
 
 // "Our students got interview calls & offers at…" — a slow, infinite logo
 // marquee built ONLY from published testimonials (real students, added at
@@ -35,28 +36,31 @@ function buildList(testimonials: Testimonial[], companies: CompanyLite[]): Hired
     let row = out.get(key);
     if (!row) {
       const match = byName.get(key);
-      row = { key, name: raw, logo: match?.logo_url || faviconOf(match?.website ?? null), interviews: 0, offers: 0 };
+      row = { key, name: raw, logo: localLogoFor(key) || match?.logo_url || faviconOf(match?.website ?? null), interviews: 0, offers: 0 };
       out.set(key, row);
     }
     if (t.outcome === "selected") row.offers += 1;
     else row.interviews += 1;
   }
-  return [...out.values()].sort((a, b) => b.offers - a.offers || b.interviews + b.offers - (a.interviews + a.offers));
+  return [...out.values()].sort((a, b) => Number(Boolean(b.logo)) - Number(Boolean(a.logo)) || b.offers - a.offers || b.interviews + b.offers - (a.interviews + a.offers));
 }
 
 function Chip({ c, i, hidden }: { c: Hired; i: number; hidden?: boolean }) {
+  // With a logo: just the logo tile (the logo already shows the name).
+  if (c.logo) {
+    return (
+      <span aria-hidden={hidden || undefined} className="hc-chip hc-chip-logo" title={c.name}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img alt={hidden ? "" : c.name} className="hc-wordmark" loading="lazy" src={c.logo} />
+      </span>
+    );
+  }
   return (
     <span aria-hidden={hidden || undefined} className="hc-chip">
-      {c.logo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img alt="" className="hc-logo" loading="lazy" src={c.logo} />
-      ) : (
-        <span className="hc-logo hc-letter" style={{ background: TILE_COLORS[i % TILE_COLORS.length] }}>
-          {c.name.charAt(0).toUpperCase()}
-        </span>
-      )}
+      <span className="hc-logo hc-letter" style={{ background: TILE_COLORS[i % TILE_COLORS.length] }}>
+        {c.name.charAt(0).toUpperCase()}
+      </span>
       <span className="hc-name">{c.name}</span>
-      {c.offers > 0 && <span className="hc-badge">Offer</span>}
     </span>
   );
 }

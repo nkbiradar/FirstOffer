@@ -1,0 +1,89 @@
+// Company logos for the "Our students got interview calls & offers at"
+// strip (components/HiredCompanies.tsx). Files live in
+// public/images/company-logos/<slug>.webp — cropped and resized from
+// Images/company-logos. The slug is the company name in lower case with
+// everything except letters and numbers removed ("Kotak Mahindra Bank" →
+// "kotakmahindrabank"). To add one: drop <slug>.webp in that folder and add
+// the slug below. ALIASES maps other spellings used in testimonials.
+export const LOGO_SLUGS = new Set<string>([
+  "accenture",
+  "airbus",
+  "amazon",
+  "angelone",
+  "bharatpe",
+  "bhive",
+  "bigbasket",
+  "binance",
+  "blend360",
+  "blinkit",
+  "blitz",
+  "bluedart",
+  "cars24",
+  "cognizant",
+  "deloitte",
+  "deltax",
+  "digitide",
+  "eternal",
+  "evertz",
+  "gravity",
+  "groww",
+  "honeywell",
+  "ibm",
+  "intel",
+  "jio",
+  "jupiter",
+  "kiwiai",
+  "kotakmahindrabank",
+  "kpit",
+  "kreditbee",
+  "lowes",
+  "lt",
+  "lufthansaairlines",
+  "mathco",
+  "nextspark",
+  "nike",
+  "nttdata",
+  "pwc",
+  "rapido",
+  "replaicate",
+  "resonance",
+  "shadowfax",
+  "siemens",
+  "skydo",
+  "stackbox",
+  "substack",
+  "superkalam",
+  "supermoney",
+  "swiggy",
+  "techmahindra",
+  "thebombaydigital",
+  "unacademy",
+  "wipro",
+  "zepto",
+  "zoho",
+  "zomato",
+]);
+
+export const LOGO_ALIASES: Record<string, string> = {
+  delloite: "deloitte",
+  nextsparkventures: "nextspark",
+  replaiceai: "replaicate",
+  replaice: "replaicate",
+  grow: "groww",
+  landt: "lt",
+  larsenandtoubro: "lt",
+  lufthansa: "lufthansaairlines",
+  kotak: "kotakmahindrabank",
+  kotakmahindra: "kotakmahindrabank",
+  nttdata: "nttdata",
+  kiwi: "kiwiai",
+  angelbroking: "angelone",
+  pricewaterhousecoopers: "pwc",
+  zomatoeternal: "zomato",
+  bombaydigital: "thebombaydigital",
+};
+
+export function localLogoFor(slug: string): string | null {
+  const s = LOGO_ALIASES[slug] ?? slug;
+  return LOGO_SLUGS.has(s) ? `/images/company-logos/${s}.webp` : null;
+}
