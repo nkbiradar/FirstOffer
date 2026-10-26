@@ -375,34 +375,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </Reveal>
         )}
 
-        <Reveal>
-          <section className="section mission-section">
-            <div className="mission-panel">
-              <div className="mission-content">
-                <span className="eyebrow">
-                  <span className="eyebrow-dot" />
-                  Why FirstOffer
-                </span>
-                <h2 style={{ marginTop: 10 }}>Because your first offer shouldn&apos;t take a semester to find</h2>
-                <p>
-                  Every listing here is checked and published by hand, not scraped and dumped — and if it goes
-                  stale, it&apos;s pulled within 48 hours. No account walls, no recruiter middlemen — just a direct
-                  line from what&apos;s hiring to where you apply.
-                </p>
-                <Link className="btn btn-secondary btn-sm" href="/fresher-jobs">
-                  See what&apos;s live right now
-                </Link>
-              </div>
-              <Image
-                className="mission-photo"
-                alt="Direct application to fresher jobs on FirstOffer"
-                src="/images/apply-illustration.webp"
-                width={500}
-                height={745}
-              />
-            </div>
-          </section>
-        </Reveal>
 
         {topCompanies.length > 0 && (
           <Reveal>
