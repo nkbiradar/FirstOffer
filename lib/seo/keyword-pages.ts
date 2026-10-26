@@ -254,6 +254,154 @@ export const KEYWORD_PAGES: KeywordPage[] = [
       },
     ],
   },
+  {
+    slug: "companies-hiring-freshers-now",
+    label: "Hiring Now",
+    heading: "Companies Hiring Freshers Right Now",
+    filter: {},
+    intro:
+      "Every company actively hiring freshers on FirstOffer today — startups, product companies and MNCs. All listings are live (each one expires 48 hours after posting) and link straight to the company's careers page, Google Form or HR email.",
+    faqs: [
+      {
+        q: "Which companies are hiring freshers right now?",
+        a: "This page lists every company with a live fresher opening on FirstOffer today. New companies are added daily, and closed roles disappear automatically after 48 hours.",
+      },
+      {
+        q: "How do I apply directly to the company?",
+        a: "Open any listing to see the official apply route — the company's careers page, its Google Form or the HR's email. There are no agents or middlemen in between.",
+      },
+      {
+        q: "How often is this list updated?",
+        a: "Several times a day. Apply early: most HRs shortlist from the first few hundred applications.",
+      },
+    ],
+  },
+  {
+    slug: "full-time-jobs-for-freshers",
+    label: "Full-time Jobs",
+    heading: "Full-time Jobs for Freshers",
+    filter: { type: "full_time" },
+    intro:
+      "Full-time entry-level roles for recent graduates — engineering, data, product, design and business roles at startups and established companies. Every listing shows salary (when shared), location and eligible batches.",
+    faqs: [
+      {
+        q: "What is a good first full-time job for a fresher?",
+        a: "One where you learn fast: a role with real ownership, good mentors and skills that transfer — like software development, data analysis or product operations.",
+      },
+      {
+        q: "How do I stand out when applying for full-time roles?",
+        a: "Tailor your resume to the job description, show 2–3 real projects, and apply early — within the first day of a listing going live.",
+      },
+    ],
+  },
+  {
+    slug: "paid-internships",
+    label: "Paid Internships",
+    heading: "Paid Internships for Students",
+    filter: { type: "internship" },
+    intro:
+      "Paid internships for college students and fresh graduates across tech, data, design, marketing and business. Stipends are shown on each listing when the company shares them — and you apply directly to the company.",
+    faqs: [
+      {
+        q: "How much do paid internships pay in India?",
+        a: "Stipends vary a lot — from around ₹5,000 to ₹50,000+ per month depending on the company, role and city. Each listing shows the stipend when shared.",
+      },
+      {
+        q: "Can I do an internship while in college?",
+        a: "Yes. Many internships are remote or part-time and open to pre-final and final-year students. Check the eligible batches on each listing.",
+      },
+    ],
+  },
+  {
+    slug: "work-from-home-internships",
+    label: "WFH Internships",
+    heading: "Work From Home Internships",
+    filter: { type: "internship", workMode: "remote" },
+    intro:
+      "Remote and work-from-home internships you can do from anywhere in India — software, data, design, content and marketing roles. Every listing links straight to the company.",
+    faqs: [
+      {
+        q: "Are work-from-home internships genuine?",
+        a: "Many are — but never pay a fee to get an internship. Every listing on FirstOffer is hand-checked and links to the company's own application route.",
+      },
+      {
+        q: "What skills help me get a remote internship?",
+        a: "Clear written communication, a portfolio or GitHub with real work, and reliability. Remote teams hire people who can work independently.",
+      },
+    ],
+  },
+  {
+    slug: "remote-jobs-for-freshers",
+    label: "Remote Jobs",
+    heading: "Remote Jobs for Freshers",
+    filter: { workMode: "remote" },
+    intro:
+      "Work-from-home jobs and internships open to freshers — engineering, data, design, support and business roles from companies hiring across India.",
+    faqs: [
+      {
+        q: "Can freshers get remote jobs?",
+        a: "Yes, especially at startups. Strong projects, clear communication and fast replies to recruiters make a big difference for remote roles.",
+      },
+      {
+        q: "Do remote jobs pay less?",
+        a: "Not necessarily. Pay depends on the company and role; each listing shows the CTC or stipend when the company shares it.",
+      },
+    ],
+  },
+  {
+    slug: "tech-internships",
+    label: "Tech Internships",
+    heading: "Tech Internships for Students",
+    filter: { type: "internship", roleCategories: ["software", "qa", "data", "ai-ml"] },
+    intro:
+      "Software, web, app, data, AI/ML and QA internships for engineering and computer science students — hand-checked, with direct application links and eligible batches on every listing.",
+    faqs: [
+      {
+        q: "How do I get a tech internship with no experience?",
+        a: "Build 2–3 small but real projects, put them on GitHub, and apply to many openings early. Most tech internships care more about projects than past experience.",
+      },
+      {
+        q: "Which tech internship is best for beginners?",
+        a: "Web development, data analysis and QA internships are the most beginner-friendly. AI/ML internships usually expect Python and some ML basics.",
+      },
+    ],
+  },
+  {
+    slug: "startup-jobs-for-freshers",
+    label: "Startup Jobs",
+    heading: "Startup Jobs for Freshers",
+    filter: {},
+    intro:
+      "Jobs and internships at Indian startups hiring freshers — where you learn fast, own real work and grow quickly. Over a thousand startups have posted roles on FirstOffer.",
+    faqs: [
+      {
+        q: "Is joining a startup good for a fresher?",
+        a: "Often, yes — you get more responsibility and learn faster. Check the startup's funding, team and product before you join.",
+      },
+      {
+        q: "How do I find startups hiring freshers?",
+        a: "Startups rarely advertise on big job portals. FirstOffer collects their openings daily and links to the founder's or HR's own application route.",
+      },
+    ],
+  },
+  {
+    slug: "2027-batch-jobs",
+    label: "2027 Batch Jobs",
+    heading: "Jobs & Internships for 2027 Batch",
+    filter: { batch: "2027" },
+    intro:
+      "Internships and early hiring open to the 2027 graduating batch — pre-final-year internships, PPO opportunities and early off-campus drives. Updated every day.",
+    faqs: [
+      {
+        q: "Can 2027 batch students apply for jobs now?",
+        a: "Mostly for internships right now — many lead to pre-placement offers. Full-time off-campus hiring for 2027 grows through your final year.",
+      },
+      {
+        q: "Which internships are best for pre-final-year students?",
+        a: "Ones in your target role with real work and a chance of a PPO. Check the eligible batch on each listing before applying.",
+      },
+    ],
+  },
 ];
 
 export function getKeywordPage(slug: string): KeywordPage | undefined {

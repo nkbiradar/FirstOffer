@@ -28,9 +28,9 @@ import {
 import { getFullAccessPriceInr } from "@/lib/payments/razorpay";
 
 export const metadata = {
-  title: "FirstOffer — Find Fresher Jobs, Tech Openings & Off-Campus Drives",
+  title: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India",
   description:
-    "Find your first offer faster. Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India. Updated daily.",
+    "Fresher jobs, internships, tech jobs and off-campus drives from companies hiring now across India — 2025, 2026 & 2027 batch, remote and paid internships. Apply directly to HRs. Updated daily.",
   alternates: { canonical: getSiteUrl() },
   openGraph: {
     title: "Find Your First Offer Faster | FirstOffer",
