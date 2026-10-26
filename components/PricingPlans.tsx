@@ -84,7 +84,7 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       countdownEndsAt: fullSale ? FULL_ACCESS_SALE_ENDS_AT : undefined,
       cta: hasFullAccess ? "Your access is active ✓" : "Get Full Access",
       href: hasFullAccess ? "/dashboard" : "/unlock",
-      note: fullSale ? `${STUDENT_COUNT_LABEL} students thank-you price · till ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+      note: fullSale ? `Offer price · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
       features: [
         { text: "Direct HR emails & recruiter numbers" },
         { text: "Official Google Forms & apply links" },
@@ -120,10 +120,14 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
         </h2>
         <p>Join {STUDENT_COUNT_LABEL} students applying directly to HRs — one payment, no auto-debit.</p>
         <div className="fp-tags">
-          {fullSale && (
-            <span className="fp-tag fp-tag-sale">🎉 We crossed {STUDENT_COUNT_LABEL} students — thank-you prices live</span>
-          )}
-          <span className="fp-tag fp-tag-season">🔥 Peak hiring season is starting · apply in bulk, apply early</span>
+          <span className="fp-tag">
+            <span aria-hidden="true" className="fp-tag-dot" />
+            Peak hiring season
+            <span className="fp-tag-sep" aria-hidden="true" />
+            <span className="fp-tag-muted">
+              {fullSale ? `Offer pricing until ${FULL_ACCESS_SALE_END_LABEL}` : "New roles added daily"}
+            </span>
+          </span>
         </div>
       </div>
 
@@ -147,7 +151,7 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
                   {off > 0 ? (
                     <>
                       <s>₹{p.was?.toLocaleString("en-IN")}</s>
-                      <span className="fp-off">🏷 {off}% OFF</span>
+                      <span className="fp-off">{off}% OFF</span>
                     </>
                   ) : (
                     <span className="fp-was-spacer">Best value for freshers</span>

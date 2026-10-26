@@ -7947,9 +7947,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-pricing-head h2 span { background: linear-gradient(90deg, #60a5fa, #34d399); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .fp-pricing-head p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--fp-muted); }
 .fp-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 18px; }
-.fp-tag { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; }
-.fp-tag-sale { color: #fff; background: linear-gradient(90deg, #f59e0b, #ef4444); box-shadow: 0 6px 18px rgba(239,68,68,0.25); }
-.fp-tag-season { color: #fde68a; background: rgba(245,158,11,0.12); border: 1px solid rgba(251,191,36,0.45); }
+.fp-tag { display: inline-flex; align-items: center; gap: 10px; padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: #e4e4e7; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10); }
+.fp-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,0.15); }
+.fp-tag-sep { width: 1px; height: 12px; background: rgba(255,255,255,0.18); }
+.fp-tag-muted { color: #a1a1aa; font-weight: 500; }
 
 .fp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: center; max-width: 1180px; margin: 0 auto; }
 .fp-card { position: relative; border-radius: 22px; background: var(--fp-card); border: 1px solid var(--fp-line); }
@@ -7965,11 +7966,11 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-was-row s { font-size: 20px; color: var(--fp-dim); text-decoration-thickness: 2px; }
 .fp-off { padding: 3px 9px; border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--fp-green); border: 1px solid rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
 .fp-was-spacer { font-size: 13px; color: var(--fp-dim); }
-.fp-note { margin: 8px 0 0; font-size: 12.5px; color: #fca5a5; }
-.fp-countdown { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: var(--fp-card-2); border: 1px solid var(--fp-line); }
+.fp-note { margin: 8px 0 0; font-size: 12.5px; color: #a1a1aa; }
+.fp-countdown { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; padding: 12px 12px; border-radius: 14px; background: var(--fp-card-2); border: 1px solid var(--fp-line); }
 .fp-countdown-label { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--fp-text); white-space: nowrap; }
-.fp-countdown-boxes { display: flex; gap: 6px; }
-.fp-countdown-boxes span { display: grid; justify-items: center; min-width: 38px; padding: 5px 4px; border-radius: 8px; font-size: 9.5px; color: var(--fp-dim); background: #23232c; }
+.fp-countdown-boxes { display: flex; gap: 5px; flex: 0 0 auto; }
+.fp-countdown-boxes span { display: grid; justify-items: center; min-width: 34px; padding: 5px 4px; border-radius: 8px; font-size: 9.5px; color: var(--fp-dim); background: #23232c; }
 .fp-countdown-boxes b { font-size: 16px; line-height: 1.2; color: #fff; font-variant-numeric: tabular-nums; }
 .fp-countdown-gap { height: 16px; }
 .fp-cta { display: block; margin-top: 18px; padding: 13px 18px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 15px; text-decoration: none; color: #0a0a0d; background: #fff; transition: transform 0.15s ease, filter 0.15s ease; }
