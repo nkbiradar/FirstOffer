@@ -8294,3 +8294,11 @@ body:has(main.home-dark) {
 
 .hc-row + .hc-row { margin-top: 14px; }
 @media (max-width: 560px) { .hc-track { --hc-gap: 22px; } }
+
+/* Navbar link icons (components/Navbar.tsx NavIcon) */
+.nav-links a, .mobile-menu a { display: inline-flex; align-items: center; gap: 7px; }
+.nav-icon { flex: 0 0 auto; opacity: 0.85; }
+.nav-links a:hover .nav-icon, .nav-links a.active .nav-icon { opacity: 1; }
+.mobile-menu a .nav-icon { width: 17px; height: 17px; }
+/* Tight desktop widths: keep the row on one line by hiding the icons. */
+@media (min-width: 1261px) and (max-width: 1439px) { .nav-links .nav-icon { display: none; } }

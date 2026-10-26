@@ -20,6 +20,42 @@ const LINKS = [
   { href: "/internal-openings", label: "Internal HR", hot: true },
 ];
 
+
+// Small line icons next to each nav link (TUF-style). 24×24 stroke paths.
+const ICONS: Record<string, string> = {
+  "/fresher-jobs": "M22 10 12 5 2 10l10 5 10-5Z M6 12v5c3 2 9 2 12 0v-5",
+  "/tech-jobs": "m8 9-4 3 4 3 M16 9l4 3-4 3 M14 5l-4 14",
+  "/off-campus-jobs": "M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
+  "/opportunities": "M3 8h18v12H3z M8 8V5h8v3 M3 13h18",
+  "/companies": "M4 21V5l8-2v18 M12 9h8v12 M8 8h.01 M8 12h.01 M8 16h.01 M16 13h.01 M16 17h.01 M2 21h20",
+  "/resume": "M14 3H6v18h12V7l-4-4Z M14 3v4h4 M9 13h6 M9 17h6",
+  "/what-worked": "M4 5h16v11H8l-4 4V5Z M8 9h8 M8 12h5",
+  "/internal-openings": "M6 11h12v10H6z M9 11V7a3 3 0 0 1 6 0v4",
+};
+
+function NavIcon({ href }: { href: string }) {
+  const d = ICONS[href];
+  if (!d) return null;
+  return (
+    <svg
+      aria-hidden="true"
+      className="nav-icon"
+      fill="none"
+      height="15"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.9}
+      viewBox="0 0 24 24"
+      width="15"
+    >
+      {d.split(" M").map((seg, i) => (
+        <path d={i === 0 ? seg : `M${seg}`} key={i} />
+      ))}
+    </svg>
+  );
+}
+
 type NavUser = { email: string | null } | null;
 
 function isActive(href: string, pathname: string, search: string) {
@@ -163,6 +199,7 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
                   .filter(Boolean)
                   .join(" ")}
               >
+                <NavIcon href={link.href} />
                 {link.label}
               </Link>
             ))}
@@ -203,6 +240,7 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
                 .join(" ")}
               onClick={() => setOpen(false)}
             >
+              <NavIcon href={link.href} />
               {link.label}
             </Link>
           ))}
@@ -259,6 +297,7 @@ function NavbarFallback({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) 
           <nav className="nav-links" aria-label="Primary">
             {LINKS.map((link) => (
               <Link key={link.label} href={link.href} className={link.hot ? "nav-link-hot" : ""}>
+                <NavIcon href={link.href} />
                 {link.label}
               </Link>
             ))}
