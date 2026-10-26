@@ -3,9 +3,8 @@ import { localLogoFor } from "@/lib/content/company-logos";
 
 // "Our students got interview calls & offers at…" — a slow, infinite logo
 // marquee built ONLY from published testimonials (real students, added at
-// /admin/testimonials). Logos come from the matching company in the
-// companies table (logo_url, else its website's favicon); companies we
-// can't match show a letter tile instead of a guessed logo.
+// /admin/testimonials). Only companies with a logo in
+// public/images/company-logos (see lib/content/company-logos.ts) are shown.
 
 type CompanyLite = { name: string; logo_url: string | null; website: string | null };
 
@@ -13,20 +12,10 @@ type Hired = { key: string; name: string; logo: string | null; interviews: numbe
 
 const norm = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
 
-function faviconOf(website: string | null) {
-  if (!website) return null;
-  try {
-    const host = new URL(website.startsWith("http") ? website : `https://${website}`).hostname;
-    return `https://www.google.com/s2/favicons?domain=${host}&sz=128`;
-  } catch {
-    return null;
-  }
-}
 
 const TILE_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#a855f7", "#ec4899", "#14b8a6", "#ef4444", "#6366f1"];
 
-function buildList(testimonials: Testimonial[], companies: CompanyLite[]): Hired[] {
-  const byName = new Map(companies.map((c) => [norm(c.name), c]));
+function buildList(testimonials: Testimonial[]): Hired[] {
   const out = new Map<string, Hired>();
   for (const t of testimonials) {
     const raw = (t.company_name ?? "").trim();
@@ -35,8 +24,7 @@ function buildList(testimonials: Testimonial[], companies: CompanyLite[]): Hired
     if (!key) continue;
     let row = out.get(key);
     if (!row) {
-      const match = byName.get(key);
-      row = { key, name: raw, logo: localLogoFor(key) || match?.logo_url || faviconOf(match?.website ?? null), interviews: 0, offers: 0 };
+      row = { key, name: raw, logo: localLogoFor(key), interviews: 0, offers: 0 };
       out.set(key, row);
     }
     if (t.outcome === "selected") row.offers += 1;
@@ -88,12 +76,13 @@ function Row({ items, reverse, offset }: { items: Hired[]; reverse?: boolean; of
 
 export default function HiredCompanies({
   testimonials,
-  companies,
 }: {
   testimonials: Testimonial[];
-  companies: CompanyLite[];
+  /** Kept for the caller's API; logos now come from the local folder only. */
+  companies?: CompanyLite[];
 }) {
-  const list = buildList(testimonials, companies);
+  // Only companies we have a logo for (public/images/company-logos).
+  const list = buildList(testimonials).filter((c) => c.logo);
   if (list.length === 0) return null;
   const twoRows = list.length >= 12;
   const rowA = twoRows ? list.filter((_, i) => i % 2 === 0) : list;
