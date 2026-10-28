@@ -31,7 +31,12 @@ const OUTCOME_COPY: Record<Testimonial["outcome"], string> = {
  * fetching. Hidden on /admin/* — an admin doesn't need to see the site's
  * own marketing widget while managing the site.
  */
-export default function SuccessPopup({ testimonials }: { testimonials: Testimonial[] }) {
+// Only the newest few rotate in the popup; the rest stay in the homepage
+// "Success stories" section (View all). Testimonials arrive newest-first.
+const POPUP_LIMIT = 5;
+
+export default function SuccessPopup({ testimonials: all }: { testimonials: Testimonial[] }) {
+  const testimonials = all.slice(0, POPUP_LIMIT);
   const pathname = usePathname();
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
