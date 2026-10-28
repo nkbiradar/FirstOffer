@@ -6,6 +6,13 @@
 // "kotakmahindrabank"). To add one: drop <slug>.webp in that folder and add
 // the slug below. ALIASES maps other spellings used in testimonials.
 export const LOGO_SLUGS = new Set<string>([
+  "codebytes",
+  "galaxy",
+  "kpmg",
+  "neura",
+  "ola",
+  "oyo",
+  "zerodha",
   "hsbc",
   "seekho",
   "boat",
@@ -72,6 +79,9 @@ export const LOGO_SLUGS = new Set<string>([
 ]);
 
 export const LOGO_ALIASES: Record<string, string> = {
+  cobytes: "codebytes",
+  olacabs: "ola",
+  oyorooms: "oyo",
   nyka: "nykaa",
   delloite: "deloitte",
   nextsparkventures: "nextspark",
