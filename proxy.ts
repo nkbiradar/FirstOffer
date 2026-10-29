@@ -34,15 +34,21 @@ function buildSecurityHeaders(nonce: string): Headers {
   // does it fall back to an external debug script for testing without a
   // real deployment, so that host is only ever added below in the dev
   // branch and never reaches the production CSP.
+  //
+  // Google AdSense (pagead2.googlesyndication.com) needs script-src to load
+  // the verification/ad library, plus connect-src and frame-src for ad
+  // serving once monetisation is enabled.
+  const adSenseDomains =
+    "https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.googleadservices.com https://adservice.google.com";
   const scriptSrc = isDev
     ? // Next.js dev mode (HMR/Fast Refresh) needs 'unsafe-eval'; this branch
       // never ships to production.
-      `'self' 'nonce-${nonce}' 'unsafe-eval' https://checkout.razorpay.com https://va.vercel-scripts.com`
-    : `'self' 'nonce-${nonce}' https://checkout.razorpay.com`;
+      `'self' 'nonce-${nonce}' 'unsafe-eval' https://checkout.razorpay.com https://va.vercel-scripts.com ${adSenseDomains}`
+    : `'self' 'nonce-${nonce}' https://checkout.razorpay.com ${adSenseDomains}`;
 
   const connectSrc = isDev
-    ? `'self' ${supabaseUrl} https://*.razorpay.com https://va.vercel-scripts.com https://vitals.vercel-insights.com`
-    : `'self' ${supabaseUrl} https://*.razorpay.com`;
+    ? `'self' ${supabaseUrl} https://*.razorpay.com https://va.vercel-scripts.com https://vitals.vercel-insights.com ${adSenseDomains}`
+    : `'self' ${supabaseUrl} https://*.razorpay.com ${adSenseDomains}`;
 
   const csp = [
     `default-src 'self'`,
@@ -51,7 +57,7 @@ function buildSecurityHeaders(nonce: string): Headers {
     `img-src 'self' data: https:`,
     `font-src 'self' data:`,
     `connect-src ${connectSrc}`,
-    `frame-src https://*.razorpay.com`,
+    `frame-src https://*.razorpay.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com`,
     `worker-src 'self'`,
     `manifest-src 'self'`,
     `object-src 'none'`,
