@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Inter, Manrope } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -77,6 +78,16 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}${isApp ? " fo-app" : ""}`}>
+      <head>
+        {/* Google AdSense — site ownership verification & future ad
+            monetisation. No visible ad units yet; this just loads the
+            adsbygoogle library so Google can verify the site. */}
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7440962924069463"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body>
         <div className="site-shell">
           <Navbar user={navUser} isAdmin={isAdmin} />
