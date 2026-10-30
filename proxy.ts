@@ -37,9 +37,13 @@ function buildSecurityHeaders(nonce: string): Headers {
   //
   // Google AdSense (pagead2.googlesyndication.com) needs script-src to load
   // the verification/ad library, plus connect-src and frame-src for ad
-  // serving once monetisation is enabled.
+  // serving once monetisation is enabled. Ad creatives are served from
+  // *.doubleclick.net / tpc.googlesyndication.com iframes, and Google's
+  // invalid-traffic checks run on *.adtrafficquality.google -- if any of
+  // these are missing, ad slots render as empty boxes. Matches Google's
+  // published CSP guidance for AdSense.
   const adSenseDomains =
-    "https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.googleadservices.com https://adservice.google.com";
+    "https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.googleadservices.com https://adservice.google.com https://*.doubleclick.net https://*.googletagservices.com https://*.adtrafficquality.google https://www.google.com https://fundingchoicesmessages.google.com";
   const scriptSrc = isDev
     ? // Next.js dev mode (HMR/Fast Refresh) needs 'unsafe-eval'; this branch
       // never ships to production.
@@ -57,7 +61,7 @@ function buildSecurityHeaders(nonce: string): Headers {
     `img-src 'self' data: https:`,
     `font-src 'self' data:`,
     `connect-src ${connectSrc}`,
-    `frame-src https://*.razorpay.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com`,
+    `frame-src https://*.razorpay.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com https://*.doubleclick.net https://*.adtrafficquality.google`,
     `worker-src 'self'`,
     `manifest-src 'self'`,
     `object-src 'none'`,

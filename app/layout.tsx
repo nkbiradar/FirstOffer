@@ -84,12 +84,16 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* Google AdSense — site ownership verification & future ad
             monetisation. Rendered as a standard HTML script tag so Google's
             verification crawler detects it directly in the initial server HTML
-            (Next.js <Script> defers to hydration which verification bots do not execute). */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7440962924069463"
-          crossOrigin="anonymous"
-        />
+            (Next.js <Script> defers to hydration which verification bots do not execute).
+            Skipped inside the Android app's WebView: AdSense is for websites,
+            and serving it in an app WebView risks the publisher account. */}
+        {!isApp && (
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7440962924069463"
+            crossOrigin="anonymous"
+          />
+        )}
       </head>
       <body>
         <div className="site-shell">
