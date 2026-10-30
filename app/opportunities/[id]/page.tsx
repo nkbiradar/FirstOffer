@@ -15,10 +15,10 @@ import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import {
-  MONTHLY_PRICE_INR,
   INTERNAL_PRICE_INR,
   DASARA_SALE_END_LABEL,
   FULL_ACCESS_SALE_END_LABEL,
+  FULL_ACCESS_SALE_MRP_INR,
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
@@ -239,7 +239,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   void isLegacyFullAccessUser;
   const fullAccessPrice = getFullAccessPriceInr();
   const fullAccessPriceNote = isFullAccessSaleActive()
-    ? `🎉 800+ students thank-you offer — ₹${MONTHLY_PRICE_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+    ? `🪔 Diwali Offer — ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
     : isFullAccessPriceRisePending()
       ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${fullAccessPrice} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
       : `Just ₹${Math.round(fullAccessPrice / 3)}/month — one payment covers 3 months.`;
@@ -443,6 +443,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       opportunityId={id}
                       isSignedIn={Boolean(user)}
                       price={fullAccessPrice}
+                      wasPrice={isFullAccessSaleActive() ? FULL_ACCESS_SALE_MRP_INR : undefined}
                       priceNote={fullAccessPriceNote}
                     />
                   )}

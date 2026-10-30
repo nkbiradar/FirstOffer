@@ -89,6 +89,7 @@ export default function UnlockContactCard({
   opportunityId,
   isSignedIn,
   price,
+  wasPrice,
   product = "full_access",
   priceNote,
   memberLabel,
@@ -104,6 +105,9 @@ export default function UnlockContactCard({
   loginNext?: string;
   isSignedIn: boolean;
   price: number;
+  /** Optional struck-through "was" price shown before `price` during an
+   * offer (e.g. Diwali ₹299 → ₹199). Display only — never charged. */
+  wasPrice?: number;
   product?: Product;
   /** Optional line shown right under the price — e.g. telling a founding
    * member their rate is locked in, or telling a new visitor pricing has
@@ -289,6 +293,9 @@ export default function UnlockContactCard({
           </>
         ) : (
           <>
+            {wasPrice && wasPrice > price && (
+              <s style={{ opacity: 0.55, marginRight: 6 }} aria-label={`Original price ₹${wasPrice}`}>₹{wasPrice}</s>
+            )}
             ₹{price}{periodSuffix}. {copy.priceLine}
           </>
         )}

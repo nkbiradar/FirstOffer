@@ -13,7 +13,7 @@ import {
   FULL_ACCESS_NEXT_PRICE_INR,
   FULL_ACCESS_PRICE_RISE_LABEL,
   FULL_ACCESS_SALE_END_LABEL,
-  MONTHLY_PRICE_INR,
+  FULL_ACCESS_SALE_MRP_INR,
   getFullAccessPriceInr,
   isFullAccessPriceRisePending,
   isFullAccessSaleActive,
@@ -72,9 +72,10 @@ export default async function UnlockPage() {
             loginNext="/unlock"
             titleOverride="Unlock every opportunity on FirstOffer"
             price={price}
+            wasPrice={saleActive ? FULL_ACCESS_SALE_MRP_INR : undefined}
             priceNote={
               saleActive
-                ? `🎉 800+ students thank-you offer: ₹${MONTHLY_PRICE_INR} → ₹${price} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+                ? `🪔 Diwali Offer: ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${price} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
                 : risePending
                 ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${price} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
                 : `Just ₹${Math.round(price / 3)}/month — one payment covers 3 months.`

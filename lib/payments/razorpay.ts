@@ -48,16 +48,21 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(DASARA_SALE_ENDS_AT);
 }
 
-// ── "800+ students" thank-you offer (22–29 Oct 2026): full access
-// ₹149 instead of ₹199, same 3 months. Switches itself off at
-// FULL_ACCESS_SALE_ENDS_AT (price goes back to ₹199) — no redeploy needed.
-export const FULL_ACCESS_SALE_PRICE_INR = 149;
-export const FULL_ACCESS_SALE_ENDS_AT = "2026-10-29T23:59:59+05:30";
-/** Last day of the offer ("till 29 Oct"). */
-export const FULL_ACCESS_SALE_END_LABEL = "29 Oct";
-/** First day back at the regular price. */
-export const FULL_ACCESS_SALE_BACK_LABEL = "30 Oct";
-export const FULL_ACCESS_SALE_TITLE = "800+ students! 🎉";
+// ── Diwali offer (30 Oct – 11 Nov 2026): full access shown as ₹299 → ₹199,
+// same 3 months. The amount charged is the regular ₹199 (MONTHLY_PRICE_INR);
+// ₹299 is a display-only "was" price for the strike-through. Switches itself
+// off at FULL_ACCESS_SALE_ENDS_AT, after which the strike-through disappears
+// and ₹199 shows on its own — no redeploy needed.
+// (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
+export const FULL_ACCESS_SALE_PRICE_INR = MONTHLY_PRICE_INR;
+/** Struck-through "was" price shown beside the offer price. */
+export const FULL_ACCESS_SALE_MRP_INR = 299;
+export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-11T23:59:59+05:30";
+/** Last day of the offer ("till 11 Nov"). */
+export const FULL_ACCESS_SALE_END_LABEL = "11 Nov";
+/** First day after the offer. */
+export const FULL_ACCESS_SALE_BACK_LABEL = "12 Nov";
+export const FULL_ACCESS_SALE_TITLE = "Diwali Offer 🪔";
 
 export function isFullAccessSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(FULL_ACCESS_SALE_ENDS_AT);
@@ -220,7 +225,7 @@ export function getProductPricing(
   return {
     priceInr,
     pricePaise: priceInr * 100,
-    description: isFullAccessSaleActive() ? "Full access — 3 months (thank-you offer)" : "Full access — 3 months",
+    description: isFullAccessSaleActive() ? "Full access — 3 months (Diwali offer)" : "Full access — 3 months",
   };
 }
 

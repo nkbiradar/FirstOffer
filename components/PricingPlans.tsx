@@ -4,9 +4,9 @@ import SafePay from "@/components/SafePay";
 import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
 import {
   FULL_ACCESS_SALE_END_LABEL,
+  FULL_ACCESS_SALE_MRP_INR,
   FULL_ACCESS_SALE_ENDS_AT,
   INTERNAL_PRICE_INR,
-  MONTHLY_PRICE_INR,
   RESUME_REVIEW_MRP_INR,
   RESUME_REVIEW_PRICE_INR,
   getFullAccessPriceInr,
@@ -79,12 +79,12 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       name: "Full Access",
       period: "3 months",
       price: getFullAccessPriceInr(),
-      was: fullSale ? MONTHLY_PRICE_INR : undefined,
+      was: fullSale ? FULL_ACCESS_SALE_MRP_INR : undefined,
       featured: true,
       countdownEndsAt: fullSale ? FULL_ACCESS_SALE_ENDS_AT : undefined,
       cta: hasFullAccess ? "Your access is active ✓" : "Get Full Access",
       href: hasFullAccess ? "/dashboard" : "/unlock",
-      note: fullSale ? `Offer price · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+      note: fullSale ? `🪔 Diwali offer · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
       features: [
         { text: "Direct HR emails & recruiter numbers" },
         { text: "Official Google Forms & apply links" },
@@ -125,7 +125,7 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
             Peak hiring season
             <span className="fp-tag-sep" aria-hidden="true" />
             <span className="fp-tag-muted">
-              {fullSale ? `Offer pricing until ${FULL_ACCESS_SALE_END_LABEL}` : "New roles added daily"}
+              {fullSale ? `🪔 Diwali offer until ${FULL_ACCESS_SALE_END_LABEL}` : "New roles added daily"}
             </span>
           </span>
         </div>
