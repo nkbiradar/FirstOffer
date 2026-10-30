@@ -12,6 +12,8 @@ import {
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
+  isDiwaliOfferActive,
+  INTERNAL_SALE_MRP_INR,
   isFullAccessSaleActive,
 } from "@/lib/payments/razorpay";
 
@@ -56,6 +58,7 @@ function Check({ included }: { included: boolean }) {
 export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?: boolean }) {
   const fullSale = isFullAccessSaleActive();
   const internalSale = isDasaraSaleActive();
+  const internalDiwali = isDiwaliOfferActive();
 
   const plans: Plan[] = [
     {
@@ -63,7 +66,8 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       name: "Internal HR",
       period: "3 months",
       price: getInternalPriceInr(),
-      was: internalSale ? INTERNAL_PRICE_INR : undefined,
+      was: internalDiwali ? INTERNAL_SALE_MRP_INR : internalSale ? INTERNAL_PRICE_INR : undefined,
+      note: internalDiwali ? `🪔 Diwali offer · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
       cta: "Get Internal HR",
       href: "/internal-openings",
       features: [

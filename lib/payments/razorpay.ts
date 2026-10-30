@@ -132,6 +132,16 @@ export function getMonthlyPlanId(): string {
 export const INTERNAL_PRICE_INR = 299;
 export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
 
+// Diwali offer (same window as the full-access Diwali offer above): Internal
+// HR shown as ₹399 → ₹299. Display only — the charge stays INTERNAL_PRICE_INR.
+// The strike-through disappears by itself when the offer window ends.
+export const INTERNAL_SALE_MRP_INR = 399;
+
+/** True during the Diwali offer window (shared by Full Access and Internal HR). */
+export function isDiwaliOfferActive(now: number = Date.now()): boolean {
+  return isFullAccessSaleActive(now);
+}
+
 // Dasara offer for Internal HR: ₹99 instead of ₹149 (same window as full access).
 export const DASARA_INTERNAL_SALE_PRICE_INR = 99;
 

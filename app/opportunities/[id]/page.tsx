@@ -15,13 +15,12 @@ import { isOpportunityApplied } from "@/lib/data/user-applications";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import {
-  INTERNAL_PRICE_INR,
-  DASARA_SALE_END_LABEL,
   FULL_ACCESS_SALE_END_LABEL,
   FULL_ACCESS_SALE_MRP_INR,
   getFullAccessPriceInr,
   getInternalPriceInr,
-  isDasaraSaleActive,
+  isDiwaliOfferActive,
+  INTERNAL_SALE_MRP_INR,
   isFullAccessSaleActive,
   isFullAccessPriceRisePending,
   FULL_ACCESS_NEXT_PRICE_INR,
@@ -431,9 +430,10 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       opportunityId={id}
                       isSignedIn={Boolean(user)}
                       price={getInternalPriceInr()}
+                      wasPrice={isDiwaliOfferActive() ? INTERNAL_SALE_MRP_INR : undefined}
                       priceNote={
-                        isDasaraSaleActive()
-                          ? `🪔 Dasara Offer — ₹${INTERNAL_PRICE_INR} → ₹${getInternalPriceInr()} for 3 months, till ${DASARA_SALE_END_LABEL}.`
+                        isDiwaliOfferActive()
+                          ? `🪔 Diwali Offer — ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
                           : undefined
                       }
                       product="internal_hr"
