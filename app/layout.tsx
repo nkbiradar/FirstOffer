@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Inter, Manrope } from "next/font/google";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -56,6 +55,9 @@ export const metadata = {
   verification: {
     google: "AQXt6ABFULn1M3O6AaFeT1bG0d4qMKZEP7spbzPd3lE",
   },
+  other: {
+    "google-adsense-account": "ca-pub-7440962924069463",
+  },
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -80,12 +82,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en" className={`${inter.variable} ${manrope.variable}${isApp ? " fo-app" : ""}`}>
       <head>
         {/* Google AdSense — site ownership verification & future ad
-            monetisation. No visible ad units yet; this just loads the
-            adsbygoogle library so Google can verify the site. */}
-        <Script
+            monetisation. Rendered as a standard HTML script tag so Google's
+            verification crawler detects it directly in the initial server HTML
+            (Next.js <Script> defers to hydration which verification bots do not execute). */}
+        <script
+          async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7440962924069463"
           crossOrigin="anonymous"
-          strategy="beforeInteractive"
         />
       </head>
       <body>
