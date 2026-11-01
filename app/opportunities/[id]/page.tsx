@@ -22,9 +22,6 @@ import {
   isDiwaliOfferActive,
   INTERNAL_SALE_MRP_INR,
   isFullAccessSaleActive,
-  isFullAccessPriceRisePending,
-  FULL_ACCESS_NEXT_PRICE_INR,
-  FULL_ACCESS_PRICE_RISE_LABEL,
 } from "@/lib/payments/razorpay";
 import {
   buildJobPostingJsonLd,
@@ -237,11 +234,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
       : false;
   void isLegacyFullAccessUser;
   const fullAccessPrice = getFullAccessPriceInr();
-  const fullAccessPriceNote = isFullAccessSaleActive()
-    ? `🪔 Diwali Offer — ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
-    : isFullAccessPriceRisePending()
-      ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${fullAccessPrice} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
-      : `Just ₹${Math.round(fullAccessPrice / 3)}/month — one payment covers 3 months.`;
+  const fullAccessPriceNote = isFullAccessSaleActive() ? `🪔 Diwali offer ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined;
 
   const {
     role,
@@ -433,7 +426,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       wasPrice={isDiwaliOfferActive() ? INTERNAL_SALE_MRP_INR : undefined}
                       priceNote={
                         isDiwaliOfferActive()
-                          ? `🪔 Diwali Offer — ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+                          ? `🪔 Diwali offer ends ${FULL_ACCESS_SALE_END_LABEL}`
                           : undefined
                       }
                       product="internal_hr"

@@ -34,8 +34,7 @@ const PRODUCT_COPY: Record<
     title: string;
     priceLine: string;
     description: string;
-    highlightTitle: string;
-    highlightBody: string;
+    benefits: string[];
     checkoutDescription: string;
     unlockLabel: (price: number) => string;
     fallbackRedirect: (opportunityId?: string) => string;
@@ -44,27 +43,31 @@ const PRODUCT_COPY: Record<
   full_access: {
     eyebrow: "Full Access Membership",
     title: "How to apply is locked",
-    priceLine: "One-time payment — unlocks 3 months of access.",
+    priceLine: "one-time payment",
     description:
       "Most freshers waste weeks applying through crowded portals and hoping someone notices. For less than the price of an auto ride, unlock the direct HR email, official Google Form, or application link on this opportunity — and every opportunity on FirstOffer, including new ones added regularly.",
-    highlightTitle: "One membership, every opportunity, unlocked",
-    highlightBody:
-      "direct HR emails, official Google Forms, and application links, updated as new roles go live. Skip straight to applying instead of guessing.",
+    benefits: [
+      "Direct HR emails and recruiter numbers",
+      "Official Google Forms and apply links",
+      "New fresher roles added every day",
+    ],
     checkoutDescription: "3-month membership — full site access",
-    unlockLabel: (price) => `Unlock everything — ₹${price} for 3 months`,
+    unlockLabel: (price) => `Get full access for ₹${price}`,
     fallbackRedirect: (opportunityId) => (opportunityId ? `/opportunities/${opportunityId}` : "/opportunities"),
   },
   internal_hr: {
     eyebrow: "Internal HR Openings",
     title: "This is an internal, HR-shared opening",
-    priceLine: "One-time payment — unlocks 3 months of access.",
+    priceLine: "one-time payment",
     description:
       "This role was shared directly by an HR or recruiter — it isn't posted on the regular job portals, so competition is far lower than a public listing. Unlock it (and every other internal opening as it comes in) for less than the price of an auto ride.",
-    highlightTitle: "Direct HR access, before everyone else",
-    highlightBody:
-      "internal, HR-shared roles with significantly lower competition — early access to openings that may never be widely posted elsewhere.",
+    benefits: [
+      "Openings shared directly by HRs and recruiters",
+      "Far less competition than public job portals",
+      "Early access to roles before they're widely posted",
+    ],
     checkoutDescription: "Internal HR Openings membership",
-    unlockLabel: (price) => `Unlock Internal Openings — ₹${price} for 3 months`,
+    unlockLabel: (price) => `Unlock internal openings for ₹${price}`,
     fallbackRedirect: () => "/internal-openings",
   },
 };
@@ -96,7 +99,11 @@ export default function UnlockContactCard({
   loginNext,
   titleOverride,
   descriptionOverride,
+  variant = "default",
 }: {
+  /** "checkout": compact card for /unlock — price, coupon and pay button
+   * only (the page itself explains the benefits). */
+  variant?: "default" | "checkout";
   /** Replace the default card headline / body (e.g. on the /unlock page). */
   titleOverride?: string;
   descriptionOverride?: string;
@@ -120,7 +127,6 @@ export default function UnlockContactCard({
 }) {
   const router = useRouter();
   const copy = PRODUCT_COPY[product];
-  const periodSuffix = " for 3 months";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
@@ -268,8 +274,18 @@ export default function UnlockContactCard({
     }
   }
 
+  // Price block: the coupon price (if any) is the headline, struck against
+  // the base price; otherwise an offer's display-only `wasPrice` is struck.
+  const displayPrice = couponApplied?.discountedInr ?? price;
+  const strikePrice = couponApplied ? price : wasPrice && wasPrice > price ? wasPrice : undefined;
+  const pctOff = strikePrice ? Math.round((1 - displayPrice / strikePrice) * 100) : 0;
+
   return (
-    <div className={`unlock-contact-card ${product === "internal_hr" ? "unlock-contact-card-internal" : ""}`}>
+    <div
+      className={`unlock-contact-card ${product === "internal_hr" ? "unlock-contact-card-internal" : ""} ${
+        variant === "checkout" ? "unlock-contact-card-checkout" : ""
+      }`}
+    >
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="lazyOnload"
@@ -283,33 +299,36 @@ export default function UnlockContactCard({
         </svg>
         {copy.eyebrow}
       </span>
-      {product === "full_access" && <PlanTags memberLabel={memberLabel} />}
-      <p className="unlock-contact-title">{titleOverride ?? copy.title}</p>
-      <p className="unlock-contact-desc" style={{ fontWeight: 700 }}>
-        {couponApplied ? (
-          <>
-            <span style={{ textDecoration: "line-through", opacity: 0.55, marginRight: 6 }}>₹{price}</span>
-            ₹{couponApplied.discountedInr}{periodSuffix}. {copy.priceLine}
-          </>
-        ) : (
-          <>
-            {wasPrice && wasPrice > price && (
-              <s style={{ opacity: 0.55, marginRight: 6 }} aria-label={`Original price ₹${wasPrice}`}>₹{wasPrice}</s>
-            )}
-            ₹{price}{periodSuffix}. {copy.priceLine}
-          </>
-        )}
-      </p>
+      {product === "full_access" && variant !== "checkout" && <PlanTags memberLabel={memberLabel} />}
+      {variant !== "checkout" && <p className="unlock-contact-title">{titleOverride ?? copy.title}</p>}
       {priceNote && <p className="unlock-contact-price-note">{priceNote}</p>}
-      <p className="unlock-contact-desc">{descriptionOverride ?? copy.description}</p>
-      <p className="unlock-contact-highlight">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span>
-          <strong>{copy.highlightTitle}</strong> — {copy.highlightBody}
-        </span>
-      </p>
+      <div className="unlock-price">
+        <div className="unlock-price-row">
+          <span className="unlock-price-now">₹{displayPrice}</span>
+          {strikePrice && (
+            <s className="unlock-price-was" aria-label={`Original price ₹${strikePrice}`}>
+              ₹{strikePrice}
+            </s>
+          )}
+          {pctOff > 0 && <span className="unlock-price-off">{pctOff}% off</span>}
+        </div>
+        <p className="unlock-price-meta">
+          for 3 months, about ₹{(displayPrice / 90).toFixed(1)} a day
+        </p>
+      </div>
+      {variant !== "checkout" && <p className="unlock-contact-desc">{descriptionOverride ?? copy.description}</p>}
+      {variant !== "checkout" && (
+      <ul className="unlock-benefits">
+        {copy.benefits.map((b) => (
+          <li key={b}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} aria-hidden="true">
+              <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {b}
+          </li>
+        ))}
+      </ul>
+      )}
       {paymentSuccess ? (
         <p className="unlock-contact-desc" style={{ fontWeight: 600 }}>
           🎉 Payment confirmed — you&apos;re ready to apply now! Loading your apply details...
@@ -357,13 +376,14 @@ export default function UnlockContactCard({
               {couponError && <p className="unlock-contact-error">{couponError}</p>}
             </div>
           )}
-          <button className="btn btn-primary btn-sm" type="button" onClick={handleUnlock} disabled={isLoading}>
-            {isLoading ? "Opening payment..." : copy.unlockLabel(couponApplied?.discountedInr ?? price)}
+          <button className="btn btn-primary unlock-contact-cta" type="button" onClick={handleUnlock} disabled={isLoading}>
+            {isLoading ? "Opening payment..." : copy.unlockLabel(displayPrice)}
           </button>
-          <p className="unlock-contact-desc" style={{ fontSize: 12, opacity: 0.75 }}>
-            Access unlocks instantly after payment and lasts 3 months. No auto-renewal, no mandate saved — just come
-            back and pay ₹{price} again whenever you want to keep going.
-          </p>
+          <ul className="unlock-trust" aria-label="Payment details">
+            <li>One-time payment, no auto-renewal</li>
+            <li>Instant access</li>
+            <li>Secure checkout via Razorpay</li>
+          </ul>
         </>
       )}
       {error && <p className="unlock-contact-error">{error}</p>}
