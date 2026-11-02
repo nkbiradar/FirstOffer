@@ -148,7 +148,7 @@ export default async function InternalOpeningsPage() {
                   wasPrice={isDiwaliOfferActive() ? INTERNAL_SALE_MRP_INR : undefined}
                   priceNote={
                     isDiwaliOfferActive()
-                      ? `🪔 Diwali offer ends ${FULL_ACCESS_SALE_END_LABEL}`
+                      ? `🪔 Diwali Offer — ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
                       : undefined
                   }
                   product="internal_hr"
