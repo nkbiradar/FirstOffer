@@ -135,6 +135,17 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
         </div>
       </div>
 
+      <div className="fp-serious">
+        <span aria-hidden="true" className="fp-serious-ico">🎯</span>
+        <div>
+          <strong>Built for freshers who are serious about getting hired.</strong>
+          <span>
+            Not for casual scrolling — for students ready to apply every day, write to real HRs and treat their job
+            search like a job.
+          </span>
+        </div>
+      </div>
+
       <div className="fp-grid">
         {plans.map((p) => {
           const off = pctOff(p.price, p.was);
