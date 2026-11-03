@@ -129,13 +129,14 @@ export function getMonthlyPlanId(): string {
 // (hasActiveSubscription is parameterized by product) and
 // app/internal-openings/page.tsx.
 // 25 Oct 2026: raised from ₹149 to ₹299 for 3 months.
-export const INTERNAL_PRICE_INR = 299;
+// 3 Nov 2026: raised to ₹499 for 3 months.
+export const INTERNAL_PRICE_INR = 499;
 export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
 
 // Diwali offer (same window as the full-access Diwali offer above): Internal
-// HR shown as ₹399 → ₹299. Display only — the charge stays INTERNAL_PRICE_INR.
+// HR shown as ₹699 → ₹499. Display only — the charge stays INTERNAL_PRICE_INR.
 // The strike-through disappears by itself when the offer window ends.
-export const INTERNAL_SALE_MRP_INR = 399;
+export const INTERNAL_SALE_MRP_INR = 699;
 
 /** True during the Diwali offer window (shared by Full Access and Internal HR). */
 export function isDiwaliOfferActive(now: number = Date.now()): boolean {

@@ -13,7 +13,7 @@ const LINKS = [
   // Free "What Worked For Me" stories — its own section, not part of Internal HR.
   { href: "/what-worked", label: "What Worked" },
   // Deliberately styled differently below (nav-link-hot) — this is the
-  // entry point to the ₹149/month Internal HR Openings product and is meant
+  // entry point to the Internal HR Openings product and is meant
   // to stand out from the plain listing links next to it.
   { href: "/internal-openings", label: "Internal HR", hot: true },
 ];
