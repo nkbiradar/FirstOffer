@@ -63,7 +63,7 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
   const plans: Plan[] = [
     {
       key: "internal",
-      name: "Internal HR",
+      name: "Internal HR + Interview Questions",
       period: "3 months",
       price: getInternalPriceInr(),
       was: internalDiwali ? INTERNAL_SALE_MRP_INR : internalSale ? INTERNAL_PRICE_INR : undefined,

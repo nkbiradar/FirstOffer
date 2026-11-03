@@ -7963,7 +7963,7 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-card-featured { background: var(--fp-blue); border-color: var(--fp-blue); padding: 0 2px 2px; box-shadow: 0 24px 60px rgba(37,99,235,0.28); }
 .fp-card-featured .fp-card-body { background: var(--fp-card); border-radius: 20px; }
 .fp-ribbon { padding: 10px 0 9px; text-align: center; font-size: 14px; font-weight: 700; color: #fff; }
-.fp-name { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 21px; font-weight: 700; color: var(--fp-text); }
+.fp-name { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; color: var(--fp-text); }
 .fp-spark { color: #fbbf24; }
 .fp-period { display: inline-block; margin-top: 14px; padding: 6px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 600; color: var(--fp-text); background: var(--fp-card-2); border: 1px solid var(--fp-line); }
 .fp-price { margin-top: 18px; font-family: var(--font-display, inherit); font-size: 44px; line-height: 1; font-weight: 800; letter-spacing: -0.02em; }
