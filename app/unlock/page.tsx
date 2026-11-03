@@ -86,16 +86,6 @@ export default async function UnlockPage() {
 
         {!unlocked && !inApp && <SafePay light />}
 
-        {!unlocked && !inApp && (
-          <p className="share-ban share-ban-light">
-            <span aria-hidden="true">⚠️</span>
-            <span>
-              <strong>One account = one user, one device.</strong> Sharing your account or copying opportunities to
-              others will get it <strong>banned</strong> — no refund. <Link href="/terms#personal-use">Terms</Link>
-            </span>
-          </p>
-        )}
-
         {!unlocked && <WhatWorked />}
       </div>
       {!unlocked && !inApp && (
