@@ -195,10 +195,6 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       </div>
 
       <div className="fp-foot">
-        <p className="fp-share">
-          ⚠️ <strong>One account = one user, one device.</strong> Sharing your account or copying opportunities to others
-          gets it <strong>banned</strong> — no refund.
-        </p>
         <SafePay />
       </div>
     </section>
