@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import StreakChip from "@/components/StreakChip";
 
 const LINKS = [
   { href: "/fresher-jobs", label: "Fresher Jobs" },
@@ -54,7 +55,7 @@ function NavIcon({ href }: { href: string }) {
   );
 }
 
-type NavUser = { email: string | null } | null;
+type NavUser = { email: string | null; streak?: number } | null;
 
 function isActive(href: string, pathname: string, search: string) {
   const [hrefPath, hrefQuery] = href.split("?");
@@ -204,6 +205,7 @@ function NavbarInner({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) {
           </nav>
 
           <div className="navbar-actions">
+            {user && <StreakChip initial={user.streak ?? 0} />}
             <AuthActions user={user} isAdmin={isAdmin} />
             <button
               type="button"
@@ -301,6 +303,7 @@ function NavbarFallback({ user, isAdmin }: { user: NavUser; isAdmin: boolean }) 
             ))}
           </nav>
           <div className="navbar-actions">
+            {user && <StreakChip initial={user.streak ?? 0} />}
             <AuthActions user={user} isAdmin={isAdmin} />
           </div>
         </div>

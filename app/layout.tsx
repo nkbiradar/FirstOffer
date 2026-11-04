@@ -7,6 +7,8 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import SuccessPopup from "@/components/SuccessPopup";
 import VisitTracker from "@/components/VisitTracker";
+import StreakCelebration from "@/components/StreakCelebration";
+import { getStreakSummary } from "@/lib/data/streak";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { getPublishedTestimonialsCached } from "@/lib/data/cached";
 import { getSiteUrl } from "@/lib/site-url";
@@ -67,7 +69,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // testimonials is fetched alongside it for the same reason: SuccessPopup
   // below needs the published list on every page, not just the homepage.
   const [user, testimonials] = await Promise.all([getUser(), getPublishedTestimonialsCached()]);
-  const navUser = user ? { email: user.email ?? null } : null;
+  // Daily apply streak for the navbar chip + milestone celebration.
+  const streak = user ? await getStreakSummary(user.id, user.user_metadata?.weekly_goal) : null;
+  const navUser = user ? { email: user.email ?? null, streak: streak?.current ?? 0 } : null;
   // Same reasoning as Step 8: the public site shouldn't advertise the admin
   // area to regular visitors. But the actual admin, once signed in, needs a
   // way back into /admin that isn't "remember the URL" — so the nav link is
@@ -104,6 +108,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <Analytics />
         <PushNotificationPrompt />
         <SuccessPopup testimonials={testimonials} />
+        {streak && (
+          <StreakCelebration
+            initial={{ current: streak.current, best: streak.best, appliedToday: streak.appliedToday }}
+          />
+        )}
         <VisitTracker isAdmin={isAdmin} />
         {/* Offer popup removed (Oct 2026) — components/OfferPopup.tsx kept for later use. */}
       </body>

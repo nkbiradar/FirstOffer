@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { isValidOutcome, updateApplicationOutcome } from "@/lib/data/user-applications";
+import { getStreakSummary } from "@/lib/data/streak";
 
 type RouteContext = { params: Promise<{ opportunityId: string }> };
 
@@ -55,5 +56,6 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Could not remove." }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true });
+  const st = await getStreakSummary(user.id);
+  return NextResponse.json({ ok: true, streak: { current: st.current, best: st.best, appliedToday: st.appliedToday } });
 }

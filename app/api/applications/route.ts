@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
+import { getStreakSummary } from "@/lib/data/streak";
 
 // Marks an opportunity as applied for the signed-in user. Any signed-in
 // user (not admin-gated) — this is the job-seeker-facing application
@@ -36,5 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Could not mark as applied." }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true });
+  // Fresh streak so the navbar chip / celebration update without a reload.
+  const st = await getStreakSummary(user.id);
+  return NextResponse.json({ ok: true, streak: { current: st.current, best: st.best, appliedToday: st.appliedToday } });
 }

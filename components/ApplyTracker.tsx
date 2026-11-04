@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { APPLIED_EVENT, emitApplied, emitStreak } from "@/lib/streak-events";
 import { useRouter } from "next/navigation";
 
 // Small "Mark as Applied" toggle on the opportunity detail page — separate
@@ -20,6 +21,16 @@ export default function ApplyTracker({
   const [applied, setApplied] = useState(initialApplied);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Stay in sync when the apply link itself counts the role as applied.
+  useEffect(() => {
+    const on = (e: Event) => {
+      const d = (e as CustomEvent<{ opportunityId: string; applied: boolean }>).detail;
+      if (d?.opportunityId === opportunityId) setApplied(d.applied);
+    };
+    window.addEventListener(APPLIED_EVENT, on);
+    return () => window.removeEventListener(APPLIED_EVENT, on);
+  }, [opportunityId]);
 
   async function toggle() {
     if (!isSignedIn) {
@@ -44,6 +55,8 @@ export default function ApplyTracker({
         return;
       }
       setApplied(!applied);
+      emitApplied(opportunityId, !applied);
+      emitStreak((await response.json().catch(() => null))?.streak);
     } catch {
       setError("Network error — try again.");
     } finally {

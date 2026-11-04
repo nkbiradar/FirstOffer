@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/auth";
 import { getUserApplications } from "@/lib/data/user-applications";
+import { getStreakSummary } from "@/lib/data/streak";
+import StreakCard from "@/components/StreakCard";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
 import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing, hasEverPaid } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
@@ -189,6 +191,8 @@ export default async function DashboardPage({
             />
           </div>
         )}
+
+        <StreakCard summary={await getStreakSummary(user.id, user.user_metadata?.weekly_goal)} />
 
         <div className="dashboard-stats">
           <div className="admin-stat">

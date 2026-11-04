@@ -31,6 +31,7 @@ import {
   buildJobBreadcrumbsJsonLd,
 } from "@/lib/seo/job-posting";
 import ApplyTracker from "@/components/ApplyTracker";
+import ApplyLink from "@/components/ApplyLink";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import { isAppRequest } from "@/lib/nativeAppServer";
@@ -167,22 +168,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
-function ApplyButton({ action, className = "" }: { action: ApplyAction; className?: string }) {
-  return (
-    <a
-      className={`btn btn-primary apply-now no-copy ${className}`}
-      draggable={false}
-      href={action.href}
-      rel="noopener noreferrer"
-      target={action.href.startsWith("mailto:") ? undefined : "_blank"}
-    >
-      {action.label}
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-        <path d="M7 17L17 7M17 7H8M17 7v9" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </a>
-  );
-}
 
 export default async function OpportunityDetailPage({ params }: { params: Promise<Params> }) {
   const nonce = await getNonce();
@@ -405,7 +390,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
             <>
               {canShowApply && applyAction && (
                 <div className="apply-inline">
-                  <ApplyButton action={applyAction} />
+                  <ApplyLink action={applyAction} initialApplied={isApplied} isSignedIn={Boolean(user)} opportunityId={id} />
                   <ApplyTracker opportunityId={id} initialApplied={isApplied} isSignedIn={Boolean(user)} />
                 </div>
               )}
@@ -568,7 +553,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
         )}
 
         {!isExpired && canShowApply && applyAction && (
-          <ApplyButton action={applyAction} className="btn-block" />
+          <ApplyLink action={applyAction} className="btn-block" initialApplied={isApplied} isSignedIn={Boolean(user)} opportunityId={id} />
         )}
 
         {/* Related Opportunities Section */}
@@ -597,7 +582,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
 
       {!isExpired && canShowApply && applyAction && (
         <div className="apply-bar">
-          <ApplyButton action={applyAction} />
+          <ApplyLink action={applyAction} initialApplied={isApplied} isSignedIn={Boolean(user)} opportunityId={id} />
         </div>
       )}
     </main>
