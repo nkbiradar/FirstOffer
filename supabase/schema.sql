@@ -1117,3 +1117,23 @@ create index if not exists subscriptions_recovery_pending_idx
 --          headers := jsonb_build_object('Authorization', 'Bearer YOUR_CRON_SECRET')
 --        ) $$
 --   );
+
+-- ── email_queue (Nov 2026) ───────────────────────────────────────────────
+-- Admin "Email users" campaigns (lib/email/broadcast.ts). One row per
+-- recipient; the 10-minute cron sends a small batch through the Hostinger
+-- mailbox and stamps sent_at (and error, if it failed). Server-only.
+create table if not exists public.email_queue (
+  id bigint generated always as identity primary key,
+  campaign text not null,
+  user_id uuid,
+  email text not null,
+  subject text not null,
+  html text not null,
+  unsubscribe_url text,
+  created_at timestamptz not null default now(),
+  sent_at timestamptz,
+  error text
+);
+create unique index if not exists email_queue_campaign_email_idx on public.email_queue (campaign, email);
+create index if not exists email_queue_pending_idx on public.email_queue (id) where sent_at is null;
+alter table public.email_queue enable row level security;

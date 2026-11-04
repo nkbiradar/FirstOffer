@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sendCheckoutRecoveryEmails } from "@/lib/email/checkout-recovery";
+import { processEmailQueue } from "@/lib/email/broadcast";
 
 // Abandoned-checkout reminder emails (lib/email/checkout-recovery.ts).
 // Called every 10 minutes by a Supabase pg_cron job (see supabase/schema.sql)
@@ -15,5 +16,7 @@ export async function GET(request: NextRequest) {
   // Optional one-off catch-up for older checkouts: ?hours=336 (max 14 days).
   const hours = Number(request.nextUrl.searchParams.get("hours"));
   const result = await sendCheckoutRecoveryEmails(Number.isFinite(hours) && hours > 0 ? hours : undefined);
-  return NextResponse.json({ ok: true, ...result });
+  // Same 10-minute tick also sends the next batch of admin broadcast emails.
+  const queue = await processEmailQueue();
+  return NextResponse.json({ ok: true, ...result, queue });
 }

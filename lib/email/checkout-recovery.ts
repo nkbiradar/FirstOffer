@@ -12,13 +12,11 @@
 // same one lib/email/admin-notify.ts uses) so it never competes with the job
 // alerts for Resend's monthly quota; falls back to Resend if SMTP isn't set.
 // Needs the `recovery_email_sent_at` column (see supabase/schema.sql).
-import nodemailer from "nodemailer";
-import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/lib/site-url";
 import { buildUnsubscribeUrl, getOptedOutUserIds } from "@/lib/data/email-preference";
-import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasInternalAccess } from "@/lib/data/subscriptions";
+import { getPaidUserIds } from "@/lib/data/paid-users";
+import { firstNameOf, getSender } from "@/lib/email/smtp-sender";
 import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
 import { getSiteStats } from "@/lib/data/opportunities";
 import {
@@ -261,58 +259,6 @@ async function loadContext(admin: ReturnType<typeof createAdminClient>): Promise
   return ctx;
 }
 
-function firstNameOf(meta: Record<string, unknown> | undefined): string {
-  const full = String(meta?.full_name ?? meta?.name ?? "").trim();
-  const first = full.split(/\s+/)[0] ?? "";
-  return /^[\p{L}.'-]{2,20}$/u.test(first) ? first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() : "";
-}
-
-type Mail = { to: string; subject: string; html: string; headers: Record<string, string> };
-type Sender = (mail: Mail) => Promise<string | null>;
-
-/** Hostinger SMTP first (own quota, sent as support@), Resend as fallback. */
-function getSender(): Sender | null {
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  if (host && user && pass) {
-    const port = Number(process.env.SMTP_PORT ?? 465);
-    const transport = nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } });
-    return async (m) => {
-      try {
-        await transport.sendMail({
-          from: `Nayan from FirstOffer <${user}>`,
-          to: m.to,
-          replyTo: user,
-          subject: m.subject,
-          html: m.html,
-          headers: m.headers,
-        });
-        return null;
-      } catch (err) {
-        return err instanceof Error ? err.message : String(err);
-      }
-    };
-  }
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
-  if (apiKey && from) {
-    const resend = new Resend(apiKey);
-    const addr = from.match(/<([^>]+)>/)?.[1] ?? from.trim();
-    return async (m) => {
-      const { error } = await resend.emails.send({
-        from: `Nayan from FirstOffer <${addr}>`,
-        to: m.to,
-        replyTo: "support@firstoffer.online",
-        subject: m.subject,
-        html: m.html,
-        headers: m.headers,
-      });
-      return error ? `${error.name}: ${error.message}` : null;
-    };
-  }
-  return null;
-}
 
 /**
  * `maxAgeHours` defaults to 24 (the regular 10-minute run). A one-off
@@ -328,7 +274,7 @@ export async function sendCheckoutRecoveryEmails(maxAgeHours: number = MAX_AGE_H
   skipped: number;
   errors: number;
 }> {
-  const send = getSender();
+  const send = getSender("Nayan from FirstOffer");
   if (!send) {
     console.error("Checkout reminders aren't configured — set SMTP_HOST/SMTP_USER/SMTP_PASS (Hostinger) or RESEND_API_KEY/RESEND_FROM_EMAIL.");
     return { configured: false, candidates: 0, sent: 0, skipped: 0, errors: 0 };
@@ -364,6 +310,7 @@ export async function sendCheckoutRecoveryEmails(maxAgeHours: number = MAX_AGE_H
   if (byUser.size === 0) return { configured: true, candidates: 0, sent: 0, skipped: 0, errors: 0 };
   const optedOut = await getOptedOutUserIds(admin);
   const ctx = await loadContext(admin);
+  const paidSets = await getPaidUserIds(admin);
   const cooldownSince = new Date(now - COOLDOWN_DAYS * 86_400_000).toISOString();
   let sent = 0;
   let skipped = 0;
@@ -381,7 +328,8 @@ export async function sendCheckoutRecoveryEmails(maxAgeHours: number = MAX_AGE_H
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
       .gte("recovery_email_sent_at", cooldownSince);
-    const paid = product === "internal_hr" ? await hasInternalAccess(userId) : await hasFullAccess(userId);
+    // Service-role lookup: the cookie-based access helpers always say "no" in a cron.
+    const paid = (product === "internal_hr" ? paidSets.internal : paidSets.fullAccess).has(userId);
 
     if (optedOut.has(userId) || paid || (recent ?? 0) > 0) {
       await markAll();
