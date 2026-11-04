@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 // Homepage-only Diwali offer popup (Full Access + Internal HR). The homepage
 // decides eligibility on the server: only while the sale is running, never
@@ -99,8 +100,8 @@ function Art() {
         Happy Diwali
       </text>
       <Diya delay={0} x={60} />
-      <Diya delay={0.4} x={160} />
-      <Diya delay={0.8} x={360} />
+      <Diya delay={0.4} x={130} />
+      <Diya delay={0.8} x={390} />
       <Diya delay={1.2} x={460} />
     </svg>
   );
@@ -148,7 +149,9 @@ export default function DiwaliOfferPopup({ endsAt, endLabel, plans }: Props) {
   if (!open || !left) return null;
   const close = () => setOpen(false);
 
-  return (
+  // Rendered into <body> so no page container (or the sticky navbar) can
+  // sit on top of it.
+  return createPortal(
     <div className="dw-overlay" onClick={close} role="presentation">
       <div
         aria-labelledby="dw-title"
@@ -208,6 +211,7 @@ export default function DiwaliOfferPopup({ endsAt, endLabel, plans }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
