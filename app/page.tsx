@@ -25,7 +25,18 @@ import {
   getPublishedWhatWorkedCached,
   getSiteStatsCached,
 } from "@/lib/data/cached";
-import { getFullAccessPriceInr } from "@/lib/payments/razorpay";
+import {
+  FULL_ACCESS_SALE_END_LABEL,
+  FULL_ACCESS_SALE_ENDS_AT,
+  FULL_ACCESS_SALE_MRP_INR,
+  INTERNAL_SALE_MRP_INR,
+  getFullAccessPriceInr,
+  getInternalPriceInr,
+  isFullAccessSaleActive,
+} from "@/lib/payments/razorpay";
+import DiwaliOfferPopup from "@/components/DiwaliOfferPopup";
+import { hasInternalAccess } from "@/lib/data/subscriptions";
+import { isAppRequest } from "@/lib/nativeAppServer";
 
 export const metadata = {
   title: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India",
@@ -85,6 +96,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     freePick,
     featuredInterns,
     whatWorked,
+    hasInternal,
+    inApp,
   ] = await Promise.all([
     // Every live opportunity (they expire after 48h, so this stays small) —
     // the role counts and filters must cover all of them, not just the newest 30.
@@ -97,7 +110,40 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     getFreePickOpportunityCached(),
     getFeaturedInternsCached(),
     getPublishedWhatWorkedCached(3),
+    user ? hasInternalAccess(user.id) : Promise.resolve(false),
+    isAppRequest(),
   ]);
+
+  // Diwali offer popup: only while the sale runs, never in the Android app,
+  // and only for plans this visitor doesn't already have.
+  const diwaliPlans = [
+    ...(alreadyHasFullAccess
+      ? []
+      : [
+          {
+            name: "Full Access",
+            tagline: "HR emails, recruiter numbers & apply links on every opening",
+            price: getFullAccessPriceInr(),
+            was: FULL_ACCESS_SALE_MRP_INR,
+            href: "/unlock",
+            cta: "Grab Full Access",
+            featured: true,
+          },
+        ]),
+    ...(hasInternal
+      ? []
+      : [
+          {
+            name: "Internal HR + Interview Questions",
+            tagline: "HR-shared openings + 6 Interview Question Kits",
+            price: getInternalPriceInr(),
+            was: INTERNAL_SALE_MRP_INR,
+            href: "/internal-openings",
+            cta: "Get Internal HR",
+          },
+        ]),
+  ];
+  const showDiwaliPopup = isFullAccessSaleActive() && !inApp && diwaliPlans.length > 0;
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
   // 2026") above is already computed for the "Today's Opportunities"
@@ -144,6 +190,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   return (
     <main className="home-dark">
+      {showDiwaliPopup && (
+        <DiwaliOfferPopup endLabel={FULL_ACCESS_SALE_END_LABEL} endsAt={FULL_ACCESS_SALE_ENDS_AT} plans={diwaliPlans} />
+      )}
       {/* WebSite Schema for SearchAction */}
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script

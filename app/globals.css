@@ -8307,3 +8307,51 @@ body:has(main.home-dark) {
 .mobile-menu a .nav-icon { width: 17px; height: 17px; }
 /* Tight desktop widths: keep the row on one line by hiding the icons. */
 @media (min-width: 1261px) and (max-width: 1439px) { .nav-links .nav-icon { display: none; } }
+
+/* ── Diwali offer popup (components/DiwaliOfferPopup.tsx, Nov 2026) ──────── */
+.dw-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: rgba(5, 5, 10, 0.72); backdrop-filter: blur(4px); animation: dw-fade 0.25s ease-out; }
+.dw-card { position: relative; width: min(520px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 22px; background: #111016; border: 1px solid rgba(251, 191, 36, 0.28); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 60px rgba(251, 191, 36, 0.12); color: #f5f5f7; outline: none; animation: dw-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
+.dw-close { position: absolute; top: 10px; right: 10px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.45); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+.dw-close:hover { background: rgba(0, 0, 0, 0.7); }
+.dw-art { display: block; width: 100%; height: 150px; }
+.dw-body { padding: 18px 22px 18px; text-align: center; }
+.dw-eyebrow { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #fde68a; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); }
+.dw-card h2 { margin: 12px 0 6px; font-family: var(--font-display, inherit); font-size: clamp(22px, 5vw, 27px); line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+.dw-card h2 span { background: linear-gradient(90deg, #fbbf24, #f97316, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.dw-sub { margin: 0; font-size: 14.5px; color: #a1a1aa; }
+.dw-timer { display: flex; justify-content: center; gap: 8px; margin: 14px 0 16px; }
+.dw-timer span { min-width: 54px; padding: 7px 4px; border-radius: 10px; background: #1c1a24; border: 1px solid rgba(255, 255, 255, 0.08); }
+.dw-timer b { display: block; font-size: 20px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+.dw-timer small { font-size: 10.5px; color: #8b8b95; text-transform: uppercase; letter-spacing: 0.06em; }
+.dw-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+.dw-plan { position: relative; display: flex; flex-direction: column; gap: 3px; padding: 14px; border-radius: 16px; background: #18171f; border: 1px solid rgba(255, 255, 255, 0.1); color: inherit; text-decoration: none; transition: transform 0.15s ease, border-color 0.15s ease; }
+.dw-plan:hover { transform: translateY(-2px); border-color: rgba(251, 191, 36, 0.5); }
+.dw-plan-featured { background: linear-gradient(180deg, rgba(37, 99, 235, 0.22), #18171f 70%); border-color: rgba(96, 165, 250, 0.55); }
+.dw-badge { position: absolute; top: -9px; right: 12px; padding: 2px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 800; color: #fff; background: #2563eb; }
+.dw-plan-name { font-size: 15px; font-weight: 800; color: #fff; line-height: 1.3; }
+.dw-plan-tag { font-size: 12.5px; color: #a1a1aa; line-height: 1.4; }
+.dw-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 7px; margin-top: 6px; }
+.dw-price b { font-size: 26px; font-weight: 800; color: #fff; }
+.dw-price s { font-size: 14px; color: #71717a; }
+.dw-price em { font-style: normal; font-size: 11px; font-weight: 800; color: #4ade80; padding: 2px 7px; border-radius: 999px; background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.35); }
+.dw-plan-cta { margin-top: 10px; padding: 9px 10px; border-radius: 10px; text-align: center; font-size: 13.5px; font-weight: 800; color: #111; background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.dw-plan-featured .dw-plan-cta { color: #fff; background: linear-gradient(180deg, #3b82f6, #2563eb); }
+.dw-later { margin-top: 12px; padding: 6px 10px; border: 0; background: none; color: #8b8b95; font-size: 13px; cursor: pointer; text-decoration: underline; }
+.dw-burst { animation: dw-burst 3.2s ease-out infinite; opacity: 0; }
+.dw-star { animation: dw-twinkle 2s ease-in-out infinite; }
+.dw-flame { animation: dw-flicker 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+.dw-glow { animation: dw-twinkle 1.8s ease-in-out infinite; }
+@keyframes dw-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dw-pop { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes dw-burst { 0% { opacity: 0; transform: scale(0.2); } 15% { opacity: 1; } 60% { opacity: 0.9; transform: scale(1); } 100% { opacity: 0; transform: scale(1.12); } }
+@keyframes dw-twinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+@keyframes dw-flicker { 0%, 100% { transform: scaleY(1) rotate(-2deg); } 50% { transform: scaleY(1.15) rotate(2deg); } }
+@media (max-width: 480px) {
+  .dw-plans { grid-template-columns: 1fr; }
+  .dw-art { height: 120px; }
+  .dw-body { padding: 14px 16px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dw-burst { animation: none; opacity: 0.9; }
+  .dw-star, .dw-flame, .dw-glow, .dw-card, .dw-overlay { animation: none; }
+}
