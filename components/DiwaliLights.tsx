@@ -1,7 +1,7 @@
 // A single string of twinkling Diwali fairy lights across the top of the
 // homepage hero. Pure CSS animation (no JS), decorative only; the homepage
 // shows it only while the Diwali offer is running.
-const BULBS = 30;
+const BULBS = 20;
 const SWAGS = 10; // the wire dips between hooks this many times
 const COLOR = "#ffc861"; // one warm golden tone
 
