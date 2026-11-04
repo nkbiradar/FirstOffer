@@ -35,6 +35,7 @@ import {
 const MIN_AGE_MINUTES = 20;
 const MAX_AGE_HOURS = 24;
 const COOLDOWN_DAYS = 7;
+const MAX_USERS_PER_RUN = 40;
 const WHATSAPP = "6363976632";
 
 type Product = "full_access" | "internal_hr";
@@ -313,7 +314,14 @@ function getSender(): Sender | null {
   return null;
 }
 
-export async function sendCheckoutRecoveryEmails(): Promise<{
+/**
+ * `maxAgeHours` defaults to 24 (the regular 10-minute run). A one-off
+ * catch-up for older abandoned checkouts passes a larger value (max 14
+ * days) via ?hours= on the cron route. Each call handles at most
+ * MAX_USERS_PER_RUN students so it finishes well inside the time limit;
+ * call again to continue (already-handled rows are skipped).
+ */
+export async function sendCheckoutRecoveryEmails(maxAgeHours: number = MAX_AGE_HOURS): Promise<{
   configured: boolean;
   candidates: number;
   sent: number;
@@ -328,7 +336,8 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
   const admin = createAdminClient();
   const now = Date.now();
   const newest = new Date(now - MIN_AGE_MINUTES * 60_000).toISOString();
-  const oldest = new Date(now - MAX_AGE_HOURS * 3_600_000).toISOString();
+  const hours = Math.min(Math.max(maxAgeHours, 1), 24 * 14);
+  const oldest = new Date(now - hours * 3_600_000).toISOString();
 
   const { data: rows, error } = await admin
     .from("subscriptions")
@@ -338,7 +347,7 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
     .lte("created_at", newest)
     .gte("created_at", oldest)
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(500);
   if (error) {
     console.error("Checkout reminders: could not read subscriptions:", error.message);
     return { configured: true, candidates: 0, sent: 0, skipped: 0, errors: 1 };
@@ -360,7 +369,9 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
   let skipped = 0;
   let errors = 0;
 
+  let handled = 0;
   for (const [userId, { product, ids }] of byUser) {
+    if (handled++ >= MAX_USERS_PER_RUN) break;
     // Mark first, so a slow or repeated run can never email twice.
     const markAll = () =>
       admin.from("subscriptions").update({ recovery_email_sent_at: new Date().toISOString() }).in("id", ids);
