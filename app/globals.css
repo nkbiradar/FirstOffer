@@ -8359,8 +8359,8 @@ body:has(main.home-dark) {
 /* ── Diwali fairy-light strip (components/DiwaliLights.tsx, Nov 2026) ─────── */
 .dl-strip { position: relative; z-index: 3; height: 30px; margin-bottom: -30px; pointer-events: none; overflow: visible; }
 .dl-wire { position: absolute; inset: 0; width: 100%; height: 100%; }
-.dl-bulb { position: absolute; width: 9px; height: 12px; margin-left: -4.5px; margin-top: 3px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: var(--c); box-shadow: 0 0 6px 2px var(--c), 0 0 16px 4px color-mix(in srgb, var(--c) 45%, transparent); animation: dl-twinkle 2s ease-in-out infinite; }
-.dl-bulb::before { content: ""; position: absolute; top: -3px; left: 2.5px; width: 4px; height: 4px; border-radius: 1px; background: #57534e; }
+.dl-bulb { position: absolute; width: 6px; height: 8px; margin-left: -3px; margin-top: 3px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: var(--c); box-shadow: 0 0 4px 1px var(--c), 0 0 9px 2px color-mix(in srgb, var(--c) 40%, transparent); animation: dl-twinkle 2s ease-in-out infinite; }
+.dl-bulb::before { content: ""; position: absolute; top: -2px; left: 1.5px; width: 3px; height: 3px; border-radius: 1px; background: #57534e; }
 @keyframes dl-twinkle { 0%, 100% { opacity: 1; filter: brightness(1.2); } 50% { opacity: 0.45; filter: brightness(0.75); } }
 @media (max-width: 640px) { .dl-bulb:nth-child(odd) { display: none; } .dl-strip { margin-bottom: -6px; } }
 @media (prefers-reduced-motion: reduce) { .dl-bulb { animation: none; } }
