@@ -17,8 +17,10 @@ import { buildUnsubscribeUrl, getOptedOutUserIds } from "@/lib/data/email-prefer
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
 import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
+import { getSiteStats } from "@/lib/data/opportunities";
 import {
   FULL_ACCESS_SALE_END_LABEL,
+  FULL_ACCESS_SALE_ENDS_AT,
   FULL_ACCESS_SALE_MRP_INR,
   INTERNAL_SALE_MRP_INR,
   getFullAccessPriceInr,
@@ -34,30 +36,50 @@ const WHATSAPP = "6363976632";
 
 type Product = "full_access" | "internal_hr";
 
+/** Real, live proof shared by every email in one run (no invented numbers). */
+export type RecoveryContext = {
+  liveOpenings: number;
+  interviews: number;
+  offers: number;
+  companies: string[];
+  story?: { name: string; company: string; outcome: "interview" | "selected"; quote: string };
+};
+
 function esc(s: string): string {
   return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] as string);
 }
 
-function copyFor(product: Product) {
+function daysLeftLabel(): string | undefined {
+  const ms = new Date(FULL_ACCESS_SALE_ENDS_AT).getTime() - Date.now();
+  if (ms <= 0) return undefined;
+  const days = Math.floor(ms / 86_400_000);
+  if (days >= 2) return `Only ${days} days left`;
+  if (days === 1) return "Only 1 day left";
+  return "Last day today";
+}
+
+function copyFor(product: Product, firstName: string) {
+  const hi = firstName ? `${firstName}, y` : "Y";
   if (product === "internal_hr") {
     const price = getInternalPriceInr();
     const offer = isDiwaliOfferActive();
     return {
       subject: offer
-        ? `Your Internal HR access is one step away — ₹${price} till ${FULL_ACCESS_SALE_END_LABEL}`
-        : `Your Internal HR access is one step away`,
-      heading: "You were one click away from Internal HR openings",
+        ? `${hi}our Internal HR access is still on hold — ₹${price} till ${FULL_ACCESS_SALE_END_LABEL}`
+        : `${hi}our Internal HR access is still on hold`,
+      preheader: "Openings shared directly by HRs + 6 Interview Question Kits. Finish in 30 seconds.",
+      heading: "Your Internal HR access is still on hold",
       price,
       was: offer ? INTERNAL_SALE_MRP_INR : undefined,
-      period: "for 3 months",
-      offerLine: offer ? `🪔 Diwali price — ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+      perDay: (price / 90).toFixed(1),
+      offer,
       benefits: [
-        "Openings shared directly by HRs — low-competition roles",
-        "Early access to fresh roles before they go public",
-        "6 Interview Question Kits (PDF) to prepare faster",
-        "One payment, no auto-debit",
+        ["Openings shared directly by HRs", "Low-competition roles most students never see."],
+        ["Early access to fresh roles", "Apply before the crowd does."],
+        ["6 Interview Question Kits (PDF)", "Walk into the interview prepared."],
+        ["One payment, 3 months", "No auto-debit, no hidden charges."],
       ],
-      cta: `Complete my payment — ₹${price}`,
+      cta: `Unlock Internal HR — ₹${price}`,
       path: "/internal-openings",
     };
   }
@@ -65,78 +87,128 @@ function copyFor(product: Product) {
   const offer = isFullAccessSaleActive();
   return {
     subject: offer
-      ? `Your ₹${price} Full Access is waiting — offer ends ${FULL_ACCESS_SALE_END_LABEL}`
-      : `Your FirstOffer Full Access is waiting`,
-    heading: "You're one step away from applying directly to HRs",
+      ? `${hi}our ₹${price} Full Access is still waiting (ends ${FULL_ACCESS_SALE_END_LABEL})`
+      : `${hi}our FirstOffer Full Access is still waiting`,
+    preheader: "Direct HR emails, recruiter numbers & Google Forms on every opening. Finish in 30 seconds.",
+    heading: "You were one tap away from applying directly to HRs",
     price,
     was: offer ? FULL_ACCESS_SALE_MRP_INR : undefined,
-    period: "for 3 months",
-    offerLine: offer ? `🪔 Diwali offer — ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+    perDay: (price / 90).toFixed(1),
+    offer,
     benefits: [
-      "Direct HR emails & recruiter numbers on every opening",
-      "Official Google Forms & apply links — no middlemen",
-      "New fresher jobs & internships added every day",
-      "Resume Keyword Matcher to check your fit before applying",
+      ["Direct HR emails & recruiter numbers", "Reach the person who shortlists — not a portal inbox."],
+      ["Official Google Forms & apply links", "The company's own route on every opening."],
+      ["New fresher jobs & internships daily", "Fresh roles only — each live for 48 hours."],
+      ["Resume Keyword Matcher", "Check your fit before you apply."],
     ],
-    cta: `Grab the offer — ₹${price}`,
+    cta: `Grab my ₹${price} access →`,
     path: "/unlock",
   };
 }
 
-function renderHtml(product: Product, unsubscribeUrl: string): { subject: string; html: string } {
-  const c = copyFor(product);
-  const url = `${getSiteUrl()}${c.path}`;
+export function renderHtml(
+  product: Product,
+  unsubscribeUrl: string,
+  ctx: RecoveryContext,
+  firstName = "",
+): { subject: string; html: string } {
+  const c = copyFor(product, firstName);
+  const url = `${getSiteUrl()}${c.path}?utm_source=email&utm_medium=reminder&utm_campaign=checkout_recovery`;
   const wa = `https://wa.me/91${WHATSAPP}`;
-  const items = c.benefits
+  const left = c.offer ? daysLeftLabel() : undefined;
+  const off = c.was ? Math.round((1 - c.price / c.was) * 100) : 0;
+
+  const proof = [
+    { v: STUDENT_COUNT_LABEL, l: "students" },
+    ctx.interviews > 0 ? { v: String(ctx.interviews), l: "interview calls" } : null,
+    ctx.offers > 0 ? { v: String(ctx.offers), l: "offers" } : null,
+    ctx.liveOpenings > 0 ? { v: String(ctx.liveOpenings), l: "openings live now" } : null,
+  ]
+    .filter(Boolean)
+    .slice(0, 3) as { v: string; l: string }[];
+  const proofCells = proof
     .map(
-      (b) =>
-        `<tr><td style="padding:6px 0;vertical-align:top;width:26px;color:#16a34a;font-weight:700;">✓</td><td style="padding:6px 0;font-size:15px;line-height:1.5;color:#1f2329;">${esc(b)}</td></tr>`,
+      (p) =>
+        `<td align="center" style="padding:12px 6px;background:#16161c;border-radius:12px;"><div style="font-size:22px;font-weight:800;color:#ffffff;">${esc(p.v)}</div><div style="font-size:12px;color:#a1a1aa;margin-top:2px;">${esc(p.l)}</div></td>`,
+    )
+    .join('<td style="width:8px;"></td>');
+
+  const benefits = c.benefits
+    .map(
+      ([t, d]) =>
+        `<tr><td style="padding:8px 12px 8px 0;vertical-align:top;width:22px;"><div style="width:22px;height:22px;border-radius:50%;background:#dcfce7;color:#15803d;font-size:13px;font-weight:800;text-align:center;line-height:22px;">✓</div></td><td style="padding:8px 0;"><div style="font-size:15px;font-weight:700;color:#111827;">${esc(t)}</div><div style="font-size:13.5px;color:#6b7280;margin-top:2px;">${esc(d)}</div></td></tr>`,
     )
     .join("");
+
+  const companies = ctx.companies.length
+    ? `<tr><td style="padding:22px 28px 0;">
+        <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">FirstOffer students got interview calls from</p>
+        <p style="margin:0;font-size:14px;line-height:2;color:#111827;">${ctx.companies
+          .map((n) => `<span style="display:inline-block;margin:0 6px 6px 0;padding:3px 10px;border-radius:8px;background:#f3f4f6;border:1px solid #e5e7eb;font-weight:600;">${esc(n)}</span>`)
+          .join("")}</p>
+      </td></tr>`
+    : "";
+
+  const story = ctx.story
+    ? `<tr><td style="padding:18px 28px 0;">
+        <div style="padding:16px 18px;border-radius:14px;background:#f0fdf4;border:1px solid #bbf7d0;">
+          <p style="margin:0;font-size:14.5px;line-height:1.6;color:#14532d;">${esc(ctx.story.quote)}</p>
+          <p style="margin:8px 0 0;font-size:13px;font-weight:700;color:#166534;">— ${esc(ctx.story.name)}, ${ctx.story.outcome === "selected" ? "selected at" : "interview call from"} ${esc(ctx.story.company)}</p>
+        </div>
+      </td></tr>`
+    : "";
+
   const priceBlock = `
-    <p style="margin:0;font-size:13px;color:#6b7280;">Your price</p>
-    <p style="margin:4px 0 0;font-size:34px;font-weight:800;color:#111827;line-height:1;">₹${c.price}
-      ${c.was ? `<span style="font-size:18px;font-weight:600;color:#9ca3af;text-decoration:line-through;margin-left:8px;">₹${c.was}</span>` : ""}
-      <span style="font-size:14px;font-weight:600;color:#6b7280;margin-left:6px;">${c.period}</span>
-    </p>
-    ${c.offerLine ? `<p style="margin:10px 0 0;display:inline-block;padding:5px 12px;border-radius:999px;background:#fff7e6;border:1px solid #f5c26b;font-size:13px;font-weight:700;color:#92400e;">${esc(c.offerLine)}</p>` : ""}`;
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-radius:16px;background:#0b0b10;">
+      <tr><td style="padding:20px 22px;">
+        ${c.offer ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#3b2a07;border:1px solid #a16207;font-size:12.5px;font-weight:700;color:#fde68a;">🪔 Diwali offer · ends ${esc(FULL_ACCESS_SALE_END_LABEL)}${left ? ` · ${esc(left)}` : ""}</span>` : ""}
+        <p style="margin:12px 0 0;font-size:40px;font-weight:800;color:#ffffff;line-height:1;">₹${c.price}
+          ${c.was ? `<span style="font-size:20px;font-weight:600;color:#71717a;text-decoration:line-through;margin-left:8px;">₹${c.was}</span><span style="display:inline-block;vertical-align:middle;margin-left:8px;padding:3px 9px;border-radius:999px;background:#052e16;border:1px solid #166534;font-size:12px;font-weight:800;color:#4ade80;">${off}% OFF</span>` : ""}
+        </p>
+        <p style="margin:8px 0 0;font-size:14px;color:#a1a1aa;">for 3 months · that's just <b style="color:#ffffff;">₹${c.perDay}/day</b> — less than a cup of chai ☕</p>
+        <a href="${url}" style="display:block;margin-top:16px;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:17px;font-weight:800;padding:16px 22px;border-radius:12px;">${esc(c.cta)}</a>
+        <p style="margin:10px 0 0;text-align:center;font-size:12.5px;color:#a1a1aa;">🔒 Razorpay secure · UPI · GPay · PhonePe · Paytm · No auto-debit</p>
+      </td></tr>
+    </table>`;
 
   const html = `<!doctype html>
 <html>
   <body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;padding:28px 14px;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(c.preheader)}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;padding:24px 12px;">
       <tr><td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e5e7eb;">
-          <tr><td style="background:#0b0b10;padding:22px 28px;">
-            <p style="margin:0;font-size:18px;font-weight:800;color:#ffffff;">FirstOffer</p>
-            <p style="margin:4px 0 0;font-size:13px;color:#a1a1aa;">Trusted by ${esc(STUDENT_COUNT_LABEL)} students</p>
-          </td></tr>
-          <tr><td style="padding:26px 28px 0;">
-            <h1 style="margin:0;font-size:22px;line-height:1.3;color:#111827;">${esc(c.heading)}</h1>
-            <p style="margin:10px 0 0;font-size:15px;line-height:1.6;color:#4b5563;">
-              You started checkout on FirstOffer but the payment didn't go through. No worries — your spot is still here.
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:540px;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #e5e7eb;">
+          <tr><td style="background:#0b0b10;padding:24px 28px 22px;">
+            <p style="margin:0;font-size:19px;font-weight:800;color:#ffffff;">FirstOffer</p>
+            <p style="margin:14px 0 0;font-size:24px;line-height:1.25;font-weight:800;color:#ffffff;">${esc(c.heading)}</p>
+            <p style="margin:10px 0 0;font-size:15px;line-height:1.6;color:#d4d4d8;">
+              ${firstName ? `Hi ${esc(firstName)}, y` : "Y"}our checkout didn't finish — happens all the time with UPI. Your price is still reserved, and it takes less than 30 seconds to complete.
             </p>
+            ${proof.length ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;"><tr>${proofCells}</tr></table>` : ""}
           </td></tr>
-          <tr><td style="padding:20px 28px 0;">
-            <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">What you get</p>
-            <table role="presentation" cellpadding="0" cellspacing="0">${items}</table>
+          <tr><td style="padding:24px 28px 0;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">What you unlock</p>
+            <table role="presentation" cellpadding="0" cellspacing="0">${benefits}</table>
           </td></tr>
-          <tr><td style="padding:20px 28px 0;">
-            <div style="padding:18px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb;">${priceBlock}</div>
-          </td></tr>
-          <tr><td style="padding:22px 28px 0;">
-            <a href="${url}" style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:15px 22px;border-radius:12px;">${esc(c.cta)} →</a>
-            <p style="margin:10px 0 0;text-align:center;font-size:13px;color:#6b7280;">🔒 Secure payment by Razorpay · UPI, GPay, PhonePe, Paytm · No auto-debit</p>
-          </td></tr>
-          <tr><td style="padding:20px 28px 24px;">
-            <p style="margin:0;font-size:14px;line-height:1.6;color:#4b5563;">
-              Payment failed or money got deducted? Just reply to this email or WhatsApp us at
-              <a href="${wa}" style="color:#16a34a;font-weight:700;text-decoration:none;">+91 63639 76632</a> — we'll sort it out the same day.
+          ${companies}
+          ${story}
+          <tr><td style="padding:22px 28px 0;">${priceBlock}</td></tr>
+          <tr><td style="padding:22px 28px 6px;">
+            <p style="margin:0;font-size:14.5px;line-height:1.65;color:#374151;">
+              Placements aren't only about skills — they're about your resume reaching a real HR. That's exactly what FirstOffer does, every single day.
             </p>
+            <p style="margin:12px 0 0;font-size:14.5px;line-height:1.65;color:#374151;">
+              Payment failed or money got deducted? Reply to this email or WhatsApp me at
+              <a href="${wa}" style="color:#16a34a;font-weight:700;text-decoration:none;">+91 63639 76632</a> — I'll fix it the same day.
+            </p>
+            <p style="margin:14px 0 0;font-size:14.5px;color:#111827;font-weight:700;">— Nayan, Founder, FirstOffer</p>
+          </td></tr>
+          <tr><td style="padding:16px 28px 22px;">
+            <a href="${url}" style="display:inline-block;color:#2563eb;font-size:15px;font-weight:700;text-decoration:none;">Complete my payment →</a>
           </td></tr>
           <tr><td style="padding:14px 28px 20px;border-top:1px solid #e5e7eb;">
             <p style="margin:0;font-size:12px;line-height:1.6;color:#9ca3af;">
-              You're getting this one-time reminder because you started a checkout on FirstOffer.
+              One-time reminder because you started a checkout on FirstOffer. Govt. registered MSME (Udyam).
               <a href="${unsubscribeUrl}" style="color:#9ca3af;">Unsubscribe</a>.
             </p>
           </td></tr>
@@ -146,6 +218,49 @@ function renderHtml(product: Product, unsubscribeUrl: string): { subject: string
   </body>
 </html>`;
   return { subject: c.subject, html };
+}
+
+async function loadContext(admin: ReturnType<typeof createAdminClient>): Promise<RecoveryContext> {
+  const ctx: RecoveryContext = { liveOpenings: 0, interviews: 0, offers: 0, companies: [] };
+  try {
+    const stats = await getSiteStats();
+    ctx.liveOpenings = stats.totalOpportunities;
+    ctx.interviews = stats.totalInterviews;
+    ctx.offers = stats.totalOffers;
+  } catch (err) {
+    console.error("Checkout reminders: stats failed:", err instanceof Error ? err.message : err);
+  }
+  const { data } = await admin
+    .from("testimonials")
+    .select("student_name, company_name, outcome, quote")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(40);
+  const seen = new Set<string>();
+  for (const t of data ?? []) {
+    const name = String(t.company_name ?? "").trim();
+    const key = name.toLowerCase();
+    if (name && !seen.has(key) && ctx.companies.length < 8) {
+      seen.add(key);
+      ctx.companies.push(name);
+    }
+    const quote = String(t.quote ?? "").trim();
+    if (!ctx.story && quote.length >= 30 && quote.length <= 260 && t.student_name) {
+      ctx.story = {
+        name: String(t.student_name).trim(),
+        company: name,
+        outcome: t.outcome === "selected" ? "selected" : "interview",
+        quote,
+      };
+    }
+  }
+  return ctx;
+}
+
+function firstNameOf(meta: Record<string, unknown> | undefined): string {
+  const full = String(meta?.full_name ?? meta?.name ?? "").trim();
+  const first = full.split(/\s+/)[0] ?? "";
+  return /^[\p{L}.'-]{2,20}$/u.test(first) ? first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() : "";
 }
 
 export async function sendCheckoutRecoveryEmails(): Promise<{
@@ -189,7 +304,9 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
     else byUser.set(r.user_id, { product: r.product === "internal_hr" ? "internal_hr" : "full_access", ids: [r.id] });
   }
 
+  if (byUser.size === 0) return { configured: true, candidates: 0, sent: 0, skipped: 0, errors: 0 };
   const optedOut = await getOptedOutUserIds(admin);
+  const ctx = await loadContext(admin);
   const cooldownSince = new Date(now - COOLDOWN_DAYS * 86_400_000).toISOString();
   let sent = 0;
   let skipped = 0;
@@ -215,6 +332,7 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
 
     const { data: u } = await admin.auth.admin.getUserById(userId);
     const email = u?.user?.email;
+    const firstName = firstNameOf(u?.user?.user_metadata);
     await markAll();
     if (!email) {
       skipped += 1;
@@ -222,9 +340,9 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
     }
 
     const unsubscribeUrl = buildUnsubscribeUrl(userId);
-    const { subject, html } = renderHtml(product, unsubscribeUrl);
+    const { subject, html } = renderHtml(product, unsubscribeUrl, ctx, firstName);
     const { error: sendError } = await resend.emails.send({
-      from,
+      from: `Nayan from FirstOffer <${from.match(/<([^>]+)>/)?.[1] ?? from.trim()}>`,
       to: email,
       replyTo: "support@firstoffer.online",
       subject,
