@@ -53,10 +53,13 @@ export function renderBroadcast(input: BroadcastInput, firstName: string, unsubs
           <tr><td style="padding:24px 28px 0;font-size:15px;line-height:1.7;color:#374151;">${body}</td></tr>
           ${cta}
           <tr><td style="padding:20px 28px 22px;">
-            <p style="margin:0;font-size:13.5px;line-height:1.6;color:#6b7280;">Questions? Reply to this email or WhatsApp us at <a href="https://wa.me/916363976632" style="color:#16a34a;font-weight:700;text-decoration:none;">+91 63639 76632</a>.</p>
+            <div style="padding:14px 16px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;">
+              <p style="margin:0;font-size:14px;line-height:1.6;color:#14532d;">💬 Need help, have a doubt or facing any issue? One of our team members is available on WhatsApp — feel free to reach out anytime.</p>
+              <a href="https://wa.me/916363976632" style="display:inline-block;margin-top:10px;padding:8px 14px;border-radius:999px;background:#16a34a;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">WhatsApp +91 63639 76632</a>
+            </div>
           </td></tr>
           <tr><td style="padding:14px 28px 20px;border-top:1px solid #e5e7eb;">
-            <p style="margin:0;font-size:12px;line-height:1.6;color:#9ca3af;">You're getting this because you signed up on FirstOffer. Govt. registered MSME (Udyam). <a href="${esc(unsubscribeUrl)}" style="color:#9ca3af;">Unsubscribe</a>.</p>
+            <p style="margin:0;font-size:12px;line-height:1.6;color:#9ca3af;">You're getting this because you signed up on FirstOffer. <a href="${esc(unsubscribeUrl)}" style="color:#9ca3af;">Unsubscribe</a>.</p>
           </td></tr>
         </table>
       </td></tr>
