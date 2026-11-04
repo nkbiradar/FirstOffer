@@ -8,8 +8,11 @@
 //  - never to anyone who has since paid (access check at send time),
 //  - never to anyone who unsubscribed from FirstOffer emails,
 //  - at most ONE reminder per student per 7 days, whatever they retry.
-// Needs RESEND_API_KEY + RESEND_FROM_EMAIL (same as the job alerts) and the
-// `recovery_email_sent_at` column (see supabase/schema.sql).
+// Sent through the Hostinger mailbox (SMTP_HOST / SMTP_USER / SMTP_PASS, the
+// same one lib/email/admin-notify.ts uses) so it never competes with the job
+// alerts for Resend's monthly quota; falls back to Resend if SMTP isn't set.
+// Needs the `recovery_email_sent_at` column (see supabase/schema.sql).
+import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/lib/site-url";
@@ -182,7 +185,7 @@ export function renderHtml(
             <p style="margin:0;font-size:19px;font-weight:800;color:#ffffff;">FirstOffer</p>
             <p style="margin:14px 0 0;font-size:24px;line-height:1.25;font-weight:800;color:#ffffff;">${esc(c.heading)}</p>
             <p style="margin:10px 0 0;font-size:15px;line-height:1.6;color:#d4d4d8;">
-              ${firstName ? `Hi ${esc(firstName)}, y` : "Y"}our checkout didn't finish — happens all the time with UPI. Your price is still reserved, and it takes less than 30 seconds to complete.
+              ${firstName ? `Hi ${esc(firstName)}, y` : "Y"}our checkout didn't finish — happens all the time with UPI. Your offer price is still available, and it takes less than 30 seconds to complete.
             </p>
             ${proof.length ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;"><tr>${proofCells}</tr></table>` : ""}
           </td></tr>
@@ -263,6 +266,53 @@ function firstNameOf(meta: Record<string, unknown> | undefined): string {
   return /^[\p{L}.'-]{2,20}$/u.test(first) ? first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() : "";
 }
 
+type Mail = { to: string; subject: string; html: string; headers: Record<string, string> };
+type Sender = (mail: Mail) => Promise<string | null>;
+
+/** Hostinger SMTP first (own quota, sent as support@), Resend as fallback. */
+function getSender(): Sender | null {
+  const host = process.env.SMTP_HOST;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  if (host && user && pass) {
+    const port = Number(process.env.SMTP_PORT ?? 465);
+    const transport = nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } });
+    return async (m) => {
+      try {
+        await transport.sendMail({
+          from: `Nayan from FirstOffer <${user}>`,
+          to: m.to,
+          replyTo: user,
+          subject: m.subject,
+          html: m.html,
+          headers: m.headers,
+        });
+        return null;
+      } catch (err) {
+        return err instanceof Error ? err.message : String(err);
+      }
+    };
+  }
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (apiKey && from) {
+    const resend = new Resend(apiKey);
+    const addr = from.match(/<([^>]+)>/)?.[1] ?? from.trim();
+    return async (m) => {
+      const { error } = await resend.emails.send({
+        from: `Nayan from FirstOffer <${addr}>`,
+        to: m.to,
+        replyTo: "support@firstoffer.online",
+        subject: m.subject,
+        html: m.html,
+        headers: m.headers,
+      });
+      return error ? `${error.name}: ${error.message}` : null;
+    };
+  }
+  return null;
+}
+
 export async function sendCheckoutRecoveryEmails(): Promise<{
   configured: boolean;
   candidates: number;
@@ -270,13 +320,11 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
   skipped: number;
   errors: number;
 }> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) {
-    console.error("Checkout reminders aren't configured — set RESEND_API_KEY and RESEND_FROM_EMAIL.");
+  const send = getSender();
+  if (!send) {
+    console.error("Checkout reminders aren't configured — set SMTP_HOST/SMTP_USER/SMTP_PASS (Hostinger) or RESEND_API_KEY/RESEND_FROM_EMAIL.");
     return { configured: false, candidates: 0, sent: 0, skipped: 0, errors: 0 };
   }
-  const resend = new Resend(apiKey);
   const admin = createAdminClient();
   const now = Date.now();
   const newest = new Date(now - MIN_AGE_MINUTES * 60_000).toISOString();
@@ -341,10 +389,8 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
 
     const unsubscribeUrl = buildUnsubscribeUrl(userId);
     const { subject, html } = renderHtml(product, unsubscribeUrl, ctx, firstName);
-    const { error: sendError } = await resend.emails.send({
-      from: `Nayan from FirstOffer <${from.match(/<([^>]+)>/)?.[1] ?? from.trim()}>`,
+    const sendError = await send({
       to: email,
-      replyTo: "support@firstoffer.online",
       subject,
       html,
       headers: {
@@ -353,12 +399,12 @@ export async function sendCheckoutRecoveryEmails(): Promise<{
       },
     });
     if (sendError) {
-      console.error("Checkout reminder failed:", sendError.message);
+      console.error("Checkout reminder failed:", sendError);
       errors += 1;
     } else {
       sent += 1;
     }
-    // Resend's default limit is 2 requests/second.
+    // Stay well under Hostinger's / Resend's per-second limits.
     await new Promise((r) => setTimeout(r, 600));
   }
 
