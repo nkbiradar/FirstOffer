@@ -9,10 +9,7 @@ const STRAND_GAP = 22; // px between lights on a strand
 const COLOR = "#ffc861"; // one warm golden tone
 
 export default function DiwaliLights() {
-  // Wire: a row of shallow curves, drawn in a 0–1000 × 0–30 box stretched to full width.
   const seg = 1000 / SWAGS;
-  let d = "M0 4";
-  for (let i = 0; i < SWAGS; i += 1) d += ` Q ${seg * i + seg / 2} 26 ${seg * (i + 1)} 4`;
 
   return (
     <div aria-hidden="true" className="dl-strip" style={{ ["--c" as string]: COLOR }}>
@@ -29,9 +26,6 @@ export default function DiwaliLights() {
           );
         })}
       </div>
-      <svg className="dl-wire" preserveAspectRatio="none" viewBox="0 0 1000 30">
-        <path d={d} fill="none" stroke="#7c6a3a" strokeWidth={2} vectorEffect="non-scaling-stroke" />
-      </svg>
       {Array.from({ length: BULBS }, (_, i) => {
         const x = ((i + 0.5) / BULBS) * 1000;
         const t = (x % seg) / seg; // position within its swag, 0–1
