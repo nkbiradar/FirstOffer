@@ -1091,3 +1091,29 @@ create index if not exists what_worked_published_created_idx
 -- The public page reads published rows server-side with a safe column list,
 -- so submitter emails and anonymous posters' names are never exposed.
 alter table public.what_worked_stories enable row level security;
+
+-- ── subscriptions.recovery_email_sent_at (Nov 2026) ──────────────────────
+-- Set when lib/email/checkout-recovery.ts sends (or deliberately skips)
+-- the one-time "you didn't finish paying" reminder for an abandoned
+-- checkout, so the same row is never emailed twice.
+alter table public.subscriptions
+  add column if not exists recovery_email_sent_at timestamptz;
+
+create index if not exists subscriptions_recovery_pending_idx
+  on public.subscriptions (status, created_at)
+  where recovery_email_sent_at is null;
+
+-- Every 10 minutes, Supabase calls the reminder endpoint (Vercel's free
+-- plan only allows daily crons). Run once in the SQL editor with your real
+-- CRON_SECRET (the same value as the CRON_SECRET env var in Vercel):
+--
+--   create extension if not exists pg_cron;
+--   create extension if not exists pg_net;
+--   select cron.schedule(
+--     'checkout-recovery',
+--     '*/10 * * * *',
+--     $$ select net.http_get(
+--          url := 'https://www.firstoffer.online/api/cron/checkout-recovery',
+--          headers := jsonb_build_object('Authorization', 'Bearer YOUR_CRON_SECRET')
+--        ) $$
+--   );
