@@ -33,7 +33,7 @@ const OUTCOME_COPY: Record<Testimonial["outcome"], string> = {
  */
 // Only the newest few rotate in the popup; the rest stay in the homepage
 // "Success stories" section (View all). Testimonials arrive newest-first.
-const POPUP_LIMIT = 5;
+const POPUP_LIMIT = 10;
 
 export default function SuccessPopup({ testimonials: all }: { testimonials: Testimonial[] }) {
   const testimonials = all.slice(0, POPUP_LIMIT);
