@@ -8359,7 +8359,7 @@ body:has(main.home-dark) {
 /* ── Diwali fairy-light strip (components/DiwaliLights.tsx, Nov 2026) ─────── */
 .dl-strip { position: relative; z-index: 1; height: 30px; margin-bottom: -30px; pointer-events: none; overflow: visible; }
 .dl-wire { position: absolute; inset: 0; width: 100%; height: 100%; }
-.dl-bulb { position: absolute; width: 6px; height: 8px; margin-left: -3px; margin-top: 3px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: var(--c); box-shadow: 0 0 4px 1px var(--c), 0 0 9px 2px color-mix(in srgb, var(--c) 40%, transparent); animation: dl-twinkle 2s ease-in-out infinite; }
+.dl-bulb { position: absolute; width: 6px; height: 8px; margin-left: -3px; margin-top: 3px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: var(--c); box-shadow: 0 0 4px 1px var(--c), 0 0 9px 2px color-mix(in srgb, var(--c) 40%, transparent); animation: dl-blink 1.6s steps(1, end) infinite; }
 .dl-bulb::before { content: ""; position: absolute; top: -2px; left: 1.5px; width: 3px; height: 3px; border-radius: 1px; background: #57534e; }
 @keyframes dl-twinkle { 0%, 100% { opacity: 1; filter: brightness(1.2); } 50% { opacity: 0.45; filter: brightness(0.75); } }
 @media (max-width: 640px) { .dl-bulb:nth-child(odd) { display: none; } .dl-strip { margin-bottom: -6px; } }
@@ -8367,7 +8367,10 @@ body:has(main.home-dark) {
 .home-dark .dh-hero { position: relative; z-index: 2; }
 .dl-curtain { position: absolute; top: 6px; left: 0; right: 0; height: 360px; pointer-events: none; -webkit-mask-image: linear-gradient(#000 0%, #000 35%, transparent 100%); mask-image: linear-gradient(#000 0%, #000 35%, transparent 100%); }
 .dl-strand { position: absolute; top: 0; width: 1px; margin-left: -0.5px; background: linear-gradient(rgba(255, 200, 97, 0.35), rgba(255, 200, 97, 0.08)); }
-.dl-strand i { position: absolute; left: -2px; width: 5px; height: 5px; border-radius: 50%; background: var(--c); box-shadow: 0 0 4px 1px var(--c), 0 0 9px 2px rgba(255, 200, 97, 0.35); animation: dl-glint 2.4s ease-in-out infinite; }
+.dl-strand i { position: absolute; left: -2px; width: 5px; height: 5px; border-radius: 50%; background: var(--c); box-shadow: 0 0 4px 1px var(--c), 0 0 9px 2px rgba(255, 200, 97, 0.35); animation: dl-blink 1.6s steps(1, end) infinite; }
+@keyframes dl-blink { 0% { opacity: 1; } 35% { opacity: 0.12; } 50% { opacity: 1; } 80% { opacity: 0.12; } 90% { opacity: 1; } }
+.dl-strand i:nth-child(3n), .dl-bulb:nth-child(3n) { animation-duration: 1.1s; }
+.dl-strand i:nth-child(4n+1), .dl-bulb:nth-child(4n+1) { animation-duration: 2.2s; }
 @keyframes dl-glint { 0%, 100% { opacity: 0.95; } 50% { opacity: 0.25; } }
 @media (max-width: 640px) {
   .dl-strand:nth-child(odd) { display: none; }
