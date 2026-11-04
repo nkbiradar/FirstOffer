@@ -239,12 +239,12 @@ async function loadContext(admin: ReturnType<typeof createAdminClient>): Promise
     .select("student_name, company_name, outcome, quote")
     .eq("is_published", true)
     .order("created_at", { ascending: false })
-    .limit(40);
+    .limit(150);
   const seen = new Set<string>();
   for (const t of data ?? []) {
     const name = String(t.company_name ?? "").trim();
     const key = name.toLowerCase();
-    if (name && !seen.has(key) && ctx.companies.length < 8) {
+    if (name && !seen.has(key) && ctx.companies.length < 18) {
       seen.add(key);
       ctx.companies.push(name);
     }
