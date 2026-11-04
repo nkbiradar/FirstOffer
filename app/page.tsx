@@ -35,7 +35,6 @@ import {
   isFullAccessSaleActive,
 } from "@/lib/payments/razorpay";
 import DiwaliOfferPopup from "@/components/DiwaliOfferPopup";
-import DiwaliLights from "@/components/DiwaliLights";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
 import { isAppRequest } from "@/lib/nativeAppServer";
 
@@ -194,7 +193,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       {showDiwaliPopup && (
         <DiwaliOfferPopup endLabel={FULL_ACCESS_SALE_END_LABEL} endsAt={FULL_ACCESS_SALE_ENDS_AT} plans={diwaliPlans} />
       )}
-      {isFullAccessSaleActive() && <DiwaliLights />}
       {/* WebSite Schema for SearchAction */}
       {/* eslint-disable-next-line react/no-danger -- JSON-LD requires raw script content */}
       <script
