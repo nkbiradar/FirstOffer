@@ -1,9 +1,9 @@
 // A single string of twinkling Diwali fairy lights across the top of the
 // homepage hero. Pure CSS animation (no JS), decorative only; the homepage
 // shows it only while the Diwali offer is running.
-const BULBS = 44;
-const SWAGS = 11; // the wire dips between hooks this many times
-const COLORS = ["#fbbf24", "#fb923c", "#f472b6", "#34d399", "#60a5fa", "#fde68a"];
+const BULBS = 30;
+const SWAGS = 10; // the wire dips between hooks this many times
+const COLOR = "#ffc861"; // one warm golden tone
 
 export default function DiwaliLights() {
   // Wire: a row of shallow curves, drawn in a 0–1000 × 0–30 box stretched to full width.
@@ -27,7 +27,7 @@ export default function DiwaliLights() {
             style={{
               left: `${x / 10}%`,
               top: `${(y / 30) * 100}%`,
-              ["--c" as string]: COLORS[i % COLORS.length],
+              ["--c" as string]: COLOR,
               animationDelay: `${(i % 7) * 0.28}s`,
             }}
           />
