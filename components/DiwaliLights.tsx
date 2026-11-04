@@ -1,7 +1,7 @@
 // Diwali fairy lights across the top of the homepage hero: one golden
 // string on a sagging wire, with thin "curtain" strands of lights hanging
-// from it that fade out downwards. Pure CSS animation (opacity only, cheap
-// to render), decorative, never blocks clicks. Shown only during the offer.
+// from it that fade out downwards. A slow glow travels down each strand like
+// falling light. Pure CSS animation (opacity/transform only, cheap to render), decorative, never blocks clicks. Shown only during the offer.
 const BULBS = 20;
 const SWAGS = 10; // the wire dips between hooks this many times
 const STRANDS = 26; // hanging curtain strands
@@ -20,7 +20,7 @@ export default function DiwaliLights() {
           return (
             <span className="dl-strand" key={i} style={{ left: `${((i + 0.5) / STRANDS) * 100}%`, height: `${length}px` }}>
               {Array.from({ length: lights }, (_, j) => (
-                <i key={j} style={{ top: `${(j + 1) * STRAND_GAP}px`, animationDelay: `${((i * 3 + j * 5) % 9) * 0.25}s` }} />
+                <i key={j} style={{ top: `${(j + 1) * STRAND_GAP}px`, animationDelay: `${(j * 0.45 + (i % 6) * 0.9) % 7}s` }} />
               ))}
             </span>
           );
@@ -34,7 +34,7 @@ export default function DiwaliLights() {
           <span
             className="dl-bulb"
             key={i}
-            style={{ left: `${x / 10}%`, top: `${(y / 30) * 100}%`, animationDelay: `${(i % 7) * 0.28}s` }}
+            style={{ left: `${x / 10}%`, top: `${(y / 30) * 100}%`, animationDelay: `${(i % 7) * 0.9}s` }}
           />
         );
       })}
