@@ -110,6 +110,9 @@ export default function HomeDarkHero({ todayCount, dateLabel, stats, openings, t
               Fresher jobs, internships and off-campus drives from companies hiring across India — with the HR&apos;s
               email, Google Form or official apply link.
             </p>
+            <p className="dh-daily dh-in" style={{ animationDelay: "0.24s" }}>
+              <span aria-hidden="true">📈</span> <strong>50+ new opportunities</strong> added every day
+            </p>
             <p className="dh-note dh-in" style={{ animationDelay: "0.26s" }}>
               ⏱ Every listing expires in 2 days as companies close hiring — apply fast.
             </p>
