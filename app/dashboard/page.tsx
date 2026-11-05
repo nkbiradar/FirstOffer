@@ -74,6 +74,14 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 // component reading a `status` query param, no client-side filtering JS —
 // same convention /opportunities already uses for its filter pills, so
 // this page degrades gracefully with JS off too.
+/** First name from the Google profile ("NAYAN KUMAR" → "Nayan"); "" if none. */
+function firstNameOf(meta: Record<string, unknown> | null | undefined): string {
+  const raw = String(meta?.given_name ?? meta?.full_name ?? meta?.name ?? "").trim();
+  const first = raw.split(/\s+/)[0] ?? "";
+  if (!/^[\p{L}.'-]{2,24}$/u.test(first)) return "";
+  return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -90,6 +98,7 @@ export default async function DashboardPage({
 
   // Runs first so a free month earned since the last visit is granted
   // before the subscription is read below.
+  const firstName = firstNameOf(user.user_metadata);
   const referral = await syncReferralRewards(user.id, displayName(user)).catch((e) => {
     console.error("syncReferralRewards threw:", e);
     return null;
@@ -143,7 +152,7 @@ export default async function DashboardPage({
             <span className="eyebrow-dot" />
             Dashboard
           </span>
-          <h1>Welcome back{user.email ? `, ${user.email.split("@")[0]}` : ""}</h1>
+          <h1>Welcome back{firstName ? `, ${firstName}` : ""} 👋</h1>
           <p>Every opportunity you&apos;ve applied to and unlocked, all in one place.</p>
         </div>
 
