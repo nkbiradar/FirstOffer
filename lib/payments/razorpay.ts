@@ -48,13 +48,13 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(DASARA_SALE_ENDS_AT);
 }
 
-// ── Diwali offer (30 Oct – 8 Nov 2026): full access shown as ₹299 → ₹149,
-// same 3 months. ₹149 is what is actually charged (getFullAccessPriceInr →
+// ── Diwali offer (30 Oct – 8 Nov 2026): full access shown as ₹299 → ₹99 (₹149 until 5 Nov),
+// same 3 months. ₹99 is what is actually charged (getFullAccessPriceInr →
 // getProductPricing → Razorpay order); ₹299 is the display-only struck-through
 // price. Switches itself off at FULL_ACCESS_SALE_ENDS_AT, after which the
 // price goes back to the regular ₹199 (MONTHLY_PRICE_INR) — no redeploy needed.
 // (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
-export const FULL_ACCESS_SALE_PRICE_INR = 149;
+export const FULL_ACCESS_SALE_PRICE_INR = 99;
 /** Struck-through "was" price shown beside the offer price. Display only. */
 export const FULL_ACCESS_SALE_MRP_INR = 299;
 export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-08T23:59:59+05:30";
