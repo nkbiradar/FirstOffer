@@ -11,17 +11,8 @@ import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR, getFul
 import OpportunityCard from "@/components/OpportunityCard";
 import OutcomeTracker from "@/components/OutcomeTracker";
 import CountUp from "@/components/CountUp";
-import ReferralCard from "@/components/ReferralCard";
-import { syncReferralRewards, REFERRAL_SIGNUPS_PER_MONTH } from "@/lib/data/referrals";
-import {
-  GOODIES_SIGNUPS_REQUIRED,
-  INTERNSHIP_SIGNUPS_REQUIRED,
-  PROFILE_PUSH_SIGNUPS_REQUIRED,
-  displayName,
-  getInternshipApplication,
-  getUserClaims,
-} from "@/lib/data/referral-rewards";
-import { getSiteUrl } from "@/lib/site-url";
+import { syncReferralRewards } from "@/lib/data/referrals";
+import { displayName } from "@/lib/data/referral-rewards";
 import CancelSubscriptionButton from "@/components/CancelSubscriptionButton";
 import { formatRelativeTime } from "@/lib/ui-format";
 import type { ApplicationOutcome } from "@/types/supabase";
@@ -99,14 +90,12 @@ export default async function DashboardPage({
   // Runs first so a free month earned since the last visit is granted
   // before the subscription is read below.
   const firstName = firstNameOf(user.user_metadata);
-  const referral = await syncReferralRewards(user.id, displayName(user)).catch((e) => {
+  // (The referral card is no longer shown, but rewards already earned by
+  // earlier referrals are still granted here.)
+  await syncReferralRewards(user.id, displayName(user)).catch((e) => {
     console.error("syncReferralRewards threw:", e);
     return null;
   });
-  const [internshipApp, referralClaims] = await Promise.all([
-    getInternshipApplication(user.id),
-    getUserClaims(user.id),
-  ]);
 
   const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
     await Promise.all([
@@ -181,25 +170,6 @@ export default async function DashboardPage({
           </Link>
         )}
 
-        {referral?.code && (
-          <div data-app-hide>
-            <ReferralCard
-              claims={{
-                ...(referralClaims.profile_push ? { profile_push: referralClaims.profile_push.status } : {}),
-                ...(referralClaims.goodies ? { goodies: referralClaims.goodies.status } : {}),
-              }}
-              defaultName={displayName(user)}
-              freeMonthEvery={REFERRAL_SIGNUPS_PER_MONTH}
-              goodiesAt={GOODIES_SIGNUPS_REQUIRED}
-              internshipAt={INTERNSHIP_SIGNUPS_REQUIRED}
-              profilePushAt={PROFILE_PUSH_SIGNUPS_REQUIRED}
-              internshipStatus={internshipApp?.status ?? null}
-              link={`${getSiteUrl()}/?ref=${referral.code}`}
-              rewardsEarned={referral.rewardsEarned}
-              signups={referral.signups}
-            />
-          </div>
-        )}
 
         <StreakCard summary={await getStreakSummary(user.id, user.user_metadata?.weekly_goal)} />
 
