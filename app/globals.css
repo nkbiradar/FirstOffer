@@ -227,6 +227,11 @@ html,
 body {
   padding: 0;
   margin: 0;
+  /* Nothing (e.g. a scrolling logo strip) may widen the page past the
+     screen — on phones that also shifts fixed popups off-centre. "clip"
+     instead of "hidden" keeps the sticky navbar working. */
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 html {
@@ -8355,22 +8360,30 @@ body:has(main.home-dark) {
 @keyframes dw-twinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
 @keyframes dw-flicker { 0%, 100% { transform: scaleY(1) rotate(-2deg); } 50% { transform: scaleY(1.15) rotate(2deg); } }
 @media (max-width: 480px) {
-  .dw-overlay { padding: 10px; }
+  .dw-overlay { padding: 12px; }
+  .dw-card { max-width: min(340px, calc(100vw - 24px)); border-radius: 18px; }
+  .dw-close { top: 8px; right: 8px; width: 30px; height: 30px; font-size: 19px; }
   .dw-plans { grid-template-columns: 1fr; gap: 8px; }
-  .dw-art { height: 96px; }
-  .dw-body { padding: 12px 14px 10px; }
-  .dw-card h2 { margin: 8px 0 4px; font-size: 20px; }
-  .dw-sub { font-size: 13px; }
-  .dw-timer { margin: 10px 0 12px; gap: 6px; }
-  .dw-timer span { min-width: 48px; padding: 5px 3px; }
-  .dw-timer b { font-size: 17px; }
-  .dw-plan { padding: 11px 12px; }
+  .dw-art { height: 78px; }
+  .dw-body { padding: 10px 12px 8px; }
+  .dw-eyebrow { font-size: 11.5px; padding: 4px 10px; }
+  .dw-card h2 { margin: 8px 0 2px; font-size: 18px; }
+  .dw-sub { display: none; }
+  .dw-timer { margin: 8px 0 10px; gap: 5px; }
+  .dw-timer span { min-width: 44px; padding: 4px 2px; border-radius: 8px; }
+  .dw-timer b { font-size: 16px; }
+  .dw-timer small { font-size: 9.5px; }
+  .dw-plan { padding: 10px 11px; border-radius: 13px; }
+  .dw-plan-name { font-size: 14px; }
   .dw-plan-tag { display: none; }
-  .dw-price { margin-top: 2px; }
-  .dw-price b { font-size: 22px; }
-  .dw-plan-cta { margin-top: 8px; padding: 8px; }
-  .dw-later { margin-top: 6px; }
+  .dw-badge { font-size: 10px; top: -8px; }
+  .dw-price { margin-top: 1px; }
+  .dw-price b { font-size: 20px; }
+  .dw-price s { font-size: 12.5px; }
+  .dw-plan-cta { margin-top: 7px; padding: 8px; font-size: 13px; }
+  .dw-later { margin-top: 4px; font-size: 12.5px; }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .dw-burst { animation: none; opacity: 0.9; }
   .dw-star, .dw-flame, .dw-glow, .dw-card, .dw-overlay { animation: none; }
