@@ -36,6 +36,9 @@ type Plan = {
   cta: string;
   href: string;
   note?: string;
+  /** Small gold tag under the name, e.g. "Best for interviews". */
+  tag?: string;
+  rating?: { avg: number; count: number };
   features: Feature[];
 };
 
@@ -55,7 +58,14 @@ function Check({ included }: { included: boolean }) {
   );
 }
 
-export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?: boolean }) {
+export default function PricingPlans({
+  hasFullAccess = false,
+  rating,
+}: {
+  hasFullAccess?: boolean;
+  /** Star rating shown on the Internal HR plan (from the homepage). */
+  rating?: { avg: number; count: number };
+}) {
   const fullSale = isFullAccessSaleActive();
   const internalSale = isDasaraSaleActive();
   const internalDiwali = isDiwaliOfferActive();
@@ -70,6 +80,8 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       note: internalDiwali ? `🪔 Diwali offer · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
       cta: "Get Internal HR",
       href: "/internal-openings",
+      tag: "Best for interviews",
+      rating,
       features: [
         { text: "Openings shared directly by HRs" },
         { text: "Low-competition roles" },
@@ -160,6 +172,22 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
                   </span>
                   {p.name}
                 </h3>
+                {(p.tag || p.rating) && (
+                  <div className="fp-meta">
+                    {p.tag && <span className="fp-tag-gold">{p.tag}</span>}
+                    {p.rating && (
+                      <span
+                        aria-label={`Rated ${p.rating.avg.toFixed(1)} out of 5 by ${p.rating.count} students`}
+                        className="fp-rating"
+                      >
+                        <span aria-hidden="true" className="fp-stars">
+                          ★★★★★
+                        </span>
+                        <b>{p.rating.avg.toFixed(1)}</b>/5 · {p.rating.count} reviews
+                      </span>
+                    )}
+                  </div>
+                )}
                 <span className="fp-period">{p.period}</span>
 
                 <div className="fp-price">₹{p.price.toLocaleString("en-IN")}</div>

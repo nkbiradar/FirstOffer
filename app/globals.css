@@ -7971,6 +7971,11 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-card-featured .fp-card-body { background: var(--fp-card); border-radius: 20px; }
 .fp-ribbon { padding: 10px 0 9px; text-align: center; font-size: 14px; font-weight: 700; color: #fff; }
 .fp-name { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; color: var(--fp-text); }
+.fp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 2px; }
+.fp-tag-gold { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #1c1103; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.fp-rating { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--fp-muted, #a1a1aa); }
+.fp-rating b { color: var(--fp-text, #fff); font-weight: 800; }
+.fp-stars { color: #fbbf24; letter-spacing: 1px; font-size: 12.5px; }
 .fp-spark { color: #fbbf24; }
 .fp-period { display: inline-block; margin-top: 14px; padding: 6px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 600; color: var(--fp-text); background: var(--fp-card-2); border: 1px solid var(--fp-line); }
 .fp-price { margin-top: 18px; font-family: var(--font-display, inherit); font-size: 44px; line-height: 1; font-weight: 800; letter-spacing: -0.02em; }

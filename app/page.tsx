@@ -326,7 +326,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             from lib/payments/razorpay.ts. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
-            <PricingPlans hasFullAccess={alreadyHasFullAccess} />
+            <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} />
             <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} />
           </section>
         </Reveal>
