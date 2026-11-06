@@ -13,7 +13,19 @@ import { createPortal } from "react-dom";
 const SEEN_KEY = "fo-diwali-popup-seen";
 const OPEN_DELAY_MS = 900;
 
-type Plan = { name: string; tagline: string; price: number; was?: number; href: string; cta: string; featured?: boolean };
+type Plan = {
+  name: string;
+  tagline: string;
+  price: number;
+  was?: number;
+  href: string;
+  cta: string;
+  featured?: boolean;
+  /** Small corner tag, e.g. "Most popular". */
+  badge?: string;
+  /** Real average star rating from published student reviews. */
+  rating?: { avg: number; count: number };
+};
 
 type Props = { endsAt: string; endLabel: string; plans: Plan[] };
 
@@ -192,8 +204,14 @@ export default function DiwaliOfferPopup({ endsAt, endLabel, plans }: Props) {
               const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0;
               return (
                 <Link className={`dw-plan${p.featured ? " dw-plan-featured" : ""}`} href={p.href} key={p.name} onClick={close}>
-                  {p.featured && <span className="dw-badge">Most popular</span>}
+                  {p.badge && <span className={`dw-badge${p.featured ? "" : " dw-badge-gold"}`}>{p.badge}</span>}
                   <span className="dw-plan-name">{p.name}</span>
+                  {p.rating && (
+                    <span aria-label={`Rated ${p.rating.avg.toFixed(1)} out of 5 by ${p.rating.count} students`} className="dw-rating">
+                      <span aria-hidden="true" className="dw-stars">★★★★★</span>
+                      <b>{p.rating.avg.toFixed(1)}</b>/5 · {p.rating.count} reviews
+                    </span>
+                  )}
                   <span className="dw-plan-tag">{p.tagline}</span>
                   <span className="dw-price">
                     <b>₹{p.price}</b>

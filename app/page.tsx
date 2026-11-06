@@ -116,6 +116,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   // Diwali offer popup: only while the sale runs, never in the Android app,
   // and only for plans this visitor doesn't already have.
+  // Real average of the star ratings on published student reviews.
+  const rated = testimonials.filter((t) => typeof t.rating === "number" && t.rating > 0);
+  const studentRating =
+    rated.length >= 5
+      ? { avg: Math.round((rated.reduce((n, t) => n + (t.rating ?? 0), 0) / rated.length) * 10) / 10, count: rated.length }
+      : undefined;
   const diwaliPlans = [
     ...(alreadyHasFullAccess
       ? []
@@ -128,6 +134,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             href: "/unlock",
             cta: "Grab Full Access",
             featured: true,
+            badge: "Most popular",
           },
         ]),
     ...(hasInternal
@@ -140,6 +147,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             was: INTERNAL_SALE_MRP_INR,
             href: "/internal-openings",
             cta: "Get Internal HR",
+            badge: "Best for interviews",
+            rating: studentRating,
           },
         ]),
   ];
