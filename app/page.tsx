@@ -116,12 +116,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   // Diwali offer popup: only while the sale runs, never in the Android app,
   // and only for plans this visitor doesn't already have.
-  // Real average of the star ratings on published student reviews.
-  const rated = testimonials.filter((t) => typeof t.rating === "number" && t.rating > 0);
-  const studentRating =
-    rated.length >= 5
-      ? { avg: Math.round((rated.reduce((n, t) => n + (t.rating ?? 0), 0) / rated.length) * 10) / 10, count: rated.length }
-      : undefined;
+  // Star rating shown on the Internal HR plan in the Diwali popup: a fixed
+  // 4.8/5 (owner's choice), with the real number of published reviews.
+  const STUDENT_RATING = 4.8;
+  const reviewCount = testimonials.length;
+  const studentRating = reviewCount >= 5 ? { avg: STUDENT_RATING, count: reviewCount } : undefined;
+
   const diwaliPlans = [
     ...(alreadyHasFullAccess
       ? []
