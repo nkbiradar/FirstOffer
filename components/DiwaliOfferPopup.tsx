@@ -138,7 +138,7 @@ export default function DiwaliOfferPopup({ endsAt, endLabel, plans }: Props) {
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    dialogRef.current?.focus();
+    dialogRef.current?.focus({ preventScroll: true });
     return () => {
       clearInterval(tick);
       document.removeEventListener("keydown", onKey);
