@@ -106,6 +106,7 @@ export default function PricingPlans({ hasFullAccess = false }: { hasFullAccess?
       cta: "Fix my resume",
       href: "/resume",
       features: [
+        { text: "Delivered within 24 hours" },
         { text: "Rebuilt for your target role" },
         { text: "ATS-friendly format & keywords" },
         { text: "Reviewed by HR professionals" },

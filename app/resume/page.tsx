@@ -41,7 +41,7 @@ const MAKEOVER_POINTS = [
 const STEPS = [
   { title: "Share your details", body: "Tell us the role you want and attach your current resume — any format, even a rough one." },
   { title: `Pay ₹${RESUME_REVIEW_PRICE_INR} once`, body: "Quick UPI or card payment. No subscription, no auto-debit." },
-  { title: "Get your new resume", body: "We rebuild it and email the ATS-ready version to your sign-in email." },
+  { title: "Get your new resume", body: "We rebuild it and email the ATS-ready version to your sign-in email — within 24 hours." },
 ];
 
 // Resume Help hub: a free downloadable ATS template (public/resume/*) and
@@ -129,6 +129,11 @@ export default async function ResumePage() {
                 <span className="resume-off-badge">{OFF_PERCENT}% OFF</span>
                 <span className="resume-price-note">Limited-time offer · one-time payment</span>
               </div>
+              <p className="resume-value">
+                <span aria-hidden="true">💡</span> A professional resume writer charges <strong>₹3,000–₹5,000</strong> and
+                takes days. Ours is just <strong>₹{RESUME_REVIEW_PRICE_INR}</strong> — delivered within{" "}
+                <strong>24 hours</strong>.
+              </p>
               <ul className="resume-checklist">
                 {MAKEOVER_POINTS.map((p) => (
                   <li key={p}>{p}</li>
