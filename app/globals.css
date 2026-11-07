@@ -2544,6 +2544,11 @@ button.btn-danger {
 }
 
 .skill-chip {
+  /* One line per chip: a long skill truncates instead of wrapping into an oval. */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   padding: 3px 10px;
   border-radius: var(--radius-full);
   background: transparent;

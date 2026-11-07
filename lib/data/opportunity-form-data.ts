@@ -1,3 +1,4 @@
+import { splitSkills } from "@/lib/ui-format";
 // Parses the admin opportunity form's FormData into a typed shape.
 // The single-opportunity form is a plain HTML <form method="post">, kept
 // dependency-free (no client JS, no schema-validation library) per the
@@ -68,10 +69,9 @@ export function str(formData: FormData, key: string): string {
 
 /** Comma-separated multi-value fields: batch, degree, branches, skills. */
 export function parseListValue(raw: string): string[] {
-  return raw
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
+  // Also accepts pasted bullet lists ("- SQL - Figma" or one per line), so
+  // they're saved as separate values instead of one long string.
+  return splitSkills(raw);
 }
 
 /** One-bullet-per-line textareas: responsibilities, requirements. Also

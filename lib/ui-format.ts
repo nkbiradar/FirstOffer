@@ -83,3 +83,28 @@ export function formatDeadlineUrgency(
   if (diffDays === 1) return { label: "Closes tomorrow", level: "critical" };
   return { label: `Closes in ${diffDays}d`, level: "soon" };
 }
+
+
+/**
+ * Turns stored skills into clean, individual chip labels. Some listings were
+ * saved with every skill in one string ("- SQL - Figma - A/B testing" or
+ * one-per-line), which rendered as one giant chip. Splits on newlines,
+ * commas, semicolons, bullets and " - " separators, strips leading bullet
+ * markers, and de-duplicates. "/" is left alone ("A/B testing").
+ */
+export function splitSkills(raw: string | readonly string[] | null | undefined): string[] {
+  const items = Array.isArray(raw) ? raw : raw ? [raw as string] : [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const item of items) {
+    for (const piece of String(item).split(/\r?\n|[,;•·]|\s+[-–—]\s+/)) {
+      const skill = piece.trim().replace(/^[-–—*•]\s*/, "").trim();
+      const key = skill.toLowerCase();
+      if (skill && !seen.has(key)) {
+        seen.add(key);
+        out.push(skill);
+      }
+    }
+  }
+  return out;
+}

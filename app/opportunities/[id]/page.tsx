@@ -8,7 +8,7 @@ import {
   getRelatedOpportunities,
 } from "@/lib/data/opportunities";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
-import { avatarGradient, initials } from "@/lib/ui-format";
+import { avatarGradient, initials, splitSkills } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getUser, isAdminEmail } from "@/lib/supabase/auth";
 import { isOpportunityApplied } from "@/lib/data/user-applications";
@@ -473,11 +473,11 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </section>
         )}
 
-        {skills.length > 0 && (
+        {splitSkills(skills).length > 0 && (
           <section className="card">
             <h2>Required Skills</h2>
             <p className="opportunity-skills">
-              {skills.map((skill) => (
+              {splitSkills(skills).map((skill) => (
                 <span className="skill-chip" key={skill}>
                   {skill}
                 </span>

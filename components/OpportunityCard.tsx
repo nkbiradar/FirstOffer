@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
-import { avatarGradient, formatDeadlineUrgency, formatRelativeTime, initials } from "@/lib/ui-format";
+import { avatarGradient, formatDeadlineUrgency, formatRelativeTime, initials, splitSkills } from "@/lib/ui-format";
 
 const TYPE_LABELS: Record<string, string> = {
   internship: "Internship",
@@ -52,7 +52,7 @@ export default function OpportunityCard({
     salary,
     location,
     work_mode,
-    skills,
+    skills: rawSkills,
     published_at,
     deadline,
     company,
@@ -60,6 +60,7 @@ export default function OpportunityCard({
     expires_at,
   } = opportunity;
   const live = liveTag(expires_at, published_at);
+  const skills = splitSkills(rawSkills);
 
   const compensation = stipend || salary;
   const postedLabel = formatRelativeTime(published_at);
