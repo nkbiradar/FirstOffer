@@ -7975,6 +7975,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-card-featured { background: var(--fp-blue); border-color: var(--fp-blue); padding: 0 2px 2px; box-shadow: 0 24px 60px rgba(37,99,235,0.28); }
 .fp-card-featured .fp-card-body { background: var(--fp-card); border-radius: 20px; }
 .fp-ribbon { padding: 10px 0 9px; text-align: center; font-size: 14px; font-weight: 700; color: #fff; }
+/* Internal HR: gold version of the featured frame + ribbon. */
+.fp-card-gold { background: linear-gradient(90deg, #f59e0b, #fbbf24); border-color: #f59e0b; padding: 0 2px 2px; box-shadow: 0 24px 60px rgba(245,158,11,0.22); }
+.fp-card-gold .fp-card-body { background: var(--fp-card); border-radius: 20px; }
+.fp-ribbon-gold { color: #1c1103; font-weight: 800; }
 .fp-name { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; color: var(--fp-text); }
 .fp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 2px; }
 .fp-tag-gold { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #1c1103; background: linear-gradient(90deg, #f59e0b, #fbbf24); }

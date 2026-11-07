@@ -32,6 +32,8 @@ type Plan = {
   price: number;
   was?: number;
   featured?: boolean;
+  /** Gold top ribbon (like the blue "Most popular" one), e.g. on Internal HR. */
+  ribbon?: string;
   countdownEndsAt?: string;
   cta: string;
   href: string;
@@ -80,7 +82,7 @@ export default function PricingPlans({
       note: internalDiwali ? `🪔 Diwali offer · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
       cta: "Get Internal HR",
       href: "/internal-openings",
-      tag: "Best for interviews",
+      ribbon: "⭐ Best for interviews",
       rating,
       features: [
         { text: "Openings shared directly by HRs" },
@@ -163,8 +165,12 @@ export default function PricingPlans({
         {plans.map((p) => {
           const off = pctOff(p.price, p.was);
           return (
-            <article className={`fp-card${p.featured ? " fp-card-featured" : ""}`} key={p.key}>
+            <article
+              className={`fp-card${p.featured ? " fp-card-featured" : ""}${p.ribbon ? " fp-card-gold" : ""}`}
+              key={p.key}
+            >
               {p.featured && <div className="fp-ribbon">Most popular</div>}
+              {p.ribbon && <div className="fp-ribbon fp-ribbon-gold">{p.ribbon}</div>}
               <div className="fp-card-body">
                 <h3 className="fp-name">
                   <span aria-hidden="true" className="fp-spark">
