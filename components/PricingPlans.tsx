@@ -183,13 +183,13 @@ export default function PricingPlans({
                     {p.tag && <span className="fp-tag-gold">{p.tag}</span>}
                     {p.rating && (
                       <span
-                        aria-label={`Rated ${p.rating.avg.toFixed(1)} out of 5 by ${p.rating.count} students`}
+                        aria-label={`Rated ${p.rating.avg.toFixed(1)} out of 5`}
                         className="fp-rating"
                       >
                         <span aria-hidden="true" className="fp-stars">
                           ★★★★★
                         </span>
-                        <b>{p.rating.avg.toFixed(1)}</b>/5 · {p.rating.count} reviews
+                        <b>{p.rating.avg.toFixed(1)}</b>/5
                       </span>
                     )}
                   </div>

@@ -207,9 +207,9 @@ export default function DiwaliOfferPopup({ endsAt, endLabel, plans }: Props) {
                   {p.badge && <span className={`dw-badge${p.featured ? "" : " dw-badge-gold"}`}>{p.badge}</span>}
                   <span className="dw-plan-name">{p.name}</span>
                   {p.rating && (
-                    <span aria-label={`Rated ${p.rating.avg.toFixed(1)} out of 5 by ${p.rating.count} students`} className="dw-rating">
+                    <span aria-label={`Rated ${p.rating.avg.toFixed(1)} out of 5`} className="dw-rating">
                       <span aria-hidden="true" className="dw-stars">★★★★★</span>
-                      <b>{p.rating.avg.toFixed(1)}</b>/5 · {p.rating.count} reviews
+                      <b>{p.rating.avg.toFixed(1)}</b>/5
                     </span>
                   )}
                   <span className="dw-plan-tag">{p.tagline}</span>
