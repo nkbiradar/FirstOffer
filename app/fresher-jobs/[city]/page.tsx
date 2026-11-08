@@ -8,6 +8,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { CITY_PAGES, getCityPage, type CityPage } from "@/lib/seo/cities";
 import { getNonce } from "@/lib/security/csp";
 import { todayShortLabel } from "@/lib/ui-format";
+import { isIndexable } from "@/lib/seo/thin-content";
 
 type Params = { city: string };
 
@@ -36,10 +37,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   return {
     title,
     description,
-    alternates: { canonical: url },
-    // A city page with no live jobs is thin content — keep it out of the
-    // index until it has openings again (links are still followed).
-    robots: total > 0 ? { index: true, follow: true } : { index: false, follow: true },
+    alternates: { canonical: city.canonicalPath ? `${getSiteUrl()}${city.canonicalPath}` : url },
+    // A city page with too few live jobs (or a duplicate of another page) is
+    // thin content — keep it out of the index until it has enough openings
+    // (links are still followed). See lib/seo/thin-content.ts.
+    robots: isIndexable(total, city.canonicalPath) ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: { title: `${title} | FirstOffer`, description, url, type: "website" },
     twitter: { card: "summary_large_image", title: `${title} | FirstOffer`, description },
   };

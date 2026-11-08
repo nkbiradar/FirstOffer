@@ -9,6 +9,7 @@ import { KEYWORD_PAGES, getKeywordPage, type KeywordPage } from "@/lib/seo/keywo
 import { CITY_PAGES } from "@/lib/seo/cities";
 import { getNonce } from "@/lib/security/csp";
 import { todayShortLabel } from "@/lib/ui-format";
+import { isIndexable } from "@/lib/seo/thin-content";
 
 type Params = { slug: string };
 
@@ -39,9 +40,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   return {
     title,
     description,
-    alternates: { canonical: url },
-    // No live jobs = thin content: keep it out of the index until it has openings.
-    robots: total > 0 ? { index: true, follow: true } : { index: false, follow: true },
+    alternates: { canonical: page.canonicalPath ? `${getSiteUrl()}${page.canonicalPath}` : url },
+    // Too few live jobs (or a duplicate of another page) = thin content: keep
+    // it out of the index until it has enough openings. See lib/seo/thin-content.ts.
+    robots: isIndexable(total, page.canonicalPath) ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: { title: `${title} | FirstOffer`, description, url, type: "website" },
     twitter: { card: "summary_large_image", title: `${title} | FirstOffer`, description },
   };

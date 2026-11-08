@@ -3,6 +3,7 @@ import { getAllPublishedOpportunityIds } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
 import { CITY_PAGES } from "@/lib/seo/cities";
 import { KEYWORD_PAGES } from "@/lib/seo/keyword-pages";
+import { isIndexable, liveCount } from "@/lib/seo/thin-content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -97,14 +98,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const cityRoutes: MetadataRoute.Sitemap = CITY_PAGES.map((city) => ({
+  // Only landing pages that are actually indexable (enough live jobs, not a
+  // duplicate) go in the sitemap — see lib/seo/thin-content.ts.
+  const [cityCounts, keywordCounts] = await Promise.all([
+    Promise.all(CITY_PAGES.map((c) => (c.canonicalPath ? 0 : liveCount(c.remote ? { workMode: "remote" } : { locations: c.terms })))),
+    Promise.all(KEYWORD_PAGES.map((p) => (p.canonicalPath ? 0 : liveCount(p.filter)))),
+  ]);
+
+  const cityRoutes: MetadataRoute.Sitemap = CITY_PAGES.filter((c, i) => isIndexable(cityCounts[i], c.canonicalPath)).map((city) => ({
     url: `${siteUrl}/fresher-jobs/${city.slug}`,
     lastModified: new Date(),
     changeFrequency: "daily",
     priority: 0.8,
   }));
 
-  const keywordRoutes: MetadataRoute.Sitemap = KEYWORD_PAGES.map((page) => ({
+  const keywordRoutes: MetadataRoute.Sitemap = KEYWORD_PAGES.filter((p, i) => isIndexable(keywordCounts[i], p.canonicalPath)).map((page) => ({
     url: `${siteUrl}/jobs/${page.slug}`,
     lastModified: new Date(),
     changeFrequency: "daily",

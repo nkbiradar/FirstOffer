@@ -10,6 +10,8 @@ export type CityPage = {
   terms: string[];
   /** Remote page filters by work mode instead of location. */
   remote?: boolean;
+  /** Same jobs as another page: canonical points there, never indexed. */
+  canonicalPath?: string;
   intro: string;
   faqs: { q: string; a: string }[];
 };
@@ -119,6 +121,7 @@ export const CITY_PAGES: CityPage[] = [
   },
   {
     slug: "remote",
+    canonicalPath: "/jobs/remote-jobs-for-freshers",
     name: "Remote",
     terms: [],
     remote: true,

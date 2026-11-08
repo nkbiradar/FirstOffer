@@ -3,7 +3,8 @@
 // freshers", "2026 batch jobs", "IT jobs for freshers"...) and lists the
 // live openings that match it. Copy is written per page (not templated) so
 // Google doesn't treat the pages as duplicates. A page with no live jobs is
-// noindexed automatically (see app/jobs/[slug]/page.tsx).
+// noindexed automatically (see app/jobs/[slug]/page.tsx and
+// lib/seo/thin-content.ts for the minimum-listings rule).
 import type { ListOpportunitiesOptions } from "@/lib/data/opportunities";
 
 export type KeywordPage = {
@@ -13,6 +14,9 @@ export type KeywordPage = {
   /** H1 and <title> (the year is added automatically). */
   heading: string;
   filter: ListOpportunitiesOptions;
+  /** Set when this page lists the same jobs as another page: canonical points
+   * there and this one is never indexed (avoids duplicate content). */
+  canonicalPath?: string;
   intro: string;
   faqs: { q: string; a: string }[];
 };
@@ -256,6 +260,7 @@ export const KEYWORD_PAGES: KeywordPage[] = [
   },
   {
     slug: "companies-hiring-freshers-now",
+    canonicalPath: "/opportunities",
     label: "Hiring Now",
     heading: "Companies Hiring Freshers Right Now",
     filter: {},
@@ -296,6 +301,7 @@ export const KEYWORD_PAGES: KeywordPage[] = [
   },
   {
     slug: "paid-internships",
+    canonicalPath: "/jobs/internships-for-students",
     label: "Paid Internships",
     heading: "Paid Internships for Students",
     filter: { type: "internship" },
@@ -368,6 +374,7 @@ export const KEYWORD_PAGES: KeywordPage[] = [
   },
   {
     slug: "startup-jobs-for-freshers",
+    canonicalPath: "/opportunities",
     label: "Startup Jobs",
     heading: "Startup Jobs for Freshers",
     filter: {},
