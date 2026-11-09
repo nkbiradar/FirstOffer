@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getSiteUrl } from "@/lib/site-url";
 import { getUser } from "@/lib/supabase/auth";
-import { hasEverPaid } from "@/lib/data/subscriptions";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import InAppBrowserWarning from "@/components/InAppBrowserWarning";
 
@@ -19,8 +18,8 @@ export const metadata: Metadata = {
   alternates: { canonical: `${getSiteUrl()}/share-your-story` },
 };
 
-// "Got an interview / got selected" form — ONLY for signed-in users who have
-// paid FirstOffer at least once (hasEverPaid). Posts to
+// "Got an interview / got selected" form — open to every signed-in user
+// (linked from each dashboard; ?outcome=selected pre-picks "offer"). Posts to
 // app/api/stories/route.ts, which saves a DRAFT testimonial and emails the
 // admin; the admin verifies it and publishes it from /admin/testimonials.
 // Share this link with members (WhatsApp, email): /share-your-story
@@ -32,6 +31,7 @@ export default async function ShareYourStoryPage({
   const params = await searchParams;
   const sent = firstValue(params.sent) === "1";
   const error = firstValue(params.error);
+  const preselectOffer = firstValue(params.outcome) === "selected";
 
   const user = await getUser();
 
@@ -49,30 +49,7 @@ export default async function ShareYourStoryPage({
             Sign in with the Google account you use on FirstOffer to share your story.
           </p>
           <InAppBrowserWarning />
-          <GoogleSignInButton next="/share-your-story" label="Continue with Google" />
-        </div>
-      </main>
-    );
-  }
-
-  // Signed in but never paid: this form is for members only.
-  if (user && !sent && !(await hasEverPaid(user.id))) {
-    return (
-      <main className="admin-login">
-        <div className="card admin-login-card story-card">
-          <span className="eyebrow" style={{ justifySelf: "start" }}>
-            <span className="eyebrow-dot" />
-            Members only
-          </span>
-          <h1>This form is for FirstOffer members</h1>
-          <p className="admin-login-sub" style={{ fontSize: 14 }}>
-            Story sharing is open to members who have unlocked access on FirstOffer. You&apos;re signed in as{" "}
-            <strong>{user.email}</strong>. If you paid with a different Google account, sign out and sign in with
-            that one.
-          </p>
-          <Link className="btn btn-secondary" href="/">
-            Back to FirstOffer
-          </Link>
+          <GoogleSignInButton next={preselectOffer ? "/share-your-story?outcome=selected" : "/share-your-story"} label="Continue with Google" />
         </div>
       </main>
     );
@@ -116,10 +93,10 @@ export default async function ShareYourStoryPage({
         <fieldset className="story-outcome">
           <legend>What happened?</legend>
           <label className="story-choice">
-            <input type="radio" name="outcome" value="interview" defaultChecked /> Got an interview call
+            <input type="radio" name="outcome" value="interview" defaultChecked={!preselectOffer} /> Got an interview call
           </label>
           <label className="story-choice">
-            <input type="radio" name="outcome" value="selected" /> Got selected / got an offer
+            <input type="radio" name="outcome" value="selected" defaultChecked={preselectOffer} /> Got selected / got an offer
           </label>
         </fieldset>
 

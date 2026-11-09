@@ -5,7 +5,7 @@ import { getUserApplications } from "@/lib/data/user-applications";
 import { getStreakSummary } from "@/lib/data/streak";
 import StreakCard from "@/components/StreakCard";
 import { getUserUnlocks } from "@/lib/data/opportunity-unlocks";
-import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing, hasEverPaid } from "@/lib/data/subscriptions";
+import { getUserSubscription, isSubscriptionAccessActive, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import { isEmailOptedOut } from "@/lib/data/email-preference";
 import { MONTHLY_PRICE_INR, LEGACY_MONTHLY_PRICE_INR, INTERNAL_PRICE_INR, getFullAccessPriceInr, getInternalPriceInr } from "@/lib/payments/razorpay";
 import OpportunityCard from "@/components/OpportunityCard";
@@ -97,7 +97,7 @@ export default async function DashboardPage({
     return null;
   });
 
-  const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser, everPaid] =
+  const [applications, unlocks, subscription, internalSubscription, emailOptedOut, isLegacyFullAccessUser] =
     await Promise.all([
       getUserApplications(user.id),
       getUserUnlocks(user.id),
@@ -105,8 +105,6 @@ export default async function DashboardPage({
       getUserSubscription(user.id, "internal_hr"),
       isEmailOptedOut(user.id),
       hasLegacyFullAccessPricing(user.id),
-      // "Share your story" is only for members who've paid at least once.
-      hasEverPaid(user.id),
     ]);
 
   const interviewCount = applications.filter((a) => a.outcome === "interview").length;
@@ -155,20 +153,29 @@ export default async function DashboardPage({
           </div>
         )}
 
-        {everPaid && (
-          <Link href="/share-your-story" className="share-story-banner">
-            <span className="share-story-banner-icon" aria-hidden="true">🎉</span>
-            <span className="share-story-banner-text">
-              <strong>
-                {interviewCount + offerCount > 0
-                  ? "Congrats on your interview / offer! Share your story"
-                  : "Got an interview call or an offer? Share your story"}
-              </strong>
-              <span>It takes 1 minute and helps other freshers keep going.</span>
-            </span>
-            <span className="share-story-banner-cta" aria-hidden="true">Share →</span>
-          </Link>
-        )}
+        {/* "Share your win" — open to every signed-in student. Submissions are
+            saved as drafts; the admin verifies and publishes them from
+            /admin/testimonials, and they then appear in the site's
+            "got an interview call at..." popup and Success Stories. */}
+        <section className="share-story-banner" aria-labelledby="share-win-title">
+          <span className="share-story-banner-icon" aria-hidden="true">🎉</span>
+          <div className="share-story-banner-text">
+            <strong id="share-win-title">
+              {interviewCount + offerCount > 0
+                ? "Congrats on your interview / offer! Share it with us"
+                : "Got an interview call or an offer? Share it with us"}
+            </strong>
+            <span>We&apos;ll feature your win on FirstOffer. Takes 1 minute and keeps other freshers going.</span>
+          </div>
+          <div className="share-story-banner-actions">
+            <Link className="share-story-btn" href="/share-your-story?outcome=interview">
+              📞 Got an interview call
+            </Link>
+            <Link className="share-story-btn share-story-btn-primary" href="/share-your-story?outcome=selected">
+              🏆 Got an offer
+            </Link>
+          </div>
+        </section>
 
 
         <StreakCard summary={await getStreakSummary(user.id, user.user_metadata?.weekly_goal)} />
@@ -256,7 +263,7 @@ export default async function DashboardPage({
                   appliedLabel={formatRelativeTime(opportunity.applied_at)}
                   initialOutcome={opportunity.outcome}
                   eligibleForPrompt={Date.now() - new Date(opportunity.applied_at).getTime() >= OUTCOME_PROMPT_DELAY_MS}
-                  canShareStory={everPaid}
+                  canShareStory
                 />
               </div>
             ))}

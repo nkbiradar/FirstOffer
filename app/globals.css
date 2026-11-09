@@ -6015,7 +6015,7 @@ html.fo-app [data-app-hide] {
   opacity: 0 !important;
 }
 
-/* Dashboard "Share your story" banner + OutcomeTracker nudge (paid members only) */
+/* Dashboard "Share your win" section + OutcomeTracker nudge (every signed-in user) */
 .share-story-banner {
   display: flex;
   align-items: center;
@@ -6047,6 +6047,40 @@ html.fo-app [data-app-hide] {
 .share-story-banner-text strong {
   font-size: 15px;
   color: var(--color-text);
+}
+.share-story-banner:hover { transform: none; }
+.share-story-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: none;
+}
+.share-story-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-brand-soft-border);
+  background: var(--color-surface, #fff);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.share-story-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-brand) 14%, transparent);
+}
+.share-story-btn-primary {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+}
+@media (max-width: 720px) {
+  .share-story-banner { flex-wrap: wrap; }
+  .share-story-banner-text { flex-basis: calc(100% - 40px); }
+  .share-story-banner-actions { width: 100%; }
+  .share-story-btn { flex: 1; text-align: center; }
 }
 .share-story-banner-cta {
   flex: none;

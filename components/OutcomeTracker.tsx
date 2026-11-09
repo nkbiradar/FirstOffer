@@ -43,7 +43,7 @@ export default function OutcomeTracker({
   appliedLabel: string | null;
   initialOutcome: ApplicationOutcome | null;
   eligibleForPrompt: boolean;
-  /** Paid members only: after "Interview"/"Offer", nudge them to /share-your-story. */
+  /** After "Interview"/"Offer", nudge them to /share-your-story. */
   canShareStory?: boolean;
 }) {
   const [outcome, setOutcome] = useState(initialOutcome);

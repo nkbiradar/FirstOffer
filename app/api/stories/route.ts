@@ -5,8 +5,9 @@ import { getUser } from "@/lib/supabase/auth";
 import { hasEverPaid } from "@/lib/data/subscriptions";
 import { notifyAdmins } from "@/lib/email/admin-notify";
 
-// Target for the /share-your-story form. Only signed-in users who have
-// actually paid FirstOffer at least once (hasEverPaid) can submit. Every
+// Target for the /share-your-story form. Any signed-in user can submit
+// (rate-limited); whether they've ever paid is included in the admin email
+// to help verification. Every
 // submission lands as a DRAFT (is_published = false, source = 'user') and
 // the admin(s) in ADMIN_EMAILS get an email straight away; nothing reaches
 // the site until the admin clicks Publish in /admin/testimonials. The
@@ -35,9 +36,6 @@ export async function POST(request: NextRequest) {
   if (!user) {
     return NextResponse.redirect(new URL("/login?next=%2Fshare-your-story", request.url), 303);
   }
-  if (!(await hasEverPaid(user.id))) {
-    return back(request, `error=${encodeURIComponent("This form is only for FirstOffer members who have unlocked access.")}`);
-  }
 
   const { allowed } = await checkRateLimit(`stories:${user.id}`, { windowSeconds: 3600, maxHits: 5 });
   if (!allowed) {
@@ -64,6 +62,8 @@ export async function POST(request: NextRequest) {
   if (!consent) {
     return back(request, `error=${encodeURIComponent("Please tick the permission box so we can share your story.")}`);
   }
+
+  const paidMember = await hasEverPaid(user.id).catch(() => false);
 
   const admin = createAdminClient();
   const { error } = await admin.from("testimonials").insert({
@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
         ["Batch", batch],
         ["Story", quote],
         ["Account email", email],
+        ["Paid member", paidMember ? "Yes" : "No"],
         ["LinkedIn", linkedin],
       ],
       "/admin/testimonials",
