@@ -6,6 +6,9 @@
 // "kotakmahindrabank"). To add one: drop <slug>.webp in that folder and add
 // the slug below. ALIASES maps other spellings used in testimonials.
 export const LOGO_SLUGS = new Set<string>([
+  "frnd",
+  "vcodewonders",
+  "volvo",
   "apna",
   "grab",
   "indiamart",
@@ -122,6 +125,10 @@ export const LOGO_ALIASES: Record<string, string> = {
   pinelabsindia: "pinelabs",
   sharechatmoj: "sharechat",
   mohallatech: "sharechat",
+  frndapp: "frnd",
+  volvogroup: "volvo",
+  volvocars: "volvo",
+  volvogroupindia: "volvo",
 };
 
 export function localLogoFor(slug: string): string | null {
