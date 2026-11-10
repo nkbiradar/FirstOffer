@@ -75,7 +75,7 @@ export default function PricingPlans({
   const plans: Plan[] = [
     {
       key: "internal",
-      name: "Internal HR + Interview Questions",
+      name: "Internal HR + Interview Questions + Referrals",
       period: "3 months",
       price: getInternalPriceInr(),
       was: internalDiwali ? INTERNAL_SALE_MRP_INR : internalSale ? INTERNAL_PRICE_INR : undefined,
@@ -89,6 +89,7 @@ export default function PricingPlans({
         { text: "Low-competition roles" },
         { text: "Early access to fresh roles" },
         { text: "6 Interview Question Kits (PDF)" },
+        { text: "Referrals" },
         { text: "HR contacts on all public listings", included: false },
       ],
     },

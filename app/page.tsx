@@ -141,8 +141,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       ? []
       : [
           {
-            name: "Internal HR + Interview Questions",
-            tagline: "HR-shared openings + 6 Interview Question Kits",
+            name: "Internal HR + Interview Questions + Referrals",
+            tagline: "HR-shared openings + 6 Interview Question Kits + Referrals",
             price: getInternalPriceInr(),
             was: INTERNAL_SALE_MRP_INR,
             href: "/internal-openings",
