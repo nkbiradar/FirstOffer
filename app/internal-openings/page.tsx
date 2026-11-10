@@ -128,7 +128,7 @@ export default async function InternalOpeningsPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Referrals
+              Referrals — whenever a company opening needs a referral, it’s posted here
             </li>
           </ul>
 
