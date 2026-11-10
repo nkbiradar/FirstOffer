@@ -7506,6 +7506,46 @@ button.tg-link { font-family: inherit; cursor: pointer; }
   box-shadow: 0 3px 10px rgba(220, 38, 38, 0.25);
 }
 
+/* ── Internal HR: Referrals sign-up (app/internal-openings) ── */
+.referral-section {
+  margin-top: 28px;
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid #fcd34d;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  display: grid;
+  gap: 16px;
+}
+.referral-head { display: flex; gap: 16px; align-items: flex-start; }
+.referral-icon {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 54px; height: 54px; border-radius: 16px; font-size: 26px;
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+}
+.referral-section.is-locked .referral-icon { background: #d1d5db; box-shadow: none; }
+.referral-section h2 { margin: 4px 0 4px; font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--color-text); }
+.referral-section p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); }
+.referral-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.referral-form label { display: grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--color-text); }
+.referral-form input[type="email"],
+.referral-form input[type="tel"] {
+  padding: 11px 13px; border-radius: 12px; border: 1px solid var(--color-border);
+  background: #fff; font: inherit; font-weight: 500; color: var(--color-text);
+}
+.referral-form-file { grid-column: 1 / -1; }
+.referral-form-file input { padding: 10px; border-radius: 12px; border: 1px dashed #f59e0b; background: #fff; font: inherit; font-weight: 500; }
+.referral-form-error { grid-column: 1 / -1; color: #b91c1c !important; font-weight: 600; }
+.referral-form-actions { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; }
+.referral-done { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px solid #fde68a; }
+.referral-done p { flex: 1 1 320px; }
+.referral-locked-cta { justify-self: start; }
+@media (max-width: 720px) {
+  .referral-form { grid-template-columns: 1fr; }
+  .referral-head { flex-direction: column; }
+  .referral-locked-cta, .referral-form-actions .btn { width: 100%; text-align: center; justify-content: center; }
+}
+
 /* ── Internal HR: Coding Interview Kit card (app/internal-openings) ── */
 .interview-kit {
   display: flex;

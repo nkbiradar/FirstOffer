@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import UnlockContactCard from "@/components/UnlockContactCard";
+import ReferralProfileForm from "@/components/ReferralProfileForm";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import { isAppRequest } from "@/lib/nativeAppServer";
 import { getInternalOpportunities } from "@/lib/data/opportunities";
@@ -128,7 +129,7 @@ export default async function InternalOpeningsPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Referrals — whenever a company opening needs a referral, it’s posted here
+              Referrals — share your resume once; our employees refer you whenever a company hires
             </li>
           </ul>
 
@@ -161,6 +162,34 @@ export default async function InternalOpeningsPage() {
                 />
               )}
             </div>
+          )}
+        </section>
+
+        {/* Members-only perk: Referrals. Members share resume + email + mobile
+            (components/ReferralProfileForm.tsx → app/api/internal/referral-profile);
+            whenever a company hires through referrals, our employees refer them. */}
+        <section className={`referral-section ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referrals">
+          <div className="referral-head">
+            <span aria-hidden="true" className="referral-icon">🤝</span>
+            <div>
+              <span className="interview-kit-eyebrow">Referrals · Members only</span>
+              <h2>Get referred by our employees</h2>
+              <p>
+                Share your resume, email ID and mobile number once. Whenever a company hires through referrals,
+                you&apos;ll be referred by our employees, and we&apos;ll post every opening that needs a referral here.
+              </p>
+            </div>
+          </div>
+          {isUnlocked && user ? (
+            <ReferralProfileForm
+              defaultEmail={String(user.user_metadata?.referral_email ?? user.email ?? "")}
+              defaultMobile={String(user.user_metadata?.referral_mobile ?? "")}
+              submittedAt={typeof user.user_metadata?.referral_profile_at === "string" ? user.user_metadata.referral_profile_at : null}
+            />
+          ) : (
+            <a className="btn btn-secondary referral-locked-cta" href="#unlock-internal-hr">
+              🔒 Unlock Internal HR to get referred
+            </a>
           )}
         </section>
 
