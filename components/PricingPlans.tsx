@@ -89,7 +89,7 @@ export default function PricingPlans({
         { text: "Low-competition roles" },
         { text: "Early access to fresh roles" },
         { text: "6 Interview Question Kits (PDF)" },
-        { text: "Referrals — share your resume once; our employees refer you whenever a company hires" },
+        { text: "🤝 Employee referrals — skip the resume pile" },
         { text: "HR contacts on all public listings", included: false },
       ],
     },

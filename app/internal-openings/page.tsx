@@ -129,7 +129,7 @@ export default async function InternalOpeningsPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Referrals — share your resume once; our employees refer you whenever a company hires
+              🤝 Employee referrals — skip the resume pile
             </li>
           </ul>
 
