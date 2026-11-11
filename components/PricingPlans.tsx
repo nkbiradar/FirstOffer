@@ -90,7 +90,7 @@ export default function PricingPlans({
         { text: "Low-competition roles" },
         { text: "Early access to fresh roles" },
         { text: "6 Interview Question Kits (PDF)" },
-        { text: "HR contacts on all public listings", included: false },
+        { text: "Internal support" },
       ],
     },
     {
