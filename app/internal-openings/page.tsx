@@ -95,6 +95,7 @@ export default async function InternalOpeningsPage() {
           </p>
 
           <ul className="internal-hr-hero-checklist">
+            <li className="is-highlight">🤝 Get referred at Accenture, IBM, Deloitte, Capgemini, Cognizant & more</li>
             <li>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
@@ -124,12 +125,6 @@ export default async function InternalOpeningsPage() {
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Bonus: 6 Interview Question Kits (PDF)
-            </li>
-            <li>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              🤝 Employee referrals — skip the resume pile
             </li>
           </ul>
 

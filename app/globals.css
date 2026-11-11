@@ -8080,6 +8080,13 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-features { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 13px; }
 .fp-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14.5px; line-height: 1.4; color: var(--fp-text); }
 .fp-features li.is-off { color: var(--fp-dim); }
+/* Highlighted top perk (Internal HR referrals). */
+.fp-features li.is-highlight,
+.internal-hr-hero-checklist li.is-highlight {
+  display: block; padding: 10px 12px; border-radius: 12px; font-weight: 750; line-height: 1.4;
+  color: #1c1103; background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.25);
+}
 .fp-ico { flex: 0 0 16px; margin-top: 2px; }
 .fp-ico-yes { color: #60a5fa; }
 .fp-ico-no { color: var(--fp-dim); }

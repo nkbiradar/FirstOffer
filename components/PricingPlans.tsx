@@ -23,7 +23,7 @@ import {
 // Strike-through prices are only shown when the plan's REAL regular price
 // is higher than what's charged today.
 
-type Feature = { text: string; included?: boolean };
+type Feature = { text: string; included?: boolean; /** Gold highlighted top line. */ highlight?: boolean };
 
 type Plan = {
   key: string;
@@ -85,11 +85,11 @@ export default function PricingPlans({
       ribbon: "⭐ Best for interviews",
       rating,
       features: [
+        { text: "🤝 Get referred at Accenture, IBM, Deloitte, Capgemini, Cognizant & more", highlight: true },
         { text: "Openings shared directly by HRs" },
         { text: "Low-competition roles" },
         { text: "Early access to fresh roles" },
         { text: "6 Interview Question Kits (PDF)" },
-        { text: "🤝 Employee referrals — skip the resume pile" },
         { text: "HR contacts on all public listings", included: false },
       ],
     },
@@ -218,8 +218,8 @@ export default function PricingPlans({
 
                 <ul className="fp-features">
                   {p.features.map((f) => (
-                    <li className={f.included === false ? "is-off" : undefined} key={f.text}>
-                      <Check included={f.included !== false} />
+                    <li className={f.highlight ? "is-highlight" : f.included === false ? "is-off" : undefined} key={f.text}>
+                      {!f.highlight && <Check included={f.included !== false} />}
                       {f.text}
                     </li>
                   ))}
