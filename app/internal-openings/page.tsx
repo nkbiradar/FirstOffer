@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import UnlockContactCard from "@/components/UnlockContactCard";
-import ReferralProfileForm from "@/components/ReferralProfileForm";
 import ReferralOpeningApply from "@/components/ReferralOpeningApply";
 import { getActiveReferralOpenings, getMyReferralApplications } from "@/lib/data/referral-openings";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
@@ -174,39 +173,11 @@ export default async function InternalOpeningsPage() {
           )}
         </section>
 
-        {/* Members-only perk: Referrals. Members share resume + email + mobile + profile links
-            (components/ReferralProfileForm.tsx → app/api/internal/referral-profile);
-            whenever a company hires through referrals, our employees refer them. */}
-        <section className={`referral-section ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referrals">
-          <div className="referral-head">
-            <span aria-hidden="true" className="referral-icon">🤝</span>
-            <div>
-              <span className="interview-kit-eyebrow">Referrals · Members only</span>
-              <h2>Get referred by our employees</h2>
-              <p>
-                Share your resume, email ID, mobile number and your LinkedIn, GitHub and coding profiles once. Whenever a company hires through referrals,
-                you&apos;ll be referred by our employees, and we&apos;ll post every opening that needs a referral here.
-              </p>
-            </div>
-          </div>
-          {isUnlocked && user ? (
-            <ReferralProfileForm
-              defaultEmail={String(user.user_metadata?.referral_email ?? user.email ?? "")}
-              defaultMobile={String(user.user_metadata?.referral_mobile ?? "")}
-              defaultLinkedin={String(user.user_metadata?.referral_linkedin ?? "")}
-              defaultGithub={String(user.user_metadata?.referral_github ?? "")}
-              defaultCoding={String(user.user_metadata?.referral_coding ?? "")}
-              submittedAt={typeof user.user_metadata?.referral_profile_at === "string" ? user.user_metadata.referral_profile_at : null}
-            />
-          ) : (
-            <a className="btn btn-secondary referral-locked-cta" href="#unlock-internal-hr">
-              🔒 Unlock Internal HR to get referred
-            </a>
-          )}
-        </section>
-
-        {/* Company-specific referrals added by the admin at /admin/referral-openings
-            (lib/data/referral-openings.ts → components/ReferralOpeningApply.tsx). */}
+        {/* Referrals: shown ONLY when the admin has posted referral companies at
+            /admin/referral-openings (lib/data/referral-openings.ts →
+            components/ReferralOpeningApply.tsx). With none live, nothing renders.
+            The older one-time "share your resume for referrals" form
+            (components/ReferralProfileForm.tsx) is no longer shown here. */}
         {referralOpenings.length > 0 && (
           <section className={`referral-openings ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referral-openings">
             <span className="interview-kit-eyebrow">Referral openings · Members only</span>
