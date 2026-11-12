@@ -2,13 +2,12 @@
 // plus "Chosen by 40+ students" when there's a real paid-member count
 // (see getPaidMemberLabel in lib/data/subscriptions.ts). No ratings or
 // reviews are shown because none are collected.
-// Fixed figure set by the founder (Oct 2026) — counts students who have
-// signed up. Update it by hand; the automatic paid-member count
-// (getPaidMemberLabel) is no longer shown.
-export const STUDENT_COUNT_LABEL = "2100+";
+// "Trusted by N+ students": N is the live sign-up count rounded down to
+// the nearest 50 (see lib/student-count.ts), passed in by the page.
+import { STUDENT_COUNT_FALLBACK_LABEL } from "@/lib/student-count";
 
-export default function PlanTags(_props: { memberLabel?: string | null }) {
-  const memberLabel = STUDENT_COUNT_LABEL;
+export default function PlanTags(props: { memberLabel?: string | null }) {
+  const memberLabel = props.memberLabel || STUDENT_COUNT_FALLBACK_LABEL;
   return (
     <div className="plan-tags">
       <span className="plan-tag plan-tag-popular">

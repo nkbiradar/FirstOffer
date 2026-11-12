@@ -4,6 +4,7 @@ import UnlockContactCard from "@/components/UnlockContactCard";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import OffCampusCompare from "@/components/OffCampusCompare";
 import { getSiteStatsCached } from "@/lib/data/cached";
+import { formatStudentCount } from "@/lib/student-count";
 import SafePay from "@/components/SafePay";
 import { getUser } from "@/lib/supabase/auth";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
@@ -67,6 +68,7 @@ export default async function UnlockPage() {
         ) : (
           <UnlockContactCard
             isSignedIn={Boolean(user)}
+            memberLabel={formatStudentCount(stats.totalSubscribers)}
             descriptionOverride="Skip crowded job portals. Get the direct HR email, recruiter number, official Google Form or application link on every opportunity — including new roles added every day."
             loginNext="/unlock"
             titleOverride="Unlock every opportunity on FirstOffer"

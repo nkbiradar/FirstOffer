@@ -1,7 +1,7 @@
 import Link from "next/link";
 import OfferCountdown from "@/components/OfferCountdown";
 import SafePay from "@/components/SafePay";
-import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
+import { STUDENT_COUNT_FALLBACK_LABEL } from "@/lib/student-count";
 import {
   FULL_ACCESS_SALE_END_LABEL,
   FULL_ACCESS_SALE_MRP_INR,
@@ -63,7 +63,10 @@ function Check({ included }: { included: boolean }) {
 export default function PricingPlans({
   hasFullAccess = false,
   rating,
+  studentLabel = STUDENT_COUNT_FALLBACK_LABEL,
 }: {
+  /** Live "2100+"-style sign-up count (lib/student-count.ts). */
+  studentLabel?: string;
   hasFullAccess?: boolean;
   /** Star rating shown on the Internal HR plan (from the homepage). */
   rating?: { avg: number; count: number };
@@ -138,7 +141,7 @@ export default function PricingPlans({
         <h2>
           Plans that get you <span>interview calls</span>
         </h2>
-        <p>Join {STUDENT_COUNT_LABEL} students applying directly to HRs — one payment, no auto-debit.</p>
+        <p>Join {studentLabel} students applying directly to HRs — one payment, no auto-debit.</p>
         <div className="fp-tags">
           <span className="fp-tag">
             <span aria-hidden="true" className="fp-tag-dot" />

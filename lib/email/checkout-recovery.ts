@@ -17,7 +17,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { buildUnsubscribeUrl, getOptedOutUserIds } from "@/lib/data/email-preference";
 import { getPaidUserIds } from "@/lib/data/paid-users";
 import { firstNameOf, getSender } from "@/lib/email/smtp-sender";
-import { STUDENT_COUNT_LABEL } from "@/components/PlanTags";
+import { formatStudentCount } from "@/lib/student-count";
 import { getSiteStats } from "@/lib/data/opportunities";
 import {
   FULL_ACCESS_SALE_END_LABEL,
@@ -43,6 +43,8 @@ export type RecoveryContext = {
   liveOpenings: number;
   interviews: number;
   offers: number;
+  /** Signed-up accounts, for the "2100+ students" proof line. */
+  students: number;
   companies: string[];
   story?: { name: string; company: string; outcome: "interview" | "selected"; quote: string };
 };
@@ -121,7 +123,7 @@ export function renderHtml(
   const off = c.was ? Math.round((1 - c.price / c.was) * 100) : 0;
 
   const proof = [
-    { v: STUDENT_COUNT_LABEL, l: "students" },
+    { v: formatStudentCount(ctx.students), l: "students" },
     ctx.interviews > 0 ? { v: String(ctx.interviews), l: "interview calls" } : null,
     ctx.offers > 0 ? { v: String(ctx.offers), l: "offers" } : null,
     ctx.liveOpenings > 0 ? { v: String(ctx.liveOpenings), l: "openings live now" } : null,
@@ -223,12 +225,13 @@ export function renderHtml(
 }
 
 async function loadContext(admin: ReturnType<typeof createAdminClient>): Promise<RecoveryContext> {
-  const ctx: RecoveryContext = { liveOpenings: 0, interviews: 0, offers: 0, companies: [] };
+  const ctx: RecoveryContext = { liveOpenings: 0, interviews: 0, offers: 0, students: 0, companies: [] };
   try {
     const stats = await getSiteStats();
     ctx.liveOpenings = stats.totalOpportunities;
     ctx.interviews = stats.totalInterviews;
     ctx.offers = stats.totalOffers;
+    ctx.students = stats.totalSubscribers;
   } catch (err) {
     console.error("Checkout reminders: stats failed:", err instanceof Error ? err.message : err);
   }

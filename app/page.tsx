@@ -6,6 +6,7 @@ import SuccessStories from "@/components/SuccessStories";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
 import HomeDarkHero from "@/components/HomeDarkHero";
+import { formatStudentCount } from "@/lib/student-count";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
 import { getSiteUrl } from "@/lib/site-url";
@@ -322,7 +323,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             from lib/payments/razorpay.ts. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
-            <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} />
+            <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} studentLabel={formatStudentCount(stats.totalSubscribers)} />
             <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} />
           </section>
         </Reveal>

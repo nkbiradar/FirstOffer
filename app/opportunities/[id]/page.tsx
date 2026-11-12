@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { getStudentCountLabel } from "@/lib/data/student-count";
 import NoCopyGuard from "@/components/NoCopyGuard";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -427,6 +428,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                     <UnlockContactCard
                       opportunityId={id}
                       isSignedIn={Boolean(user)}
+                      memberLabel={await getStudentCountLabel()}
                       price={fullAccessPrice}
                       wasPrice={isFullAccessSaleActive() ? FULL_ACCESS_SALE_MRP_INR : undefined}
                       priceNote={fullAccessPriceNote}
