@@ -13,6 +13,13 @@ const OPPORTUNITY_SELECT = "*, company:companies(id, name, slug, logo_url)";
 
 export class OpportunityValidationError extends Error {}
 
+/** Thrown by createOpportunity() when the company already has this role; carries the existing row so the admin can "Publish again" instead. */
+export class DuplicateOpportunityError extends OpportunityValidationError {
+  constructor(message: string, public existingId: string, public existingStatus: string) {
+    super(message);
+  }
+}
+
 // Email addresses, plain and simple.
 const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
 
@@ -324,8 +331,10 @@ async function assertNotDuplicate(companyId: string, role: string): Promise<void
   if (error) throw new Error(`Duplicate check failed: ${error.message}`);
   const match = (data ?? []).find((row) => normalizeRole(String(row.role ?? "")) === target);
   if (match) {
-    throw new OpportunityValidationError(
+    throw new DuplicateOpportunityError(
       `Already exists: this company already has "${match.role}" (${match.status}). Not published.`,
+      String(match.id),
+      String(match.status),
     );
   }
 }
@@ -357,6 +366,7 @@ export async function createOpportunity(input: OpportunityFormInput): Promise<Op
 export async function updateOpportunity(
   id: string,
   input: OpportunityFormInput,
+  options: { restartVisibility?: boolean } = {},
 ): Promise<{ opportunity: Opportunity; publishingNow: boolean }> {
   validate(input);
 
@@ -375,7 +385,10 @@ export async function updateOpportunity(
   // about "putting it back up." Also the signal the caller uses to decide
   // whether to fire a "new opportunity" push notification — an edit that
   // was already published shouldn't re-notify.
-  const publishingNow = input.status === "published" && existing.status !== "published";
+  // restartVisibility: bulk import's "Publish again" on a duplicate — treat
+  // it as a fresh upload even if the old listing is still published.
+  const publishingNow =
+    input.status === "published" && (existing.status !== "published" || Boolean(options.restartVisibility));
 
   const payload: Partial<OpportunityInsert> = {
     ...toDbFields(input),

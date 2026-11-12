@@ -8,6 +8,8 @@ type EditableItem = BulkDraftOpportunity & {
   id: string;
   status: string;
   error?: string;
+  /** Set when the error is "Already exists" — the listing "Publish again" would put back live. */
+  existingId?: string;
 };
 
 const EXAMPLE_FORMAT = `---OPPORTUNITY---
@@ -312,6 +314,39 @@ export default function BulkImportClient() {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }
 
+  // "Publish again" on an "Already exists" item: updates the existing
+  // listing with this item's details and puts it back live (fresh 2-day
+  // window, notifications as for a new upload) instead of adding a copy.
+  const [republishingId, setRepublishingId] = useState<string | null>(null);
+  async function handlePublishAgain(target: EditableItem) {
+    if (!target.existingId || republishingId) return;
+    setRepublishingId(target.id);
+    setTopError(null);
+    try {
+      const { id, error, existingId, ...rest } = target;
+      void id; void error;
+      const response = await fetch("/api/admin/opportunities/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: [{ ...rest, republishExistingId: existingId }] }),
+      });
+      const body = await response.json();
+      const result = body?.results?.[0];
+      if (!response.ok || !result?.success) {
+        const message = result?.error ?? body?.error ?? "Could not publish again.";
+        setItems((prev) => prev.map((item) => (item.id === target.id ? { ...item, error: message } : item)));
+        return;
+      }
+      setItems((prev) => prev.filter((item) => item.id !== target.id));
+      setSummary(`Published again: ${target.company} — ${target.role}.`);
+      router.refresh();
+    } catch {
+      setTopError("Network error — could not reach the server.");
+    } finally {
+      setRepublishingId(null);
+    }
+  }
+
   async function handlePublishAll() {
     if (items.length === 0) return;
     if (isPublishingRef.current) return;
@@ -327,7 +362,7 @@ export default function BulkImportClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: submitted.map(({ id, error, ...rest }) => rest),
+          items: submitted.map(({ id, error, existingId, ...rest }) => rest),
         }),
       });
 
@@ -338,8 +373,9 @@ export default function BulkImportClient() {
         return;
       }
 
-      const results: { index: number; success: boolean; error?: string }[] = body.results ?? [];
+      const results: { index: number; success: boolean; error?: string; existingId?: string }[] = body.results ?? [];
       const failed = new Map(results.filter((r) => !r.success).map((r) => [r.index, r.error ?? "Failed."]));
+      const existingIds = new Map(results.filter((r) => r.existingId).map((r) => [r.index, r.existingId as string]));
       const succeededCount = results.length - failed.size;
 
       // Keep only the items that failed (with their error attached) so a
@@ -349,7 +385,7 @@ export default function BulkImportClient() {
         submitted
           .map((item, index) => ({ item, index }))
           .filter(({ index }) => failed.has(index))
-          .map(({ item, index }) => ({ ...item, error: failed.get(index) })),
+          .map(({ item, index }) => ({ ...item, error: failed.get(index), existingId: existingIds.get(index) })),
       );
 
       setSummary(
@@ -552,7 +588,21 @@ export default function BulkImportClient() {
                     </span>
                   </label>
 
-                  {item.error && <p className="form-error">{item.error}</p>}
+                  {item.error && (
+                    <div className="form-error" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                      <span>{item.error}</span>
+                      {item.existingId && (
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={() => handlePublishAgain(item)}
+                          disabled={republishingId !== null || isPublishing}
+                        >
+                          {republishingId === item.id ? "Publishing…" : "Publish again"}
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   <div className="bulk-item-grid">
                     <TextField label="Company" value={item.company} onChange={(v) => updateField(item.id, "company", v)} />

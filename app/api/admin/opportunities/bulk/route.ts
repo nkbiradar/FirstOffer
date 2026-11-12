@@ -3,13 +3,13 @@ import { refreshPublicData } from "@/lib/data/cached";
 import { notifyGoogleJobs } from "@/lib/seo/google-indexing";
 import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { createOpportunity } from "@/lib/data/admin-opportunities";
+import { createOpportunity, updateOpportunity, DuplicateOpportunityError } from "@/lib/data/admin-opportunities";
 import { parseOpportunityBulkItem, type BulkOpportunityItem } from "@/lib/data/opportunity-form-data";
 import { notifyBulkOpportunities } from "@/lib/notify/new-opportunity-alerts";
 
 type BulkResult =
   | { index: number; success: true; id: string }
-  | { index: number; success: false; error: string };
+  | { index: number; success: false; error: string; existingId?: string };
 
 // Driven by fetch() from BulkImportClient (a JSON body, not a plain form —
 // this is the one part of the daily workflow that genuinely needs client
@@ -26,7 +26,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { items?: BulkOpportunityItem[] };
+  // republishExistingId: set by the "Publish again" button on an
+  // "Already exists" item — updates that existing listing with this item's
+  // details and puts it back live, instead of creating a second copy.
+  let body: { items?: (BulkOpportunityItem & { republishExistingId?: string })[] };
   try {
     body = await request.json();
   } catch {
@@ -52,9 +55,19 @@ export async function POST(request: NextRequest) {
   for (let index = 0; index < items.length; index += 1) {
     try {
       const input = parseOpportunityBulkItem(items[index]);
-      const opportunity = await createOpportunity(input);
+      const republishId = String(items[index].republishExistingId ?? "").trim();
+      let opportunity;
+      let announce: boolean;
+      if (republishId) {
+        const updated = await updateOpportunity(republishId, { ...input, status: "published" }, { restartVisibility: true });
+        opportunity = updated.opportunity;
+        announce = updated.publishingNow;
+      } else {
+        opportunity = await createOpportunity(input);
+        announce = opportunity.status === "published";
+      }
       results.push({ index, success: true, id: opportunity.id });
-      if (opportunity.status === "published") {
+      if (announce) {
         if (opportunity.is_internal) publishedInternalCount += 1;
         else {
           publishedPublicCount += 1;
@@ -63,7 +76,8 @@ export async function POST(request: NextRequest) {
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create opportunity.";
-      results.push({ index, success: false, error: message });
+      const existingId = error instanceof DuplicateOpportunityError ? error.existingId : undefined;
+      results.push({ index, success: false, error: message, ...(existingId ? { existingId } : {}) });
     }
   }
 
