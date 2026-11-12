@@ -7552,6 +7552,8 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .referral-openings h2 { margin: 0; font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--color-text); }
 .referral-openings > p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); }
 .referral-openings-list { display: grid; gap: 12px; margin-top: 6px; }
+.referral-openings-empty { padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px dashed #f59e0b; font-size: 14px; color: var(--color-text-secondary); }
+.referral-openings .referral-locked-cta { justify-self: start; }
 .referral-opening { display: grid; gap: 8px; padding: 16px; border-radius: 14px; background: #fff; border: 1px solid var(--color-border); }
 .referral-opening-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: flex-start; }
 .referral-opening-company { display: block; font-size: 16px; font-weight: 800; color: var(--color-text); }

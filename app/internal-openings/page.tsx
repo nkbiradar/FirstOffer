@@ -173,44 +173,46 @@ export default async function InternalOpeningsPage() {
           )}
         </section>
 
-        {/* Referrals: shown ONLY when the admin has posted referral companies at
-            /admin/referral-openings (lib/data/referral-openings.ts →
-            components/ReferralOpeningApply.tsx). With none live, nothing renders.
-            The older one-time "share your resume for referrals" form
-            (components/ReferralProfileForm.tsx) is no longer shown here. */}
-        {referralOpenings.length > 0 && (
-          <section className={`referral-openings ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referral-openings">
-            <span className="interview-kit-eyebrow">Referral openings · Members only</span>
-            <h2>
-              🎯 {referralOpenings.length} compan{referralOpenings.length === 1 ? "y is" : "ies are"} accepting referrals now
-            </h2>
-            {isUnlocked && user ? (
-              <>
-                <p>
-                  Our employees can refer you at these companies. Share your resume, email, mobile and the details each
-                  company asks for — we&apos;ll refer you and reach out on your email or mobile.
-                </p>
-                <div className="referral-openings-list">
-                  {referralOpenings.map((o) => (
-                    <ReferralOpeningApply
-                      appliedAt={myReferralApps[o.id] ?? null}
-                      defaults={referralDefaults}
-                      key={o.id}
-                      opening={o}
-                    />
-                  ))}
-                </div>
-              </>
+        {/* Referrals: always shown. Company-wise referrals are posted by the
+            admin at /admin/referral-openings (lib/data/referral-openings.ts →
+            components/ReferralOpeningApply.tsx). Members see each company's
+            apply form, or an empty state until one is posted; locked visitors
+            see only the count and an unlock button, never company names. */}
+        <section className={`referral-openings ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referral-openings">
+          <span className="interview-kit-eyebrow">Referrals · Members only</span>
+          <h2>
+            🤝{" "}
+            {referralOpenings.length > 0
+              ? `${referralOpenings.length} compan${referralOpenings.length === 1 ? "y is" : "ies are"} accepting referrals now`
+              : "Get referred by our employees"}
+          </h2>
+          <p>
+            We post referral openings here company-wise. Share your resume, email, mobile and the details each company
+            asks for — our employees will refer you and we&apos;ll reach out on your email or mobile.
+          </p>
+          {isUnlocked && user ? (
+            referralOpenings.length > 0 ? (
+              <div className="referral-openings-list">
+                {referralOpenings.map((o) => (
+                  <ReferralOpeningApply
+                    appliedAt={myReferralApps[o.id] ?? null}
+                    defaults={referralDefaults}
+                    key={o.id}
+                    opening={o}
+                  />
+                ))}
+              </div>
             ) : (
-              <>
-                <p>Company names and the apply form are visible to Internal HR members.</p>
-                <a className="btn btn-secondary referral-locked-cta" href="#unlock-internal-hr">
-                  🔒 Unlock to see the companies
-                </a>
-              </>
-            )}
-          </section>
-        )}
+              <div className="referral-openings-empty">
+                No referral openings right now. New companies will appear here as soon as we post them — check back soon.
+              </div>
+            )
+          ) : (
+            <a className="btn btn-secondary referral-locked-cta" href="#unlock-internal-hr">
+              🔒 Unlock Internal HR to get referred
+            </a>
+          )}
+        </section>
 
         {/* Members-only perk: the Coding Interview Kit PDF (served by
             app/api/internal/interview-kit, which re-checks access). */}
