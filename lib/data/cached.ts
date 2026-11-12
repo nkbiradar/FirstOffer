@@ -11,7 +11,6 @@ import { getCompaniesWithPublishedCounts } from "@/lib/data/companies";
 import { getPublishedTestimonials } from "@/lib/data/testimonials";
 import { getActiveAnnouncement } from "@/lib/data/site-announcement";
 import { getFeaturedInterns } from "@/lib/data/referral-rewards";
-import { getPublishedWhatWorked } from "@/lib/data/what-worked";
 
 const MINUTE = 60;
 const PUBLIC_TAG = "public-data";
@@ -50,8 +49,3 @@ export const getFeaturedInternsCached = unstable_cache(() => getFeaturedInterns(
   revalidate: 5 * MINUTE,
   tags: [PUBLIC_TAG],
 });
-export const getPublishedWhatWorkedCached = unstable_cache(
-  (limit: number) => getPublishedWhatWorked(limit),
-  ["what-worked-v1"],
-  { revalidate: 5 * MINUTE, tags: [PUBLIC_TAG] },
-);

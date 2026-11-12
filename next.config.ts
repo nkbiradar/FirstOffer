@@ -17,6 +17,13 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/internal/interview-kit": ["./private/**/*"],
   },
+  // "What Worked" section was removed — send old links to the homepage.
+  async redirects() {
+    return [
+      { source: "/what-worked", destination: "/", permanent: true },
+      { source: "/what-worked/:path*", destination: "/", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

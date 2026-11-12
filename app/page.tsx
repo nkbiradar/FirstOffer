@@ -5,7 +5,6 @@ import Reveal from "@/components/Reveal";
 import SuccessStories from "@/components/SuccessStories";
 import FreePickCard from "@/components/FreePickCard";
 import DirectFlow from "@/components/DirectFlow";
-import WhatWorkedCard from "@/components/WhatWorkedCard";
 import HomeDarkHero from "@/components/HomeDarkHero";
 import { ROLE_CATEGORIES, categorizeRole, isRoleSlug } from "@/lib/roles";
 import { avatarGradient, initials, todayShortLabel } from "@/lib/ui-format";
@@ -22,7 +21,6 @@ import {
   getFreePickOpportunityCached,
   getHomepageOpportunitiesCached,
   getPublishedTestimonialsCached,
-  getPublishedWhatWorkedCached,
   getSiteStatsCached,
 } from "@/lib/data/cached";
 import {
@@ -95,7 +93,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     alreadyHasFullAccess,
     freePick,
     featuredInterns,
-    whatWorked,
     hasInternal,
     inApp,
   ] = await Promise.all([
@@ -109,7 +106,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     user ? hasFullAccess(user.id) : Promise.resolve(false),
     getFreePickOpportunityCached(),
     getFeaturedInternsCached(),
-    getPublishedWhatWorkedCached(3),
     user ? hasInternalAccess(user.id) : Promise.resolve(false),
     isAppRequest(),
   ]);
@@ -506,38 +502,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             </div>
           </section>
         </Reveal>
-
-        {/* "What Worked For Me" — free, read-only advice from students who
-            went from no calls to interview calls (/what-worked). Latest 3
-            published stories; hidden until the admin has published one. */}
-        {whatWorked.length > 0 && (
-          <Reveal>
-            <section className="section">
-              <div className="section-header">
-                <div>
-                  <span className="eyebrow">
-                    <span className="eyebrow-dot" />
-                    What worked for me · Free
-                  </span>
-                  <h2 style={{ marginTop: 10 }}>Not getting interview calls? Here&apos;s what changed it for them</h2>
-                  <p className="section-sub">
-                    Freshers who were stuck at zero calls share exactly what they changed — in their own words.
-                  </p>
-                </div>
-              </div>
-              <div className="ww-grid">
-                {whatWorked.map((s) => (
-                  <WhatWorkedCard compact key={s.id} story={s} />
-                ))}
-              </div>
-              <div className="ww-home-actions">
-                <Link className="btn btn-primary" href="/what-worked">
-                  Read all stories
-                </Link>
-              </div>
-            </section>
-          </Reveal>
-        )}
 
         {testimonials.length > 0 && (
           <Reveal>

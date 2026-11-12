@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
-import WhatWorked from "@/components/WhatWorked";
 import OffCampusCompare from "@/components/OffCampusCompare";
 import { getSiteStatsCached } from "@/lib/data/cached";
 import SafePay from "@/components/SafePay";
@@ -86,7 +85,6 @@ export default async function UnlockPage() {
 
         {!unlocked && !inApp && <SafePay light />}
 
-        {!unlocked && <WhatWorked />}
       </div>
       {!unlocked && !inApp && (
         <div className="container" style={{ maxWidth: 1180, paddingBottom: 64 }}>

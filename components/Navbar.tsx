@@ -11,8 +11,6 @@ const LINKS = [
   { href: "/tech-jobs", label: "Tech Jobs" },
   { href: "/opportunities", label: "All Openings" },
   { href: "/resume", label: "Resume Help" },
-  // Free "What Worked For Me" stories — its own section, not part of Internal HR.
-  { href: "/what-worked", label: "What Worked" },
   // Deliberately styled differently below (nav-link-hot) — this is the
   // entry point to the Internal HR Openings product and is meant
   // to stand out from the plain listing links next to it.
@@ -28,7 +26,6 @@ const ICONS: Record<string, string> = {
   "/opportunities": "M3 8h18v12H3z M8 8V5h8v3 M3 13h18",
   "/companies": "M4 21V5l8-2v18 M12 9h8v12 M8 8h.01 M8 12h.01 M8 16h.01 M16 13h.01 M16 17h.01 M2 21h20",
   "/resume": "M14 3H6v18h12V7l-4-4Z M14 3v4h4 M9 13h6 M9 17h6",
-  "/what-worked": "M4 5h16v11H8l-4 4V5Z M8 9h8 M8 12h5",
   "/internal-openings": "M6 11h12v10H6z M9 11V7a3 3 0 0 1 6 0v4",
 };
 
