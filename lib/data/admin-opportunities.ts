@@ -301,9 +301,39 @@ export async function getOpportunityByIdForAdmin(
   return data as OpportunityWithCompany | null;
 }
 
+/** Lowercased, whitespace-collapsed role title, so "SDE  Intern" and "sde intern" count as the same role. */
+function normalizeRole(role: string): string {
+  return role.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/**
+ * Refuses to create an opportunity when the same company already has one
+ * with the same role (any status: draft, published or expired). Shared by
+ * the single "Add Opportunity" form and bulk import, since both go through
+ * createOpportunity(). To put an old listing back up, edit and re-publish
+ * the existing one instead of adding it again.
+ */
+async function assertNotDuplicate(companyId: string, role: string): Promise<void> {
+  const target = normalizeRole(role);
+  if (!target) return;
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("opportunities")
+    .select("id, role, status")
+    .eq("company_id", companyId);
+  if (error) throw new Error(`Duplicate check failed: ${error.message}`);
+  const match = (data ?? []).find((row) => normalizeRole(String(row.role ?? "")) === target);
+  if (match) {
+    throw new OpportunityValidationError(
+      `Already exists: this company already has "${match.role}" (${match.status}). Not published.`,
+    );
+  }
+}
+
 export async function createOpportunity(input: OpportunityFormInput): Promise<Opportunity> {
   validate(input);
   const companyId = await resolveCompanyId(input);
+  await assertNotDuplicate(companyId, input.role);
   const admin = createAdminClient();
 
   const publishedAt = input.status === "published" ? new Date() : null;

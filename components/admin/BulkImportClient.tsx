@@ -255,8 +255,9 @@ export default function BulkImportClient() {
   }
 
   // Checks the currently parsed items against every opportunity already in
-  // the database (not just each other) — display-only, like the in-batch
-  // duplicate flag below, and never blocks publishing.
+  // the database (not just each other) — a preview only. Publishing itself
+  // is blocked server-side: createOpportunity() rejects any item whose
+  // company + role already exists, and that item shows as failed.
   async function handleCheckDuplicates() {
     if (items.length === 0) return;
     setIsCheckingDuplicates(true);
