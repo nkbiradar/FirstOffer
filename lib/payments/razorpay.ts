@@ -35,7 +35,8 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // LEGACY_MONTHLY_PRICE_INR and getFullAccessPricing() below.
 // Since Oct 2026 this ₹99 buys 3 months (FULL_ACCESS_PERIOD_MS), not one.
 // 16 Oct 2026: raised to ₹199 for 3 months.
-export const MONTHLY_PRICE_INR = 199;
+// 13 Nov 2026 (after the Diwali offer): ₹149 for 3 months.
+export const MONTHLY_PRICE_INR = 149;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
 // ── Dasara offer (Oct 2026): full access ₹49 instead of ₹99, same 3 months.
@@ -52,7 +53,7 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
 // same 3 months. ₹99 is what is actually charged (getFullAccessPriceInr →
 // getProductPricing → Razorpay order); ₹299 is the display-only struck-through
 // price. Switches itself off at FULL_ACCESS_SALE_ENDS_AT, after which the
-// price goes back to the regular ₹199 (MONTHLY_PRICE_INR) — no redeploy needed.
+// price goes to the regular ₹149 (MONTHLY_PRICE_INR) — no redeploy needed.
 // (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
 export const FULL_ACCESS_SALE_PRICE_INR = 99;
 /** Struck-through "was" price shown beside the offer price. Display only. */
@@ -84,8 +85,8 @@ export function isFullAccessPriceRisePending(now: number = Date.now()): boolean 
 /** The full-access price to show and charge right now. */
 export function getFullAccessPriceInr(now: number = Date.now()): number {
   if (isFullAccessSaleActive(now)) return FULL_ACCESS_SALE_PRICE_INR;
-  // Price stays ₹199 after the offer ends (Oct 2026 decision); the ₹399
-  // strike-through and countdown simply disappear once the offer is over.
+  // After the Diwali offer ends (12 Nov 2026, 23:59 IST) the price is the
+  // regular ₹149; the strike-through and offer badges disappear by themselves.
   return MONTHLY_PRICE_INR;
 }
 
