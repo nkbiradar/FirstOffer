@@ -7,13 +7,29 @@ import { notifyAdmins } from "@/lib/email/admin-notify";
 
 // Internal HR members' "Referrals" sign-up (app/internal-openings,
 // components/ReferralProfileForm.tsx). The member shares their resume,
-// email and mobile number; whenever a company hires through referrals, our
+// email, mobile number and (optionally) LinkedIn / GitHub / coding profile links; whenever a company hires through referrals, our
 // employees refer them. Same delivery as the Resume Makeover upload: the
 // resume is emailed to the admin mailbox as an attachment and never stored
 // by the site. The only thing saved is `referral_profile_at` on the user's
 // metadata, so the page can show "You're on the referral list".
 
 const MAX_BYTES = 4 * 1024 * 1024; // Vercel caps request bodies at ~4.5 MB
+
+/** Optional profile link: "" when blank, null when invalid, else a normalised https URL. */
+function cleanUrl(raw: FormDataEntryValue | null, hosts?: string[]): string | null {
+  let v = String(raw ?? "").trim().slice(0, 200);
+  if (!v) return "";
+  if (!/^https?:\/\//i.test(v)) v = `https://${v}`;
+  try {
+    const u = new URL(v);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    const host = u.hostname.toLowerCase().replace(/^www\./, "");
+    if (hosts && !hosts.some((h) => host === h || host.endsWith(`.${h}`))) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
 
 function detectType(bytes: Uint8Array): "pdf" | "docx" | "doc" | null {
   if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf"; // %PDF
@@ -47,12 +63,24 @@ export async function POST(request: NextRequest) {
   const mobileRaw = String(formData.get("mobile") ?? "").replace(/[\s-]/g, "");
   const mobile = mobileRaw.replace(/^(\+91|91|0)(?=\d{10}$)/, "");
   const file = formData.get("resume");
+  const linkedin = cleanUrl(formData.get("linkedin"), ["linkedin.com"]);
+  const github = cleanUrl(formData.get("github"), ["github.com"]);
+  const coding = cleanUrl(formData.get("coding"));
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
   if (!/^[6-9]\d{9}$/.test(mobile)) {
     return NextResponse.json({ error: "Please enter a valid 10-digit mobile number." }, { status: 400 });
+  }
+  if (linkedin === null) {
+    return NextResponse.json({ error: "Please enter a valid LinkedIn profile link (linkedin.com/in/…)." }, { status: 400 });
+  }
+  if (github === null) {
+    return NextResponse.json({ error: "Please enter a valid GitHub profile link (github.com/…)." }, { status: 400 });
+  }
+  if (coding === null) {
+    return NextResponse.json({ error: "Please enter a valid coding profile link." }, { status: 400 });
   }
   if (!(file instanceof File) || file.size === 0 || file.size > MAX_BYTES) {
     return NextResponse.json({ error: "Please attach your resume (PDF or Word, under 4 MB)." }, { status: 400 });
@@ -75,6 +103,9 @@ export async function POST(request: NextRequest) {
       ["Name", name],
       ["Email", email],
       ["Mobile", `+91 ${mobile}`],
+      ["LinkedIn", linkedin || "—"],
+      ["GitHub", github || "—"],
+      ["Coding profile", coding || "—"],
       ["Account email", user.email ?? ""],
       ["Plan", "Internal HR (active)"],
     ],
@@ -91,7 +122,12 @@ export async function POST(request: NextRequest) {
   const submittedAt = new Date().toISOString();
   const admin = createAdminClient();
   const { error } = await admin.auth.admin.updateUserById(user.id, {
-    user_metadata: { ...meta, referral_profile_at: submittedAt, referral_mobile: mobile, referral_email: email },
+    user_metadata: { ...meta, referral_profile_at: submittedAt, referral_mobile: mobile,
+      referral_email: email,
+      referral_linkedin: linkedin,
+      referral_github: github,
+      referral_coding: coding,
+    },
   });
   if (error) console.error("referral-profile: metadata update failed:", error.message);
 

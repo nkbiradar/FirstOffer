@@ -1137,3 +1137,38 @@ create table if not exists public.email_queue (
 create unique index if not exists email_queue_campaign_email_idx on public.email_queue (campaign, email);
 create index if not exists email_queue_pending_idx on public.email_queue (id) where sent_at is null;
 alter table public.email_queue enable row level security;
+
+-- ── Referral openings (Nov 2026) ─────────────────────────────────────────
+-- Companies where our employees can refer Internal HR members. Added by the
+-- admin at /admin/referral-openings and listed in the "Referral openings"
+-- section of /internal-openings. `fields` says which extra details to ask
+-- for: { "linkedin": "required" | "optional", "github": ..., ... }; a key
+-- that's missing is not asked. Resume, email and mobile are always asked.
+-- Applications keep the contact details and links; the resume itself is
+-- emailed to the admin and never stored. Server-only (RLS, no policies).
+-- NOTE: additive and safe to run on its own against the live database.
+create table if not exists public.referral_openings (
+  id uuid primary key default gen_random_uuid(),
+  company text not null,
+  role text,
+  location text,
+  details text,
+  apply_by date,
+  fields jsonb not null default '{}'::jsonb,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index if not exists referral_openings_active_idx
+  on public.referral_openings (is_active, created_at desc);
+alter table public.referral_openings enable row level security;
+
+create table if not exists public.referral_opening_applications (
+  id uuid primary key default gen_random_uuid(),
+  opening_id uuid not null references public.referral_openings(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  details jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (opening_id, user_id)
+);
+alter table public.referral_opening_applications enable row level security;

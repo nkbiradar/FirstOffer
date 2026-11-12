@@ -145,6 +145,9 @@ export default async function AdminDashboardPage({
           <Link className="btn btn-secondary" href="/admin/referrals">
             Referral Rewards
           </Link>
+          <Link className="btn btn-secondary" href="/admin/referral-openings">
+            Referral Openings
+          </Link>
         </div>
 
         <section className="card announcement-card">

@@ -3,6 +3,8 @@ import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import ReferralProfileForm from "@/components/ReferralProfileForm";
+import ReferralOpeningApply from "@/components/ReferralOpeningApply";
+import { getActiveReferralOpenings, getMyReferralApplications } from "@/lib/data/referral-openings";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import { isAppRequest } from "@/lib/nativeAppServer";
 import { getInternalOpportunities } from "@/lib/data/opportunities";
@@ -62,6 +64,18 @@ export default async function InternalOpeningsPage() {
   // locked. Real rows are only ever fetched, and only ever rendered, once
   // isUnlocked is true.
   const { opportunities, total } = await getInternalOpportunities(isUnlocked ? 50 : 1);
+  // Referral companies added at /admin/referral-openings. Locked visitors
+  // only see how many there are, never the company names.
+  const referralOpenings = await getActiveReferralOpenings();
+  const myReferralApps = isUnlocked && user ? await getMyReferralApplications(user.id) : {};
+  const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
+  const referralDefaults: Record<string, string> = {
+    email: String(meta.referral_email ?? user?.email ?? ""),
+    mobile: String(meta.referral_mobile ?? ""),
+  };
+  for (const k of ["linkedin", "github", "coding", "portfolio", "college", "experience", "notice"]) {
+    if (typeof meta[`referral_${k}`] === "string") referralDefaults[k] = meta[`referral_${k}`] as string;
+  }
 
   const breadcrumbsJsonLd = buildLandingBreadcrumbsJsonLd("Internal HR Openings", "/internal-openings");
 
@@ -160,7 +174,7 @@ export default async function InternalOpeningsPage() {
           )}
         </section>
 
-        {/* Members-only perk: Referrals. Members share resume + email + mobile
+        {/* Members-only perk: Referrals. Members share resume + email + mobile + profile links
             (components/ReferralProfileForm.tsx → app/api/internal/referral-profile);
             whenever a company hires through referrals, our employees refer them. */}
         <section className={`referral-section ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referrals">
@@ -170,7 +184,7 @@ export default async function InternalOpeningsPage() {
               <span className="interview-kit-eyebrow">Referrals · Members only</span>
               <h2>Get referred by our employees</h2>
               <p>
-                Share your resume, email ID and mobile number once. Whenever a company hires through referrals,
+                Share your resume, email ID, mobile number and your LinkedIn, GitHub and coding profiles once. Whenever a company hires through referrals,
                 you&apos;ll be referred by our employees, and we&apos;ll post every opening that needs a referral here.
               </p>
             </div>
@@ -179,6 +193,9 @@ export default async function InternalOpeningsPage() {
             <ReferralProfileForm
               defaultEmail={String(user.user_metadata?.referral_email ?? user.email ?? "")}
               defaultMobile={String(user.user_metadata?.referral_mobile ?? "")}
+              defaultLinkedin={String(user.user_metadata?.referral_linkedin ?? "")}
+              defaultGithub={String(user.user_metadata?.referral_github ?? "")}
+              defaultCoding={String(user.user_metadata?.referral_coding ?? "")}
               submittedAt={typeof user.user_metadata?.referral_profile_at === "string" ? user.user_metadata.referral_profile_at : null}
             />
           ) : (
@@ -187,6 +204,42 @@ export default async function InternalOpeningsPage() {
             </a>
           )}
         </section>
+
+        {/* Company-specific referrals added by the admin at /admin/referral-openings
+            (lib/data/referral-openings.ts → components/ReferralOpeningApply.tsx). */}
+        {referralOpenings.length > 0 && (
+          <section className={`referral-openings ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referral-openings">
+            <span className="interview-kit-eyebrow">Referral openings · Members only</span>
+            <h2>
+              🎯 {referralOpenings.length} compan{referralOpenings.length === 1 ? "y is" : "ies are"} accepting referrals now
+            </h2>
+            {isUnlocked && user ? (
+              <>
+                <p>
+                  Our employees can refer you at these companies. Share your resume, email, mobile and the details each
+                  company asks for — we&apos;ll refer you and reach out on your email or mobile.
+                </p>
+                <div className="referral-openings-list">
+                  {referralOpenings.map((o) => (
+                    <ReferralOpeningApply
+                      appliedAt={myReferralApps[o.id] ?? null}
+                      defaults={referralDefaults}
+                      key={o.id}
+                      opening={o}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p>Company names and the apply form are visible to Internal HR members.</p>
+                <a className="btn btn-secondary referral-locked-cta" href="#unlock-internal-hr">
+                  🔒 Unlock to see the companies
+                </a>
+              </>
+            )}
+          </section>
+        )}
 
         {/* Members-only perk: the Coding Interview Kit PDF (served by
             app/api/internal/interview-kit, which re-checks access). */}

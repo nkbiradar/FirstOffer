@@ -7,10 +7,16 @@ import { useState } from "react";
 export default function ReferralProfileForm({
   defaultEmail,
   defaultMobile,
+  defaultLinkedin = "",
+  defaultGithub = "",
+  defaultCoding = "",
   submittedAt,
 }: {
   defaultEmail: string;
   defaultMobile: string;
+  defaultLinkedin?: string;
+  defaultGithub?: string;
+  defaultCoding?: string;
   /** When they last shared their details (null = never). */
   submittedAt: string | null;
 }) {
@@ -76,6 +82,36 @@ export default function ReferralProfileForm({
           placeholder="10-digit mobile number"
           required
           type="tel"
+        />
+      </label>
+      <label>
+        <span>LinkedIn profile (optional)</span>
+        <input
+          defaultValue={defaultLinkedin}
+          maxLength={200}
+          name="linkedin"
+          placeholder="https://linkedin.com/in/your-name"
+          type="url"
+        />
+      </label>
+      <label>
+        <span>GitHub profile (optional)</span>
+        <input
+          defaultValue={defaultGithub}
+          maxLength={200}
+          name="github"
+          placeholder="https://github.com/your-username"
+          type="url"
+        />
+      </label>
+      <label className="referral-form-wide">
+        <span>Coding profile, if any (LeetCode, CodeChef, Codeforces, HackerRank…)</span>
+        <input
+          defaultValue={defaultCoding}
+          maxLength={200}
+          name="coding"
+          placeholder="https://leetcode.com/u/your-username"
+          type="url"
         />
       </label>
       <label className="referral-form-file">
