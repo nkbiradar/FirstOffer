@@ -33,8 +33,8 @@ const FREE_POINTS = [
 ];
 
 const MAKEOVER_POINTS = [
+  "Reviewed by HR professionals from top MNCs",
   "Your raw resume rewritten in a clean, professional format",
-  "Reviewed by HR professionals from top companies",
   "Keywords and bullet points matched to the role you're targeting",
   "Fully renewed summary, skills, projects and experience",
   "Built to score 90%+ on ATS resume checks",
@@ -141,7 +141,7 @@ export default async function ResumePage() {
           {!inApp && (
             <article className="resume-option resume-option-paid" id="makeover">
               <span className="resume-badge resume-badge-paid">Done for you</span>
-              <h2>Confused? Send us your raw resume — we&apos;ll make it professional</h2>
+              <h2>Get your resume reviewed by top MNC HRs — and a 90% ATS-friendly resume built by our team</h2>
               <div className="resume-price">
                 <strong>Included in Full Access</strong>
                 <span className="resume-price-note">₹{FULL_PRICE} for 3 months · 1 makeover per plan</span>

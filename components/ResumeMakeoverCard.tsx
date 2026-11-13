@@ -122,8 +122,8 @@ export default function ResumeMakeoverCard({
           Get Full Access — ₹{fullAccessPrice}
         </Link>
         <p className="resume-form-note">
-          Resume Makeover is included free with Full Access (₹{fullAccessPrice} for 3 months), along with HR emails,
-          recruiter numbers and apply links.
+          Resume review by top MNC HRs and a 90% ATS-friendly resume built by our team are included free with Full
+          Access (₹{fullAccessPrice} for 3 months), along with HR emails, recruiter numbers and apply links.
         </p>
       </div>
     );

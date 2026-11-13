@@ -109,7 +109,7 @@ export default function PricingPlans({
         { text: "Direct HR emails & recruiter numbers" },
         { text: "Official Google Forms & apply links" },
         { text: "New fresher roles added daily" },
-        { text: "📄 Resume Makeover by HR experts — included (1 per plan)", highlight: true },
+        { text: "📄 Resume review by top MNC HRs + 90% ATS-friendly resume built by our team", highlight: true },
         { text: "Resume Keyword Matcher" },
         { text: "Fresh listings only — every role live 48 hrs" },
       ],

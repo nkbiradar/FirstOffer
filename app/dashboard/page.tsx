@@ -153,6 +153,24 @@ export default async function DashboardPage({
           </div>
         )}
 
+        {/* Full Access perk: Resume Makeover (app/resume → /api/resume-review/member). */}
+        {hasFullAccess && (
+          <section className="member-resume-card" aria-labelledby="member-resume-title">
+            <span className="member-resume-icon" aria-hidden="true">📄</span>
+            <div className="member-resume-text">
+              <span className="member-resume-eyebrow">Included in your plan</span>
+              <strong id="member-resume-title">Get your resume reviewed by top MNC HRs</strong>
+              <span>
+                Our team rebuilds it into a 90%+ ATS-friendly resume for the role you want — delivered to your email
+                within 24 hours.
+              </span>
+            </div>
+            <Link className="btn btn-primary member-resume-btn" href="/resume#makeover">
+              Review my resume
+            </Link>
+          </section>
+        )}
+
         {/* "Share your win" — open to every signed-in student. Submissions are
             saved as drafts; the admin verifies and publishes them from
             /admin/testimonials, and they then appear in the site's

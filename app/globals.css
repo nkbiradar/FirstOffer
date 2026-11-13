@@ -8600,3 +8600,12 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 .sc-close { display: block; margin: 10px auto 0; border: 0; background: none; color: #8b8b95; font-size: 13px; text-decoration: underline; cursor: pointer; }
 @keyframes sc-bounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-4px) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .sc-flame, .sc-card, .sc-overlay { animation: none; } }
+
+/* ── Dashboard: Full Access resume perk card ── */
+.member-resume-card { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 16px 0; padding: 18px 20px; border-radius: 18px; background: #eff6ff; border: 1px solid #bfdbfe; }
+.member-resume-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: #fff; font-size: 24px; flex: none; }
+.member-resume-text { flex: 1 1 280px; display: grid; gap: 3px; }
+.member-resume-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #1d4ed8; }
+.member-resume-text strong { font-size: 17px; color: var(--color-text); }
+.member-resume-text span:last-child { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); }
+@media (max-width: 720px) { .member-resume-btn { width: 100%; justify-content: center; text-align: center; } }
