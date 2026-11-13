@@ -259,7 +259,8 @@ export function getAccessPeriodMs(product: string | null | undefined): number {
   return FULL_ACCESS_PERIOD_MS;
 }
 
-// ── Resume Makeover (one-time ₹199 service, see app/resume) ─────────────
+// ── Resume Makeover — no longer sold separately (included with Full Access
+// since 13 Nov 2026, see app/api/resume-review/member). Kept for old orders.
 // A one-off human service, not a subscription: the student pays once,
 // uploads their current resume, and the team rewrites it. Lives in its own
 // `resume_orders` table (supabase/schema.sql) — never touches

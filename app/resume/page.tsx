@@ -4,19 +4,21 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getUser } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAppRequest } from "@/lib/nativeAppServer";
-import { RESUME_REVIEW_PRICE_INR, RESUME_REVIEW_MRP_INR } from "@/lib/payments/razorpay";
-
-const OFF_PERCENT = Math.round((1 - RESUME_REVIEW_PRICE_INR / RESUME_REVIEW_MRP_INR) * 100);
+import { FULL_ACCESS_PERIOD_MS, getFullAccessPriceInr } from "@/lib/payments/razorpay";
+import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
 import ResumeMakeoverCard from "@/components/ResumeMakeoverCard";
 
+// Resume Makeover is included with Full Access (13 Nov 2026) — no separate price.
+const FULL_PRICE = getFullAccessPriceInr();
+
 export const metadata: Metadata = {
-  title: `Resume Help for Freshers — Free ATS Resume Template & ₹${RESUME_REVIEW_PRICE_INR} Resume Makeover`,
+  title: "Resume Help for Freshers — Free ATS Resume Template & Resume Makeover",
   description:
-    "Getting no interview calls? Download a free one-page ATS-friendly resume template, or send us your resume and we'll rebuild it professionally for the role you want — now just ₹" + RESUME_REVIEW_PRICE_INR + ".",
+    "Getting no interview calls? Download a free one-page ATS-friendly resume template, or get your resume rebuilt professionally for the role you want — included with FirstOffer Full Access.",
   alternates: { canonical: `${getSiteUrl()}/resume` },
   openGraph: {
     title: "Getting no interview calls? Fix your resume | FirstOffer",
-    description: `Free ATS-friendly resume template, or a full ₹${RESUME_REVIEW_PRICE_INR} resume makeover for freshers.`,
+    description: "Free ATS-friendly resume template, or a full resume makeover included with Full Access.",
     url: `${getSiteUrl()}/resume`,
     type: "website",
   },
@@ -40,7 +42,7 @@ const MAKEOVER_POINTS = [
 
 const STEPS = [
   { title: "Share your details", body: "Tell us the role you want and attach your current resume — any format, even a rough one." },
-  { title: `Pay ₹${RESUME_REVIEW_PRICE_INR} once`, body: "Quick UPI or card payment. No subscription, no auto-debit." },
+  { title: "Included with Full Access", body: `No extra payment — 1 makeover with every ₹${FULL_PRICE} Full Access plan (3 months).` },
   { title: "Get your new resume", body: "We rebuild it and email the ATS-ready version to your sign-in email — within 24 hours." },
 ];
 
@@ -51,19 +53,38 @@ const STEPS = [
 export default async function ResumePage() {
   const [user, inApp] = await Promise.all([getUser(), isAppRequest()]);
 
-  // A paid order still waiting for its resume file (tab closed after paying,
-  // or the upload failed) — the card resumes at the upload step.
+  // An old ₹199 paid order still waiting for its resume file keeps its upload
+  // step. Full Access members get 1 makeover per 3-month plan; usedAt is the
+  // one they've already used in that window, if any.
   let pendingOrderId: string | null = null;
+  let isMember = false;
+  let usedAt: string | null = null;
   if (user && !inApp) {
-    const { data } = await createAdminClient()
-      .from("resume_orders")
-      .select("razorpay_order_id")
-      .eq("user_id", user.id)
-      .eq("status", "paid")
-      .order("paid_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    pendingOrderId = data?.razorpay_order_id ?? null;
+    const admin = createAdminClient();
+    const since = new Date(Date.now() - FULL_ACCESS_PERIOD_MS).toISOString();
+    const [{ data: pending }, member, { data: used }] = await Promise.all([
+      admin
+        .from("resume_orders")
+        .select("razorpay_order_id")
+        .eq("user_id", user.id)
+        .eq("status", "paid")
+        .order("paid_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      hasFullAccess(user.id),
+      admin
+        .from("resume_orders")
+        .select("created_at")
+        .eq("user_id", user.id)
+        .like("razorpay_order_id", "member_%")
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+    pendingOrderId = pending?.razorpay_order_id ?? null;
+    isMember = member;
+    usedAt = used?.created_at ?? null;
   }
 
   return (
@@ -122,17 +143,13 @@ export default async function ResumePage() {
               <span className="resume-badge resume-badge-paid">Done for you</span>
               <h2>Confused? Send us your raw resume — we&apos;ll make it professional</h2>
               <div className="resume-price">
-                <span className="resume-price-old" aria-label={`Original price ₹${RESUME_REVIEW_MRP_INR}`}>
-                  ₹{RESUME_REVIEW_MRP_INR}
-                </span>
-                <strong>₹{RESUME_REVIEW_PRICE_INR}</strong>
-                <span className="resume-off-badge">{OFF_PERCENT}% OFF</span>
-                <span className="resume-price-note">Limited-time offer · one-time payment</span>
+                <strong>Included in Full Access</strong>
+                <span className="resume-price-note">₹{FULL_PRICE} for 3 months · 1 makeover per plan</span>
               </div>
               <p className="resume-value">
                 <span aria-hidden="true">💡</span> A professional resume writer charges <strong>₹3,000–₹5,000</strong> and
-                takes days. Ours is just <strong>₹{RESUME_REVIEW_PRICE_INR}</strong> — delivered within{" "}
-                <strong>24 hours</strong>.
+                takes days. With Full Access it&apos;s <strong>included</strong> — delivered within{" "}
+                <strong>24 hours</strong>, along with HR emails, recruiter numbers and apply links.
               </p>
               <ul className="resume-checklist">
                 {MAKEOVER_POINTS.map((p) => (
@@ -140,10 +157,12 @@ export default async function ResumePage() {
                 ))}
               </ul>
               <ResumeMakeoverCard
+                fullAccessPrice={FULL_PRICE}
+                isMember={isMember}
                 isSignedIn={Boolean(user)}
-                userEmail={user?.email ?? null}
-                price={RESUME_REVIEW_PRICE_INR}
                 pendingOrderId={pendingOrderId}
+                usedAt={usedAt}
+                userEmail={user?.email ?? null}
               />
             </article>
           )}
@@ -151,7 +170,7 @@ export default async function ResumePage() {
 
         {!inApp && (
           <section className="resume-steps">
-            <h2>How the ₹{RESUME_REVIEW_PRICE_INR} makeover works</h2>
+            <h2>How the Resume Makeover works</h2>
             <ol>
               {STEPS.map((s, i) => (
                 <li key={s.title}>

@@ -49,7 +49,7 @@ const PRODUCT_COPY: Record<
       "Most freshers waste weeks applying through crowded portals and hoping someone notices. For less than the price of an auto ride, unlock the direct HR email, official Google Form, or application link on this opportunity — and every opportunity on FirstOffer, including new ones added regularly.",
     highlightTitle: "One membership, every opportunity, unlocked",
     highlightBody:
-      "direct HR emails, official Google Forms, and application links, updated as new roles go live. Skip straight to applying instead of guessing.",
+      "direct HR emails, official Google Forms, and application links, updated as new roles go live — plus a free Resume Makeover by HR experts. Skip straight to applying instead of guessing.",
     checkoutDescription: "3-month membership — full site access",
     unlockLabel: (price) => `Unlock everything — ₹${price} for 3 months`,
     fallbackRedirect: (opportunityId) => (opportunityId ? `/opportunities/${opportunityId}` : "/opportunities"),

@@ -7,8 +7,6 @@ import {
   FULL_ACCESS_SALE_MRP_INR,
   FULL_ACCESS_SALE_ENDS_AT,
   INTERNAL_PRICE_INR,
-  RESUME_REVIEW_MRP_INR,
-  RESUME_REVIEW_PRICE_INR,
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
@@ -18,7 +16,7 @@ import {
 } from "@/lib/payments/razorpay";
 
 // Dark, three-plan pricing section on the homepage: Full Access (featured),
-// Internal HR Openings and Resume Makeover. All prices come from
+// Internal HR Openings (Resume Makeover is now part of Full Access). All prices come from
 // lib/payments/razorpay.ts, so a sale switching on/off updates this too.
 // Strike-through prices are only shown when the plan's REAL regular price
 // is higher than what's charged today.
@@ -111,25 +109,9 @@ export default function PricingPlans({
         { text: "Direct HR emails & recruiter numbers" },
         { text: "Official Google Forms & apply links" },
         { text: "New fresher roles added daily" },
+        { text: "📄 Resume Makeover by HR experts — included (1 per plan)", highlight: true },
         { text: "Resume Keyword Matcher" },
         { text: "Fresh listings only — every role live 48 hrs" },
-      ],
-    },
-    {
-      key: "resume",
-      name: "Resume Makeover",
-      period: "One-time",
-      price: RESUME_REVIEW_PRICE_INR,
-      was: RESUME_REVIEW_MRP_INR,
-      cta: "Fix my resume",
-      href: "/resume",
-      features: [
-        { text: "Delivered within 24 hours" },
-        { text: "Rebuilt for your target role" },
-        { text: "ATS-friendly format & keywords" },
-        { text: "Reviewed by HR professionals" },
-        { text: "Free ATS template included" },
-        { text: "Job listings & HR contacts", included: false },
       ],
     },
   ];
@@ -165,7 +147,7 @@ export default function PricingPlans({
         </div>
       </div>
 
-      <div className="fp-grid">
+      <div className="fp-grid fp-grid-2">
         {plans.map((p) => {
           const off = pctOff(p.price, p.was);
           return (

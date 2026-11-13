@@ -318,8 +318,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </section>
         </Reveal>
 
-        {/* Dark three-plan pricing (Full Access / Internal HR / Resume
-            Makeover) + "why off-campus" comparison. Prices and offers come
+        {/* Dark two-plan pricing (Full Access incl. Resume Makeover /
+            Internal HR) + "why off-campus" comparison. Prices and offers come
             from lib/payments/razorpay.ts. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>

@@ -17,6 +17,11 @@ function clip(value: unknown, max: number) {
 }
 
 export async function POST(request: NextRequest) {
+  // Since 13 Nov 2026 the Resume Makeover is included with Full Access and is
+  // no longer sold on its own — see app/api/resume-review/member.
+  if (process.env.RESUME_MAKEOVER_STANDALONE !== "1") {
+    return NextResponse.json({ error: "Resume Makeover is now included with Full Access." }, { status: 410 });
+  }
   const user = await getUser();
   if (!user) {
     return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
