@@ -1172,3 +1172,13 @@ create table if not exists public.referral_opening_applications (
   unique (opening_id, user_id)
 );
 alter table public.referral_opening_applications enable row level security;
+
+-- Referral openings: Telegram-style post fields (Batch, CTC, Job ID, JD link,
+-- Apply link). When apply_url is set, members apply there directly instead of
+-- through the site's referral form. Additive and safe to re-run.
+alter table public.referral_openings add column if not exists batch text;
+alter table public.referral_openings add column if not exists ctc text;
+alter table public.referral_openings add column if not exists job_id text;
+alter table public.referral_openings add column if not exists jd_url text;
+alter table public.referral_openings add column if not exists apply_url text;
+notify pgrst, 'reload schema';

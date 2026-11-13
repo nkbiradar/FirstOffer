@@ -25,6 +25,11 @@ export type ReferralOpening = {
   location: string | null;
   details: string | null;
   apply_by: string | null;
+  batch: string | null;
+  ctc: string | null;
+  job_id: string | null;
+  jd_url: string | null;
+  apply_url: string | null;
   fields: ReferralFields;
   is_active: boolean;
   created_at: string;
@@ -39,7 +44,8 @@ export type ReferralApplication = {
   updated_at: string;
 };
 
-const COLUMNS = "id, company, role, location, details, apply_by, fields, is_active, created_at";
+const COLUMNS =
+  "id, company, role, location, details, apply_by, batch, ctc, job_id, jd_url, apply_url, fields, is_active, created_at";
 
 /** Active openings whose apply-by date (if any) hasn't passed, newest first. */
 export async function getActiveReferralOpenings(): Promise<ReferralOpening[]> {

@@ -51,8 +51,31 @@ export default async function AdminReferralOpeningsPage({ searchParams }: { sear
               <input maxLength={120} name="location" placeholder="Bengaluru / Remote" />
             </label>
             <label>
+              Batch
+              <input maxLength={120} name="batch" placeholder="2023/2024/2025/2026" />
+            </label>
+            <label>
+              CTC
+              <input maxLength={80} name="ctc" placeholder="Competitive / 6 LPA" />
+            </label>
+            <label>
+              Job ID
+              <input maxLength={80} name="job_id" placeholder="JB0076765" />
+            </label>
+            <label>
               Apply by (optional)
               <input name="apply_by" type="date" />
+            </label>
+          </div>
+          <div className="broadcast-row">
+            <label>
+              JD link
+              <input name="jd_url" placeholder="https://careers.company.com/jobs/…" type="url" />
+            </label>
+            <label>
+              Apply link (optional)
+              <input name="apply_url" placeholder="https://docs.google.com/forms/…" type="url" />
+              <span className="hint">If set, members apply on this link. Leave empty to collect resumes on FirstOffer.</span>
             </label>
           </div>
           <label>
@@ -109,10 +132,29 @@ export default async function AdminReferralOpeningsPage({ searchParams }: { sear
                         {o.is_active ? "Live" : "Closed"}
                       </span>
                       <div className="hint">
-                        {[o.role, o.location, o.apply_by ? `Apply by ${o.apply_by}` : null].filter(Boolean).join(" · ") ||
-                          "No role / location set"}
+                        {[
+                          o.role,
+                          o.batch ? `Batch ${o.batch}` : null,
+                          o.ctc ? `CTC ${o.ctc}` : null,
+                          o.location,
+                          o.job_id ? `Job ID ${o.job_id}` : null,
+                          o.apply_by ? `Apply by ${o.apply_by}` : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") || "No role / location set"}
                       </div>
-                      <div className="hint">Asks: Resume, Email, Mobile{asked ? `, ${asked}` : ""}</div>
+                      <div className="hint">
+                        {o.apply_url ? (
+                          <>
+                            Apply link:{" "}
+                            <a href={o.apply_url} rel="noreferrer" target="_blank">
+                              {o.apply_url}
+                            </a>
+                          </>
+                        ) : (
+                          `Asks on FirstOffer: Resume, Email, Mobile${asked ? `, ${asked}` : ""}`
+                        )}
+                      </div>
                     </div>
                     <form action={`/api/admin/referral-openings/${o.id}`} method="post" className="referral-admin-actions">
                       {o.is_active ? (
