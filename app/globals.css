@@ -8096,6 +8096,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-card-kit .fp-card-body { background: var(--fp-card); border-radius: 20px; }
 .fp-ribbon-kit { color: #022c22; font-weight: 800; }
 .fp-card-kit .fp-note { color: #fbbf24; font-weight: 700; }
+.fp-card-kit .fp-tag-gold { background: linear-gradient(90deg, #10b981, #34d399); color: #022c22; }
+.fp-card-kit .fp-cta { background: linear-gradient(90deg, #10b981, #14d3a5); color: #022c22; border-color: transparent; font-weight: 800; }
+.fp-card-kit .fp-cta:hover { filter: brightness(1.06); }
+.fp-card-kit .fp-features li.is-highlight { background: linear-gradient(90deg, #10b981, #34d399); color: #022c22; }
 .fp-name { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; color: var(--fp-text); }
 .fp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 2px; }
 .fp-tag-gold { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #1c1103; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
