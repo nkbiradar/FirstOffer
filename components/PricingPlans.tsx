@@ -133,6 +133,7 @@ export default function PricingPlans({
         { text: "HR email directory — 740+ companies, 12 countries" },
         { text: "500+ company career page links" },
         { text: "Job referral guide + referral mail template" },
+        { text: "How to get replies from companies (guide)" },
         { text: "ATS-friendly resume template (PDF + editable)" },
         { text: "Pay once — download & keep forever" },
       ],

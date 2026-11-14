@@ -21,7 +21,7 @@ const STATS = [
   { big: "3,100+", small: "HR contacts" },
   { big: "740+", small: "HR emails · 12 countries" },
   { big: "500+", small: "Company career links" },
-  { big: "7", small: "Files · instant download" },
+  { big: "8", small: "Files · instant download" },
 ];
 
 // Career Kit 2027: one-time ₹179 lifetime product (product "career_kit").

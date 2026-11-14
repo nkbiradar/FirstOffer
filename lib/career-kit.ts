@@ -46,6 +46,14 @@ export const CAREER_KIT_FILES: CareerKitFile[] = [
     emoji: "🤝",
   },
   {
+    key: "get-replies",
+    file: "FirstOffer_How_to_Get_Replies_from_Companies.pdf",
+    title: "How to Get Replies from Companies",
+    detail: "5 habits that get HRs to respond — subject line, timing & more",
+    format: "PDF",
+    emoji: "📬",
+  },
+  {
     key: "referral-mail",
     file: "FirstOffer_HR_Referral_Mail_Template.docx",
     title: "Referral Mail Template + Real Example",
