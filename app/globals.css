@@ -7560,6 +7560,7 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .referral-opening-role { display: block; font-size: 13px; color: var(--color-text-secondary); }
 .referral-opening-deadline { font-size: 12px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 4px 10px; border-radius: 999px; }
 .referral-opening-details { margin: 0; font-size: 14px; line-height: 1.55; white-space: pre-line; color: var(--color-text-secondary); }
+.referral-opening-note { margin: 0; padding: 10px 12px; border-radius: 10px; background: #eef2ff; border: 1px solid #c7d2fe; font-size: 14px; font-weight: 700; color: #1e1b4b; }
 .referral-opening-alert { font-size: 15px; font-weight: 800; color: #b91c1c; }
 .referral-opening-facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; font-size: 14px; }
 .referral-opening-facts dt { font-weight: 700; color: var(--color-text); }

@@ -73,6 +73,7 @@ export type ReferralOpeningCard = {
   job_id: string | null;
   jd_url: string | null;
   apply_url: string | null;
+  applicant_note: string | null;
   fields: ReferralFields;
 };
 
@@ -183,6 +184,11 @@ export default function ReferralOpeningApply({
       </dl>
       {opening.details && (
         <p className="referral-opening-details">{opening.details}</p>
+      )}
+      {opening.applicant_note && (
+        <p className="referral-opening-note">
+          <span aria-hidden="true">📝</span> {opening.applicant_note}
+        </p>
       )}
       {opening.apply_url ? (
         <a

@@ -1194,3 +1194,8 @@ alter table public.coupons drop constraint if exists coupons_product_check;
 alter table public.coupons
   add constraint coupons_product_check check (product in ('full_access', 'internal_hr', 'career_kit', 'all'));
 notify pgrst, 'reload schema';
+
+-- Referral openings: optional note shown to paid members above the Apply
+-- button (e.g. what to enter on the referrer's Google Form). Safe to re-run.
+alter table public.referral_openings add column if not exists applicant_note text;
+notify pgrst, 'reload schema';

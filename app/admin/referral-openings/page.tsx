@@ -79,6 +79,15 @@ export default async function AdminReferralOpeningsPage({ searchParams }: { sear
             </label>
           </div>
           <label>
+            Note for applicants (shown only to paid members)
+            <input
+              defaultValue="For the Google Form, enter Premium Group Name: SDE PREMIUM"
+              maxLength={300}
+              name="applicant_note"
+            />
+            <span className="hint">Shown in a box right above the Apply button. Clear it if not needed.</span>
+          </label>
+          <label>
             Details for members (optional)
             <textarea
               maxLength={3000}

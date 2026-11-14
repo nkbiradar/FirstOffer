@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
     job_id: text("job_id", 80) || null,
     jd_url: jdUrl || null,
     apply_url: applyUrl || null,
+    applicant_note: text("applicant_note", 300) || null,
     fields,
   });
   if (error) return back(`error=${encodeURIComponent(error.message)}`);
