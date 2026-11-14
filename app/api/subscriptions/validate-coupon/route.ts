@@ -34,7 +34,8 @@ export async function POST(request: NextRequest) {
   }
 
   const code = typeof body.code === "string" ? body.code.trim() : "";
-  const product: SubscriptionProduct = body.product === "internal_hr" ? "internal_hr" : "full_access";
+  const product: SubscriptionProduct =
+    body.product === "internal_hr" ? "internal_hr" : body.product === "career_kit" ? "career_kit" : "full_access";
 
   if (!code) {
     return NextResponse.json({ valid: false, error: "Enter a coupon code." }, { status: 400 });

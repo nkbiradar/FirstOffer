@@ -26,6 +26,8 @@ export async function getPaidUserIds(admin: Admin): Promise<{ fullAccess: Set<st
     for (const r of data ?? []) {
       const ok = r.current_period_end ? new Date(r.current_period_end).getTime() > now : r.status === "active";
       if (!ok) continue;
+      // Career Kit (one-time downloads) grants neither membership.
+      if (r.product === "career_kit") continue;
       (r.product === "internal_hr" ? internal : fullAccess).add(r.user_id as string);
     }
     if ((data ?? []).length < PAGE) break;

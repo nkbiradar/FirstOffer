@@ -7,6 +7,8 @@ import {
   FULL_ACCESS_SALE_MRP_INR,
   FULL_ACCESS_SALE_ENDS_AT,
   INTERNAL_PRICE_INR,
+  CAREER_KIT_MRP_INR,
+  CAREER_KIT_PRICE_INR,
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
@@ -16,7 +18,7 @@ import {
 } from "@/lib/payments/razorpay";
 
 // Dark, three-plan pricing section on the homepage: Full Access (featured),
-// Internal HR Openings (Resume Makeover is now part of Full Access). All prices come from
+// Internal HR Openings and the one-time Career Kit 2027 (Resume Makeover is part of Full Access). All prices come from
 // lib/payments/razorpay.ts, so a sale switching on/off updates this too.
 // Strike-through prices are only shown when the plan's REAL regular price
 // is higher than what's charged today.
@@ -32,6 +34,8 @@ type Plan = {
   featured?: boolean;
   /** Gold top ribbon (like the blue "Most popular" one), e.g. on Internal HR. */
   ribbon?: string;
+  /** Green top ribbon — the one-time Career Kit card. */
+  kitRibbon?: string;
   countdownEndsAt?: string;
   cta: string;
   href: string;
@@ -114,6 +118,25 @@ export default function PricingPlans({
         { text: "Fresh listings only — every role live 48 hrs" },
       ],
     },
+    {
+      key: "kit",
+      name: "Career Kit 2027",
+      period: "One-time · Lifetime access",
+      price: CAREER_KIT_PRICE_INR,
+      was: CAREER_KIT_MRP_INR,
+      kitRibbon: "🔥 Launch offer · Lifetime",
+      note: "⏳ Prices will increase soon",
+      cta: "Get Career Kit",
+      href: "/career-kit",
+      features: [
+        { text: "📇 3,100+ HR contacts — company-wise (2027 updated)", highlight: true },
+        { text: "HR email directory — 740+ companies, 12 countries" },
+        { text: "500+ company career page links" },
+        { text: "Job referral guide + referral mail template" },
+        { text: "ATS-friendly resume template (PDF + editable)" },
+        { text: "Pay once — download & keep forever" },
+      ],
+    },
   ];
 
   return (
@@ -147,16 +170,17 @@ export default function PricingPlans({
         </div>
       </div>
 
-      <div className="fp-grid fp-grid-2">
+      <div className="fp-grid">
         {plans.map((p) => {
           const off = pctOff(p.price, p.was);
           return (
             <article
-              className={`fp-card${p.featured ? " fp-card-featured" : ""}${p.ribbon ? " fp-card-gold" : ""}`}
+              className={`fp-card${p.featured ? " fp-card-featured" : ""}${p.ribbon ? " fp-card-gold" : ""}${p.kitRibbon ? " fp-card-kit" : ""}`}
               key={p.key}
             >
               {p.featured && <div className="fp-ribbon">Most popular</div>}
               {p.ribbon && <div className="fp-ribbon fp-ribbon-gold">{p.ribbon}</div>}
+              {p.kitRibbon && <div className="fp-ribbon fp-ribbon-kit">{p.kitRibbon}</div>}
               <div className="fp-card-body">
                 <h3 className="fp-name">
                   <span aria-hidden="true" className="fp-spark">

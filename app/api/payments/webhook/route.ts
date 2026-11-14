@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     // opportunity_unlocks handling further down: if the browser tab closed
     // right after paying and app/api/subscriptions/verify/route.ts's
     // client-side call never fired, this is what still grants access.
-    if (product === "full_access" || product === "internal_hr") {
+    if (product === "full_access" || product === "internal_hr" || product === "career_kit") {
       const currentPeriodEnd = new Date(Date.now() + getAccessPeriodMs(product)).toISOString();
       const { error } = await admin
         .from("subscriptions")

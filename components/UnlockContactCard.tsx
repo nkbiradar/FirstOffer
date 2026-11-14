@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-type Product = "full_access" | "internal_hr";
+type Product = "full_access" | "internal_hr" | "career_kit";
 
 // Copy/labels that differ between the two subscription products this card
 // can sell. Kept as a lookup (rather than scattering `product === "..."`
@@ -66,6 +66,18 @@ const PRODUCT_COPY: Record<
     checkoutDescription: "Internal HR Openings membership",
     unlockLabel: (price) => `Unlock Internal Openings — ₹${price} for 3 months`,
     fallbackRedirect: () => "/internal-openings",
+  },
+  career_kit: {
+    eyebrow: "Career Kit 2027 · Lifetime access",
+    title: "Get the complete job-search kit",
+    priceLine: "Pay once — download everything, keep it forever.",
+    description:
+      "3,100+ HR contacts, a 12-country HR email directory, 500+ company career links, the referral guide, a referral mail template and an ATS-friendly resume template — everything a fresher needs to reach HRs directly.",
+    highlightTitle: "One payment, lifetime access",
+    highlightBody: "instant downloads after payment, plus every 2027 update we add to the kit, at no extra cost.",
+    checkoutDescription: "Career Kit 2027 — lifetime access",
+    unlockLabel: (price) => `Get Career Kit — ₹${price} (lifetime)`,
+    fallbackRedirect: () => "/career-kit",
   },
 };
 
@@ -120,7 +132,7 @@ export default function UnlockContactCard({
 }) {
   const router = useRouter();
   const copy = PRODUCT_COPY[product];
-  const periodSuffix = " for 3 months";
+  const periodSuffix = product === "career_kit" ? " one-time · lifetime access" : " for 3 months";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
@@ -312,7 +324,9 @@ export default function UnlockContactCard({
       </p>
       {paymentSuccess ? (
         <p className="unlock-contact-desc" style={{ fontWeight: 600 }}>
-          🎉 Payment confirmed — you&apos;re ready to apply now! Loading your apply details...
+          {product === "career_kit"
+            ? "🎉 Payment confirmed — your Career Kit downloads are ready! Loading them..."
+            : "🎉 Payment confirmed — you're ready to apply now! Loading your apply details..."}
         </p>
       ) : (
         <>

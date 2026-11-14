@@ -292,6 +292,7 @@ export async function sendCheckoutRecoveryEmails(maxAgeHours: number = MAX_AGE_H
     .from("subscriptions")
     .select("id, user_id, product, created_at")
     .eq("status", "created")
+    .neq("product", "career_kit") // reminder emails only cover the two memberships
     .is("recovery_email_sent_at", null)
     .lte("created_at", newest)
     .gte("created_at", oldest)

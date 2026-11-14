@@ -8092,6 +8092,10 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .fp-card-gold { background: linear-gradient(90deg, #f59e0b, #fbbf24); border-color: #f59e0b; padding: 0 2px 2px; box-shadow: 0 24px 60px rgba(245,158,11,0.22); }
 .fp-card-gold .fp-card-body { background: var(--fp-card); border-radius: 20px; }
 .fp-ribbon-gold { color: #1c1103; font-weight: 800; }
+.fp-card-kit { background: linear-gradient(90deg, #10b981, #14d3a5); border-color: #10b981; padding: 0 2px 2px; box-shadow: 0 24px 60px rgba(16,185,129,0.22); }
+.fp-card-kit .fp-card-body { background: var(--fp-card); border-radius: 20px; }
+.fp-ribbon-kit { color: #022c22; font-weight: 800; }
+.fp-card-kit .fp-note { color: #fbbf24; font-weight: 700; }
 .fp-name { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; color: var(--fp-text); }
 .fp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 2px; }
 .fp-tag-gold { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #1c1103; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
@@ -8609,3 +8613,41 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 .member-resume-text strong { font-size: 17px; color: var(--color-text); }
 .member-resume-text span:last-child { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); }
 @media (max-width: 720px) { .member-resume-btn { width: 100%; justify-content: center; text-align: center; } }
+
+/* ── Career Kit 2027 page (app/career-kit) ── */
+.ck-hero { margin: 8px 0 28px; padding: 32px; border-radius: 24px; background: #0b0b12; color: #fff; display: grid; gap: 14px; position: relative; overflow: hidden; }
+.ck-hero::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, #4f46e5, #10d3a5); }
+.ck-badge { justify-self: start; font-size: 12px; font-weight: 800; letter-spacing: .04em; padding: 6px 12px; border-radius: 999px; background: rgba(16, 211, 165, .14); color: #34e3b8; }
+.ck-hero h1 { margin: 0; font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); line-height: 1.15; color: #fff; }
+.ck-mark { background: linear-gradient(90deg, #818cf8, #34e3b8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ck-hero > p { margin: 0; max-width: 720px; font-size: 16px; line-height: 1.6; color: #cbd5e1; }
+.ck-price { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.ck-price s { font-size: 22px; color: #94a3b8; }
+.ck-price strong { font-size: 44px; font-weight: 900; color: #fff; }
+.ck-off { font-size: 13px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: #f59e0b; color: #1f1300; }
+.ck-once { font-size: 14px; color: #a5b4fc; font-weight: 600; }
+.ck-urgency { margin: 0 !important; font-weight: 700; color: #fbbf24 !important; }
+.ck-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 6px; }
+.ck-stat { padding: 14px 16px; border-radius: 14px; background: #161827; display: grid; gap: 2px; }
+.ck-stat strong { font-size: 24px; font-weight: 800; color: #fff; }
+.ck-stat span { font-size: 13px; color: #9ca3af; }
+.ck-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.ck-included h2, .ck-downloads h2 { margin: 0 0 12px; font-family: var(--font-display); font-size: 22px; }
+.ck-sub { margin: -6px 0 14px; color: var(--color-text-secondary); }
+.ck-grid { display: grid; gap: 10px; }
+.ck-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px solid var(--color-border); }
+.ck-item-emoji { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: #eef2ff; font-size: 20px; flex: none; }
+.ck-item-text { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.ck-item-text strong { font-size: 15px; color: var(--color-text); }
+.ck-item-text span { font-size: 13px; color: var(--color-text-secondary); }
+.ck-format { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; }
+.ck-why { list-style: none; padding: 0; margin: 16px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px; font-weight: 600; color: var(--color-text); }
+.ck-buy { position: sticky; top: 96px; }
+@media (max-width: 900px) {
+  .ck-layout { grid-template-columns: 1fr; }
+  .ck-buy { position: static; }
+  .ck-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ck-why { grid-template-columns: 1fr; }
+  .ck-hero { padding: 24px 20px; }
+  .ck-item .btn { flex: none; }
+}

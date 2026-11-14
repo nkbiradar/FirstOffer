@@ -1182,3 +1182,15 @@ alter table public.referral_openings add column if not exists job_id text;
 alter table public.referral_openings add column if not exists jd_url text;
 alter table public.referral_openings add column if not exists apply_url text;
 notify pgrst, 'reload schema';
+
+-- ── Career Kit 2027 (Nov 2026) ───────────────────────────────────────────
+-- One-time ₹179 lifetime product (lib/payments/razorpay.ts CAREER_KIT_*,
+-- app/career-kit, app/api/career-kit). Uses the same subscriptions table;
+-- "lifetime" is a current_period_end ~100 years ahead. Safe to re-run.
+alter table public.subscriptions drop constraint if exists subscriptions_product_check;
+alter table public.subscriptions
+  add constraint subscriptions_product_check check (product in ('full_access', 'internal_hr', 'career_kit'));
+alter table public.coupons drop constraint if exists coupons_product_check;
+alter table public.coupons
+  add constraint coupons_product_check check (product in ('full_access', 'internal_hr', 'career_kit', 'all'));
+notify pgrst, 'reload schema';

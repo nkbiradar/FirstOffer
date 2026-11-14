@@ -1,0 +1,162 @@
+%-------------------------------------------------------------
+%  One-page ATS-friendly resume template
+%  Replace every example line with your own details.
+%  Works on Overleaf (overleaf.com) — upload this file and click Recompile.
+%-------------------------------------------------------------
+\documentclass[letterpaper,10pt]{article}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.55in}
+\addtolength{\evensidemargin}{-0.55in}
+\addtolength{\textwidth}{1.1in}
+\addtolength{\topmargin}{-0.6in}
+\addtolength{\textheight}{1.2in}
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\definecolor{linkblue}{RGB}{0,0,230}
+\newcommand{\lnk}[2]{\href{#1}{\color{linkblue}\underline{#2}}}
+
+\titleformat{\section}{\vspace{-5pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{#2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-6pt}
+}
+\newcommand{\roleHeading}[2]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      #1 & \textbf{\small #2} \\
+    \end{tabular*}\vspace{-6pt}
+}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.15in, label={--}, itemsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+
+\begin{document}
+
+%----------------------------- HEADER -----------------------------
+\begin{center}
+  {\Large \textbf{Your Full Name}} \\ \vspace{2pt}
+  \small City, State \ $|$ \ \textit{Target Role (e.g. Software Engineer / Data Analyst)} \\ \vspace{1pt}
+  \small +91-XXXXXXXXXX \ $|$ \
+  \lnk{mailto:yourname@email.com}{yourname@email.com} \ $|$ \
+  \lnk{https://linkedin.com/in/yourname}{linkedin.com/in/yourname} \ $|$ \
+  \lnk{https://github.com/yourname}{github.com/yourname} \ $|$ \
+  \lnk{https://yourportfolio.com}{yourportfolio.com}
+\end{center}
+
+%----------------------------- SUMMARY -----------------------------
+\section{Summary}
+\small{Computer Science graduate with hands-on experience building \textbf{full-stack web applications} and \textbf{data-driven projects} from idea to deployment. Built a personal finance app used by \textbf{500+ users} and a movie recommendation engine during an internship and college projects. Strong foundation in \textbf{Data Structures \& Algorithms, DBMS and OOP}, with practical skills in \textbf{React.js, Node.js, Python and SQL}. Looking for a Software Engineer role where I can build reliable products and grow with a strong engineering team.}
+
+%----------------------------- EDUCATION -----------------------------
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Your College Name, City}{20XX -- 20XX}
+    {B.Tech -- Computer Science and Engineering \ $|$ \ CGPA: X.X/10}{City, State}
+  \resumeSubheading
+    {Your School / PU College Name}{20XX -- 20XX}
+    {Class XII (PCM) \ $|$ \ Percentage: XX\%}{City, State}
+\resumeSubHeadingListEnd
+
+%----------------------------- WORK EXPERIENCE -----------------------------
+\section{Work Experience}
+\resumeSubHeadingListStart
+  \roleHeading{\textbf{\color{linkblue}Company Name} -- \textbf{\textit{Software Developer Intern}} \ $|$ \ \lnk{https://example.com}{View Live}}{Jan 20XX -- Jun 20XX}
+  \resumeItemListStart
+    \resumeItem{Built and shipped \textbf{3 new features} for the company's customer dashboard using \textbf{React.js and Node.js}, used by \textbf{2,000+ customers}.}
+    \resumeItem{Improved page load time by \textbf{35\%} by optimising API calls and adding caching.}
+    \resumeItem{Worked with the design and QA team to fix \textbf{40+ bugs} and release updates every 2 weeks.}
+    \resumeItem{Wrote unit tests with \textbf{Jest}, raising test coverage of the dashboard module from 45\% to \textbf{80\%}.}
+  \resumeItemListEnd
+
+  \roleHeading{\textbf{College / Club Name} -- \textbf{\textit{Web Developer}}}{May 20XX -- Aug 20XX}
+  \resumeItemListStart
+    \resumeItem{Designed and built responsive pages for the official college fest website using \textbf{HTML, CSS and JavaScript}.}
+    \resumeItem{Handled registrations for \textbf{1,000+ participants} through an online form connected to Google Sheets.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%----------------------------- PROJECTS -----------------------------
+\section{Projects}
+\resumeSubHeadingListStart
+  \roleHeading{\textbf{\color{linkblue}Expense Tracker -- Personal Finance App} \ $|$ \ \textit{\small React.js, Node.js, Express, MongoDB} \ $|$ \ \lnk{https://example.com}{View Live}}{Full-Stack}
+  \resumeItemListStart
+    \resumeItem{Built a web app that lets users track daily expenses, set monthly budgets and see spending charts; used by \textbf{500+ users}.}
+    \resumeItem{Added secure login with \textbf{JWT authentication} and REST APIs for adding, editing and filtering expenses.}
+    \resumeItem{Designed the \textbf{MongoDB} schema and added indexes, cutting average query time from 400 ms to \textbf{120 ms}.}
+    \resumeItem{Added monthly reports with \textbf{Chart.js} and CSV export so users can download their spending history.}
+    \resumeItem{Deployed on \textbf{Vercel and Render} with a CI pipeline using \textbf{GitHub Actions} for automatic testing and releases.}
+  \resumeItemListEnd
+
+  \roleHeading{\textbf{\color{linkblue}Movie Recommendation System} \ $|$ \ \textit{\small Python, Pandas, Scikit-learn, Streamlit} \ $|$ \ \lnk{https://github.com/yourname}{GitHub}}{Machine Learning}
+  \resumeItemListStart
+    \resumeItem{Built a content-based recommender on a dataset of \textbf{5,000+ movies} using TF-IDF and cosine similarity.}
+    \resumeItem{Created a simple \textbf{Streamlit} web interface where users pick a movie and get 5 similar suggestions instantly.}
+    \resumeItem{Cleaned and merged raw data with \textbf{Pandas}, reducing missing values from 18\% to under 2\%.}
+    \resumeItem{Evaluated results with a user survey of \textbf{50 classmates}; \textbf{78\%} rated the suggestions as relevant.}
+  \resumeItemListEnd
+
+  \roleHeading{\textbf{\color{linkblue}Chat App -- Real-time Messaging} \ $|$ \ \textit{\small Socket.io, Node.js, React.js, Firebase} \ $|$ \ \lnk{https://github.com/yourname}{GitHub}}{Real-time Systems}
+  \resumeItemListStart
+    \resumeItem{Built a group chat app with \textbf{real-time messaging}, typing indicators and online status using \textbf{Socket.io}.}
+    \resumeItem{Stored chats and images in \textbf{Firebase}, supporting \textbf{100+ concurrent users} in load testing.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+%----------------------------- SKILLS -----------------------------
+\section{Skills}
+\small{
+\textbf{Languages}: C++, Java, Python, JavaScript, SQL \\
+\textbf{Frontend}: React.js, Next.js, HTML, CSS, Tailwind CSS \\
+\textbf{Backend \& Databases}: Node.js, Express.js, REST APIs, MongoDB, MySQL \\
+\textbf{Tools}: Git \& GitHub, VS Code, Postman, Figma, Vercel \\
+\textbf{Core CS}: Data Structures \& Algorithms, OOP, DBMS, Operating Systems, Computer Networks \\
+\textbf{Soft Skills}: Problem Solving, Team Collaboration, Communication, Time Management
+}
+
+%----------------------------- ACHIEVEMENTS -----------------------------
+\section{Achievements \& Certifications}
+\small{
+\textbf{Solved 400+ DSA problems} -- LeetCode and GeeksforGeeks (LeetCode rating: XXXX). \\
+\textbf{Finalist, College Hackathon 20XX} -- Ranked top 10 among 150+ teams. \\
+\textbf{Full Stack Web Development Certification} -- Platform Name \ $\cdot$ \ \textbf{Python for Data Science} -- Platform Name \\
+\textbf{SQL (Intermediate) Certification} -- HackerRank \ $\cdot$ \ \textbf{Cloud Fundamentals} -- Platform Name
+}
+
+%----------------------------- LEADERSHIP -----------------------------
+\section{Leadership}
+\small{
+\textbf{Technical Lead, Coding Club} -- Organised weekly coding contests and mentored 50+ juniors in DSA. \\
+\textbf{Volunteer, Annual Tech Fest} -- Managed event logistics and sponsor coordination for 2,000+ attendees. \\
+\textbf{Member, Entrepreneurship Cell} -- Helped organise startup talks and pitch events with founders and investors. \\
+\textbf{Class Representative} -- Acted as the link between 60 students and faculty for academic and placement updates.
+}
+
+\end{document}

@@ -161,7 +161,17 @@ export function getInternalPlanId(): string {
   return planId;
 }
 
-export type SubscriptionProduct = "full_access" | "internal_hr";
+export type SubscriptionProduct = "full_access" | "internal_hr" | "career_kit";
+
+// ── Career Kit 2027 (Nov 2026): one-time ₹179, lifetime access to the
+// downloadable job-search kit (HR contacts, HR email directory, 500+ career
+// links, referral guide + mail template, ATS resume template) served by
+// app/api/career-kit. ₹949 is the display-only struck-through price.
+export const CAREER_KIT_PRICE_INR = 179;
+export const CAREER_KIT_MRP_INR = 949;
+/** "Lifetime" = a period end far in the future, so every existing access
+ * check (isSubscriptionAccessActive) works unchanged. */
+export const LIFETIME_PERIOD_MS = 100 * 365 * 24 * 60 * 60 * 1000;
 
 /**
  * Single lookup table for everything that differs between the two
@@ -182,6 +192,14 @@ export function getProductConfig(product: SubscriptionProduct): {
   pricePaise: number;
   description: string;
 } {
+  if (product === "career_kit") {
+    return {
+      planId: MANUAL_PLAN_MARKER,
+      priceInr: CAREER_KIT_PRICE_INR,
+      pricePaise: CAREER_KIT_PRICE_INR * 100,
+      description: "Career Kit 2027 — lifetime access",
+    };
+  }
   if (product === "internal_hr") {
     return {
       planId: getInternalPlanId(),
@@ -220,6 +238,13 @@ export function getProductPricing(
   pricePaise: number;
   description: string;
 } {
+  if (product === "career_kit") {
+    return {
+      priceInr: CAREER_KIT_PRICE_INR,
+      pricePaise: CAREER_KIT_PRICE_INR * 100,
+      description: "Career Kit 2027 — lifetime access",
+    };
+  }
   if (product === "internal_hr") {
     const internalPriceInr = getInternalPriceInr();
     return {
@@ -255,7 +280,7 @@ export const FULL_ACCESS_PERIOD_MS = 90 * 24 * 60 * 60 * 1000;
 /** How long one payment for `product` unlocks access. Since Oct 2026
  * both products (full access ₹99, Internal HR ₹149) buy 3 months. */
 export function getAccessPeriodMs(product: string | null | undefined): number {
-  void product;
+  if (product === "career_kit") return LIFETIME_PERIOD_MS;
   return FULL_ACCESS_PERIOD_MS;
 }
 

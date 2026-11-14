@@ -9,7 +9,7 @@ import {
 } from "@/lib/payments/razorpay";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFullAccess } from "@/lib/data/opportunity-unlocks";
-import { hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
+import { hasCareerKitAccess, hasInternalAccess, hasLegacyFullAccessPricing } from "@/lib/data/subscriptions";
 import { applyCouponDiscount, validateCouponForCheckout } from "@/lib/payments/coupons";
 
 // Starts a payment for one of the two products this site sells — the
@@ -55,7 +55,8 @@ export async function POST(request: NextRequest) {
     // No body (or invalid JSON) is fine — defaults to full_access below,
     // matching every call site that existed before this product param.
   }
-  const product: SubscriptionProduct = body.product === "internal_hr" ? "internal_hr" : "full_access";
+  const product: SubscriptionProduct =
+    body.product === "internal_hr" ? "internal_hr" : body.product === "career_kit" ? "career_kit" : "full_access";
 
   const { allowed } = await checkRateLimit(`create-subscription:${product}:${user.id}`, {
     windowSeconds: 60,
@@ -73,7 +74,11 @@ export async function POST(request: NextRequest) {
   // grandfathered Autopay row) subscription. For internal_hr: this product
   // has no legacy lifetime equivalent, so it's just the active check.
   const alreadyHasAccess =
-    product === "internal_hr" ? await hasInternalAccess(user.id) : await hasFullAccess(user.id);
+    product === "internal_hr"
+      ? await hasInternalAccess(user.id)
+      : product === "career_kit"
+        ? await hasCareerKitAccess(user.id)
+        : await hasFullAccess(user.id);
   if (alreadyHasAccess) {
     return NextResponse.json({ alreadyUnlocked: true });
   }

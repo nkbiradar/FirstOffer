@@ -95,6 +95,11 @@ export async function hasInternalAccess(userId: string): Promise<boolean> {
   return hasActiveSubscription(userId, "internal_hr");
 }
 
+/** Career Kit 2027 — one-time ₹179, lifetime (see CAREER_KIT_PRICE_INR). */
+export async function hasCareerKitAccess(userId: string): Promise<boolean> {
+  return hasActiveSubscription(userId, "career_kit");
+}
+
 /**
  * The ₹49→₹99 grandfathering check: true if this user has ever completed a
  * real full_access payment at the old ₹49 rate — in which case

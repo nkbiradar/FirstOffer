@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
   // Members-only files served by API routes (kept out of /public).
   outputFileTracingIncludes: {
     "/api/internal/interview-kit": ["./private/**/*"],
+    "/api/career-kit": ["./private/career-kit/**/*"],
   },
   // "What Worked" section was removed — send old links to the homepage.
   async redirects() {
