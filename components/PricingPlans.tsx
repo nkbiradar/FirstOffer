@@ -137,7 +137,6 @@ export default function PricingPlans({
         { text: "Job referral guide + referral mail template" },
         { text: "How to get replies from companies (guide)" },
         { text: "ATS-friendly resume template (PDF + editable)" },
-        { text: `Trusted by ${studentLabel} FirstOffer students` },
       ],
     },
   ];
