@@ -229,8 +229,8 @@ export default function PricingPlans({
 
                 <ul className="fp-features">
                   {p.features.map((f) => (
-                    <li className={f.highlight ? "is-highlight" : f.included === false ? "is-off" : undefined} key={f.text}>
-                      {!f.highlight && <Check included={f.included !== false} />}
+                    <li className={f.highlight ? "is-key" : f.included === false ? "is-off" : undefined} key={f.text}>
+                      <Check included={f.included !== false} />
                       {f.text}
                     </li>
                   ))}
