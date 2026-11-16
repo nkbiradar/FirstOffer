@@ -8660,3 +8660,25 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 
 .referral-opening-lockbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 4px; padding: 10px 12px; border-radius: 10px; background: #f8fafc; border: 1px dashed #cbd5e1; font-size: 13px; font-weight: 600; color: #475569; }
 @media (max-width: 720px) { .referral-opening-lockbar .btn { width: 100%; justify-content: center; } }
+
+/* ── Guides (app/guides) ── */
+.guide-hub-head { margin: 8px 0 24px; display: grid; gap: 10px; }
+.guide-hub-head h1 { margin: 0; }
+.guide-hub-head p { margin: 0; color: var(--color-text-secondary); }
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.guide-card { display: grid; gap: 8px; padding: 20px; border-radius: 16px; background: #fff; border: 1px solid var(--color-border); text-decoration: none; color: var(--color-text); transition: border-color .15s, transform .15s; }
+.guide-card:hover { border-color: #a5b4fc; transform: translateY(-2px); }
+.guide-card h2 { margin: 0; font-size: 18px; line-height: 1.35; }
+.guide-card p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); }
+.guide { max-width: 760px; margin: 0 auto; }
+.guide h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.2; margin: 10px 0; }
+.guide h2 { font-size: 22px; margin: 32px 0 10px; }
+.guide h3 { font-size: 16px; margin: 16px 0 4px; }
+.guide p, .guide li { font-size: 16.5px; line-height: 1.7; color: var(--color-text); }
+.guide ul { padding-left: 22px; display: grid; gap: 6px; }
+.guide-meta { font-size: 13.5px; color: var(--color-text-secondary); }
+.guide .guide-intro { font-size: 18px; color: var(--color-text-secondary); }
+.guide-example { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; line-height: 1.6; padding: 16px 18px; border-radius: 12px; background: #f5f6ff; border: 1px solid #e0e3f5; overflow-x: auto; }
+.guide-faq p { margin-top: 0; }
+.guide-related, .guide-more { margin-top: 32px; padding: 18px 20px; border-radius: 14px; border: 1px solid var(--color-border); background: #fff; }
+.guide-related h2, .guide-more h2 { margin-top: 0; font-size: 18px; }

@@ -4,6 +4,7 @@ import { getSiteUrl } from "@/lib/site-url";
 import { CITY_PAGES } from "@/lib/seo/cities";
 import { KEYWORD_PAGES } from "@/lib/seo/keyword-pages";
 import { isIndexable, liveCount } from "@/lib/seo/thin-content";
+import { GUIDES } from "@/lib/guides";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -63,6 +64,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${siteUrl}/career-kit`,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       url: `${siteUrl}/resume-match`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -119,5 +125,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }));
 
-  return [...staticRoutes, ...keywordRoutes, ...cityRoutes, ...opportunityRoutes];
+  // Evergreen career guides (lib/guides.ts).
+  const guideRoutes: MetadataRoute.Sitemap = [
+    { url: `${siteUrl}/guides`, changeFrequency: "weekly", priority: 0.8 },
+    ...GUIDES.map((g) => ({
+      url: `${siteUrl}/guides/${g.slug}`,
+      lastModified: new Date(`${g.updated}T00:00:00`),
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
+  ];
+
+  return [...staticRoutes, ...guideRoutes, ...keywordRoutes, ...cityRoutes, ...opportunityRoutes];
 }

@@ -102,6 +102,7 @@ export default function Footer() {
             <Link href="/companies">Companies</Link>
             <Link href="/resume">Resume Help</Link>
             <Link href="/resume-match">Resume Matcher</Link>
+            <Link href="/guides">Career Guides</Link>
             <Link href="/about">About</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>
