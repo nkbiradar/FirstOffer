@@ -1,3 +1,5 @@
+import FounderNote from "@/components/FounderNote";
+
 export default function AboutPage() {
   return (
     <main className="page">
@@ -28,6 +30,16 @@ export default function AboutPage() {
         a few seconds, and it&apos;s also what lets you keep track of what you&apos;ve applied to
         and note whether you heard back.
       </p>
+
+      <h2 style={{ marginTop: 32 }}>Who&apos;s behind FirstOffer</h2>
+      <p style={{ marginTop: 12 }}>
+        FirstOffer is built and run by a 2026 Computer Science graduate who went through the same off-campus job hunt —
+        scattered Telegram groups, expired links and hidden HR contacts. Every opening here is checked and posted by
+        hand, and every payment and support request is handled personally.
+      </p>
+      <div style={{ marginTop: 16 }}>
+        <FounderNote />
+      </div>
     </main>
   );
 }
