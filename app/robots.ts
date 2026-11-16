@@ -18,6 +18,14 @@ export default function robots(): MetadataRoute.Robots {
         "/login",
         "/auth",
         "/auth/*",
+        // Endless search/filter combinations of the listing pages: their
+        // canonical is the clean URL, so crawling every variant only wastes
+        // Google's crawl budget (and our database quota). Clean landing pages
+        // like /jobs/* and /fresher-jobs/* stay fully crawlable.
+        "/opportunities?*",
+        "/companies?*",
+        "/*?q=*",
+        "/*&q=*",
       ],
     },
     sitemap: `${siteUrl}/sitemap.xml`,

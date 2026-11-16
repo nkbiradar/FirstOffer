@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/site-url";
+
+export const metadata: Metadata = {
+  title: "About FirstOffer — Fresher Jobs With Direct HR Contacts",
+  description:
+    "FirstOffer is a job platform for freshers in India: verified internships, full-time and off-campus roles with direct apply links, posted daily and removed after 48 hours.",
+  alternates: { canonical: `${getSiteUrl()}/about` },
+};
+
 export default function AboutPage() {
   return (
     <main className="page">

@@ -111,7 +111,7 @@ export default async function OffCampusJobsLandingPage() {
             <Link className="filter-pill active" href="/off-campus-jobs">
               Off-Campus Drives
             </Link>
-            <Link className="filter-pill" href="/opportunities?type=internship">
+            <Link className="filter-pill" href="/jobs/internships-for-students">
               Internships
             </Link>
             <Link className="filter-pill" href="/opportunities?type=full_time">

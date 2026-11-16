@@ -6,7 +6,7 @@ import PrintButton from "@/components/PrintButton";
 type Params = { id: string };
 
 export const metadata: Metadata = {
-  title: "Certificate Verification — FirstOffer",
+  title: "Certificate Verification",
   robots: { index: false, follow: false },
 };
 

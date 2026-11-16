@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — FirstOffer",
+  title: "Terms of Service",
   description: "The terms that govern using FirstOffer.",
 };
 

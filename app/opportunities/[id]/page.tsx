@@ -27,6 +27,7 @@ import {
   FULL_ACCESS_NEXT_PRICE_INR,
   FULL_ACCESS_PRICE_RISE_LABEL,
 } from "@/lib/payments/razorpay";
+import { maskContact } from "@/lib/seo/mask-contact";
 import {
   buildJobPostingJsonLd,
   buildJobBreadcrumbsJsonLd,
@@ -108,7 +109,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { opportunity, isExpired } = await getCachedOpportunityDetail(id);
 
   if (!opportunity) {
-    return { title: "Opportunity not found — FirstOffer" };
+    return { title: "Opportunity not found", robots: { index: false, follow: true } };
   }
 
   const companyName = opportunity.company?.name ?? "";
@@ -135,7 +136,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const url = `${getSiteUrl()}/opportunities/${id}`;
 
   return {
-    title,
+    // absolute: the root layout template would add a second "| FirstOffer".
+    title: { absolute: title },
     description,
     alternates: { canonical: url },
     // Internal HR Openings are deliberately excluded from every public
@@ -510,10 +512,14 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </section>
         )}
 
-        {canShowApply && additional_details && (
+        {/* Job details are public (visitors + Google); only contact/apply
+            info inside the text is masked until unlocked (lib/seo/mask-contact.ts). */}
+        {additional_details && (
           <section className="card">
-            <h2>Additional Details</h2>
-            <p className="preserve-whitespace">{additional_details}</p>
+            <h2>Job Details</h2>
+            <p className="preserve-whitespace">
+              {canShowApply ? additional_details : maskContact(additional_details)}
+            </p>
           </section>
         )}
 

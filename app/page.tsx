@@ -38,7 +38,7 @@ import { hasInternalAccess } from "@/lib/data/subscriptions";
 import { isAppRequest } from "@/lib/nativeAppServer";
 
 export const metadata = {
-  title: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India",
+  title: { absolute: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India" },
   description:
     "Fresher jobs, internships, tech jobs and off-campus drives from companies hiring now across India — 2025, 2026 & 2027 batch, remote and paid internships. Apply directly to HRs. Updated daily.",
   alternates: { canonical: getSiteUrl() },
@@ -180,18 +180,32 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   const siteUrl = getSiteUrl();
 
+  // WebSite + Organization: helps Google show the right site name and logo.
+  // (SearchAction removed — Google retired the sitelinks search box.)
   const websiteJsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "FirstOffer",
-    url: siteUrl,
-    description:
-      "Find your first offer faster. Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${siteUrl}/opportunities?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        name: "FirstOffer",
+        alternateName: "FirstOffer — Fresher Jobs",
+        url: siteUrl,
+        inLanguage: "en-IN",
+        publisher: { "@id": `${siteUrl}/#organization` },
+        description:
+          "Find your first offer faster. Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
+      },
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        name: "FirstOffer",
+        url: siteUrl,
+        logo: { "@type": "ImageObject", url: `${siteUrl}/icon.png` },
+        email: "support@firstoffer.online",
+        areaServed: "IN",
+      },
+    ],
   };
 
   return (

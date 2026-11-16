@@ -12,7 +12,7 @@ import { getSiteUrl } from "@/lib/site-url";
 const OFF = Math.round((1 - CAREER_KIT_PRICE_INR / CAREER_KIT_MRP_INR) * 100);
 
 export const metadata: Metadata = {
-  title: `Career Kit 2027 — 3,100+ HR Contacts, 500+ Career Links & Resume Template | ₹${CAREER_KIT_PRICE_INR} Lifetime`,
+  title: "Career Kit 2027 — 3,100+ HR Contacts & 500+ Career Links",
   description: `Everything a fresher needs to reach HRs directly: 3,100+ HR contacts, 12-country HR email directory, 500+ company career links, referral guide, referral mail template and ATS resume template. One-time ₹${CAREER_KIT_PRICE_INR}, lifetime access.`,
   alternates: { canonical: `${getSiteUrl()}/career-kit` },
 };

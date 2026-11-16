@@ -113,10 +113,10 @@ export default async function FresherJobsLandingPage() {
             <Link className="filter-pill" href="/off-campus-jobs">
               Off-Campus Drives
             </Link>
-            <Link className="filter-pill" href="/opportunities?type=internship">
+            <Link className="filter-pill" href="/jobs/internships-for-students">
               Internships
             </Link>
-            <Link className="filter-pill" href="/opportunities?mode=remote">
+            <Link className="filter-pill" href="/jobs/remote-jobs-for-freshers">
               Remote Roles
             </Link>
           </div>

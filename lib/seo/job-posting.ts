@@ -1,5 +1,6 @@
 import type { OpportunityWithCompany } from "@/lib/data/opportunities";
 import { getSiteUrl } from "@/lib/site-url";
+import { maskContact } from "@/lib/seo/mask-contact";
 
 const EMPLOYMENT_TYPE: Record<string, string> = {
   internship: "INTERN",
@@ -92,7 +93,8 @@ function buildHtmlDescription(opportunity: OpportunityWithCompany, companyName: 
   }
 
   if (opportunity.additional_details) {
-    parts.push(`<h3>Additional Details</h3><p>${escapeHtml(opportunity.additional_details)}</p>`);
+    // Same masked text the page shows publicly, so schema matches visible content.
+    parts.push(`<h3>Job Details</h3><p>${escapeHtml(maskContact(opportunity.additional_details))}</p>`);
   }
 
   return parts.join("\n");
