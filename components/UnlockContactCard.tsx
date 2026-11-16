@@ -1,7 +1,6 @@
 "use client";
 
 import PlanTags from "@/components/PlanTags";
-import FounderNote from "@/components/FounderNote";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
@@ -380,7 +379,6 @@ export default function UnlockContactCard({
               ? "Downloads unlock instantly after payment and stay yours forever. One-time payment — no renewal, no auto-debit."
               : `Access unlocks instantly after payment and lasts 3 months. No auto-renewal, no mandate saved — just come back and pay ₹${price} again whenever you want to keep going.`}
           </p>
-          <FounderNote />
         </>
       )}
       {error && <p className="unlock-contact-error">{error}</p>}

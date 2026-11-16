@@ -1,7 +1,6 @@
 import Link from "next/link";
 import OfferCountdown from "@/components/OfferCountdown";
 import SafePay from "@/components/SafePay";
-import FounderNote from "@/components/FounderNote";
 import { STUDENT_COUNT_FALLBACK_LABEL } from "@/lib/student-count";
 import {
   FULL_ACCESS_SALE_END_LABEL,
@@ -244,7 +243,6 @@ export default function PricingPlans({
 
       <div className="fp-foot">
         <SafePay />
-        <FounderNote dark />
       </div>
     </section>
   );
