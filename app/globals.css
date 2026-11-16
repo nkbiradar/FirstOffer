@@ -8671,3 +8671,6 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 .founder-note-dark .founder-note-cred { color: #a1a1aa; }
 .founder-note-dark .founder-note-link { background: transparent; border-color: rgba(147,197,253,0.4); color: #93c5fd; }
 @media (max-width: 480px) { .founder-note { flex-wrap: wrap; } .founder-note-link { margin-left: 52px; } }
+
+.referral-opening-lockbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 4px; padding: 10px 12px; border-radius: 10px; background: #f8fafc; border: 1px dashed #cbd5e1; font-size: 13px; font-weight: 600; color: #475569; }
+@media (max-width: 720px) { .referral-opening-lockbar .btn { width: 100%; justify-content: center; } }

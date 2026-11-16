@@ -3,6 +3,7 @@ import Link from "next/link";
 import OpportunityCard from "@/components/OpportunityCard";
 import UnlockContactCard from "@/components/UnlockContactCard";
 import ReferralOpeningApply from "@/components/ReferralOpeningApply";
+import ReferralOpeningPreview, { toPublicOpening } from "@/components/ReferralOpeningPreview";
 import { getActiveReferralOpenings, getMyReferralApplications } from "@/lib/data/referral-openings";
 import AppMembersOnlyNote from "@/components/AppMembersOnlyNote";
 import { isAppRequest } from "@/lib/nativeAppServer";
@@ -177,7 +178,8 @@ export default async function InternalOpeningsPage() {
             admin at /admin/referral-openings (lib/data/referral-openings.ts →
             components/ReferralOpeningApply.tsx). Members see each company's
             apply form, or an empty state until one is posted; locked visitors
-            see only the count and an unlock button, never company names. */}
+            see company details (ReferralOpeningPreview) but never the referrer's
+            email, apply link, JD link or applicant note. */}
         <section className={`referral-openings ${isUnlocked ? "is-unlocked" : "is-locked"}`} id="referral-openings">
           <span className="interview-kit-eyebrow">Referrals · Members only</span>
           <h2>
@@ -207,6 +209,14 @@ export default async function InternalOpeningsPage() {
                 No referral openings right now. New companies will appear here as soon as we post them — check back soon.
               </div>
             )
+          ) : referralOpenings.length > 0 ? (
+            // Locked: company details only — contact/apply fields are stripped
+            // server-side by toPublicOpening() and never sent to the browser.
+            <div className="referral-openings-list">
+              {referralOpenings.map((o) => (
+                <ReferralOpeningPreview key={o.id} opening={toPublicOpening(o)} />
+              ))}
+            </div>
           ) : (
             <a className="btn btn-secondary referral-locked-cta" href="#unlock-internal-hr">
               🔒 Unlock Internal HR to get referred
