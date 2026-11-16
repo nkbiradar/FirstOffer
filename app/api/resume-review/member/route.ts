@@ -7,7 +7,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { notifyAdmins } from "@/lib/email/admin-notify";
 import { FULL_ACCESS_PERIOD_MS } from "@/lib/payments/razorpay";
 
-// Resume Makeover for Full Access members (included in the ₹149 plan since
+// Resume Makeover for Full Access members (included in the Full Access plan since
 // 13 Nov 2026 — the separate ₹199 purchase is gone). One request carries the
 // details + resume; the resume is emailed to the admin and never stored.
 // The order is recorded in resume_orders with amount 0 and a "member_…"
