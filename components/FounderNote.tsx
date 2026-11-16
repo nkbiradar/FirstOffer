@@ -5,20 +5,16 @@ import { FOUNDER } from "@/lib/founder";
 export default function FounderNote({ dark = false }: { dark?: boolean }) {
   return (
     <div className={`founder-note${dark ? " founder-note-dark" : ""}`}>
-      <span aria-hidden="true" className="founder-note-avatar">
-        {FOUNDER.initials}
-      </span>
+      <img alt="" aria-hidden="true" className="founder-note-avatar" height={40} src="/icon.png" width={40} />
       <div className="founder-note-text">
         <span className="founder-note-name">
-          Built by <strong>{FOUNDER.name}</strong>
+          <strong>{FOUNDER.title}</strong>
         </span>
-        <span className="founder-note-cred">
-          {FOUNDER.title} · {FOUNDER.credential}
-        </span>
+        <span className="founder-note-cred">{FOUNDER.credential}</span>
       </div>
       {FOUNDER.linkedin && (
         <a
-          aria-label={`${FOUNDER.name} on LinkedIn`}
+          aria-label="Founder on LinkedIn"
           className="founder-note-link"
           href={FOUNDER.linkedin}
           rel="noopener noreferrer"
