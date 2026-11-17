@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 // Backs the admin-only "how many strangers visited the site" number on
 // /admin (Visitors Today / Total Visitors). Deliberately NOT a full
 // analytics system — no page-level breakdown, no referrers, no bot
@@ -53,38 +54,47 @@ export type SiteVisitStats = {
  * on a single fetch, so "Total Visitors" keeps growing correctly no matter
  * how many rows the table has.
  */
+// All-time DISTINCT visitors: every page fetched IN PARALLEL (previously one
+// page after another — 26+ sequential round trips made /admin slow), and
+// cached for 10 minutes since this number doesn't need to be live.
+const getAllTimeVisitors = unstable_cache(
+  async (): Promise<number> => {
+    const admin = createAdminClient();
+    const { count } = await admin.from("site_visits").select("visitor_id", { count: "exact", head: true });
+    const PAGE_SIZE = 1000;
+    const pages = Math.ceil((count ?? 0) / PAGE_SIZE);
+    const results = await Promise.all(
+      Array.from({ length: pages }, (_, i) =>
+        admin
+          .from("site_visits")
+          .select("visitor_id")
+          .order("visitor_id")
+          .range(i * PAGE_SIZE, i * PAGE_SIZE + PAGE_SIZE - 1),
+      ),
+    );
+    const ids = new Set<string>();
+    for (const { data, error } of results) {
+      if (error) {
+        console.error("getSiteVisitStats (all-time) failed:", error.message);
+        continue;
+      }
+      for (const row of data ?? []) ids.add(row.visitor_id);
+    }
+    return ids.size;
+  },
+  ["site-visits-all-time-v2"],
+  { revalidate: 600 },
+);
+
 export async function getSiteVisitStats(): Promise<SiteVisitStats> {
   const admin = createAdminClient();
-
-  const todayResult = await admin
-    .from("site_visits")
-    .select("visitor_id", { count: "exact", head: true })
-    .eq("day", istDateKey());
-
+  // "Today" stays live (one head-only count); all-time comes from the cache.
+  const [todayResult, allTime] = await Promise.all([
+    admin.from("site_visits").select("visitor_id", { count: "exact", head: true }).eq("day", istDateKey()),
+    getAllTimeVisitors(),
+  ]);
   if (todayResult.error) {
     console.error("getSiteVisitStats (today) failed:", todayResult.error.message);
   }
-
-  const allTimeIds = new Set<string>();
-  const PAGE_SIZE = 1000;
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await admin
-      .from("site_visits")
-      .select("visitor_id")
-      .range(from, from + PAGE_SIZE - 1);
-
-    if (error) {
-      console.error("getSiteVisitStats (all-time) failed:", error.message);
-      break;
-    }
-    for (const row of data ?? []) {
-      allTimeIds.add(row.visitor_id);
-    }
-    if (!data || data.length < PAGE_SIZE) break;
-  }
-
-  return {
-    today: todayResult.count ?? 0,
-    allTime: allTimeIds.size,
-  };
+  return { today: todayResult.count ?? 0, allTime };
 }

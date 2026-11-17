@@ -8682,3 +8682,11 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 .guide-faq p { margin-top: 0; }
 .guide-related, .guide-more { margin-top: 32px; padding: 18px 20px; border-radius: 14px; border: 1px solid var(--color-border); background: #fff; }
 .guide-related h2, .guide-more h2 { margin-top: 0; font-size: 18px; }
+
+/* ── Admin loading skeleton (app/admin/loading.tsx) ── */
+.admin-skel { border-radius: 16px; background: linear-gradient(90deg, #eceef3 25%, #f6f7fa 50%, #eceef3 75%); background-size: 200% 100%; animation: admin-skel 1.2s ease-in-out infinite; }
+.admin-skel-title { height: 44px; width: 260px; margin: 12px 0 24px; }
+.admin-skel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.admin-skel-card { height: 160px; }
+@keyframes admin-skel { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .admin-skel { animation: none; } }

@@ -242,25 +242,24 @@ function todayDateKey() {
  */
 async function sweepExpiredOpportunities(): Promise<void> {
   const admin = createAdminClient();
-
-  const { error: deadlineError } = await admin
-    .from("opportunities")
-    .update({ status: "expired" })
-    .eq("status", "published")
-    .not("deadline", "is", null)
-    .lt("deadline", todayDateKey());
-
+  // Both sweeps run in parallel (they touch different rows' conditions).
+  const [{ error: deadlineError }, { error: expiresAtError }] = await Promise.all([
+    admin
+      .from("opportunities")
+      .update({ status: "expired" })
+      .eq("status", "published")
+      .not("deadline", "is", null)
+      .lt("deadline", todayDateKey()),
+    admin
+      .from("opportunities")
+      .update({ status: "expired" })
+      .eq("status", "published")
+      .not("expires_at", "is", null)
+      .lt("expires_at", new Date().toISOString()),
+  ]);
   if (deadlineError) {
     console.error("sweepExpiredOpportunities (deadline) failed:", deadlineError.message);
   }
-
-  const { error: expiresAtError } = await admin
-    .from("opportunities")
-    .update({ status: "expired" })
-    .eq("status", "published")
-    .not("expires_at", "is", null)
-    .lt("expires_at", new Date().toISOString());
-
   if (expiresAtError) {
     console.error("sweepExpiredOpportunities (expires_at) failed:", expiresAtError.message);
   }
