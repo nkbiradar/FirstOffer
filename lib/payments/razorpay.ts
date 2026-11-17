@@ -38,7 +38,7 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // 13 Nov 2026 (after the Diwali offer): ₹149 for 3 months.
 // 16 Nov 2026: lowered to ₹99 for 3 months.
 // 17 Nov 2026: regular price ₹149; ₹99 is the November Hiring Offer price
-// (FULL_ACCESS_SALE_* below) until 30 Nov, then ₹149 automatically.
+// (FULL_ACCESS_SALE_* below) until 25 Nov, then ₹149 automatically.
 export const MONTHLY_PRICE_INR = 149;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
@@ -58,17 +58,17 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
 // price. Switches itself off at FULL_ACCESS_SALE_ENDS_AT, after which the
 // price goes to the regular MONTHLY_PRICE_INR — no redeploy needed.
 // (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
-// ── November Hiring Offer (17–30 Nov 2026): Full Access ₹99 (regular ₹149),
+// ── November Hiring Offer (17–25 Nov 2026): Full Access ₹99 (regular ₹149),
 // Internal HR ₹299 (regular ₹399). Real deadline: at FULL_ACCESS_SALE_ENDS_AT
 // both prices go back to the regular price automatically — do NOT extend.
 export const FULL_ACCESS_SALE_PRICE_INR = 99;
-/** Struck-through price shown beside the offer price = the real price from 1 Dec. */
+/** Struck-through price shown beside the offer price = the real price after the offer. */
 export const FULL_ACCESS_SALE_MRP_INR = MONTHLY_PRICE_INR;
-export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-30T23:59:59+05:30";
-/** Last day of the offer ("till 30 Nov"). */
-export const FULL_ACCESS_SALE_END_LABEL = "30 Nov";
+export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-25T23:59:59+05:30";
+/** Last day of the offer ("till 25 Nov"). */
+export const FULL_ACCESS_SALE_END_LABEL = "25 Nov";
 /** First day after the offer. */
-export const FULL_ACCESS_SALE_BACK_LABEL = "1 Dec";
+export const FULL_ACCESS_SALE_BACK_LABEL = "26 Nov";
 export const FULL_ACCESS_SALE_TITLE = "November Hiring Offer";
 /** Short badge used across the site while the offer runs. */
 export const OFFER_BADGE = "🔥 November Hiring Offer";
