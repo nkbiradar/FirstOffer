@@ -149,7 +149,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           },
         ]),
   ];
-  const showDiwaliPopup = isFullAccessSaleActive() && !inApp && diwaliPlans.length > 0;
+  // Diwali-themed popup retired after Diwali (no extra popups during the November offer).
+  const showDiwaliPopup = false && isFullAccessSaleActive() && !inApp && diwaliPlans.length > 0;
 
   // Short "14 Sep" form for the hero pill -- todayDateLabel ("14 September
   // 2026") above is already computed for the "Today's Opportunities"

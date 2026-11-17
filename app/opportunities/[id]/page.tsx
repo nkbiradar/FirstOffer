@@ -25,7 +25,7 @@ import {
   isFullAccessSaleActive,
   isFullAccessPriceRisePending,
   FULL_ACCESS_NEXT_PRICE_INR,
-  FULL_ACCESS_PRICE_RISE_LABEL,
+  FULL_ACCESS_PRICE_RISE_LABEL, OFFER_BADGE, FULL_ACCESS_SALE_BACK_LABEL,
 } from "@/lib/payments/razorpay";
 import { maskContact } from "@/lib/seo/mask-contact";
 import {
@@ -226,7 +226,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
   void isLegacyFullAccessUser;
   const fullAccessPrice = getFullAccessPriceInr();
   const fullAccessPriceNote = isFullAccessSaleActive()
-    ? `🪔 Diwali Offer — ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+    ? `${OFFER_BADGE}: ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${fullAccessPrice} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}. Back to ₹${FULL_ACCESS_SALE_MRP_INR} from ${FULL_ACCESS_SALE_BACK_LABEL}.`
     : isFullAccessPriceRisePending()
       ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${fullAccessPrice} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
       : `Just ₹${Math.round(fullAccessPrice / 3)}/month — one payment covers 3 months.`;
@@ -421,7 +421,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                       wasPrice={isDiwaliOfferActive() ? INTERNAL_SALE_MRP_INR : undefined}
                       priceNote={
                         isDiwaliOfferActive()
-                          ? `🪔 Diwali Offer — ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+                          ? `${OFFER_BADGE}: ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}. Back to ₹${INTERNAL_SALE_MRP_INR} from ${FULL_ACCESS_SALE_BACK_LABEL}.`
                           : undefined
                       }
                       product="internal_hr"

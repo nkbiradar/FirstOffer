@@ -10,7 +10,7 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import { getInternalOpportunities } from "@/lib/data/opportunities";
 import { getUser } from "@/lib/supabase/auth";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
-import { FULL_ACCESS_SALE_END_LABEL, INTERNAL_PRICE_INR, INTERNAL_SALE_MRP_INR, getInternalPriceInr, isDiwaliOfferActive } from "@/lib/payments/razorpay";
+import { FULL_ACCESS_SALE_END_LABEL, INTERNAL_PRICE_INR, INTERNAL_SALE_MRP_INR, getInternalPriceInr, isDiwaliOfferActive, OFFER_BADGE, FULL_ACCESS_SALE_BACK_LABEL } from "@/lib/payments/razorpay";
 import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
@@ -164,7 +164,7 @@ export default async function InternalOpeningsPage() {
                   wasPrice={isDiwaliOfferActive() ? INTERNAL_SALE_MRP_INR : undefined}
                   priceNote={
                     isDiwaliOfferActive()
-                      ? `🪔 Diwali Offer — ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+                      ? `${OFFER_BADGE}: ₹${INTERNAL_SALE_MRP_INR} → ₹${getInternalPriceInr()} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}. Back to ₹${INTERNAL_SALE_MRP_INR} from ${FULL_ACCESS_SALE_BACK_LABEL}.`
                       : undefined
                   }
                   product="internal_hr"

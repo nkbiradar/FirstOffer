@@ -37,7 +37,9 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // 16 Oct 2026: raised to ₹199 for 3 months.
 // 13 Nov 2026 (after the Diwali offer): ₹149 for 3 months.
 // 16 Nov 2026: lowered to ₹99 for 3 months.
-export const MONTHLY_PRICE_INR = 99;
+// 17 Nov 2026: regular price ₹149; ₹99 is the November Hiring Offer price
+// (FULL_ACCESS_SALE_* below) until 30 Nov, then ₹149 automatically.
+export const MONTHLY_PRICE_INR = 149;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
 // ── Dasara offer (Oct 2026): full access ₹49 instead of ₹99, same 3 months.
@@ -50,21 +52,26 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(DASARA_SALE_ENDS_AT);
 }
 
-// ── Diwali offer (30 Oct – 12 Nov 2026, extended from 8 Nov): full access shown as ₹299 → ₹99 (₹149 until 5 Nov),
+// ── (History) Diwali offer 30 Oct – 12 Nov 2026 used this same slot. Mechanics:
 // same 3 months. ₹99 is what is actually charged (getFullAccessPriceInr →
 // getProductPricing → Razorpay order); ₹299 is the display-only struck-through
 // price. Switches itself off at FULL_ACCESS_SALE_ENDS_AT, after which the
 // price goes to the regular MONTHLY_PRICE_INR — no redeploy needed.
 // (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
+// ── November Hiring Offer (17–30 Nov 2026): Full Access ₹99 (regular ₹149),
+// Internal HR ₹299 (regular ₹399). Real deadline: at FULL_ACCESS_SALE_ENDS_AT
+// both prices go back to the regular price automatically — do NOT extend.
 export const FULL_ACCESS_SALE_PRICE_INR = 99;
-/** Struck-through "was" price shown beside the offer price. Display only. */
-export const FULL_ACCESS_SALE_MRP_INR = 299;
-export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-12T23:59:59+05:30";
-/** Last day of the offer ("till 12 Nov"). */
-export const FULL_ACCESS_SALE_END_LABEL = "12 Nov";
+/** Struck-through price shown beside the offer price = the real price from 1 Dec. */
+export const FULL_ACCESS_SALE_MRP_INR = MONTHLY_PRICE_INR;
+export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-30T23:59:59+05:30";
+/** Last day of the offer ("till 30 Nov"). */
+export const FULL_ACCESS_SALE_END_LABEL = "30 Nov";
 /** First day after the offer. */
-export const FULL_ACCESS_SALE_BACK_LABEL = "13 Nov";
-export const FULL_ACCESS_SALE_TITLE = "Diwali Offer 🪔";
+export const FULL_ACCESS_SALE_BACK_LABEL = "1 Dec";
+export const FULL_ACCESS_SALE_TITLE = "November Hiring Offer";
+/** Short badge used across the site while the offer runs. */
+export const OFFER_BADGE = "🔥 November Hiring Offer";
 
 export function isFullAccessSaleActive(now: number = Date.now()): boolean {
   return now < Date.parse(FULL_ACCESS_SALE_ENDS_AT);
@@ -136,12 +143,13 @@ export function getMonthlyPlanId(): string {
 export const INTERNAL_PRICE_INR = 399;
 export const INTERNAL_PRICE_PAISE = INTERNAL_PRICE_INR * 100;
 
-// Diwali offer (same window as the full-access Diwali offer above): Internal
-// HR shown as ₹699 → ₹399. Display only — the charge stays INTERNAL_PRICE_INR.
-// The strike-through disappears by itself when the offer window ends.
-export const INTERNAL_SALE_MRP_INR = 699;
+// November Hiring Offer for Internal HR: ₹299 is CHARGED during the offer
+// window (getInternalPriceInr below); the struck-through price is the real
+// regular price, INTERNAL_PRICE_INR.
+export const INTERNAL_SALE_PRICE_INR = 299;
+export const INTERNAL_SALE_MRP_INR = INTERNAL_PRICE_INR;
 
-/** True during the Diwali offer window (shared by Full Access and Internal HR). */
+/** True while the current offer window runs (shared by Full Access and Internal HR). */
 export function isDiwaliOfferActive(now: number = Date.now()): boolean {
   return isFullAccessSaleActive(now);
 }
@@ -151,7 +159,9 @@ export const DASARA_INTERNAL_SALE_PRICE_INR = 99;
 
 /** The Internal HR price to show and charge right now (₹99 during the old sale, else INTERNAL_PRICE_INR). */
 export function getInternalPriceInr(now: number = Date.now()): number {
-  return isDasaraSaleActive(now) ? DASARA_INTERNAL_SALE_PRICE_INR : INTERNAL_PRICE_INR;
+  if (isDasaraSaleActive(now)) return DASARA_INTERNAL_SALE_PRICE_INR;
+  if (isFullAccessSaleActive(now)) return INTERNAL_SALE_PRICE_INR;
+  return INTERNAL_PRICE_INR;
 }
 
 export function getInternalPlanId(): string {
@@ -264,7 +274,7 @@ export function getProductPricing(
   return {
     priceInr,
     pricePaise: priceInr * 100,
-    description: isFullAccessSaleActive() ? "Full access — 3 months (Diwali offer)" : "Full access — 3 months",
+    description: isFullAccessSaleActive() ? "Full access — 3 months (November Hiring Offer)" : "Full access — 3 months",
   };
 }
 

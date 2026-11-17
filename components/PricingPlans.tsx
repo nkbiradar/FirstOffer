@@ -12,7 +12,7 @@ import {
   isDasaraSaleActive,
   isDiwaliOfferActive,
   INTERNAL_SALE_MRP_INR,
-  isFullAccessSaleActive,
+  isFullAccessSaleActive, OFFER_BADGE,
 } from "@/lib/payments/razorpay";
 
 // Dark, three-plan pricing section on the homepage: Full Access (featured),
@@ -82,7 +82,8 @@ export default function PricingPlans({
       period: "3 months",
       price: getInternalPriceInr(),
       was: internalDiwali ? INTERNAL_SALE_MRP_INR : internalSale ? INTERNAL_PRICE_INR : undefined,
-      note: internalDiwali ? `🪔 Diwali offer · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+      note: internalDiwali ? `${OFFER_BADGE} · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+      countdownEndsAt: internalDiwali ? FULL_ACCESS_SALE_ENDS_AT : undefined,
       cta: "Get Internal HR",
       href: "/internal-openings",
       ribbon: "⭐ Best for interviews",
@@ -107,7 +108,7 @@ export default function PricingPlans({
       countdownEndsAt: fullSale ? FULL_ACCESS_SALE_ENDS_AT : undefined,
       cta: hasFullAccess ? "Your access is active ✓" : "Get Full Access",
       href: hasFullAccess ? "/dashboard" : "/unlock",
-      note: fullSale ? `🪔 Diwali offer · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
+      note: fullSale ? `${OFFER_BADGE} · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
       features: [
         { text: "Direct HR emails & recruiter numbers" },
         { text: "Official Google Forms & apply links" },
@@ -133,7 +134,7 @@ export default function PricingPlans({
             Peak hiring season
             <span className="fp-tag-sep" aria-hidden="true" />
             <span className="fp-tag-muted">
-              {fullSale ? `🪔 Diwali offer until ${FULL_ACCESS_SALE_END_LABEL}` : "New roles added daily"}
+              {fullSale ? `${OFFER_BADGE} until ${FULL_ACCESS_SALE_END_LABEL}` : "New roles added daily"}
             </span>
           </span>
         </div>

@@ -16,7 +16,7 @@ import {
   FULL_ACCESS_SALE_MRP_INR,
   getFullAccessPriceInr,
   isFullAccessPriceRisePending,
-  isFullAccessSaleActive,
+  isFullAccessSaleActive, OFFER_BADGE, FULL_ACCESS_SALE_BACK_LABEL,
 } from "@/lib/payments/razorpay";
 
 // Direct checkout page for Full Access — the target of the offer popup and
@@ -76,7 +76,7 @@ export default async function UnlockPage() {
             wasPrice={saleActive ? FULL_ACCESS_SALE_MRP_INR : undefined}
             priceNote={
               saleActive
-                ? `🪔 Diwali Offer: ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${price} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}.`
+                ? `${OFFER_BADGE}: ₹${FULL_ACCESS_SALE_MRP_INR} → ₹${price} for 3 months, till ${FULL_ACCESS_SALE_END_LABEL}. Back to ₹${FULL_ACCESS_SALE_MRP_INR} from ${FULL_ACCESS_SALE_BACK_LABEL}.`
                 : risePending
                 ? `🔥 Offer: ₹${FULL_ACCESS_NEXT_PRICE_INR} → ₹${price} for 3 months, ends ${FULL_ACCESS_PRICE_RISE_LABEL}.`
                 : `Just ₹${Math.round(price / 3)}/month — one payment covers 3 months.`

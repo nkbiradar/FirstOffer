@@ -165,7 +165,7 @@ export function renderHtml(
   const priceBlock = `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-radius:16px;background:#0b0b10;">
       <tr><td style="padding:20px 22px;">
-        ${c.offer ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#3b2a07;border:1px solid #a16207;font-size:12.5px;font-weight:700;color:#fde68a;">🪔 Diwali offer · ends ${esc(FULL_ACCESS_SALE_END_LABEL)}${left ? ` · ${esc(left)}` : ""}</span>` : ""}
+        ${c.offer ? `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#3b2a07;border:1px solid #a16207;font-size:12.5px;font-weight:700;color:#fde68a;">🔥 November Hiring Offer · ends ${esc(FULL_ACCESS_SALE_END_LABEL)}${left ? ` · ${esc(left)}` : ""}</span>` : ""}
         <p style="margin:12px 0 0;font-size:40px;font-weight:800;color:#ffffff;line-height:1;">₹${c.price}
           ${c.was ? `<span style="font-size:20px;font-weight:600;color:#71717a;text-decoration:line-through;margin-left:8px;">₹${c.was}</span><span style="display:inline-block;vertical-align:middle;margin-left:8px;padding:3px 9px;border-radius:999px;background:#052e16;border:1px solid #166534;font-size:12px;font-weight:800;color:#4ade80;">${off}% OFF</span>` : ""}
         </p>
