@@ -95,9 +95,15 @@ export async function hasInternalAccess(userId: string): Promise<boolean> {
   return hasActiveSubscription(userId, "internal_hr");
 }
 
-/** Career Kit 2027 — one-time ₹179, lifetime (see CAREER_KIT_PRICE_INR). */
+/** Career Kit 2027 downloads. Since 17 Nov 2026 the kit is included in the
+ * Internal HR plan (₹399); anyone who bought the old standalone ₹179 kit
+ * (product "career_kit") keeps their lifetime access too. */
 export async function hasCareerKitAccess(userId: string): Promise<boolean> {
-  return hasActiveSubscription(userId, "career_kit");
+  const [kit, internal] = await Promise.all([
+    hasActiveSubscription(userId, "career_kit"),
+    hasActiveSubscription(userId, "internal_hr"),
+  ]);
+  return kit || internal;
 }
 
 /**

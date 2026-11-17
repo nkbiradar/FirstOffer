@@ -6,14 +6,13 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 import { getUser } from "@/lib/supabase/auth";
 import { hasCareerKitAccess } from "@/lib/data/subscriptions";
 import { CAREER_KIT_FILES } from "@/lib/career-kit";
-import { CAREER_KIT_MRP_INR, CAREER_KIT_PRICE_INR } from "@/lib/payments/razorpay";
+import { getInternalPriceInr } from "@/lib/payments/razorpay";
 import { getSiteUrl } from "@/lib/site-url";
 
-const OFF = Math.round((1 - CAREER_KIT_PRICE_INR / CAREER_KIT_MRP_INR) * 100);
 
 export const metadata: Metadata = {
   title: "Career Kit 2027 — 3,100+ HR Contacts & 500+ Career Links",
-  description: `Everything a fresher needs to reach HRs directly: 3,100+ HR contacts, 12-country HR email directory, 500+ company career links, referral guide, referral mail template and ATS resume template. One-time ₹${CAREER_KIT_PRICE_INR}, lifetime access.`,
+  description: `Everything a fresher needs to reach HRs directly: 3,100+ HR contacts, 12-country HR email directory, 500+ company career links, referral guide, referral mail template and ATS resume template. Included with the FirstOffer Internal HR plan.`,
   alternates: { canonical: `${getSiteUrl()}/career-kit` },
 };
 
@@ -31,6 +30,7 @@ const STATS = [
 export default async function CareerKitPage() {
   const [user, inApp] = await Promise.all([getUser(), isAppRequest()]);
   const owned = user ? await hasCareerKitAccess(user.id) : false;
+  const internalPrice = getInternalPriceInr();
 
   return (
     <main className="page page-wide">
@@ -42,7 +42,7 @@ export default async function CareerKitPage() {
         </nav>
 
         <section className="ck-hero">
-          <span className="ck-badge">✨ 2027 Updated · Lifetime access</span>
+          <span className="ck-badge">✨ 2027 Updated · Included with Internal HR</span>
           <h1>
             The complete <span className="ck-mark">job-search kit</span> for freshers
           </h1>
@@ -52,13 +52,12 @@ export default async function CareerKitPage() {
           </p>
           {!owned && !inApp && (
             <div className="ck-price">
-              <s aria-label={`Original price ₹${CAREER_KIT_MRP_INR}`}>₹{CAREER_KIT_MRP_INR}</s>
-              <strong>₹{CAREER_KIT_PRICE_INR}</strong>
-              <span className="ck-off">{OFF}% OFF</span>
-              <span className="ck-once">One-time payment · Lifetime access</span>
+              <strong>Included in Internal HR</strong>
+              <span className="ck-once">
+                ₹{internalPrice} for 3 months · plus referrals, HR-shared openings &amp; interview kits
+              </span>
             </div>
           )}
-          {!owned && !inApp && <p className="ck-urgency">⏳ Launch price — prices will increase soon.</p>}
           <div className="ck-stats">
             {STATS.map((s) => (
               <div className="ck-stat" key={s.small}>
@@ -108,6 +107,7 @@ export default async function CareerKitPage() {
                 <li>📥 Instant download right after payment</li>
                 <li>♾️ Pay once, keep it forever — no renewal</li>
                 <li>🔄 Free 2027 updates included</li>
+                <li>🤝 Plus company-wise referrals &amp; HR-shared openings</li>
                 <li>🔒 Secure UPI / card payment via Razorpay</li>
               </ul>
             </section>
@@ -117,16 +117,15 @@ export default async function CareerKitPage() {
                 <AppMembersOnlyNote
                   isSignedIn={Boolean(user)}
                   next="/career-kit"
-                  what="The Career Kit is available to FirstOffer members who own it."
+                  what="The Career Kit is included for FirstOffer Internal HR members."
                 />
               ) : (
                 <UnlockContactCard
                   isSignedIn={Boolean(user)}
                   loginNext="/career-kit#buy"
-                  price={CAREER_KIT_PRICE_INR}
-                  priceNote={`🔥 Launch offer: ₹${CAREER_KIT_MRP_INR} → ₹${CAREER_KIT_PRICE_INR}. Prices will increase soon.`}
-                  product="career_kit"
-                  wasPrice={CAREER_KIT_MRP_INR}
+                  price={internalPrice}
+                  priceNote="📇 The full Career Kit 2027 is included with Internal HR — download everything right after payment."
+                  product="internal_hr"
                 />
               )}
             </aside>

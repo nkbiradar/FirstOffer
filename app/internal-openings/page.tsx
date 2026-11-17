@@ -224,6 +224,31 @@ export default async function InternalOpeningsPage() {
           )}
         </section>
 
+        {/* Members-only perk: Career Kit 2027 (included with Internal HR since
+            17 Nov 2026) — downloads live on /career-kit, served by app/api/career-kit. */}
+        <section className={`interview-kit ${isUnlocked ? "is-unlocked" : "is-locked"}`}>
+          <span aria-hidden="true" className="interview-kit-icon" style={{ fontSize: 26 }}>
+            📇
+          </span>
+          <div className="interview-kit-body">
+            <span className="interview-kit-eyebrow">Career Kit 2027 · Included</span>
+            <h2>3,100+ HR contacts, 740+ HR emails &amp; 500+ career links</h2>
+            <p>
+              Company-wise HR contacts, a 12-country HR email directory, 500+ official career pages, the referral guide,
+              referral mail template and an ATS-friendly resume template — 8 files, download and keep.
+            </p>
+          </div>
+          {isUnlocked ? (
+            <a className="btn btn-primary interview-kit-cta" href="/career-kit">
+              Open Career Kit
+            </a>
+          ) : (
+            <a className="btn btn-secondary interview-kit-cta" href="#unlock-internal-hr">
+              🔒 Unlock to download
+            </a>
+          )}
+        </section>
+
         {/* Members-only perk: the Coding Interview Kit PDF (served by
             app/api/internal/interview-kit, which re-checks access). */}
         <section className={`interview-kit ${isUnlocked ? "is-unlocked" : "is-locked"}`}>

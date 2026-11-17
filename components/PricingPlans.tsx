@@ -7,8 +7,6 @@ import {
   FULL_ACCESS_SALE_MRP_INR,
   FULL_ACCESS_SALE_ENDS_AT,
   INTERNAL_PRICE_INR,
-  CAREER_KIT_MRP_INR,
-  CAREER_KIT_PRICE_INR,
   getFullAccessPriceInr,
   getInternalPriceInr,
   isDasaraSaleActive,
@@ -18,7 +16,7 @@ import {
 } from "@/lib/payments/razorpay";
 
 // Dark, three-plan pricing section on the homepage: Full Access (featured),
-// Internal HR Openings and the one-time Career Kit 2027 (Resume Makeover is part of Full Access). All prices come from
+// Internal HR Openings (Career Kit 2027 included; Resume Makeover is part of Full Access). All prices come from
 // lib/payments/razorpay.ts, so a sale switching on/off updates this too.
 // Strike-through prices are only shown when the plan's REAL regular price
 // is higher than what's charged today.
@@ -91,6 +89,7 @@ export default function PricingPlans({
       rating,
       features: [
         { text: "🤝 Get referred at Accenture, IBM, Deloitte, Capgemini, Cognizant & more", highlight: true },
+        { text: "📇 Career Kit 2027 included — 3,100+ HR contacts, 740+ HR emails, 500+ career links" },
         { text: "Openings shared directly by HRs" },
         { text: "Low-competition roles" },
         { text: "Early access to fresh roles" },
@@ -116,27 +115,6 @@ export default function PricingPlans({
         { text: "📄 Resume review by top MNC HRs + 90% ATS-friendly resume built by our team", highlight: true },
         { text: "Resume Keyword Matcher" },
         { text: "Fresh listings only — every role live 48 hrs" },
-      ],
-    },
-    {
-      key: "kit",
-      name: "Career Kit 2027",
-      period: "One-time · Lifetime access",
-      price: CAREER_KIT_PRICE_INR,
-      was: CAREER_KIT_MRP_INR,
-      kitRibbon: "🚀 New for 2027 · Best value",
-      tag: `💰 Save ₹${CAREER_KIT_MRP_INR - CAREER_KIT_PRICE_INR} · 8 files · Instant download`,
-      note: "⏳ Launch price — prices will increase soon",
-      cta: "Get Career Kit — ₹" + CAREER_KIT_PRICE_INR,
-      href: "/career-kit",
-      features: [
-        { text: `📇 3,100+ HR contacts + 500+ career links — pay once, keep forever`, highlight: true },
-        { text: "3,100+ HR contacts — company-wise (2027 updated)" },
-        { text: "HR email directory — 740+ companies, 12 countries" },
-        { text: "500+ company career page links" },
-        { text: "Job referral guide + referral mail template" },
-        { text: "How to get replies from companies (guide)" },
-        { text: "ATS-friendly resume template (PDF + editable)" },
       ],
     },
   ];
@@ -172,7 +150,7 @@ export default function PricingPlans({
         </div>
       </div>
 
-      <div className="fp-grid">
+      <div className="fp-grid fp-grid-2">
         {plans.map((p) => {
           const off = pctOff(p.price, p.was);
           return (

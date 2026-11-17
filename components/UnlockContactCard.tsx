@@ -62,7 +62,7 @@ const PRODUCT_COPY: Record<
       "This role was shared directly by an HR or recruiter — it isn't posted on the regular job portals, so competition is far lower than a public listing. Unlock it (and every other internal opening as it comes in) for less than the price of an auto ride.",
     highlightTitle: "Direct HR access, before everyone else",
     highlightBody:
-      "internal, HR-shared roles with significantly lower competition — early access to openings that may never be widely posted elsewhere.",
+      "internal, HR-shared roles with significantly lower competition, company-wise referrals, interview kits — plus the full Career Kit 2027 (3,100+ HR contacts, 500+ career links).",
     checkoutDescription: "Internal HR Openings membership",
     unlockLabel: (price) => `Unlock Internal Openings — ₹${price} for 3 months`,
     fallbackRedirect: () => "/internal-openings",
