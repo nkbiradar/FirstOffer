@@ -87,10 +87,12 @@ export default function PricingPlans({
       cta: "Get Internal HR",
       href: "/internal-openings",
       ribbon: "⭐ Best for interviews",
+      tag: "Everything in one plan",
       rating,
       features: [
         { text: "🤝 Get referred at Accenture, IBM, Deloitte, Capgemini, Cognizant & more", highlight: true },
         { text: "📇 Career Kit 2027 included — 3,100+ HR contacts, 740+ HR emails, 500+ career links" },
+        { text: "🛡️ No interview call in 3 months? Next 3 months free", highlight: true },
         { text: "Openings shared directly by HRs" },
         { text: "Low-competition roles" },
         { text: "Early access to fresh roles" },

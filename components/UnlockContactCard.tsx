@@ -379,6 +379,12 @@ export default function UnlockContactCard({
               ? "Downloads unlock instantly after payment and stay yours forever. One-time payment — no renewal, no auto-debit."
               : `Access unlocks instantly after payment and lasts 3 months. No auto-renewal, no mandate saved — just come back and pay ₹${price} again whenever you want to keep going.`}
           </p>
+          {product === "internal_hr" && (
+            <p className="unlock-contact-promise">
+              🛡️ <strong>Interview Call Promise:</strong> no interview call in 3 months? Get the next 3 months free.{" "}
+              <a href="/refund-policy#internal-hr-promise">See terms</a>
+            </p>
+          )}
         </>
       )}
       {error && <p className="unlock-contact-error">{error}</p>}

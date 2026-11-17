@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
       </span>
       <h1 style={{ marginTop: 14 }}>Refund Policy</h1>
       <p style={{ marginTop: 6, fontSize: 13.5 }}>
-        Last updated: October 21, 2026
+        Last updated: November 17, 2026
       </p>
 
       <p style={{ marginTop: 20 }}>
@@ -36,7 +36,7 @@ export default function RefundPolicyPage() {
 
       <h2 style={{ marginTop: 32 }}>When you are eligible for a refund</h2>
       <p style={{ marginTop: 12 }}>
-        Apart from the Interview Call Guarantee above, we&apos;ll also refund you if either of these happens:
+        Apart from the Internal HR Interview Call Promise and the older Interview Call Guarantee below, we&apos;ll also refund you if either of these happens:
       </p>
       <p style={{ marginTop: 12 }}>
         <strong>Payment succeeded but the unlock failed.</strong> If Razorpay charged you but the
@@ -49,6 +49,29 @@ export default function RefundPolicyPage() {
         duplicate.</strong> If the opportunity you were viewing when you paid is later confirmed to
         be fake, a scam, or a duplicate of another listing already on the site, you&apos;re entitled
         to a full refund even after the unlock.
+      </p>
+
+      <h2 id="internal-hr-promise" style={{ marginTop: 32, scrollMarginTop: 90 }}>
+        🛡️ Internal HR Interview Call Promise (purchases from 17 Nov 2026)
+      </h2>
+      <p style={{ marginTop: 12 }}>
+        If you buy the Internal HR plan and don&apos;t get a single interview call during your 3 months of access,
+        we&apos;ll give you <strong>the next 3 months of Internal HR free</strong>. This is an access extension, not a
+        cash refund.
+      </p>
+      <p style={{ marginTop: 12 }}>
+        <strong>Who it&apos;s for:</strong> members who actually used the plan — you applied to at least 10 openings or
+        referral openings on FirstOffer during your 3 months.
+      </p>
+      <p style={{ marginTop: 12 }}>
+        <strong>How to claim:</strong> email{" "}
+        <a href="mailto:support@firstoffer.online">support@firstoffer.online</a> from the email address you signed up
+        with, within 7 days after your access ends, with a line confirming you didn&apos;t receive any interview call.
+        We&apos;ll extend your access within 2 working days. One free extension per member.
+      </p>
+      <p style={{ marginTop: 12 }}>
+        FirstOffer shares openings, referrals and resources — hiring decisions are always made by the companies, so we
+        can&apos;t promise a job. This promise is our way of standing behind the plan.
       </p>
 
       <h2 id="interview-guarantee" style={{ marginTop: 32, scrollMarginTop: 90 }}>

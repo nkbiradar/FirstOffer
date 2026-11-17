@@ -8690,3 +8690,6 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 .admin-skel-card { height: 160px; }
 @keyframes admin-skel { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .admin-skel { animation: none; } }
+
+.unlock-contact-promise { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(250, 204, 21, 0.35); background: rgba(250, 204, 21, 0.08); font-size: 13px; line-height: 1.5; }
+.unlock-contact-promise a { text-decoration: underline; font-weight: 600; }
