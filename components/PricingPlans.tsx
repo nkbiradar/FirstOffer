@@ -121,6 +121,7 @@ export default function PricingPlans({
         { text: "📄 Resume review by top MNC HRs + 90% ATS-friendly resume built by our team", highlight: true },
         { text: "Resume Keyword Matcher" },
         { text: "Fresh listings only — every role live 48 hrs" },
+        { text: "💬 WhatsApp support — real humans, fast replies" },
       ],
     },
   ];
