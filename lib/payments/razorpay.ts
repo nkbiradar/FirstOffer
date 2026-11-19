@@ -39,7 +39,9 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // 16 Nov 2026: lowered to ₹99 for 3 months.
 // 17 Nov 2026: regular price ₹149; ₹99 is the November Hiring Offer price
 // (FULL_ACCESS_SALE_* below) until 25 Nov, then ₹149 automatically.
-export const MONTHLY_PRICE_INR = 149;
+// 19 Nov 2026: regular price ₹299; offer price ₹149 (was ₹99) until 25 Nov,
+// then ₹299 automatically.
+export const MONTHLY_PRICE_INR = 299;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
 // ── Dasara offer (Oct 2026): full access ₹49 instead of ₹99, same 3 months.
@@ -58,10 +60,10 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
 // price. Switches itself off at FULL_ACCESS_SALE_ENDS_AT, after which the
 // price goes to the regular MONTHLY_PRICE_INR — no redeploy needed.
 // (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
-// ── November Hiring Offer (17–25 Nov 2026): Full Access ₹99 (regular ₹149),
+// ── November Hiring Offer (17–25 Nov 2026): Full Access ₹149 (regular ₹299; was ₹99/₹149 until 19 Nov),
 // Internal HR ₹299 (regular ₹399). Real deadline: at FULL_ACCESS_SALE_ENDS_AT
 // both prices go back to the regular price automatically — do NOT extend.
-export const FULL_ACCESS_SALE_PRICE_INR = 99;
+export const FULL_ACCESS_SALE_PRICE_INR = 149;
 /** Struck-through price shown beside the offer price = the real price after the offer. */
 export const FULL_ACCESS_SALE_MRP_INR = MONTHLY_PRICE_INR;
 export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-25T23:59:59+05:30";
