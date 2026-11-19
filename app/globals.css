@@ -8209,6 +8209,7 @@ button.tg-link { font-family: inherit; cursor: pointer; }
 .dh-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: var(--dh-text); background: #1e2230; border: 1px solid rgba(255,255,255,0.08); }
 .dh-live-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; animation: dhPulse 1.8s ease-out infinite; flex: 0 0 auto; }
 .dh h1 { margin: 0; font-family: var(--font-display, inherit); font-size: clamp(2.6rem, 1.6rem + 3.4vw, 4.4rem); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: #fff; text-wrap: balance; }
+.dh h1 .dh-kicker { display: block; margin-bottom: 14px; font-family: inherit; font-size: clamp(0.85rem, 0.8rem + 0.3vw, 1.05rem); line-height: 1.3; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #34d399; }
 .dh-swoosh { position: relative; display: inline-block; white-space: nowrap; }
 .dh-swoosh svg { position: absolute; left: 0; bottom: -0.16em; width: 100%; height: 0.32em; overflow: visible; }
 .dh-swoosh path { stroke-dasharray: 340; stroke-dashoffset: 340; animation: dhDraw 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s forwards; }

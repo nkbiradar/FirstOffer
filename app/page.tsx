@@ -40,12 +40,12 @@ import { isAppRequest } from "@/lib/nativeAppServer";
 export const metadata = {
   title: { absolute: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India" },
   description:
-    "Fresher jobs, internships, tech jobs and off-campus drives from companies hiring now across India — 2025, 2026 & 2027 batch, remote and paid internships. Apply directly to HRs. Updated daily.",
+    "3,600+ fresher jobs, internships & off-campus drives from 1,900+ companies hiring across India — 2025, 2026 & 2027 batch. Apply directly to HRs. New openings daily.",
   alternates: { canonical: getSiteUrl() },
   openGraph: {
     title: "Find Your First Offer Faster | FirstOffer",
     description:
-      "Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
+      "3,600+ fresher jobs, internships & off-campus drives from 1,900+ companies. 155+ students got interview calls. New openings daily.",
     url: getSiteUrl(),
     type: "website",
     images: [{ url: "/images/hero-journey.webp", width: 1672, height: 941 }],
@@ -54,7 +54,7 @@ export const metadata = {
     card: "summary_large_image" as const,
     title: "Find Your First Offer Faster | FirstOffer",
     description:
-      "Discover fresher jobs, tech jobs, internships and off-campus opportunities from companies hiring across India.",
+      "3,600+ fresher jobs, internships & off-campus drives from 1,900+ companies. 155+ students got interview calls. New openings daily.",
   },
 };
 

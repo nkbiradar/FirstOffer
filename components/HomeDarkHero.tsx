@@ -89,6 +89,8 @@ export default function HomeDarkHero({ todayCount, dateLabel, stats, openings, t
             </span>
 
             <h1 className="dh-in" style={{ animationDelay: "0.12s" }}>
+              {/* Keyword line for search engines, shown as a small kicker. */}
+              <span className="dh-kicker">Fresher Jobs &amp; Internships 2026</span>
               Find Your{" "}
               <span className="dh-swoosh">
                 First Offer
