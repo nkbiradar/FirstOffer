@@ -235,7 +235,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           visitors see when they scroll. */}
       <div className="container">
         <section className="section" style={{ paddingTop: 24 }}>
-          <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} studentLabel={formatStudentCount(stats.totalSubscribers)} />
+          <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} studentLabel={formatStudentCount(stats.totalSubscribers)} interviewCount={stats.totalInterviews} />
         </section>
       </div>
 

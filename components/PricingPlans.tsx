@@ -64,7 +64,10 @@ export default function PricingPlans({
   hasFullAccess = false,
   rating,
   studentLabel = STUDENT_COUNT_FALLBACK_LABEL,
+  interviewCount,
 }: {
+  /** Live interview-call count, shown in the headline when > 0. */
+  interviewCount?: number;
   /** Live "2100+"-style sign-up count (lib/student-count.ts). */
   studentLabel?: string;
   hasFullAccess?: boolean;
@@ -126,9 +129,17 @@ export default function PricingPlans({
     <section className="fp-pricing" data-app-hide id="pricing">
       <div className="fp-pricing-head">
         <span className="fp-eyebrow">Membership Pricing</span>
-        <h2>
-          Plans that get you <span>interview calls</span>
-        </h2>
+        {interviewCount && interviewCount > 0 ? (
+          <h2>
+            {interviewCount.toLocaleString("en-IN")} students tried it and got <span>interview calls</span>.
+            <br />
+            Your luck could be next.
+          </h2>
+        ) : (
+          <h2>
+            Plans that get you <span>interview calls</span>
+          </h2>
+        )}
         <p>Join {studentLabel} students applying directly to HRs — one payment, no auto-debit.</p>
         <div className="fp-tags">
           <span className="fp-tag">
