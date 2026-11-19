@@ -19,6 +19,7 @@ type Opening = {
   opportunity_type: string | null;
   stipend: string | null;
   salary: string | null;
+  batch?: string[] | null;
   company: { name: string | null; logo_url?: string | null } | { name: string | null; logo_url?: string | null }[] | null;
 };
 
@@ -59,7 +60,12 @@ function tagOf(o: Opening) {
   if (o.opportunity_type === "internship") return "Internship";
   if (o.work_mode === "remote") return "Remote";
   if (o.opportunity_type === "full_time") return "Full-time";
-  return "Fresher";
+  // No type set: only call it "Fresher" when nothing says it needs experience
+  // (e.g. "Senior Software Engineer", batch "Experienced Professionals").
+  const experienced =
+    (o.batch ?? []).some((b) => /experienc/i.test(b)) ||
+    /\b(senior|sr\.?|lead|principal|manager|head|architect)\b/i.test(o.role);
+  return experienced ? "Experienced" : "Fresher";
 }
 
 const AVATAR_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#a855f7", "#ec4899", "#14b8a6"];
