@@ -231,6 +231,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         companies={companies}
       />
 
+      {/* Pricing right after the hero, so the offer is the first thing
+          visitors see when they scroll. */}
+      <div className="container">
+        <section className="section" style={{ paddingTop: 24 }}>
+          <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} studentLabel={formatStudentCount(stats.totalSubscribers)} />
+        </section>
+      </div>
+
       {/* "No middlemen" animation: student → live jobs → HR, on the same dark
           background as the hero so the top of the page reads as one block. */}
       <section className="dh-band">
@@ -338,7 +346,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             from lib/payments/razorpay.ts. */}
         <Reveal>
           <section className="section" style={{ paddingTop: 8 }}>
-            <PricingPlans hasFullAccess={alreadyHasFullAccess} rating={studentRating} studentLabel={formatStudentCount(stats.totalSubscribers)} />
             <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} />
           </section>
         </Reveal>
