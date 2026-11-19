@@ -55,6 +55,8 @@ export default async function UnlockPage() {
           )}
         </p>
 
+        {/* Target of the "Start applying off-campus" button further down. */}
+        <div id="unlock-pay" style={{ scrollMarginTop: 96 }} />
         {unlocked ? (
           <div className="empty-state">
             <h3>Your full access is active ✅</h3>
@@ -90,7 +92,7 @@ export default async function UnlockPage() {
       </div>
       {!unlocked && !inApp && (
         <div className="container" style={{ maxWidth: 1180, paddingBottom: 64 }}>
-          <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} />
+          <OffCampusCompare totalInterviews={stats.totalInterviews} totalStartups={stats.totalStartups} ctaHref="#unlock-pay" />
         </div>
       )}
     </main>

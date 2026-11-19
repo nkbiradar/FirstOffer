@@ -5,9 +5,9 @@ import { getFullAccessPriceInr } from "@/lib/payments/razorpay";
 // (homepage + /unlock). Points about campus placements are general limits
 // students commonly face; FirstOffer numbers come from live site stats.
 
-type Props = { totalStartups?: number; totalInterviews?: number };
+type Props = { totalStartups?: number; totalInterviews?: number; ctaHref?: string };
 
-export default function OffCampusCompare({ totalStartups = 0, totalInterviews = 0 }: Props) {
+export default function OffCampusCompare({ totalStartups = 0, totalInterviews = 0, ctaHref = "/unlock" }: Props) {
   const perDay = (getFullAccessPriceInr() / 90).toFixed(1);
   const startups = totalStartups > 0 ? `${totalStartups.toLocaleString("en-IN")}+` : "1,000+";
 
@@ -87,7 +87,7 @@ export default function OffCampusCompare({ totalStartups = 0, totalInterviews = 
           {totalInterviews > 0 && (
             <p className="fp-compare-proof">🎤 {totalInterviews} students have already landed interview calls this way.</p>
           )}
-          <Link className="fp-cta fp-cta-primary" href="/unlock">
+          <Link className="fp-cta fp-cta-primary" href={ctaHref}>
             Start applying off-campus
           </Link>
         </div>
