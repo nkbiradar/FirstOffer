@@ -41,8 +41,8 @@ export const CONTACT_UNLOCK_PRICE_PAISE = CONTACT_UNLOCK_PRICE_INR * 100;
 // (FULL_ACCESS_SALE_* below) until 25 Nov, then ₹149 automatically.
 // 19 Nov 2026: regular price ₹299; offer price ₹149 (was ₹99) until 25 Nov,
 // then ₹299 automatically.
-// 23 Nov 2026: offer price back to ₹99 (struck ₹299) until 25 Nov.
-export const MONTHLY_PRICE_INR = 299;
+// 23 Nov 2026: offer ₹99 (struck ₹199) until 25 Nov; regular price ₹199 from 26 Nov.
+export const MONTHLY_PRICE_INR = 199;
 export const MONTHLY_PRICE_PAISE = MONTHLY_PRICE_INR * 100;
 
 // ── Dasara offer (Oct 2026): full access ₹49 instead of ₹99, same 3 months.
