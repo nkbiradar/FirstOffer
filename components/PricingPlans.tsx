@@ -44,6 +44,47 @@ type Plan = {
   features: Feature[];
 };
 
+// TUF-style long feature list: each card lists its own features (✓) and then
+// the other plan's features greyed out (✗), so students see what "take both" adds.
+// Only list things that actually exist on the site (lib/career-kit.ts,
+// app/api/internal/interview-kit/route.ts).
+const FULL_FEATURES: Feature[] = [
+  { text: "Direct HR emails & recruiter numbers" },
+  { text: "Official Google Forms & apply links" },
+  { text: "3,900+ verified fresher jobs & internships" },
+  { text: "New fresher roles added daily" },
+  { text: "Fresh listings only — every role live 48 hrs" },
+  { text: "📄 Resume review by top MNC HRs + 90% ATS-friendly resume built by our team", highlight: true },
+  { text: "Resume Keyword Matcher — tailor your resume to each job" },
+  { text: "💬 WhatsApp support — real humans, fast replies" },
+];
+
+const INTERNAL_FEATURES: Feature[] = [
+  { text: "🤝 Get referred at Accenture, IBM, Deloitte, Capgemini, Cognizant & more", highlight: true },
+  { text: "🛡️ No interview call in 3 months? Next 3 months free", highlight: true },
+  { text: "Openings shared directly by HRs" },
+  { text: "Low-competition internal roles" },
+  { text: "Early access to fresh roles" },
+  { text: "Career Kit: 3,100+ HR contacts, company-wise" },
+  { text: "Career Kit: HR email directory — 12 countries" },
+  { text: "Career Kit: 500+ companies hiring — career links" },
+  { text: "Career Kit: How to get a job referral — 6-step guide" },
+  { text: "Career Kit: How to get replies from companies" },
+  { text: "Career Kit: Referral mail template + real example" },
+  { text: "Career Kit: ATS resume template + editable Overleaf version" },
+  { text: "Interview Kit: Coding & DSA questions" },
+  { text: "Interview Kit: SQL for Data Analysts" },
+  { text: "Interview Kit: Python & Pandas" },
+  { text: "Interview Kit: Excel, Statistics & Power BI" },
+  { text: "Interview Kit: Machine Learning basics" },
+  { text: "Interview Kit: Generative AI & LLMs" },
+  { text: "Internal HR support" },
+];
+
+function withOthers(own: Feature[], others: Feature[]): Feature[] {
+  return [...own, ...others.map((f) => ({ text: f.text, included: false }))];
+}
+
 function pctOff(price: number, was?: number) {
   return was && was > price ? Math.round((1 - price / was) * 100) : 0;
 }
@@ -92,16 +133,7 @@ export default function PricingPlans({
       ribbon: "⭐ Best for interviews",
       tag: "Everything in one plan",
       rating,
-      features: [
-        { text: "🤝 Get referred at Accenture, IBM, Deloitte, Capgemini, Cognizant & more", highlight: true },
-        { text: "📇 Career Kit 2027 included — 3,100+ HR contacts, 740+ HR emails, 500+ career links" },
-        { text: "🛡️ No interview call in 3 months? Next 3 months free", highlight: true },
-        { text: "Openings shared directly by HRs" },
-        { text: "Low-competition roles" },
-        { text: "Early access to fresh roles" },
-        { text: "6 Interview Question Kits (PDF)" },
-        { text: "Internal support" },
-      ],
+      features: withOthers(INTERNAL_FEATURES, FULL_FEATURES),
     },
     {
       key: "full",
@@ -114,15 +146,7 @@ export default function PricingPlans({
       cta: hasFullAccess ? "Your access is active ✓" : "Get Full Access",
       href: hasFullAccess ? "/dashboard" : "/unlock",
       note: fullSale ? `${OFFER_BADGE} · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
-      features: [
-        { text: "Direct HR emails & recruiter numbers" },
-        { text: "Official Google Forms & apply links" },
-        { text: "New fresher roles added daily" },
-        { text: "📄 Resume review by top MNC HRs + 90% ATS-friendly resume built by our team", highlight: true },
-        { text: "Resume Keyword Matcher" },
-        { text: "Fresh listings only — every role live 48 hrs" },
-        { text: "💬 WhatsApp support — real humans, fast replies" },
-      ],
+      features: withOthers(FULL_FEATURES, INTERNAL_FEATURES),
     },
   ];
 
