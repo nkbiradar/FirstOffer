@@ -44,8 +44,7 @@ type Plan = {
   features: Feature[];
 };
 
-// TUF-style long feature list: each card lists its own features (✓) and then
-// the other plan's features greyed out (✗), so students see what "take both" adds.
+// TUF-style long feature list: each card lists only what it includes (✓).
 // Only list things that actually exist on the site (lib/career-kit.ts,
 // app/api/internal/interview-kit/route.ts).
 const FULL_FEATURES: Feature[] = [
@@ -81,9 +80,6 @@ const INTERNAL_FEATURES: Feature[] = [
   { text: "Internal HR support" },
 ];
 
-function withOthers(own: Feature[], others: Feature[]): Feature[] {
-  return [...own, ...others.map((f) => ({ text: f.text, included: false }))];
-}
 
 function pctOff(price: number, was?: number) {
   return was && was > price ? Math.round((1 - price / was) * 100) : 0;
@@ -133,7 +129,7 @@ export default function PricingPlans({
       ribbon: "⭐ Best for interviews",
       tag: "Everything in one plan",
       rating,
-      features: withOthers(INTERNAL_FEATURES, FULL_FEATURES),
+      features: INTERNAL_FEATURES,
     },
     {
       key: "full",
@@ -146,7 +142,7 @@ export default function PricingPlans({
       cta: hasFullAccess ? "Your access is active ✓" : "Get Full Access",
       href: hasFullAccess ? "/dashboard" : "/unlock",
       note: fullSale ? `${OFFER_BADGE} · ends ${FULL_ACCESS_SALE_END_LABEL}` : undefined,
-      features: withOthers(FULL_FEATURES, INTERNAL_FEATURES),
+      features: FULL_FEATURES,
     },
   ];
 
