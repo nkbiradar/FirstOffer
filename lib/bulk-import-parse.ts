@@ -171,6 +171,36 @@ function extractBlocks(raw: string): string[] {
   return blocks;
 }
 
+const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+/**
+ * Keeps email addresses out of Additional Details: any sentence there that
+ * contains an email is dropped (e.g. "Interested candidates can send their
+ * resume to hr@x.com."), and the first email found fills hrEmail if it's
+ * still empty — so the admin never has to delete it by hand.
+ */
+export function moveEmailsOutOfDetails(draft: BulkDraftOpportunity): BulkDraftOpportunity {
+  const text = draft.additionalDetails;
+  const emails = text.match(EMAIL_RE);
+  if (!emails) return draft;
+  const cleaned = text
+    .split("\n")
+    .map((line) =>
+      line
+        .split(/(?<=[.!?])\s+/)
+        .filter((sentence) => !new RegExp(EMAIL_RE.source).test(sentence))
+        .join(" ")
+        .trim(),
+    )
+    .filter(Boolean)
+    .join("\n");
+  return {
+    ...draft,
+    additionalDetails: cleaned,
+    hrEmail: draft.hrEmail.trim() ? draft.hrEmail : emails[0],
+  };
+}
+
 type StringFieldKey = Exclude<keyof BulkDraftOpportunity, "isInternal" | "isImmediateHiring">;
 
 function finalizeDraft(draft: BulkDraftOpportunity): BulkDraftOpportunity {
@@ -186,7 +216,7 @@ function finalizeDraft(draft: BulkDraftOpportunity): BulkDraftOpportunity {
   }
   trimmed.opportunityType = normalizeType(trimmed.opportunityType);
   trimmed.workMode = normalizeWorkMode(trimmed.workMode);
-  return trimmed;
+  return moveEmailsOutOfDetails(trimmed);
 }
 
 /**

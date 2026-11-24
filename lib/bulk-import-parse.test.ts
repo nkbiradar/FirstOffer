@@ -115,4 +115,19 @@ Requirements: 2+ years experience
     expect(parseBulkOpportunities("")).toEqual([]);
     expect(parseBulkOpportunities("   \n\n  ")).toEqual([]);
   });
+  it("removes email sentences from Additional Details and fills HR email", () => {
+    const raw = `Company: Softcodess\nRole: MERN Intern\nAdditional Details: Knowledge of MongoDB required. Interested candidates can send their updated resume to hr@softcodess.com.`;
+    const [draft] = parseBulkOpportunities(raw);
+
+    expect(draft.additionalDetails).toBe("Knowledge of MongoDB required.");
+    expect(draft.hrEmail).toBe("hr@softcodess.com");
+  });
+
+  it("keeps an existing HR email and still strips the address from details", () => {
+    const raw = `Company: Acme\nHR Email: jobs@acme.com\nAdditional Details: Mail careers@acme.com for queries.`;
+    const [draft] = parseBulkOpportunities(raw);
+
+    expect(draft.additionalDetails).toBe("");
+    expect(draft.hrEmail).toBe("jobs@acme.com");
+  });
 });

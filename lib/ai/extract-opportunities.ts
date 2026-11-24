@@ -11,7 +11,7 @@
 // the "Parse with AI" button surfaces instead of failing silently).
 
 import Anthropic from "@anthropic-ai/sdk";
-import { normalizeType, normalizeWorkMode, type BulkDraftOpportunity } from "@/lib/bulk-import-parse";
+import { moveEmailsOutOfDetails, normalizeType, normalizeWorkMode, type BulkDraftOpportunity } from "@/lib/bulk-import-parse";
 
 const FIELD_DESCRIPTIONS = `
 - company: the hiring company's name
@@ -28,7 +28,7 @@ const FIELD_DESCRIPTIONS = `
 - responsibilities: one responsibility per line
 - requirements: one requirement per line
 - eligibility: any other eligibility criteria as free text (this is where experience requirements like "Experience: 0-3 years" belong)
-- additionalDetails: anything else worth keeping that doesn't fit elsewhere
+- additionalDetails: anything else worth keeping that doesn't fit elsewhere — NEVER include email addresses here (put them in hrEmail) or sentences like "send your resume to <email>"
 - applicationUrl: direct application link, if any
 - googleFormUrl: Google Form link, if any
 - hrEmail: HR/contact email, if any
@@ -78,7 +78,7 @@ function fieldStr(value: unknown): string {
 }
 
 function normalizeAiItem(raw: Record<string, unknown>, fallbackSourceText: string): BulkDraftOpportunity {
-  return {
+  return moveEmailsOutOfDetails({
     company: fieldStr(raw.company),
     role: fieldStr(raw.role),
     opportunityType: normalizeType(fieldStr(raw.opportunityType)),
@@ -107,7 +107,7 @@ function normalizeAiItem(raw: Record<string, unknown>, fallbackSourceText: strin
     // "Mark all as Internal" in BulkImportClient.tsx after reviewing.
     isInternal: false,
     isImmediateHiring: false,
-  };
+  });
 }
 
 export async function extractOpportunitiesWithAi(rawText: string): Promise<AiExtractResult> {
