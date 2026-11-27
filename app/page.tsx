@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import OpportunityCard from "@/components/OpportunityCard";
@@ -37,26 +38,55 @@ import DiwaliOfferPopup from "@/components/DiwaliOfferPopup";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
 import { isAppRequest } from "@/lib/nativeAppServer";
 
-export const metadata = {
-  title: { absolute: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India" },
-  description:
-    "3,600+ fresher jobs, internships & off-campus drives from 1,900+ companies hiring across India — 2025, 2026 & 2027 batch. Apply directly to HRs. New openings daily.",
-  alternates: { canonical: getSiteUrl() },
-  openGraph: {
-    title: "Find Your First Offer Faster | FirstOffer",
-    description:
-      "3,600+ fresher jobs, internships & off-campus drives from 1,900+ companies. 155+ students got interview calls. New openings daily.",
-    url: getSiteUrl(),
-    type: "website",
-    images: [{ url: "/images/hero-journey.webp", width: 1672, height: 941 }],
-  },
-  twitter: {
-    card: "summary_large_image" as const,
-    title: "Find Your First Offer Faster | FirstOffer",
-    description:
-      "3,600+ fresher jobs, internships & off-campus drives from 1,900+ companies. 155+ students got interview calls. New openings daily.",
-  },
-};
+// Live numbers (cached 5 min via getSiteStatsCached) so the search snippet
+// and social previews always match the stats shown on the page itself.
+function roundDownLabel(n: number): string {
+  const step = n >= 1000 ? 100 : 10;
+  return (Math.floor(n / step) * step).toLocaleString("en-IN");
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  let jobs = "3,600";
+  let companies = "1,900";
+  let interviews = "";
+  try {
+    const stats = await getSiteStatsCached();
+    if (stats.totalPostedEver > 0) jobs = roundDownLabel(stats.totalPostedEver);
+    if (stats.totalStartups > 0) companies = roundDownLabel(stats.totalStartups);
+    if (stats.totalInterviews > 0) interviews = stats.totalInterviews.toLocaleString("en-IN");
+  } catch {
+    // Fall back to the static numbers above; metadata must never break the page.
+  }
+
+  const siteUrl = getSiteUrl();
+  const title = "Find Your First Offer Faster | FirstOffer";
+  // Kept under ~155 characters so Google shows it without truncation.
+  const description = `${jobs}+ fresher jobs, internships & off-campus drives from ${companies}+ companies across India. 2025–2027 batch. Apply directly to HRs. New openings daily.`;
+  const socialDescription = `${jobs}+ fresher jobs & internships from ${companies}+ companies.${interviews ? ` ${interviews} students got interview calls.` : ""} New openings daily.`;
+  const imageAlt = "FirstOffer — fresher jobs, internships and off-campus drives in India";
+
+  return {
+    title: { absolute: "FirstOffer — Fresher Jobs, Internships & Tech Jobs Hiring Now in India" },
+    description,
+    alternates: { canonical: siteUrl },
+    // The page-level openGraph replaces the layout's, so siteName/locale are repeated here.
+    openGraph: {
+      title,
+      description: socialDescription,
+      url: siteUrl,
+      type: "website",
+      siteName: "FirstOffer",
+      locale: "en_IN",
+      images: [{ url: "/images/hero-journey.webp", width: 1672, height: 941, alt: imageAlt }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: socialDescription,
+      images: [{ url: "/images/hero-journey.webp", alt: imageAlt }],
+    },
+  };
+}
 
 const HOW_IT_WORKS = [
   {
@@ -205,6 +235,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         logo: { "@type": "ImageObject", url: `${siteUrl}/icon.png` },
         email: "support@firstoffer.online",
         areaServed: "IN",
+        // Official profiles, so Google can connect them to the FirstOffer brand.
+        sameAs: ["https://whatsapp.com/channel/0029VbEAe3eFSAsw8baLWz33"],
       },
     ],
   };

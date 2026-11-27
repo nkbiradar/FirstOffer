@@ -360,6 +360,203 @@ export const GUIDES: Guide[] = [
       { href: "/guides/off-campus-placement-guide", label: "Off-campus placement guide" },
     ],
   },
+  {
+    slug: "aptitude-test-preparation-for-placements",
+    title: "Aptitude Test Preparation for Placements: Topics & 30-Day Plan (2026)",
+    description:
+      "What fresher aptitude tests actually cover — quant, logical reasoning and verbal — plus a simple 30-day plan, speed tricks and the mistakes that cost candidates the cut-off.",
+    updated: "2026-11-27",
+    readMins: 7,
+    intro:
+      "For most mass-hiring and off-campus drives, the online aptitude test is the first filter, and it removes far more candidates than the interview does. The good news: the syllabus is predictable and the questions repeat in pattern. With 45–60 minutes of focused practice a day, most freshers can clear the cut-off within a month.",
+    sections: [
+      {
+        h: "What the aptitude round usually tests",
+        p: [
+          "Exact patterns differ by company, but almost every fresher test mixes the same three areas, often with a coding or technical section for tech roles. Always check the latest pattern for the company you are targeting before the test.",
+        ],
+        list: [
+          "Quantitative aptitude: percentages, profit & loss, ratio, averages, time & work, time-speed-distance, simple & compound interest, permutations & combinations, probability, number system.",
+          "Logical reasoning: series, coding-decoding, blood relations, seating arrangement, syllogisms, puzzles, data sufficiency, direction sense.",
+          "Verbal ability: reading comprehension, sentence correction, fill in the blanks, para jumbles, synonyms and antonyms.",
+          "Data interpretation: tables, bar and pie charts, with percentage and ratio calculations.",
+        ],
+      },
+      {
+        h: "A simple 30-day plan",
+        list: [
+          "Days 1–10: Quant basics. One topic a day: learn the formula, solve 20–30 easy questions, then 10 timed ones.",
+          "Days 11–18: Logical reasoning. Puzzles and arrangements take the longest, so practise them daily.",
+          "Days 19–23: Verbal and data interpretation. Read one editorial a day to speed up comprehension.",
+          "Days 24–30: Full-length timed mock tests every day. Spend as much time reviewing mistakes as taking the test.",
+        ],
+      },
+      {
+        h: "Speed matters more than difficulty",
+        p: [
+          "Most candidates who fail the aptitude round could solve the questions — they just run out of time. Learn shortcuts for percentages and fractions, memorise squares up to 30 and cubes up to 15, and practise mental calculation.",
+          "In the test, do a first pass answering only the questions you can solve in under a minute. Come back to the harder ones later. Never spend three minutes on one question.",
+        ],
+      },
+      {
+        h: "Mistakes that cost freshers the cut-off",
+        list: [
+          "Guessing blindly when the test has negative marking — check the rules first.",
+          "Practising without a timer, then panicking in the real test.",
+          "Ignoring verbal ability because it feels easy; it is often the deciding section.",
+          "Skipping mock-test review. The same mistake pattern repeats until you fix it.",
+          "Taking the test on a weak internet connection or an untested device for online drives.",
+        ],
+      },
+      {
+        h: "After you clear the test",
+        p: [
+          "Clearing the aptitude round usually leads to a technical and an HR interview. Keep your resume ready, revise the projects you have listed, and prepare a short self-introduction. Then keep applying to new drives every day so you are never waiting on a single company.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "How many days are enough for aptitude preparation?", a: "About 30 days of daily practice (45–60 minutes) is enough for most fresher tests if you are consistent and take timed mocks in the last week." },
+      { q: "Is aptitude asked for non-IT roles too?", a: "Yes. Most mass-hiring drives, banks, consulting and operations roles use an aptitude test as the first screening round." },
+      { q: "Is there negative marking in aptitude tests?", a: "It depends on the company. Read the test instructions carefully: if there is negative marking, avoid blind guesses." },
+    ],
+    related: [
+      { href: "/off-campus-jobs", label: "Off-campus jobs and drives" },
+      { href: "/guides/fresher-interview-preparation", label: "Fresher interview preparation" },
+      { href: "/guides/off-campus-placement-guide", label: "Off-campus placement guide" },
+    ],
+  },
+  {
+    slug: "how-to-identify-fake-job-offers",
+    title: "How to Identify Fake Job Offers & Job Scams (Fresher Safety Guide)",
+    description:
+      "The warning signs of fake job offers and placement scams in India — registration fees, fake offer letters, WhatsApp-only recruiters — and how to verify any offer before you respond.",
+    updated: "2026-11-27",
+    readMins: 6,
+    intro:
+      "Freshers are the main target of job scams because they are eager, applying everywhere and often don't know how real hiring works. The single most important rule: a genuine employer never asks a candidate to pay money to get a job. Here is how to spot a fake offer and check any opportunity before you share documents or money.",
+    sections: [
+      {
+        h: "Red flags of a fake job offer",
+        list: [
+          "They ask for money: a registration fee, training fee, security deposit, laptop charge or \"refundable\" amount.",
+          "You get an offer without any test or interview, or after a short chat on WhatsApp or Telegram only.",
+          "The salary is far above normal fresher pay for very little work, such as liking videos or rating products.",
+          "The email comes from a free address (gmail.com, yahoo.com) instead of the company's own domain.",
+          "The offer letter has spelling mistakes, a blurry logo or no proper company address.",
+          "They pressure you to decide immediately or ask for OTPs, bank details or Aadhaar and PAN copies early.",
+        ],
+      },
+      {
+        h: "How to verify an offer in 10 minutes",
+        list: [
+          "Search the role on the company's official careers page. If it isn't there, be careful.",
+          "Check the sender's email domain matches the company's real website.",
+          "Find the recruiter on LinkedIn: real recruiters have a work history at that company.",
+          "Search the company name with \"scam\" or \"fraud\" and read recent experiences.",
+          "Call the company's official number (from its website, not the mail) and ask HR to confirm.",
+        ],
+      },
+      {
+        h: "Common scams freshers face",
+        p: [
+          "Task-based \"work from home\" scams pay a small amount first to build trust, then ask you to deposit money for bigger tasks. Fake placement agencies charge a fee and promise guaranteed jobs at big companies. Impersonation scams copy a real company's name and logo and send fake offer letters asking for a training or background-verification fee.",
+        ],
+      },
+      {
+        h: "What to do if you've been targeted",
+        list: [
+          "Stop responding and do not send any more money or documents.",
+          "If you shared bank details or paid money, contact your bank immediately.",
+          "Report cyber fraud on the national cybercrime portal (cybercrime.gov.in) or call the cybercrime helpline 1930.",
+          "Report the fake profile or number on the platform where you found it.",
+        ],
+      },
+      {
+        h: "How FirstOffer keeps listings safe",
+        p: [
+          "Every listing on FirstOffer is checked before it goes live and links to the company's own application route: its careers page, Google Form or HR contact. If anyone asks you for money in the name of a job you found here, don't pay. Report it to support@firstoffer.online.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Do genuine companies charge freshers a fee for jobs?", a: "No. Genuine employers do not charge candidates for applications, interviews, training or offer letters. Any request for money is a major red flag." },
+      { q: "Is a job offer on WhatsApp real?", a: "Some recruiters do use WhatsApp, but an offer made only over chat, with no proper interview or official email, is very often a scam. Always verify through the company's official website." },
+      { q: "Where do I report a job scam in India?", a: "Report it on cybercrime.gov.in or call the cybercrime helpline 1930. If money was involved, also contact your bank immediately." },
+    ],
+    related: [
+      { href: "/fresher-jobs", label: "Verified fresher jobs" },
+      { href: "/guides/how-to-write-email-to-hr-for-job", label: "How to email HR for a job" },
+      { href: "/companies", label: "Companies hiring now" },
+    ],
+  },
+  {
+    slug: "linkedin-profile-tips-for-freshers",
+    title: "LinkedIn Profile Tips for Freshers: Get Noticed by Recruiters (2026)",
+    description:
+      "How freshers can set up a LinkedIn profile recruiters actually find: headline formulas, an About section template, projects, skills and a simple weekly routine.",
+    updated: "2026-11-27",
+    readMins: 6,
+    intro:
+      "Recruiters search LinkedIn every day for freshers with specific skills. If your profile has a vague headline and an empty About section, you simply don't show up. A few focused changes make your profile searchable and give HR a reason to message you, or to say yes to your referral request.",
+    sections: [
+      {
+        h: "Write a headline recruiters search for",
+        p: [
+          "Your headline is the most important line on your profile because it appears in every search result. Skip \"Student at XYZ College\". Instead, state the role you want and your top skills.",
+        ],
+        list: [
+          "Aspiring Data Analyst | SQL, Python, Power BI | 2026 Graduate",
+          "Software Engineer (Fresher) | Java, Spring Boot, React | Open to Work",
+          "B.Tech CSE '26 | Machine Learning, NLP | Building AI projects",
+        ],
+      },
+      {
+        h: "About section template",
+        example:
+          "I'm a [2026 B.Tech CSE graduate] focused on [target role].\n\nWhat I've built:\n• [Project 1] – [what it does + one result]\n• [Project 2] – [what it does + one result]\n\nSkills: [5–8 skills from job descriptions you want]\n\nI'm looking for [role] opportunities in [city/remote]. Reach me at [email].",
+      },
+      {
+        h: "Sections that matter most for freshers",
+        list: [
+          "Profile photo: a clear, well-lit face photo. Profiles with photos get far more views.",
+          "Experience: add internships, freelance work and serious college roles, each with 2–3 result-focused bullets.",
+          "Projects: link GitHub or a live demo for every project.",
+          "Skills: add the exact skills used in job descriptions (for example, \"SQL\", not \"databases\").",
+          "Open to Work: turn it on, set the job titles and locations you want, and choose recruiters-only if you prefer.",
+          "Custom URL: change it to linkedin.com/in/yourname and use it on your resume.",
+        ],
+      },
+      {
+        h: "A simple weekly routine",
+        list: [
+          "Connect with 10–15 people a week: recruiters, alumni and engineers at companies you like, with a short personal note.",
+          "Post once a week about something you built or learned. Short posts with a screenshot work well.",
+          "Comment thoughtfully on posts from people in your target field.",
+          "Ask for a referral only after reading the job description, and share the Job ID and your resume.",
+        ],
+      },
+      {
+        h: "Mistakes to avoid",
+        list: [
+          "Copy-pasting your resume word for word into every section.",
+          "Generic connection requests with no note, or asking strangers for a job in the first message.",
+          "Listing 50 skills you can't back up in an interview.",
+          "Leaving the profile untouched for months while applying everywhere.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Should freshers turn on Open to Work?", a: "Yes. It helps recruiters find you. You can choose to show it only to recruiters if you don't want the green photo frame." },
+      { q: "How many skills should I add on LinkedIn?", a: "Add the 10–15 skills that match the roles you want and that you can talk about confidently in an interview." },
+      { q: "Can LinkedIn help me get a referral?", a: "Yes. Connect with employees at the company, read the job description first, and send a short, specific message with the Job ID and your resume." },
+    ],
+    related: [
+      { href: "/guides/how-to-get-job-referral", label: "How to get a job referral" },
+      { href: "/guides/ats-friendly-resume-for-freshers", label: "ATS-friendly resume for freshers" },
+      { href: "/fresher-jobs", label: "Fresher jobs hiring now" },
+    ],
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {

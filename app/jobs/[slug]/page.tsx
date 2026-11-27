@@ -26,8 +26,15 @@ function withYear(page: KeywordPage) {
   return /\b20\d\d\b/.test(page.heading) ? page.heading : `${page.heading} (${YEAR})`;
 }
 
+/** "November 2026" in India time — search titles with the current month
+ * signal fresh listings (the page itself updates every day). */
+function monthYear() {
+  return new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric", timeZone: "Asia/Kolkata" });
+}
+
 function pageTitle(page: KeywordPage, total: number) {
-  return total > 0 ? `${withYear(page)} — ${total} Live Openings` : withYear(page);
+  const base = /\b20\d\d\b/.test(page.heading) ? page.heading : `${page.heading} ${monthYear()}`;
+  return total > 0 ? `${base} — ${total} Live Openings` : base;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -150,6 +157,19 @@ export default async function KeywordJobsPage({ params }: { params: Promise<Para
               View all live opportunities &rarr;
             </Link>
           </div>
+        )}
+
+        {page.content && page.content.length > 0 && (
+          <section className="seo-faq-section">
+            {page.content.map((block) => (
+              <div key={block.h} style={{ marginBottom: 20 }}>
+                <h2>{block.h}</h2>
+                {block.p.map((para) => (
+                  <p key={para.slice(0, 40)}>{para}</p>
+                ))}
+              </div>
+            ))}
+          </section>
         )}
 
         <section className="seo-faq-section">

@@ -18,6 +18,9 @@ export type KeywordPage = {
    * there and this one is never indexed (avoids duplicate content). */
   canonicalPath?: string;
   intro: string;
+  /** Optional extra guide sections shown below the listings (adds useful,
+   * unique text to the most competitive pages). */
+  content?: { h: string; p: string[] }[];
   faqs: { q: string; a: string }[];
 };
 
@@ -25,10 +28,38 @@ export const KEYWORD_PAGES: KeywordPage[] = [
   {
     slug: "it-jobs-for-freshers",
     label: "IT Jobs",
-    heading: "IT Jobs for Freshers",
+    heading: "IT Fresher Jobs in India",
     filter: { roleCategories: ["software", "qa", "data", "ai-ml"] },
     intro:
-      "Entry-level IT jobs across software development, testing, data and AI — from product startups to IT services companies. Every opening links to the company's own careers page, Google Form or HR email.",
+      "Latest IT fresher jobs and IT jobs for freshers across software development, testing, data and AI — from product startups to IT services companies hiring across India. Every opening is hand-checked and links to the company's own careers page, Google Form or HR email.",
+    content: [
+      {
+        h: "Which IT companies are hiring freshers?",
+        p: [
+          "IT fresher hiring in India comes from three main groups: large IT services companies that run mass-hiring and off-campus drives, product companies and global capability centres that hire smaller batches for specific teams, and startups that hire freshers and interns all year round. The live openings above include all three, updated every day.",
+          "Startups usually move fastest, sometimes from application to offer in under two weeks, while larger companies run longer processes with an online test, technical interview and HR round.",
+        ],
+      },
+      {
+        h: "Popular IT roles for freshers",
+        p: [
+          "The most common entry-level IT roles are software engineer or developer (frontend, backend or full-stack), QA and test engineer, data analyst, associate cloud or DevOps engineer, technical support engineer and AI/ML intern. Each listing shows the role, location, work mode and eligible batches, so you can filter out roles that don't fit before applying.",
+        ],
+      },
+      {
+        h: "Skills that get freshers shortlisted",
+        p: [
+          "Recruiters for IT fresher jobs mostly check the same basics: one programming language you know well (Java, Python, C++ or JavaScript), data structures and algorithms, SQL, Git, and one or two projects you can explain clearly. For testing roles add manual testing and basic automation; for data roles add Excel, SQL and Power BI or Python.",
+          "An ATS-friendly one-page resume that lists these skills with measurable project results makes a big difference to your shortlisting rate.",
+        ],
+      },
+      {
+        h: "How to apply for IT fresher jobs faster",
+        p: [
+          "Fresher openings often get hundreds of applications within hours, so speed matters. Check this page daily, apply within a few hours of a role going live, and use the company's own application link on each listing. Where an HR email is given, send a short, specific mail with the role name in the subject line and your resume attached.",
+        ],
+      },
+    ],
     faqs: [
       {
         q: "Which IT jobs can a fresher apply for?",

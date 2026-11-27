@@ -363,7 +363,13 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
                 {initials(companyName)}
               </span>
               <p className="opportunity-company" style={{ fontSize: 14 }}>
-                {companyName}
+                {company?.slug && !opportunity.is_internal ? (
+                  <Link href={`/companies/${company.slug}`} title={`More ${companyName} jobs for freshers`}>
+                    {companyName}
+                  </Link>
+                ) : (
+                  companyName
+                )}
               </p>
             </div>
           )}

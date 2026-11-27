@@ -31,6 +31,8 @@ export type ListOpportunitiesOptions = {
   roleCategory?: string;
   /** Match ANY of these role categories (keyword landing pages, e.g. "IT jobs"). */
   roleCategories?: string[];
+  /** Only openings from this company (company landing pages). */
+  companyId?: string;
 };
 
 export type ListOpportunitiesResult = {
@@ -470,6 +472,10 @@ export async function getPublishedOpportunities(
 
   if (options.workMode) {
     builder = builder.eq("work_mode", options.workMode);
+  }
+
+  if (options.companyId) {
+    builder = builder.eq("company_id", options.companyId);
   }
 
   if (options.batch) {

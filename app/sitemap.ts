@@ -5,6 +5,7 @@ import { CITY_PAGES } from "@/lib/seo/cities";
 import { KEYWORD_PAGES } from "@/lib/seo/keyword-pages";
 import { isIndexable, liveCount } from "@/lib/seo/thin-content";
 import { GUIDES } from "@/lib/guides";
+import { getIndexableCompaniesCached } from "@/lib/data/company-pages";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -65,6 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${siteUrl}/career-kit`,
+      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
     },
@@ -136,5 +138,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticRoutes, ...guideRoutes, ...keywordRoutes, ...cityRoutes, ...opportunityRoutes];
+  // Company landing pages with enough posting history (lib/data/company-pages.ts).
+  const companies = await getIndexableCompaniesCached();
+  const companyRoutes: MetadataRoute.Sitemap = companies.map((c) => ({
+    url: `${siteUrl}/companies/${c.slug}`,
+    lastModified: c.lastPublished ? new Date(c.lastPublished) : new Date(),
+    changeFrequency: "daily",
+    priority: 0.75,
+  }));
+
+  return [...staticRoutes, ...guideRoutes, ...keywordRoutes, ...cityRoutes, ...companyRoutes, ...opportunityRoutes];
 }

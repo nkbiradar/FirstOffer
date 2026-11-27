@@ -123,7 +123,13 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                   })()}
                   <Link
                     className="company-card-link"
-                    href={`/opportunities?q=${encodeURIComponent(company.name)}${role ? `&role=${role}` : ""}`}
+                    href={
+                      role
+                        ? `/opportunities?q=${encodeURIComponent(company.name)}&role=${role}`
+                        : company.slug
+                          ? `/companies/${company.slug}`
+                          : `/opportunities?q=${encodeURIComponent(company.name)}`
+                    }
                   >
                     View Opportunities &rarr;
                   </Link>
