@@ -61,18 +61,19 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
 // price. Switches itself off at FULL_ACCESS_SALE_ENDS_AT, after which the
 // price goes to the regular MONTHLY_PRICE_INR — no redeploy needed.
 // (Previous use of this slot: "800+ students" offer, ₹149, 22–29 Oct.)
-// 25 Nov 2026: offer extended 3 days, now ends 28 Nov (regular prices from 29 Nov).
+// 25 Nov 2026: offer extended 3 days, to 28 Nov.
+// 28 Nov 2026: extended again, now ends 3 Dec (regular prices from 4 Dec).
 // ── November Hiring Offer (17–28 Nov 2026): Full Access ₹149 (regular ₹299; was ₹99/₹149 until 19 Nov),
 // Internal HR ₹299 (regular ₹399). Real deadline: at FULL_ACCESS_SALE_ENDS_AT
 // both prices go back to the regular price automatically — do NOT extend.
 export const FULL_ACCESS_SALE_PRICE_INR = 99;
 /** Struck-through price shown beside the offer price = the real price after the offer. */
 export const FULL_ACCESS_SALE_MRP_INR = MONTHLY_PRICE_INR;
-export const FULL_ACCESS_SALE_ENDS_AT = "2026-11-28T23:59:59+05:30";
-/** Last day of the offer ("till 28 Nov"). */
-export const FULL_ACCESS_SALE_END_LABEL = "28 Nov";
+export const FULL_ACCESS_SALE_ENDS_AT = "2026-12-03T23:59:59+05:30";
+/** Last day of the offer ("till 3 Dec"). */
+export const FULL_ACCESS_SALE_END_LABEL = "3 Dec";
 /** First day after the offer. */
-export const FULL_ACCESS_SALE_BACK_LABEL = "29 Nov";
+export const FULL_ACCESS_SALE_BACK_LABEL = "4 Dec";
 export const FULL_ACCESS_SALE_TITLE = "November Hiring Offer";
 /** Short badge used across the site while the offer runs. */
 export const OFFER_BADGE = "🔥 November Hiring Offer";
