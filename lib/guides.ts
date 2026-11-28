@@ -288,7 +288,7 @@ export const GUIDES: Guide[] = [
       { q: "Is CGPA important?", a: "Mention it if it's 7 or above, or if the job post asks for it. Many companies have cut-offs." },
     ],
     related: [
-      { href: "/resume", label: "Free ATS resume template + resume review" },
+      { href: "/#pricing", label: "Resume makeover, included in Full Access" },
       { href: "/resume-match", label: "Check your resume against a job's keywords" },
       { href: "/guides/how-to-write-email-to-hr-for-job", label: "How to write an email to HR" },
     ],

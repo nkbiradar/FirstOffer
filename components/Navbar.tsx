@@ -10,7 +10,6 @@ const LINKS = [
   { href: "/fresher-jobs", label: "Fresher Jobs" },
   { href: "/tech-jobs", label: "Tech Jobs" },
   { href: "/opportunities", label: "All Openings" },
-  { href: "/resume", label: "Resume Help" },
   // Deliberately styled differently below (nav-link-hot) — this is the
   // entry point to the Internal HR Openings product and is meant
   // to stand out from the plain listing links next to it.

@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   description:
     "Getting no interview calls? Download a free one-page ATS-friendly resume template, or get your resume rebuilt professionally for the role you want — included with FirstOffer Full Access.",
   alternates: { canonical: `${getSiteUrl()}/resume` },
+  // Resume makeover is now part of the Full Access plan, so this page is only
+  // the members' upload page (opened from the dashboard): kept out of search.
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Getting no interview calls? Fix your resume | FirstOffer",
     description: "Free ATS-friendly resume template, or a full resume makeover included with Full Access.",
