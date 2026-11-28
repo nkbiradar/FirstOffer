@@ -66,7 +66,8 @@ export function isDasaraSaleActive(now: number = Date.now()): boolean {
 // ── November Hiring Offer (17–28 Nov 2026): Full Access ₹149 (regular ₹299; was ₹99/₹149 until 19 Nov),
 // Internal HR ₹299 (regular ₹399). Real deadline: at FULL_ACCESS_SALE_ENDS_AT
 // both prices go back to the regular price automatically — do NOT extend.
-export const FULL_ACCESS_SALE_PRICE_INR = 99;
+// 28 Nov 2026: offer price raised from ₹99 to ₹149 (still struck against ₹199), till 3 Dec.
+export const FULL_ACCESS_SALE_PRICE_INR = 149;
 /** Struck-through price shown beside the offer price = the real price after the offer. */
 export const FULL_ACCESS_SALE_MRP_INR = MONTHLY_PRICE_INR;
 export const FULL_ACCESS_SALE_ENDS_AT = "2026-12-03T23:59:59+05:30";
