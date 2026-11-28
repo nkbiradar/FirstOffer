@@ -173,22 +173,48 @@ function extractBlocks(raw: string): string[] {
 
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 
+// Indian mobile numbers: optional +91 / 91 / 0 prefix, then 10 digits starting
+// 6–9, allowing a space or dash in the middle ("93822 44040", "+91-9382244040").
+// Not preceded by a letter, digit, "/" or "=" so URL paths and query values
+// (careers/job/4467197178...) are not mistaken for phone numbers.
+const PHONE_RE = /(?<![\w/=.-])(?:\+91[\s-]?|91[\s-]?|0)?[6-9]\d{4}[\s-]?\d{5}(?!\d)/g;
+
+/** A phone-looking number that is really a job/requisition ID ("Job ID: 9876543210"). */
+function isIdNumber(text: string, index: number): boolean {
+  return /\b(?:job|req|requisition|ref|reference)?\s*(?:id|no\.?|number|#)\s*[:#-]?\s*$/i.test(
+    text.slice(Math.max(0, index - 25), index),
+  );
+}
+
+function findPhones(text: string): string[] {
+  const out: string[] = [];
+  for (const m of text.matchAll(PHONE_RE)) {
+    if (m.index !== undefined && !isIdNumber(text, m.index)) out.push(m[0].trim());
+  }
+  return out;
+}
+
 /**
- * Keeps email addresses out of Additional Details: any sentence there that
- * contains an email is dropped (e.g. "Interested candidates can send their
- * resume to hr@x.com."), and the first email found fills hrEmail if it's
- * still empty — so the admin never has to delete it by hand.
+ * Keeps HR contact details out of Additional Details: any sentence there that
+ * contains an email address or a phone number is dropped (e.g. "Interested
+ * candidates can send their resume to hr@x.com." / "Share your resume with
+ * Lavanya HR at 9382244040."). The first email found fills hrEmail and the
+ * first phone number fills hrContact if they're still empty — so the admin
+ * never has to delete them by hand.
  */
-export function moveEmailsOutOfDetails(draft: BulkDraftOpportunity): BulkDraftOpportunity {
+export function moveContactsOutOfDetails(draft: BulkDraftOpportunity): BulkDraftOpportunity {
   const text = draft.additionalDetails;
-  const emails = text.match(EMAIL_RE);
-  if (!emails) return draft;
+  const emails = text.match(EMAIL_RE) ?? [];
+  const phones = findPhones(text);
+  if (emails.length === 0 && phones.length === 0) return draft;
+  const hasContact = (sentence: string) =>
+    new RegExp(EMAIL_RE.source).test(sentence) || findPhones(sentence).length > 0;
   const cleaned = text
     .split("\n")
     .map((line) =>
       line
         .split(/(?<=[.!?])\s+/)
-        .filter((sentence) => !new RegExp(EMAIL_RE.source).test(sentence))
+        .filter((sentence) => !hasContact(sentence))
         .join(" ")
         .trim(),
     )
@@ -197,9 +223,13 @@ export function moveEmailsOutOfDetails(draft: BulkDraftOpportunity): BulkDraftOp
   return {
     ...draft,
     additionalDetails: cleaned,
-    hrEmail: draft.hrEmail.trim() ? draft.hrEmail : emails[0],
+    hrEmail: draft.hrEmail.trim() || emails[0] || "",
+    hrContact: draft.hrContact.trim() || phones[0] || "",
   };
 }
+
+/** @deprecated kept for existing imports — now also moves phone numbers. */
+export const moveEmailsOutOfDetails = moveContactsOutOfDetails;
 
 type StringFieldKey = Exclude<keyof BulkDraftOpportunity, "isInternal" | "isImmediateHiring">;
 
@@ -216,7 +246,7 @@ function finalizeDraft(draft: BulkDraftOpportunity): BulkDraftOpportunity {
   }
   trimmed.opportunityType = normalizeType(trimmed.opportunityType);
   trimmed.workMode = normalizeWorkMode(trimmed.workMode);
-  return moveEmailsOutOfDetails(trimmed);
+  return moveContactsOutOfDetails(trimmed);
 }
 
 /**

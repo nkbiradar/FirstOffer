@@ -130,4 +130,22 @@ Requirements: 2+ years experience
     expect(draft.additionalDetails).toBe("");
     expect(draft.hrEmail).toBe("jobs@acme.com");
   });
+
+  it("removes HR phone sentences from Additional Details and fills HR contact", () => {
+    const raw = `Company: Talent Corp\nRole: HR Recruiter\nAdditional Details: Experience required: 1–3 years in non-IT recruitment. Responsibilities include screening resumes and scheduling interviews. Interested candidates can share their updated resume with Lavanya HR at 9382244040.`;
+    const [draft] = parseBulkOpportunities(raw);
+
+    expect(draft.additionalDetails).toBe(
+      "Experience required: 1–3 years in non-IT recruitment. Responsibilities include screening resumes and scheduling interviews.",
+    );
+    expect(draft.hrContact).toBe("9382244040");
+  });
+
+  it("handles +91 and spaced numbers, but leaves job IDs and URLs alone", () => {
+    const raw = `Company: Acme\nAdditional Details: Job ID: 9876543210. See https://acme.com/careers/job/9876543210 for details. Call +91 93822 44040 for queries.`;
+    const [draft] = parseBulkOpportunities(raw);
+
+    expect(draft.additionalDetails).toBe("Job ID: 9876543210. See https://acme.com/careers/job/9876543210 for details.");
+    expect(draft.hrContact).toBe("+91 93822 44040");
+  });
 });
