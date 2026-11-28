@@ -5,7 +5,7 @@ import { getUser } from "@/lib/supabase/auth";
 import { hasInternalAccess } from "@/lib/data/subscriptions";
 
 // Internal HR members-only downloads: the FirstOffer interview kits
-// (?kit=coding | sql | python | excel | ml | genai; default coding).
+// (?kit=coding | sql | python | excel | ml | genai | technical | hr; default coding).
 // The PDF lives in /private (NOT /public), so the only way to get it is
 // through this route, which checks sign-in + active Internal HR access.
 // next.config.ts's outputFileTracingIncludes ships the file with this route.
@@ -20,6 +20,9 @@ const KITS: Record<string, string> = {
   excel: "FirstOffer_Excel_Stats_PowerBI_Interview_Kit.pdf",
   ml: "FirstOffer_Machine_Learning_Interview_Kit.pdf",
   genai: "FirstOffer_GenAI_LLM_Interview_Kit.pdf",
+  // New (28 Nov 2026): most-asked technical + HR/managerial round questions.
+  technical: "FirstOffer_Technical_Round_Interview_Kit.pdf",
+  hr: "FirstOffer_HR_Managerial_Interview_Kit.pdf",
 };
 
 export async function GET(request: NextRequest) {

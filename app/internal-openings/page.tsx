@@ -15,6 +15,22 @@ import { getSiteUrl } from "@/lib/site-url";
 import { getNonce } from "@/lib/security/csp";
 import { buildLandingBreadcrumbsJsonLd } from "@/lib/seo/job-posting";
 
+// New kits (28 Nov 2026) — shown first with a NEW badge.
+const NEW_KITS = [
+  {
+    slug: "technical",
+    emoji: "🧠",
+    title: "Most-Asked Technical Questions",
+    topics: "35 questions · OOPs · DBMS & SQL · OS · Networks · Web · Testing · your project · role-wise plan",
+  },
+  {
+    slug: "hr",
+    emoji: "🤝",
+    title: "HR & Managerial Round",
+    topics: "26 questions · Tell me about yourself · relocation, bond, salary · STAR stories · sample answers",
+  },
+];
+
 const DATA_AI_KITS = [
   { slug: "sql", emoji: "🗄️", title: "SQL for Data Analysts", topics: "Joins · ranking · window functions · duplicates" },
   { slug: "python", emoji: "🐼", title: "Python & Pandas", topics: "Cleaning · groupby · merge · dates · outliers" },
@@ -138,7 +154,7 @@ export default async function InternalOpeningsPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Bonus: 6 Interview Question Kits (PDF)
+              Bonus: 8 Interview Question Kits (PDF) — 2 new
             </li>
           </ul>
 
@@ -247,6 +263,50 @@ export default async function InternalOpeningsPage() {
               🔒 Unlock to download
             </a>
           )}
+        </section>
+
+        {/* NEW (28 Nov 2026): Technical + HR/managerial round kits — same
+            members-only route (?kit=technical | hr), highlighted with a NEW badge. */}
+        <section className={`kit-list kit-list-new ${isUnlocked ? "is-unlocked" : "is-locked"}`}>
+          <div className="kit-list-head">
+            <span className="interview-kit-eyebrow">
+              <span className="kit-new-badge">NEW</span> Interview Kits · Members only
+            </span>
+            <h2>🎯 Got an interview? Just prepare these questions</h2>
+            <p>
+              The technical and HR questions companies actually ask freshers — role-wise, with what the interviewer is
+              checking, model answers and the follow-up they&apos;ll ask next.
+            </p>
+            <div className="kit-list-chips">
+              <span>61 questions</span>
+              <span>Technical + HR rounds</span>
+              <span>Role-wise plan</span>
+            </div>
+          </div>
+          <ul className="kit-list-grid">
+            {NEW_KITS.map((k) => (
+              <li className="kit-list-item" key={k.slug}>
+                <span aria-hidden="true" className="kit-list-emoji">
+                  {k.emoji}
+                </span>
+                <div className="kit-list-text">
+                  <strong>
+                    {k.title} <span className="kit-new-badge">NEW</span>
+                  </strong>
+                  <span>{k.topics}</span>
+                </div>
+                {isUnlocked ? (
+                  <a className="btn btn-sm btn-primary" href={`/api/internal/interview-kit?kit=${k.slug}`}>
+                    Download
+                  </a>
+                ) : (
+                  <a className="btn btn-sm btn-secondary" href="#unlock-internal-hr">
+                    🔒 Unlock
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Members-only perk: the Coding Interview Kit PDF (served by

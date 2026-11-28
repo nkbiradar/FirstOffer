@@ -8694,3 +8694,8 @@ body:has(main.home-dark) .streak-chip { color: #fdba74; }
 
 .unlock-contact-promise { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(250, 204, 21, 0.35); background: rgba(250, 204, 21, 0.08); font-size: 13px; line-height: 1.5; }
 .unlock-contact-promise a { text-decoration: underline; font-weight: 600; }
+
+/* NEW badge for freshly added interview kits (Internal HR, 28 Nov 2026) */
+.kit-new-badge, .kit-list-text .kit-new-badge { display: inline-block; vertical-align: middle; margin-left: 4px; padding: 2px 8px; border-radius: 999px; background: #ef4444; color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; line-height: 1.4; }
+.interview-kit-eyebrow .kit-new-badge { margin: 0 6px 0 0; }
+.kit-list-new { border: 2px solid #ef4444; box-shadow: 0 6px 24px rgba(239, 68, 68, 0.12); }

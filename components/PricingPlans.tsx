@@ -71,6 +71,8 @@ const INTERNAL_FEATURES: Feature[] = [
   { text: "Career Kit: How to get replies from companies" },
   { text: "Career Kit: Referral mail template + real example" },
   { text: "Career Kit: ATS resume template + editable Overleaf version" },
+  { text: "🆕 NEW Interview Kit: Most-asked Technical questions (role-wise)", highlight: true },
+  { text: "🆕 NEW Interview Kit: HR & Managerial round questions", highlight: true },
   { text: "Interview Kit: Coding & DSA questions" },
   { text: "Interview Kit: SQL for Data Analysts" },
   { text: "Interview Kit: Python & Pandas" },

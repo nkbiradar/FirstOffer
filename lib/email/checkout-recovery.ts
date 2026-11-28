@@ -71,7 +71,7 @@ function copyFor(product: Product, firstName: string) {
       subject: offer
         ? `${hi}our Internal HR access is still on hold — ₹${price} till ${FULL_ACCESS_SALE_END_LABEL}`
         : `${hi}our Internal HR access is still on hold`,
-      preheader: "Openings shared directly by HRs + 6 Interview Question Kits. Finish in 30 seconds.",
+      preheader: "Openings shared directly by HRs + 8 Interview Question Kits. Finish in 30 seconds.",
       heading: "Your Internal HR access is still on hold",
       price,
       was: offer ? INTERNAL_SALE_MRP_INR : undefined,
@@ -80,7 +80,7 @@ function copyFor(product: Product, firstName: string) {
       benefits: [
         ["Openings shared directly by HRs", "Low-competition roles most students never see."],
         ["Early access to fresh roles", "Apply before the crowd does."],
-        ["6 Interview Question Kits (PDF)", "Walk into the interview prepared."],
+        ["8 Interview Question Kits (PDF) — incl. new Technical & HR round kits", "Walk into the interview prepared."],
         ["One payment, 3 months", "No auto-debit, no hidden charges."],
       ],
       cta: `Unlock Internal HR — ₹${price}`,
